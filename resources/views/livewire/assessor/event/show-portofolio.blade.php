@@ -2,7 +2,7 @@
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('assessor.dashboard'), 'title' => 'Dashboard'],
         ['url' => route('assessor.event'), 'title' => 'Event'],
-        ['url' => route('assessor.event.show-peserta', $id_event), 'title' => 'Peserta'],
+        ['url' => route('assessor.event.show-peserta', $id_event), 'title' => 'Asesi'],
         ['url' => null, 'title' => 'Portofolio'],
     ]" />
     <div class="row">
