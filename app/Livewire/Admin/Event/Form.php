@@ -23,6 +23,7 @@ class Form extends Component
     public $alat_tes_id = [];
     public $assessor = [];
     public $is_finished;
+    public $is_open;
 
     public $isUpdate = false;
 
@@ -46,6 +47,7 @@ class Form extends Component
                 $this->alat_tes_id = $data->alatTes()->pluck('id')->toArray();
                 $this->assessor = $data->assessor()->pluck('id')->toArray();
                 $this->is_finished = $data->is_finished;
+                $this->is_open = $data->is_open;
                 $this->pin_ujian = $data->pin_ujian;
             }
         } catch (\Throwable $th) {
@@ -75,7 +77,8 @@ class Form extends Component
             'alat_tes_id.*' => 'exists:ref_alat_tes,id',
             'assessor' => 'required|array',
             'assessor.*' => 'exists:assessor,id',
-            'pin_ujian' => ['required']
+            'pin_ujian' => ['required'],
+            'is_open' => ['required']
         ];
 
         // Validasi pin ujian hanya wajib saat create, tidak saat update
@@ -102,7 +105,8 @@ class Form extends Component
             'pin_ujian.required' => 'harus diisi',
             'alat_tes_id.required' => 'harus dipilih',
             'assessor.required' => 'harus dipilih',
-            'pin_ujian.required' => 'harus diisi'
+            'pin_ujian.required' => 'harus diisi',
+            'is_open.required' => 'harus dipilih'
         ];
     }
 
@@ -119,6 +123,7 @@ class Form extends Component
                 $data->jumlah_peserta = $this->jumlah_peserta;
                 $data->pin_ujian = $this->pin_ujian;
                 $data->is_finished = $this->is_finished;
+                $data->is_open = $this->is_open;
                 $data->save();
 
                 // Attach assessors
@@ -139,6 +144,7 @@ class Form extends Component
                     'tgl_selesai' => $this->tgl_selesai,
                     'jumlah_peserta' => $this->jumlah_peserta,
                     'pin_ujian' => $this->pin_ujian,
+                    'is_open' => $this->is_open,
                 ]);
 
                 // Attach assessors

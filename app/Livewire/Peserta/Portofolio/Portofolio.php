@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Peserta\Portofolio;
 
+use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefPertanyaanPengalaman;
 use App\Models\RefPertanyaanPenilaian;
@@ -50,13 +51,15 @@ class Portofolio extends Component
         }])
             ->orderBy('urutan', 'asc')
             ->get();
-        
+
         $penilaian = RefPertanyaanPenilaian::with(['jawaban' => function ($query) {
             $query->where('peserta_id', Auth::guard('peserta')->user()->id)
                 ->where('event_id', Auth::guard('peserta')->user()->event_id);
         }])
             ->orderBy('urutan', 'asc')
             ->get();
+
+        $portofolio_is_open = Event::where('is_open', 'true')->where('id', Auth::guard('peserta')->user()->event_id)->first();
 
         return view('livewire..peserta.portofolio.index', [
             'biodata' => $biodata,
@@ -65,6 +68,7 @@ class Portofolio extends Component
             'karir' => $karir,
             'pertanyaan' => $pertanyaan,
             'penilaian' => $penilaian,
+            'portofolio_is_open' => $portofolio_is_open
         ]);
     }
 }

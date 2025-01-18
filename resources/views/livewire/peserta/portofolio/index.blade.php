@@ -4,6 +4,9 @@
         ['url' => null, 'title' => 'Portofolio'],
     ]" />
 
+    @if (!$portofolio_is_open)
+        <x-alert :type="'danger'" :teks="'Event masih / sudah ditutup!'" />
+    @else
     <x-alert :type="'danger'" :teks="'Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh.
                 Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. 
                 Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!'" />
@@ -299,4 +302,5 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
