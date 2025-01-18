@@ -133,6 +133,26 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#motivasi-komitmen" role="button"
+                        aria-expanded="false" aria-controls="motivasi-komitmen">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Motivasi dan Komitmen</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="motivasi-komitmen">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="" wire:navigate
+                                    class="nav-link">Data Referensi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-motivasi-komitmen') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
 
                 <li class="nav-item nav-category"></li>

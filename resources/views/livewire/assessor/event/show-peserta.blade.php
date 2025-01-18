@@ -2,18 +2,18 @@
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('assessor.dashboard'), 'title' => 'Dashboard'],
         ['url' => route('assessor.event'), 'title' => 'Event'],
-        ['url' => null, 'title' => 'Peserta']
+        ['url' => null, 'title' => 'Asesi']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Peserta Event {{ $event->nama_event }}</h6>
+                    <h6 class="card-title">Data Asesi Event {{ $event->nama_event }}</h6>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
                         <div class="col-sm-4">
                             <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama / nip / jabatan / instansi" />
+                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari berdasar nama / nip / jabatan / instansi" />
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -27,7 +27,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nama Peserta</th>
+                                    <th>Nama Asesi</th>
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>

@@ -62,7 +62,7 @@
                                     <th>Nama Event</th>
                                     <th>Tgl Pelaksanaan</th>
                                     <th>Jabatan yg Diujikan</th>
-                                    <th>Assessee</th>
+                                    <th>Asesi</th>
                                     <th>Alat Tes</th>
                                     <th>Status</th>
                                     <th></th>

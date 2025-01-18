@@ -75,6 +75,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('ref-kecerdasan-emosi', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Index::class)->name('admin.ref-kecerdasan-emosi');
     Route::get('ref-kecerdasan-emosi/create', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Create::class)->name('admin.ref-kecerdasan-emosi.create');
     Route::get('ref-kecerdasan-emosi/{id}/edit', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Edit::class)->name('admin.ref-kecerdasan-emosi.edit');
+
+    // soal motivasi komitmen
+    Route::get('soal-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Index::class)->name('admin.soal-motivasi-komitmen');
+    Route::get('soal-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Create::class)->name('admin.soal-motivasi-komitmen.create');
+    Route::get('soal-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Edit::class)->name('admin.soal-motivasi-komitmen.edit');
 });
 
 // assessor
