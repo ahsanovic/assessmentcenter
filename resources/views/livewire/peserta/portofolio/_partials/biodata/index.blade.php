@@ -67,6 +67,22 @@
                             </div><!-- Col -->
                         </div><!-- Row -->
                         <div class="row">
+                            <div class="col-sm-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Gelar Depan</label>
+                                    <input type="text" class="form-control" wire:model.blur="gelar_depan">
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Gelar Belakang</label>
+                                    <input type="text" class="form-control" wire:model.blur="gelar_belakang">
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
                                     <label for="gol-pangkat" class="form-label">Golongan/Pangkat</label>

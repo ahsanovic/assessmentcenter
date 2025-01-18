@@ -28,6 +28,8 @@ class Biodata extends Component
     public $agama_id;
     public $jk;
     public $gol_pangkat_id;
+    public $gelar_depan;
+    public $gelar_belakang;
 
     #[Validate([
         'foto' => 'image|mimes:jpeg,png,jpg|max:200',
@@ -57,6 +59,8 @@ class Biodata extends Component
 
     public function mount()
     {
+        $this->gelar_depan = Auth::guard('peserta')->user()->gelar_depan;
+        $this->gelar_belakang = Auth::guard('peserta')->user()->gelar_belakang;
         $this->alamat = Auth::guard('peserta')->user()->alamat;
         $this->no_hp = Auth::guard('peserta')->user()->no_hp;
         $this->nik = Auth::guard('peserta')->user()->nik;
@@ -101,6 +105,46 @@ class Biodata extends Component
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'gagal update foto'
+            ]);
+        }
+    }
+
+    public function updatedGelarDepan($value)
+    {
+        try {
+            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+                'gelar_depan' => $value,
+            ]);
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'berhasil update data'
+            ]);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'gagal update data'
+            ]);
+        }
+    }
+    
+    public function updatedGelarBelakang($value)
+    {
+        try {
+            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+                'gelar_belakang' => $value,
+            ]);
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'berhasil update data'
+            ]);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'gagal update data'
             ]);
         }
     }
