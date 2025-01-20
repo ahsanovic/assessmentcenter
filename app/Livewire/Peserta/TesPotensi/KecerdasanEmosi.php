@@ -264,7 +264,7 @@ class KecerdasanEmosi extends Component
 
         $skor_total = $data->nilai_indikator_kd + $data->nilai_indikator_mpd + $data->nilai_indikator_ke + $data->nilai_indikator_ks;
         $skor->skor_total = $skor_total;
-        if ($skor_total >= 1 && $skor_total <= 23) {
+        if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 23)) {
             $level_total = '1';
             $kualifikasi_total = 'Sangat Kurang';
         } else if ($skor_total >= 24 && $skor_total <= 25) {
