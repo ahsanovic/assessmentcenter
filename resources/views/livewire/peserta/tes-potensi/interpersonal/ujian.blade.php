@@ -18,6 +18,11 @@
                     </button>
                 </div>
                 <div class="col-2">
+                    <button type="button" class="btn btn-inverse-info">
+                        <strong><span class="time text-dark"></span></strong>
+                    </button>
+                </div>
+                <div class="col-2">
                     <button class="btn btn-inverse-dark"
                         x-data
                         @click="Swal.fire({
@@ -125,3 +130,48 @@
         </div>
     </div>
 </div>
+@push('js')
+<script>
+    function timeout(id) {
+        Swal.fire({
+            title: 'Waktu Habis',
+            text: 'Waktu ujian telah habis, tetapi Anda masih dapat mengerjakan soal sampai selesai. Silahkan mengisi semua jawaban dan pastikan jangan ada yang terlewat!',
+            icon: 'warning',
+            allowOutsideClick: false,
+        })
+    }
+
+    var waktu = new Date({{ $timer }} * 1000).getTime();
+    var waktuJS = waktu + 30 * 60000;
+    
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+        var now = new Date().getTime();
+        
+        // Find the distance between now an the count down date
+        var distance = waktuJS - now;
+        
+        // Time calculations for days, hours, minutes and seconds
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Output the result in an element
+        $('.time').html(('0' + hours).slice(-2) + " : " + ('0' + minutes).slice(-2) + " : " + ('0' + seconds).slice(-2) + "");
+        
+        // If the count down is over, write some text
+        if (distance < 0) {
+            if (!localStorage.getItem("popup")) {
+                clearInterval(x); 
+                $('.time').html('Waktu Habis');
+                timeout({{ $id_ujian }});
+                localStorage.setItem("popup", 'viewed');
+            } else {
+                clearInterval(x); 
+                $('.time').html('Waktu Habis');
+                clearTimeout({{ $id_ujian }})
+            }
+        }
+    }, 1000);
+</script>
+@endpush

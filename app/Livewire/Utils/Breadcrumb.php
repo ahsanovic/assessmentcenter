@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\DistribusiPeserta;
+namespace App\Livewire\Utils;
 
-use App\Models\Event;
-use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Breadcrumb extends Component
 {

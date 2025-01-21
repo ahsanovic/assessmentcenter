@@ -20,12 +20,13 @@ class KecerdasanEmosi extends Component
     public $jawaban_user = [];
     public $jawaban_kosong;
     public $id_ujian;
+    public $timer;
 
     public function mount($id)
     {
         $this->id_soal = $id;
 
-        $data = UjianKecerdasanEmosi::select('id', 'soal_id', 'jawaban')
+        $data = UjianKecerdasanEmosi::select('id', 'soal_id', 'jawaban', 'created_at')
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->where('is_finished', 'false')
@@ -36,6 +37,7 @@ class KecerdasanEmosi extends Component
         $this->soal = SoalKecerdasanEmosi::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalKecerdasanEmosi::count();
         $this->id_ujian = $data->id;
+        $this->timer = $data->created_at->timestamp;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
