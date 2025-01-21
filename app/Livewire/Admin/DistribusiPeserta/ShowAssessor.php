@@ -42,7 +42,8 @@ class ShowAssessor extends Component
                     $query->where('assessor_peserta.event_id', $this->event->id);
                 }])
                 ->withCount(['peserta' => function ($query) {
-                    $query->where('assessor_peserta.event_id', $this->event->id);
+                    $query->where('assessor_peserta.event_id', $this->event->id)
+                        ->where('peserta.is_active', 'true');
                 }])
                 ->when($this->search, function ($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
