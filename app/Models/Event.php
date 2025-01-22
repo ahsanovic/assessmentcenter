@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use Illuminate\Database\Eloquent\Model;
 
@@ -132,5 +133,28 @@ class Event extends Model
     public function pesertaIdTesKecerdasanEmosi()
     {
         return $this->ujianKecerdasanEmosi()->select('peserta_id')->distinct();
+    }
+
+    // motivasi dan komitmen
+    public function ujianMotivasiKomitmen()
+    {
+        return $this->hasMany(UjianMotivasiKomitmen::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesMotivasiKomitmen()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianMotivasiKomitmen::class,    // Model perantara (UjianMotivasiKomitmen)
+            'event_id',                   // Foreign key di UjianMotivasiKomitmen
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianMotivasiKomitmen
+        );
+    }
+
+    public function pesertaIdTesMotivasiKomitmen()
+    {
+        return $this->ujianMotivasiKomitmen()->select('peserta_id')->distinct();
     }
 }

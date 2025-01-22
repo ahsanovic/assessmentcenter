@@ -45,6 +45,12 @@
                                                     {{ $item->ujian_kecerdasan_emosi_count }} orang
                                             </a>
                                         </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-motivasi-komitmen', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_motivasi_komitmen_count }} orang
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

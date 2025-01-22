@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\DataTes\TesBerlangsung;
 
 use App\Models\Event;
-use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\Peserta;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Tes Berlangsung'])]
-class ShowPesertaKecerdasanEmosi extends Component
+class ShowPesertaMotivasiKomitmen extends Component
 {
     use WithPagination;
 
@@ -38,14 +38,14 @@ class ShowPesertaKecerdasanEmosi extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with(['pesertaTesKecerdasanEmosi'])->findOrFail($this->id_event);
+        $this->event = Event::with(['pesertaTesMotivasiKomitmen'])->findOrFail($this->id_event);
     }
 
     public function render()
     {
-        $data = Peserta::join('ujian_kecerdasan_emosi', 'ujian_kecerdasan_emosi.peserta_id', '=', 'peserta.id')
-                ->whereIn('peserta.id', $this->event->pesertaIdTesKecerdasanEmosi->pluck('peserta_id'))
-                ->select('peserta.*', 'ujian_kecerdasan_emosi.is_finished', 'ujian_kecerdasan_emosi.id as ujian_kecerdasan_emosi_id')
+        $data = Peserta::join('ujian_motivasi_komitmen', 'ujian_motivasi_komitmen.peserta_id', '=', 'peserta.id')
+                ->whereIn('peserta.id', $this->event->pesertaIdTesMotivasiKomitmen->pluck('peserta_id'))
+                ->select('peserta.*', 'ujian_motivasi_komitmen.is_finished', 'ujian_motivasi_komitmen.id as ujian_motivasi_komitmen_id')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')
@@ -54,7 +54,7 @@ class ShowPesertaKecerdasanEmosi extends Component
                 })
                 ->paginate(10);
 
-        return view('livewire.admin.data-tes.tes-berlangsung.show-peserta-kecerdasan-emosi', [
+        return view('livewire.admin.data-tes.tes-berlangsung.show-peserta-motivasi-komitmen', [
             'data' => $data
         ]);
     }
@@ -69,7 +69,7 @@ class ShowPesertaKecerdasanEmosi extends Component
     public function destroy()
     {
         try {
-            UjianKecerdasanEmosi::find($this->selected_id)->delete();
+            UjianMotivasiKomitmen::find($this->selected_id)->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

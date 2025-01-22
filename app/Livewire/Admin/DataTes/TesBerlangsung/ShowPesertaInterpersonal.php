@@ -11,7 +11,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Event'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Tes Berlangsung'])]
 class ShowPesertaInterpersonal extends Component
 {
     use WithPagination;
