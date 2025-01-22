@@ -181,7 +181,7 @@
                             <div class="row mb-4">
                                 <div class="col-sm-12">
                                     <div class="mb-1">
-                                        <label class="form-label">Status</label>
+                                        <label class="form-label">Status Event</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input type="radio" class="form-check-input" wire:model="is_finished"
