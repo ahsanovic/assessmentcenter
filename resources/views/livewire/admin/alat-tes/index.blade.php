@@ -23,6 +23,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Alat Tes</th>
+                                    <th>Definisi Aspek Potensi</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -31,6 +32,7 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->alat_tes }}</td>
+                                        <td class="text-wrap">{{ $item->definisi_aspek_potensi }}</td>
                                         <td>
                                             <div class="btn-group dropstart">
                                                 <a

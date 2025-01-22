@@ -28,6 +28,7 @@ class Form extends Component
                 $data = RefAlatTes::findOrFail($id);
                 $this->id = $data->id;
                 $this->form->alat_tes = $data->alat_tes;
+                $this->form->definisi_aspek_potensi = $data->definisi_aspek_potensi;
             }
         } catch (\Throwable $th) {
             // throw $th;
@@ -45,7 +46,10 @@ class Form extends Component
         $this->validate();
         try {
             if ($this->isUpdate) {
-                $data = RefAlatTes::whereId($this->id)->update($this->validate());
+                $data = RefAlatTes::findOrFail($this->id);
+                $data->alat_tes = $this->form->alat_tes;
+                $data->definisi_aspek_potensi = $this->form->definisi_aspek_potensi;
+                $data->save();
                 
                 session()->flash('toast', [
                     'type' => 'success',
@@ -62,6 +66,7 @@ class Form extends Component
     
                 RefAlatTes::create([
                     'alat_tes' => $this->form->alat_tes,
+                    'definisi_aspek_potensi' => $this->form->definisi_aspek_potensi,
                 ]);
     
                 session()->flash('toast', [

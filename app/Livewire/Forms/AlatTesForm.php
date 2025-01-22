@@ -9,4 +9,6 @@ class AlatTesForm extends Form
 {
     #[Validate('required', message: 'harus diisi')]
     public $alat_tes;
+
+    public $definisi_aspek_potensi;
 }

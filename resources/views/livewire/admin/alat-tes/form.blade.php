@@ -20,6 +20,17 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Definisi Aspek Potensi</label>
+                                    <input type="text" wire:model="form.definisi_aspek_potensi" class="form-control @error('form.definisi_aspek_potensi') is-invalid @enderror">
+                                    @error('form.definisi_aspek_potensi')
+                                    <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
                         <a href="{{ route('admin.alat-tes') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
                         <button
                             type="submit"
