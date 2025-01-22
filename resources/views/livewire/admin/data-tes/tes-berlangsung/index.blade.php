@@ -17,8 +17,8 @@
                                     <th>Jumlah Peserta</th>
                                     <th>Tes Interpersonal</th>
                                     <th>Tes Pengembangan Diri</th>
-                                    <th>Tes Motivasi & Komitmen</th>
                                     <th>Tes Kecerdasan Emosi</th>
+                                    <th>Tes Motivasi & Komitmen</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,6 +37,12 @@
                                             <a class="btn btn-xs btn-warning" wire:navigate
                                                 href="{{ route('admin.tes-berlangsung.show-peserta-pengembangan-diri', ['idEvent' => $item->id]) }}">
                                                     {{ $item->ujian_pengembangan_diri_count }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-kecerdasan-emosi', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_kecerdasan_emosi_count }} orang
                                             </a>
                                         </td>
                                     </tr>

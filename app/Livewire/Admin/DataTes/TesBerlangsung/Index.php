@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\DataTes\TesBerlangsung;
 
 use App\Models\Event;
+use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\RefJabatanDiuji;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -20,8 +21,8 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::withCount(['peserta', 'ujianInterpersonal', 'ujianPengembanganDiri'])
-            ->with(['peserta', 'ujianInterpersonal', 'ujianPengembanganDiri'])
+        $data = Event::withCount(['peserta', 'ujianInterpersonal', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi'])
+            ->with(['peserta', 'ujianInterpersonal', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi'])
             ->whereIsFinished('false')
             ->orderByDesc('id')
             ->paginate(10);

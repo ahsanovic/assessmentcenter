@@ -30,6 +30,7 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('tes-berlangsung', \App\Livewire\Admin\DataTes\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-interpersonal', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaInterpersonal::class)->name('admin.tes-berlangsung.show-peserta-interpersonal');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaPengembanganDiri::class)->name('admin.tes-berlangsung.show-peserta-pengembangan-diri');
+    Route::get('tes-berlangsung/{idEvent}/show-peserta-kecerdasan-emosi', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaKecerdasanEmosi::class)->name('admin.tes-berlangsung.show-peserta-kecerdasan-emosi');
 
     // peserta
     Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');

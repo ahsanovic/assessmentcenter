@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Interpersonal\UjianInterpersonal;
+use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use Illuminate\Database\Eloquent\Model;
 
@@ -108,5 +109,28 @@ class Event extends Model
     public function pesertaIdTesPengembanganDiri()
     {
         return $this->ujianPengembanganDiri()->select('peserta_id')->distinct();
+    }
+
+    // kecerdasan emosi
+    public function ujianKecerdasanEmosi()
+    {
+        return $this->hasMany(UjianKecerdasanEmosi::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesKecerdasanEmosi()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianKecerdasanEmosi::class,    // Model perantara (UjianKecerdasanEmosi)
+            'event_id',                   // Foreign key di UjianKecerdasanEmosi
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianKecerdasanEmosi
+        );
+    }
+
+    public function pesertaIdTesKecerdasanEmosi()
+    {
+        return $this->ujianKecerdasanEmosi()->select('peserta_id')->distinct();
     }
 }
