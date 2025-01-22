@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\DataTes\TesBerlangsung;
 
 use App\Models\Event;
-use App\Models\RefJabatanDiuji;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -25,8 +24,6 @@ class Index extends Component
             ->orderByDesc('id')
             ->paginate(10);
 
-        $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-
-        return view('livewire.admin.data-tes.tes-berlangsung.index', compact('data', 'option_jabatan_diuji'));
+        return view('livewire.admin.data-tes.tes-berlangsung.index', compact('data'));
     }
 }
