@@ -6,6 +6,7 @@ use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\RefKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -21,6 +22,7 @@ class KecerdasanEmosi extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
+    public $durasi_tes;
 
     public function mount($id)
     {
@@ -38,6 +40,9 @@ class KecerdasanEmosi extends Component
         $this->jml_soal = SoalKecerdasanEmosi::count();
         $this->id_ujian = $data->id;
         $this->timer = $data->created_at->timestamp;
+
+        $durasi_tes = Settings::where('alat_tes_id', 4)->first(['waktu']);
+        $this->durasi_tes = $durasi_tes->waktu;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {

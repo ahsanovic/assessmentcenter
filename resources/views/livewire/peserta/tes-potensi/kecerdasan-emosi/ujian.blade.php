@@ -142,7 +142,7 @@
     }
 
     var waktu = new Date({{ $timer }} * 1000).getTime();
-    var waktuJS = waktu + 30 * 60000;
+    var waktuJS = waktu + {{ $durasi_tes }} * 60000;
     
     // Update the count down every 1 second
     var x = setInterval(function() {

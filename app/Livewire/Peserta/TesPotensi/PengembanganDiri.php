@@ -6,6 +6,7 @@ use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\PengembanganDiri\RefPengembanganDiri;
 use App\Models\PengembanganDiri\SoalPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
+use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -21,6 +22,7 @@ class PengembanganDiri extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
+    public $durasi_tes;
 
     public function mount($id)
     {
@@ -46,6 +48,9 @@ class PengembanganDiri extends Component
         $this->jml_soal = SoalPengembanganDiri::count();
         $this->id_ujian = $data->id;
         $this->timer = $data->created_at->timestamp;
+
+        $durasi_tes = Settings::where('alat_tes_id', 5)->first(['waktu']);
+        $this->durasi_tes = $durasi_tes->waktu;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
