@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Livewire\Admin\PengembanganDiri\RefPengembanganDiri;
+namespace App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen;
 
-use App\Http\Requests\RefPengembanganDiriRequest;
-use App\Models\PengembanganDiri\RefPengembanganDiri;
+use App\Http\Requests\RefMotivasiKomitmenRequest;
+use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Pengembangan Diri'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Motivasi dan Komitmen'])]
 class Edit extends Component
 {   
     public $indikator_nama;
     public $indikator_nomor;
-    public $kualifikasi = [];
 
     #[Locked]
     public $id;
@@ -21,11 +20,10 @@ class Edit extends Component
     public function mount($id)
     {
         try {
-            $data = RefPengembanganDiri::findOrFail($id);
+            $data = RefMotivasiKomitmen::findOrFail($id);
             $this->id = $data->id;
             $this->indikator_nama = $data->indikator_nama;
             $this->indikator_nomor = $data->indikator_nomor;
-            $this->kualifikasi = $data->kualifikasi;
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
@@ -34,18 +32,18 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.admin.pengembangan-diri.referensi.edit');
+        return view('livewire.admin.motivasi-komitmen.referensi.edit');
     }
 
     protected function rules()
     {
-        $request = new RefPengembanganDiriRequest();
+        $request = new RefMotivasiKomitmenRequest();
         return $request->rules();
     }
 
     protected function messages()
     {
-        $request = new RefPengembanganDiriRequest();
+        $request = new RefMotivasiKomitmenRequest();
         return $request->messages();
     }
 
@@ -54,9 +52,9 @@ class Edit extends Component
         $this->validate();
 
         try {
-            $data = RefPengembanganDiri::find($this->id);
+            $data = RefMotivasiKomitmen::find($this->id);
 
-            $check_duplicate = RefPengembanganDiri::where('indikator_nomor', '!=', $this->indikator_nomor)->get(['indikator_nomor']);
+            $check_duplicate = RefMotivasiKomitmen::where('indikator_nomor', '!=', $this->indikator_nomor)->get(['indikator_nomor']);
             foreach ($check_duplicate as $value) {
                 if ($value->indikator_nomor == $data->indikator_nomor) {
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor indikator ' . $this->indikator_nomor . ' sudah ada!']);
@@ -66,17 +64,6 @@ class Edit extends Component
 
             $data->indikator_nama = $this->indikator_nama;
             $data->indikator_nomor = $this->indikator_nomor;
-
-            $kualifikasiLevels = ['Sangat Baik', 'Baik', 'Cukup', 'Kurang/Sangat Kurang'];
-            $array_kualifikasi = [];
-            foreach ($this->kualifikasi as $index => $item) {
-                $array_kualifikasi[] = [
-                    'kualifikasi' => $kualifikasiLevels[$index] ?? 'Tidak Diketahui',
-                    'uraian_potensi' => $item['uraian_potensi'] ?? '',
-                ];
-            }
-
-            $data->kualifikasi = $array_kualifikasi;
             $data->save();
 
             session()->flash('toast', [
@@ -84,7 +71,7 @@ class Edit extends Component
                 'message' => 'berhasil ubah data'
             ]);
 
-            $this->redirect(route('admin.ref-pengembangan-diri'), true);
+            $this->redirect(route('admin.ref-motivasi-komitmen'), true);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);

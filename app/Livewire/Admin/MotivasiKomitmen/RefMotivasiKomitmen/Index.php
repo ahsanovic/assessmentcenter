@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\Admin\PengembanganDiri\RefPengembanganDiri;
+namespace App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen;
 
-use App\Models\PengembanganDiri\RefPengembanganDiri;
+use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Pengembangan Diri'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Motivasi dan Komitmen'])]
 class Index extends Component
 {
     use WithPagination;
@@ -17,9 +17,9 @@ class Index extends Component
     
     public function render()
     {
-        $data = RefPengembanganDiri::paginate(10);
+        $data = RefMotivasiKomitmen::paginate(10);
         
-        return view('livewire.admin.pengembangan-diri.referensi.index', compact('data'));
+        return view('livewire.admin.motivasi-komitmen.referensi.index', compact('data'));
     }
 
     public function deleteConfirmation($id)
@@ -32,7 +32,7 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefPengembanganDiri::find($this->selected_id)->delete();
+            RefMotivasiKomitmen::find($this->selected_id)->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

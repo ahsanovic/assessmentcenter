@@ -7,26 +7,15 @@ use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Motivasi Komitmen'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Motivasi dan Komitmen'])]
 class Create extends Component
 {   
     public $indikator_nama;
     public $indikator_nomor;
-    public $kualifikasi = [];
-    
-    public function mount()
-    {
-        $this->kualifikasi = [
-            ['uraian_potensi' => ''], // Sangat Baik
-            ['uraian_potensi' => ''], // Baik
-            ['uraian_potensi' => ''], // Cukup
-            ['uraian_potensi' => ''], // Kurang/Sangat Kurang
-        ];
-    }
 
     public function render()
     {
-        return view('livewire.admin.pengembangan-diri.referensi.create');
+        return view('livewire.admin.motivasi-komitmen.referensi.create');
     }
 
     protected function rules()
@@ -55,17 +44,6 @@ class Create extends Component
             $data = new RefMotivasiKomitmen();
             $data->indikator_nama = $this->indikator_nama;
             $data->indikator_nomor = $this->indikator_nomor;
-
-            $kualifikasiLevels = ['Sangat Baik', 'Baik', 'Cukup', 'Kurang/Sangat Kurang'];
-            $array_kualifikasi = [];
-            foreach ($this->kualifikasi as $index => $item) {
-                $array_kualifikasi[] = [
-                    'kualifikasi' => $kualifikasiLevels[$index] ?? 'Tidak Diketahui',
-                    'uraian_potensi' => $item['uraian_potensi'] ?? '',
-                ];
-            }
-
-            $data->kualifikasi = $array_kualifikasi;
             $data->save();
 
             session()->flash('toast', [
@@ -73,7 +51,7 @@ class Create extends Component
                 'message' => 'berhasil tambah data'
             ]);
 
-            $this->redirect(route('admin.ref-pengembangan-diri'), true);
+            $this->redirect(route('admin.ref-motivasi-komitmen'), true);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);

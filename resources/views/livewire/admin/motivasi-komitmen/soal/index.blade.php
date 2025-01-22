@@ -52,7 +52,7 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->jenisIndikator->indikator_nama ?? '' }}</td>
-                                        <td>{{ $item->soal }}</td>
+                                        <td class="text-wrap">{{ $item->soal }}</td>
                                         <td class="text-wrap">{{ $item->opsi_a }}</td>
                                         <td>{{ $item->poin_opsi_a }}</td>
                                         <td class="text-wrap">{{ $item->opsi_b }}</td>

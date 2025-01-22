@@ -1,0 +1,381 @@
+<?php
+
+namespace App\Livewire\Peserta\TesPotensi;
+
+use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
+use App\Models\MotivasiKomitmen\RefDeskripsiMotivasiKomitmen;
+use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
+use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
+use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\Settings;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+
+#[Layout('components.layouts.peserta.app', ['title' => 'Tes Motivasi dan Komitmen'])]
+class MotivasiKomitmen extends Component
+{
+    public $soal;
+    public $jml_soal;
+    public $id_soal;
+    public $nomor_soal;
+    public $jawaban_user = [];
+    public $jawaban_kosong;
+    public $id_ujian;
+    public $timer;
+    public $durasi_tes;
+
+    public function mount($id)
+    {
+        $this->id_soal = $id;
+
+        $data = UjianMotivasiKomitmen::select('id', 'soal_id', 'jawaban', 'created_at')
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('is_finished', 'false')
+            ->first();
+
+        $this->nomor_soal = explode(',', $data->soal_id);
+        $this->jawaban_user = explode(',', $data->jawaban);
+        $this->soal = SoalMotivasiKomitmen::find($this->nomor_soal[$this->id_soal - 1]);
+        $this->jml_soal = SoalMotivasiKomitmen::count();
+        $this->id_ujian = $data->id;
+        $this->timer = $data->created_at->timestamp;
+
+        $durasi_tes = Settings::where('alat_tes_id', 7)->first(['waktu']);
+        $this->durasi_tes = $durasi_tes->waktu;
+
+        for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
+            if ($this->jawaban_user[$i] == '0') {
+                $j = $j + 1;
+                $this->jawaban_kosong = $j;
+            }
+        }
+    }
+
+    public function render()
+    {
+        return view('livewire..peserta.tes-potensi.motivasi-komitmen.ujian', [
+            'nomor_sekarang' => $this->id_soal,
+            'jawaban' => $this->jawaban_user,
+            'jawaban_kosong' => $this->jawaban_kosong,
+            'jml_soal' => $this->jml_soal,
+            'soal' => $this->soal
+        ]);
+    }
+
+    public function saveAndNext($nomor_soal)
+    {
+        $index_array = $nomor_soal - 1;
+        $data = UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('is_finished', 'false')
+            ->first();
+
+        $soal_id = explode(',', $data->soal_id);
+
+        // update jawaban
+        $jawaban_user = explode(',', $data->jawaban);
+        $jawaban_user[$index_array] = $this->jawaban_user[$index_array] ?? '0';
+        $jawaban_user = implode(',', $jawaban_user);
+
+        UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('is_finished', 'false')
+            ->update(['jawaban' => $jawaban_user]);
+
+        $poin = SoalMotivasiKomitmen::find($soal_id[$index_array]);
+        $poin_a = $poin->poin_opsi_a;
+        $poin_b = $poin->poin_opsi_b;
+
+        $indikator_map = [
+            [1, 15, 'nilai_indikator_1'],
+            [16, 24, 'nilai_indikator_2'],
+            [25, 34, 'nilai_indikator_3'],
+            [35, 44, 'nilai_indikator_4'],
+            [45, 55, 'nilai_indikator_5'],
+        ];
+
+        foreach ($indikator_map as [$start, $end, $indikator]) {
+            if ($nomor_soal >= $start && $nomor_soal <= $end) {
+                $skor = $data->{$indikator};
+                if ($this->jawaban_user[$index_array] === 'A') {
+                    $skor += $poin_a;
+                } elseif ($this->jawaban_user[$index_array] === 'B') {
+                    $skor += $poin_b;
+                }
+
+                $data->update([$indikator => $skor]);
+                break;
+            }
+        }
+
+        if ($nomor_soal < $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => $nomor_soal + 1]), true);
+        }
+    }
+
+    public function navigate($id)
+    {
+        if ($id >= 1 && $id <= $this->jml_soal) {
+            $this->id_soal = $id;
+            $this->soal = SoalMotivasiKomitmen::find($this->nomor_soal[$id - 1]);
+            $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => $id]), true);
+        }
+    }
+
+    public function finish()
+    {
+        $data = UjianMotivasiKomitmen::findOrFail($this->id_ujian);
+
+        // indikator motivasi keterdekatan dengan rekan kerja
+        if ($data->nilai_indikator_1 >= 1 && $data->nilai_indikator_1 <= 6) {
+            $standard_1 = '1';
+            $kualifikasi_1 = '1/SK';
+        } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 8) {
+            $standard_1 = '2';
+            $kualifikasi_1 = '1/K';
+        } else if ($data->nilai_indikator_1 == 9) {
+            $standard_1 = '3-';
+            $kualifikasi_1 = '1/C-';
+        } else if ($data->nilai_indikator_1 >= 10 && $data->nilai_indikator_1 <= 11) {
+            $standard_1 = '3';
+            $kualifikasi_1 = '1/C';
+        } else if ($data->nilai_indikator_1 == 12) {
+            $standard_1 = '3+';
+            $kualifikasi_1 = '1/C+';
+        } else if ($data->nilai_indikator_1 >= 13 && $data->nilai_indikator_1 <= 14) {
+            $standard_1 = '4';
+            $kualifikasi_1 = '1/B';
+        } else if ($data->nilai_indikator_1 == 15) {
+            $standard_1 = '5';
+            $kualifikasi_1 = '1/SB';
+        }
+
+        // indikator motivasi mengidentifikasi diri
+        if ($data->nilai_indikator_2 >= 1 && $data->nilai_indikator_2 <= 8) {
+            $standard_2 = '1';
+            $kualifikasi_2 = '2/SK';
+        } else if ($data->nilai_indikator_2 >= 9 && $data->nilai_indikator_2 <= 10) {
+            $standard_2 = '2';
+            $kualifikasi_2 = '2/K';
+        } else if ($data->nilai_indikator_2 == 11) {
+            $standard_2 = '3-';
+            $kualifikasi_2 = '2/C-';
+        } else if ($data->nilai_indikator_2 == 12) {
+            $standard_2 = '3';
+            $kualifikasi_2 = '2/C';
+        } else if ($data->nilai_indikator_2 == 13) {
+            $standard_2 = '3+';
+            $kualifikasi_2 = '2/C+';
+        } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 15) {
+            $standard_2 = '4';
+            $kualifikasi_2 = '2/B';
+        } else if ($data->nilai_indikator_2 >= 16) {
+            $standard_2 = '5';
+            $kualifikasi_2 = '2/SB';
+        }
+
+        // indikator motivasi mempertimbangkan keuntungan
+        if ($data->nilai_indikator_3 >= 1 && $data->nilai_indikator_3 <= 6) {
+            $standard_3 = '1';
+            $kualifikasi_3 = '3/SK';
+        } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 10) {
+            $standard_3 = '2';
+            $kualifikasi_3 = '3/K';
+        } else if ($data->nilai_indikator_3 == 11) {
+            $standard_3 = '3-';
+            $kualifikasi_3 = '3/C-';
+        } else if ($data->nilai_indikator_3 >= 12 && $data->nilai_indikator_3 <= 14) {
+            $standard_3 = '3';
+            $kualifikasi_3 = '3/C';
+        } else if ($data->nilai_indikator_3 == 15) {
+            $standard_3 = '3+';
+            $kualifikasi_3 = '3/C+';
+        } else if ($data->nilai_indikator_3 >= 16 && $data->nilai_indikator_3 <= 19) {
+            $standard_3 = '4';
+            $kualifikasi_3 = '3/B';
+        } else if ($data->nilai_indikator_3 >= 20) {
+            $standard_3 = '5';
+            $kualifikasi_3 = '3/SB';
+        }
+
+        // indikator motivasi adapatsi dalam tim
+        if ($data->nilai_indikator_4 >= 1 && $data->nilai_indikator_4 <= 12) {
+            $standard_4 = '1';
+            $kualifikasi_4 = '4/SK';
+        } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 18) {
+            $standard_4 = '2';
+            $kualifikasi_4 = '4/K';
+        } else if ($data->nilai_indikator_4 >= 19 && $data->nilai_indikator_4 <= 21) {
+            $standard_4 = '3-';
+            $kualifikasi_4 = '4/C-';
+        } else if ($data->nilai_indikator_4 >= 22 && $data->nilai_indikator_4 <= 24) {
+            $standard_4 = '3';
+            $kualifikasi_4 = '4/C';
+        } else if ($data->nilai_indikator_4 >= 25 && $data->nilai_indikator_4 <= 26) {
+            $standard_4 = '3+';
+            $kualifikasi_4 = '4/C+';
+        } else if ($data->nilai_indikator_4 >= 27 && $data->nilai_indikator_4 <= 32) {
+            $standard_4 = '4';
+            $kualifikasi_4 = '4/B';
+        } else if ($data->nilai_indikator_4 >= 33) {
+            $standard_4 = '5';
+            $kualifikasi_4 = '4/SB';
+        }
+
+        // indikator motivasi memiliki loyalitas
+        if ($data->nilai_indikator_5 >= 1 && $data->nilai_indikator_5 <= 18) {
+            $standard_5 = '1';
+            $kualifikasi_5 = '5/SK';
+        } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 25) {
+            $standard_5 = '2';
+            $kualifikasi_5 = '5/K';
+        } else if ($data->nilai_indikator_5 >= 26 && $data->nilai_indikator_5 <= 27) {
+            $standard_5 = '3-';
+            $kualifikasi_5 = '5/C-';
+        } else if ($data->nilai_indikator_5 >= 29 && $data->nilai_indikator_5 <= 30) {
+            $standard_5 = '3';
+            $kualifikasi_5 = '5/C';
+        } else if ($data->nilai_indikator_5 >= 31 && $data->nilai_indikator_5 <= 32) {
+            $standard_5 = '3+';
+            $kualifikasi_5 = '5/C+';
+        } else if ($data->nilai_indikator_5 >= 33 && $data->nilai_indikator_5 <= 39) {
+            $standard_5 = '4';
+            $kualifikasi_5 = '5/B';
+        } else if ($data->nilai_indikator_5 >= 40) {
+            $standard_5 = '5';
+            $kualifikasi_5 = '5/SB';
+        }
+
+        $indikator = RefMotivasiKomitmen::get(['indikator_nama', 'indikator_nomor']);
+
+        $skor = new HasilMotivasiKomitmen();
+        $skor->event_id = Auth::guard('peserta')->user()->event_id;
+        $skor->peserta_id = Auth::guard('peserta')->user()->id;
+        $skor->ujian_id = $data->id;
+        $nilai = [];
+        foreach ($indikator as $value) {
+            if ($value->indikator_nomor == 1) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'ranking' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_1,
+                    'standard' => $standard_1 ?? '',
+                    'kualifikasi' => $kualifikasi_1 ?? ''
+                ];
+            } else if ($value->indikator_nomor == 2) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'ranking' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_2,
+                    'standard' => $standard_2 ?? '',
+                    'kualifikasi' => $kualifikasi_2 ?? ''
+                ];
+            } else if ($value->indikator_nomor == 3) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'ranking' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_3,
+                    'standard' => $standard_3 ?? '',
+                    'kualifikasi' => $kualifikasi_3 ?? ''
+                ];
+            } else if ($value->indikator_nomor == 4) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'ranking' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_4,
+                    'standard' => $standard_4 ?? '',
+                    'kualifikasi' => $kualifikasi_4 ?? ''
+                ];
+            } else if ($value->indikator_nomor == 5) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'ranking' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_5,
+                    'standard' => $standard_5 ?? '',
+                    'kualifikasi' => $kualifikasi_5 ?? ''
+                ];
+            }
+        }
+
+        $skor->nilai = $nilai;
+
+        $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5;
+        $skor->skor_total = $skor_total;
+
+        $priority = [
+            '5/SB',
+            '4/SB',
+            '3/SB',
+            '2/SB',
+            '1/SB',
+            '5/B',
+            '4/B',
+            '3/B',
+            '2/B',
+            '1/B',
+            '5/C+',
+            '4/C+',
+            '3/C+',
+            '2/C+',
+            '1/C+',
+            '5/C',
+            '4/C',
+            '3/C',
+            '2/C',
+            '1/C',
+            '5/C-',
+            '4/C-',
+            '3/C-',
+            '2/C-',
+            '1/C-',
+            '5/K',
+            '4/K',
+            '3/K',
+            '2/K',
+            '1/K',
+            '5/SK',
+            '4/SK',
+            '3/SK',
+            '2/SK',
+            '1/SK'
+        ];
+
+        // menyortir data berdasarkan urutan kualifikasi
+        usort($nilai, function ($a, $b) use ($priority) {
+            $posA = array_search($a['kualifikasi'], $priority);
+            $posB = array_search($b['kualifikasi'], $priority);
+            // Jika tidak ditemukan, beri nilai besar agar berada di urutan terakhir
+            $posA = $posA === false ? PHP_INT_MAX : $posA;
+            $posB = $posB === false ? PHP_INT_MAX : $posB;
+
+            return $posA <=> $posB;
+        });
+
+        // Ambil kualifikasi tertinggi pertama
+        $top_kualifikasi = $nilai[0]['kualifikasi'];
+
+        // Ambil semua data dengan kualifikasi tertinggi
+        $top_data = $top_kualifikasi ? array_filter($nilai, function ($item) use ($top_kualifikasi) {
+            return $item['kualifikasi'] === $top_kualifikasi;
+        }) : [];
+
+        $kualifikasi_tertinggi = $top_data[0]['kualifikasi'];
+        $skor->kualifikasi = $kualifikasi_tertinggi;
+
+        $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kualifikasi_tertinggi . '%')->first();
+        if ($deskripsi) {
+            $skor->level = $deskripsi->level;
+            $skor->deskripsi = $deskripsi->deskripsi;
+        }
+
+        $skor->save();
+
+        // change status ujian to true (finish)
+        $data->is_finished = true;
+        $data->save();
+
+        return $this->redirect(route('peserta.tes-potensi'), navigate: true);
+    }
+}

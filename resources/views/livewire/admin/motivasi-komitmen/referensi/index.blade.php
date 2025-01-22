@@ -1,15 +1,15 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Pengembangan Diri'],
+        ['url' => null, 'title' => 'Motivasi dan Komitmen'],
         ['url' => null, 'title' => 'Data Referensi']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Referensi Instrumen Pengembangan Diri</h6>
-                    <a href="{{ route('admin.ref-pengembangan-diri.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
+                    <h6 class="card-title">Data Referensi Instrumen Motivasi dan Komitmen</h6>
+                    <a href="{{ route('admin.ref-motivasi-komitmen.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
@@ -17,7 +17,6 @@
                                     <th>#</th>
                                     <th>Nama Indikator</th>
                                     <th>Nomor Indikator</th>
-                                    <th>Kualifikasi/Uraian Potensi</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -27,22 +26,12 @@
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->indikator_nama }}</td>
                                         <td>{{ $item->indikator_nomor }}</td>
-                                        <td class="text-wrap">
-                                            @if(is_array($item->kualifikasi))
-                                                @foreach($item->kualifikasi as $qual)
-                                                    <b>{{ $qual['kualifikasi'] ?? '' }}:</b> <br />
-                                                    {{ $qual['uraian_potensi'] ?? '' }} <br />
-                                                @endforeach
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
                                         <td>
                                             <div class="btn-group">
                                                 <a
                                                     class="btn btn-xs btn-outline-warning"
                                                     wire:navigate
-                                                    href="{{ route('admin.ref-pengembangan-diri.edit', $item->id) }}"
+                                                    href="{{ route('admin.ref-motivasi-komitmen.edit', $item->id) }}"
                                                 >
                                                     Edit
                                                 </a>
