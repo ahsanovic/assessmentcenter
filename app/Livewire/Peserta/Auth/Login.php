@@ -38,6 +38,10 @@ class Login extends Component
             })
             ->where('is_active', 'true')
             ->first();
+        
+        if (!$peserta) {
+            $this->addError('nip', 'Akun tidak ditemukan.');
+        }
 
         if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'password'))) {
             request()->session()->regenerate();
