@@ -52,6 +52,14 @@
                     </a>
                 </li>
 
+                <li class="nav-item nav-category">Setting</li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.settings') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Setting Tes</span>
+                    </a>
+                </li>
+
                 <li class="nav-item nav-category">Event</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.event') }}" wire:navigate class="nav-link">
@@ -72,7 +80,29 @@
                     </a>
                 </li>
 
-                <li class="nav-item nav-category">Instrumen</li>
+                <li class="nav-item nav-category">Tes</li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#pengembangan-diri" role="button"
+                        aria-expanded="false" aria-controls="pengembangan-diri">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Data Tes</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="pengembangan-diri">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-berlangsung') }}" wire:navigate
+                                    class="nav-link">Tes Berlangsung</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" wire:navigate
+                                    class="nav-link">Tes Selesai</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item nav-category">Instrumen Tes</li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#pengembangan-diri" role="button"
                         aria-expanded="false" aria-controls="pengembangan-diri">
@@ -143,7 +173,7 @@
                     <div class="collapse" data-bs-parent="#sidebarNav" id="motivasi-komitmen">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="" wire:navigate
+                                <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
                                     class="nav-link">Data Referensi</a>
                             </li>
                             <li class="nav-item">

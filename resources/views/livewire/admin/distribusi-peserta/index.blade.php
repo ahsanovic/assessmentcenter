@@ -8,8 +8,8 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">Distribusi Peserta</h6>
-                    <a href="{{ route('admin.event.create') }}" wire:navigate
-                        class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
+                    {{-- <a href="{{ route('admin.event.create') }}" wire:navigate
+                        class="btn btn-xs btn-outline-primary mt-3">Tambah</a> --}}
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
                         <div class="col-sm-3">

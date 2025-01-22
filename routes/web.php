@@ -14,12 +14,22 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('alat-tes/create', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.create');
     Route::get('alat-tes/{id}/edit', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.edit');
 
+    // setting
+    Route::get('settings', \App\Livewire\Admin\Settings\Index::class)->name('admin.settings');
+    Route::get('settings/create', \App\Livewire\Admin\Settings\Form::class)->name('admin.settings.create');
+    Route::get('settings/{id}/edit', \App\Livewire\Admin\Settings\Form::class)->name('admin.settings.edit');
+
     // event
     Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');
     Route::get('event/create', \App\Livewire\Admin\Event\Form::class)->name('admin.event.create');
     Route::get('event/{id}/edit', \App\Livewire\Admin\Event\Form::class)->name('admin.event.edit');
     Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
     Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
+
+    // data tes
+    Route::get('tes-berlangsung', \App\Livewire\Admin\DataTes\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');
+    Route::get('tes-berlangsung/{idEvent}/show-peserta-interpersonal', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaInterpersonal::class)->name('admin.tes-berlangsung.show-peserta-interpersonal');
+    Route::get('tes-berlangsung/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaPengembanganDiri::class)->name('admin.tes-berlangsung.show-peserta-pengembangan-diri');
 
     // peserta
     Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
@@ -80,6 +90,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('soal-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Index::class)->name('admin.soal-motivasi-komitmen');
     Route::get('soal-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Create::class)->name('admin.soal-motivasi-komitmen.create');
     Route::get('soal-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Edit::class)->name('admin.soal-motivasi-komitmen.edit');
+
+    // referensi motivasi dan komitmen
+    Route::get('ref-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Index::class)->name('admin.ref-motivasi-komitmen');
+    Route::get('ref-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Create::class)->name('admin.ref-motivasi-komitmen.create');
+    Route::get('ref-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Edit::class)->name('admin.ref-motivasi-komitmen.edit');
 });
 
 // assessor
@@ -126,6 +141,7 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('interpersonal/{id}', \App\Livewire\Peserta\TesPotensi\Interpersonal::class)->name('peserta.tes-potensi.interpersonal')->middleware(CheckExamPin::class);
         Route::get('pengembangan-diri/{id}', \App\Livewire\Peserta\TesPotensi\PengembanganDiri::class)->name('peserta.tes-potensi.pengembangan-diri')->middleware(CheckExamPin::class);
         Route::get('kecerdasan-emosi/{id}', \App\Livewire\Peserta\TesPotensi\KecerdasanEmosi::class)->name('peserta.tes-potensi.kecerdasan-emosi')->middleware(CheckExamPin::class);
+        Route::get('motivasi-komitmen/{id}', \App\Livewire\Peserta\TesPotensi\MotivasiKomitmen::class)->name('peserta.tes-potensi.motivasi-komitmen')->middleware(CheckExamPin::class);
     });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
