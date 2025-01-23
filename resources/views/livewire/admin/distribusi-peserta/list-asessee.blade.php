@@ -43,7 +43,7 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->nama }}</td>
-                                        <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}</td>
+                                        <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }}  -  {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td>{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }}</td>
                                         <td>
