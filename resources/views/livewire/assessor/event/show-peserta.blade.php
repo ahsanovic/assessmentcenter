@@ -31,6 +31,7 @@
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>
+                                    <th>Unit Kerja</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -42,6 +43,7 @@
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }}  -  {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }}</td>
+                                        <td class="text-wrap">{{ $item->unit_kerja }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-primary" wire:navigate
                                                 href="{{ route('assessor.peserta.portofolio', ['idEvent' => $item->event_id, 'idPeserta' => $item->id]) }}">

@@ -63,7 +63,6 @@
                                     <th>Tgl Pelaksanaan</th>
                                     <th>Jabatan yg Diujikan</th>
                                     <th>Asesi</th>
-                                    <th>Alat Tes</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -88,12 +87,6 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-info btn-xs" data-bs-toggle="modal"
-                                                data-bs-target="#modalAlatTes{{ $item->id }}">
-                                                Lihat
-                                            </button>
-                                        </td>
-                                        <td>
                                             @if ($item->is_finished == 'true')
                                                 <span class="badge bg-danger">Selesai</span>
                                             @else
@@ -110,32 +103,4 @@
         </div>
         <x-pagination :items="$data" />
     </div>
-
-    <!-- Modal -->
-    @foreach ($data as $index => $item)
-        <div class="modal fade" id="modalAlatTes{{ $item->id }}" tabindex="-1" aria-labelledby="modalAlatTes"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Alat Tes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="btn-close"></button>
-                    </div>
-                    <div class="modal-body">
-                        @if ($item->alatTes->isNotEmpty())
-                            @foreach ($item->alatTes as $alat)
-                                {{ $loop->iteration . '. ' . $alat->alat_tes }} <br />
-                            @endforeach
-                        @endif
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-xs btn-secondary" data-bs-dismiss="modal">
-                            Tutup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
 </div>

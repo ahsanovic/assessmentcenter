@@ -35,6 +35,7 @@
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>
+                                    <th>Unit Kerja</th>
                                     <th>Pilih</th>
                                 </tr>
                             </thead>
@@ -46,6 +47,7 @@
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }}  -  {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td>{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }}</td>
+                                        <td class="text-wrap">{{ $item->unit_kerja }}</td>
                                         <td>
                                             <input
                                                 type="checkbox"
