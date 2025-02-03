@@ -364,6 +364,9 @@ class KecerdasanEmosi extends Component
             case 'C':
                 $kualifikasi = 'Cukup';
                 break;
+            case 'K':
+                $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
             case 'SK':
                 $kualifikasi = 'Kurang/Sangat Kurang';
                 break;
