@@ -319,13 +319,13 @@ class Interpersonal extends Component
             $kualifikasi_total = 'Kurang';
         } else if ($skor_total == 68) {
             $level_total = '3-';
-            $kualifikasi_total = 'Cukup-';
+            $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 69 && $skor_total <= 75) {
             $level_total = '3';
             $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 76 && $skor_total <= 78) {
             $level_total = '3+';
-            $kualifikasi_total = 'Cukup+';
+            $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 79 && $skor_total <= 89) {
             $level_total = '4';
             $kualifikasi_total = 'Baik';
@@ -363,11 +363,26 @@ class Interpersonal extends Component
             $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
         }
 
-        // Ambil hanya nilai 'indikator' dari hasil
-        $indikators = array_column($top_data, 'indikator');
+        // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
+        $indikator_nama = array_column($top_data, 'indikator');
+        $indikator_nomor = array_column($top_data, 'ranking');
+        $kualifikasi_array = array_column($top_data, 'kualifikasi');
 
-        $skor->indikator_potensi_1 = $indikators[0];
-        $skor->indikator_potensi_2 = $indikators[1];
+        // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
+        $data_kualifikasi_1 = RefInterpersonal::whereIndikatorNomor($indikator_nomor[0])->first();
+        $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
+        $data_kualifikasi_2 = RefInterpersonal::whereIndikatorNomor($indikator_nomor[1])->first();
+        $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
+
+        $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
+        $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
+        $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
+        $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
+
+        $skor->indikator_potensi_1 = $indikator_nama[0];
+        $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
+        $skor->indikator_potensi_2 = $indikator_nama[1];
+        $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
         $skor->save();
 
         // change status ujian to true (finish)
@@ -375,5 +390,28 @@ class Interpersonal extends Component
         $data->save();
 
         return $this->redirect(route('peserta.tes-potensi'), navigate: true);
+    }
+
+    private function _getKualifikasi($value)
+    {
+        switch ($value) {
+            case 'SB':
+                $kualifikasi = 'Sangat Baik';
+                break;
+            case 'B':
+                $kualifikasi = 'Baik';
+                break;
+            case 'C':
+                $kualifikasi = 'Cukup';
+                break;
+            case 'K':
+                $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
+            case 'SK':
+                $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
+        }
+
+        return $kualifikasi;
     }
 }
