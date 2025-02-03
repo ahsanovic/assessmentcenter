@@ -278,13 +278,13 @@ class KecerdasanEmosi extends Component
             $level_total = '2';
             $kualifikasi_total = 'Kurang';
         } else if ($skor_total >= 26 && $skor_total <= 27) {
-            $level_total = '3';
+            $level_total = '3-';
             $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 28 && $skor_total <= 29) {
             $level_total = '3';
             $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 30 && $skor_total <= 31) {
-            $level_total = '3';
+            $level_total = '3+';
             $kualifikasi_total = 'Cukup';
         } else if ($skor_total >= 32 && $skor_total <= 35) {
             $level_total = '4';
