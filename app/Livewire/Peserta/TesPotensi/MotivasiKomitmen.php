@@ -84,6 +84,20 @@ class MotivasiKomitmen extends Component
             ->where('is_finished', 'false')
             ->update(['jawaban' => $jawaban_user]);
 
+        // perhitungan ulang soal yang belum dijawab
+        $this->jawaban_user = explode(',', $jawaban_user); // Update state Livewire
+        $this->jawaban_kosong = 0;
+
+        foreach ($this->jawaban_user as $jawaban) {
+            if ($jawaban == '0') {
+                $this->jawaban_kosong++;
+            }
+        }
+
+        if ($this->jawaban_kosong === 0) {
+            $this->jawaban_kosong = 0;
+        }
+
         $poin = SoalMotivasiKomitmen::find($soal_id[$index_array]);
         $poin_a = $poin->poin_opsi_a;
         $poin_b = $poin->poin_opsi_b;

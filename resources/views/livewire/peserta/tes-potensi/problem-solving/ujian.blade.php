@@ -1,7 +1,7 @@
 <div>
     <div class="row mb-4">
         <div class="col">
-            <h3 class="text-center">Tes Motivasi dan Komitmen</h3>
+            <h3 class="text-center">Tes Problem Solving</h3>
         </div>
     </div>
     <div class="card mb-3">
@@ -72,10 +72,36 @@
                         <div class="col-12 me-2 mb-2">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2"
-                                >
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
                                 <label class="form-check-label" for="opsi2">
                                     B. {{ $soal->opsi_b }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 me-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
+                                <label class="form-check-label" for="opsi3">
+                                    C. {{ $soal->opsi_c }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 me-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
+                                <label class="form-check-label" for="opsi4">
+                                    D. {{ $soal->opsi_d }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 me-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
+                                <label class="form-check-label" for="opsi5">
+                                    E. {{ $soal->opsi_e }}
                                 </label>
                             </div>
                         </div>
@@ -88,10 +114,7 @@
                         @if ($nomor_sekarang == 1) disabled @endif>
                         Sebelumnya
                     </button>
-                    <button
-                        class="btn btn-success btn-sm"
-                        wire:click="saveAndNext({{ $nomor_sekarang }})"
-                    >
+                    <button class="btn btn-success btn-sm" wire:click="saveAndNext({{ $nomor_sekarang }})">
                         Simpan & Lanjutkan
                     </button>
                 </div>
@@ -103,9 +126,9 @@
                 @endphp
                 <h6 class="text-muted small">NAVIGASI SOAL</h6>
                 <div class="col mt-2">
-                    @for ($i = 0; $i < 5; $i++)
+                    @for ($i = 0; $i < 1; $i++)
                         <div class="d-flex flex-wrap btn-group btn-group-sm" role="group" aria-label="Basic example">
-                            @for ($j = 1; $j <= 11; $j++)
+                            @for ($j = 1; $j <= 14; $j++)
                                 <button wire:click="navigate({{ $nomor_soal }})"
                                     class="btn btn-sm btn-<?php
                                     if ($jawaban[$nomor_soal - 1] === '0') {
@@ -170,4 +193,3 @@
     }, 1000);
 </script>
 @endpush
-

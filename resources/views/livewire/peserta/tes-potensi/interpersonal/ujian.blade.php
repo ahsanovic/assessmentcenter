@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-2">
                     <button type="button" class="btn btn-inverse-danger">
-                        Belum Dijawab: <span class="badge bg-danger text-white">{{ $jawaban_kosong }}</span>
+                        Belum Dijawab: <span class="badge bg-danger text-white">{{ $jawaban_kosong ?? 0 }}</span>
                     </button>
                 </div>
                 <div class="col-2">
