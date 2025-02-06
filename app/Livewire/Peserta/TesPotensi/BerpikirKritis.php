@@ -329,7 +329,7 @@ class BerpikirKritis extends Component
                     $kategori = 'Rendah';
                 } else if ($nilai_indikator >= 2 && $nilai_indikator <= 4) {
                     $kategori = 'Sedang';
-                } else if ($nilai_indikator >= 5) {
+                } else if ($nilai_indikator == 5) {
                     $kategori = 'Tinggi';
                 }
             }
