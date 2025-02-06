@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.peserta.app', ['title' => 'Tes Kecerdasan Emosi'])]
+#[Layout('components.layouts.peserta.app', ['title' => 'Tes Berpikir Kritis dan Strategis'])]
 class BerpikirKritis extends Component
 {
     public $soal;

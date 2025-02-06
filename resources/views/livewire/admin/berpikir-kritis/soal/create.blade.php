@@ -57,7 +57,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Pilihan A</label>
-                                    <textarea wire:model="form.soal" class="form-control @error('form.opsi_a') is-invalid @enderror" rows="5"></textarea>
+                                    <textarea wire:model="form.opsi_a" class="form-control @error('form.opsi_a') is-invalid @enderror" rows="5"></textarea>
                                     @error('form.opsi_a')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
@@ -82,7 +82,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Pilihan B</label>
-                                    <textarea wire:model="form.soal" class="form-control @error('form.opsi_b') is-invalid @enderror" rows="5"></textarea>
+                                    <textarea wire:model="form.opsi_b" class="form-control @error('form.opsi_b') is-invalid @enderror" rows="5"></textarea>
                                     @error('form.opsi_b')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
@@ -107,7 +107,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Pilihan C</label>
-                                    <textarea wire:model="form.soal" class="form-control @error('form.opsi_c') is-invalid @enderror" rows="5"></textarea>
+                                    <textarea wire:model="form.opsi_c" class="form-control @error('form.opsi_c') is-invalid @enderror" rows="5"></textarea>
                                     @error('form.opsi_c')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
@@ -132,7 +132,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Pilihan D</label>
-                                    <textarea wire:model="form.soal" class="form-control @error('form.opsi_d') is-invalid @enderror" rows="5"></textarea>
+                                    <textarea wire:model="form.opsi_d" class="form-control @error('form.opsi_d') is-invalid @enderror" rows="5"></textarea>
                                     @error('form.opsi_d')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
@@ -157,7 +157,7 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Pilihan E</label>
-                                    <textarea wire:model="form.soal" class="form-control @error('form.opsi_e') is-invalid @enderror" rows="5"></textarea>
+                                    <textarea wire:model="form.opsi_e" class="form-control @error('form.opsi_e') is-invalid @enderror" rows="5"></textarea>
                                     @error('form.opsi_e')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
