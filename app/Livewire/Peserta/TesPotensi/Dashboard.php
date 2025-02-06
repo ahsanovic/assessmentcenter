@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Peserta\TesPotensi;
 
+use App\Models\BerpikirKritis\SoalBerpikirKritis;
+use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Interpersonal\SoalInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
@@ -38,12 +40,18 @@ class Dashboard extends Component
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('is_finished', 'true')
             ->first(['is_finished']);
+        
+        $test_berpikir_kritis = UjianBerpikirKritis::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['is_finished']);
 
         return view('livewire..peserta.tes-potensi.dashboard', [
             'test_interpersonal' => $test_interpersonal,
             'test_pengembangan_diri' => $test_pengembangan_diri,
             'test_kecerdasan_emosi' => $test_kecerdasan_emosi,
-            'test_motivasi_komitmen' => $test_motivasi_komitmen
+            'test_motivasi_komitmen' => $test_motivasi_komitmen,
+            'test_berpikir_kritis' => $test_berpikir_kritis,
         ]);
     }
 
@@ -236,5 +244,56 @@ class Dashboard extends Component
         $ujian->save();
 
         return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]), navigate: true);
+    }
+
+    public function startTesBerpikirKritis()
+    {
+        // cek peserta sudah selesai tes atau belum
+        $checking_test = UjianBerpikirKritis::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['id']);
+
+        if ($checking_test) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Anda sudah melakukan tes ini']);
+            return;
+        }
+
+        // cek peserta sudah mulai tes / belum
+        $count_ujian = UjianBerpikirKritis::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'false')
+            ->count();
+
+        if ($count_ujian > 0) {
+            return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
+        }
+
+        $soal = SoalBerpikirKritis::get(['id']);
+        $jumlah_soal = $soal->count();
+        $soal_id = $soal->implode('id', ',');
+
+        for ($i = 0; $i < $jumlah_soal; $i++) {
+            $jawaban_kosong[$i] = 0;
+        }
+
+        $jawaban_kosong = implode(',', $jawaban_kosong);
+
+        $ujian = new UjianBerpikirKritis();
+        $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+        $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+        $ujian->soal_id = $soal_id;
+        $ujian->jawaban = $jawaban_kosong;
+        $ujian->nilai_indikator_1 = 0;
+        $ujian->nilai_indikator_2 = 0;
+        $ujian->nilai_indikator_3 = 0;
+        $ujian->nilai_indikator_4 = 0;
+        $ujian->nilai_indikator_5 = 0;
+        $ujian->nilai_indikator_6 = 0;
+        $ujian->nilai_indikator_7 = 0;
+        $ujian->nilai_indikator_8 = 0;
+        $ujian->save();
+
+        return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
     }
 }

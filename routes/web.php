@@ -26,12 +26,17 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
     Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
 
-    // data tes
+    // data tes berlangsung
     Route::get('tes-berlangsung', \App\Livewire\Admin\DataTes\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-interpersonal', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaInterpersonal::class)->name('admin.tes-berlangsung.show-peserta-interpersonal');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaPengembanganDiri::class)->name('admin.tes-berlangsung.show-peserta-pengembangan-diri');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-kecerdasan-emosi', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaKecerdasanEmosi::class)->name('admin.tes-berlangsung.show-peserta-kecerdasan-emosi');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-motivasi-komitmen', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaMotivasiKomitmen::class)->name('admin.tes-berlangsung.show-peserta-motivasi-komitmen');
+
+    // data tes selesai
+    Route::get('tes-selesai', \App\Livewire\Admin\DataTes\TesSelesai\Index::class)->name('admin.tes-selesai');
+    Route::get('tes-selesai/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.show-peserta');
+    Route::get('tes-selesai/{idEvent}/{nip}/show-report', \App\Livewire\Admin\DataTes\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
 
     // peserta
     Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
@@ -97,6 +102,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('ref-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Index::class)->name('admin.ref-motivasi-komitmen');
     Route::get('ref-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Create::class)->name('admin.ref-motivasi-komitmen.create');
     Route::get('ref-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Edit::class)->name('admin.ref-motivasi-komitmen.edit');
+
+    // soal berpikir kritis dan strategis
+    Route::get('soal-berpikir-kritis', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Index::class)->name('admin.soal-berpikir-kritis');
+    Route::get('soal-berpikir-kritis/create', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Create::class)->name('admin.soal-berpikir-kritis.create');
+    Route::get('soal-berpikir-kritis/{id}/edit', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Edit::class)->name('admin.soal-berpikir-kritis.edit');
 });
 
 // assessor
@@ -144,6 +154,7 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('pengembangan-diri/{id}', \App\Livewire\Peserta\TesPotensi\PengembanganDiri::class)->name('peserta.tes-potensi.pengembangan-diri')->middleware(CheckExamPin::class);
         Route::get('kecerdasan-emosi/{id}', \App\Livewire\Peserta\TesPotensi\KecerdasanEmosi::class)->name('peserta.tes-potensi.kecerdasan-emosi')->middleware(CheckExamPin::class);
         Route::get('motivasi-komitmen/{id}', \App\Livewire\Peserta\TesPotensi\MotivasiKomitmen::class)->name('peserta.tes-potensi.motivasi-komitmen')->middleware(CheckExamPin::class);
+        Route::get('berpikir-kritis/{id}', \App\Livewire\Peserta\TesPotensi\BerpikirKritis::class)->name('peserta.tes-potensi.berpikir-kritis')->middleware(CheckExamPin::class);
     });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
