@@ -4,7 +4,6 @@ namespace App\Livewire\Peserta\TesPotensi;
 
 use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\RefAspekBerpikirKritis;
-use App\Models\BerpikirKritis\RefBerpikirKritis;
 use App\Models\BerpikirKritis\RefIndikatorBerpikirKritis;
 use App\Models\BerpikirKritis\SoalBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
@@ -85,6 +84,20 @@ class BerpikirKritis extends Component
             ->where('is_finished', 'false')
             ->update(['jawaban' => $jawaban_user]);
 
+        // perhitungan ulang soal yang belum dijawab
+        $this->jawaban_user = explode(',', $jawaban_user); // Update state Livewire
+        $this->jawaban_kosong = 0;
+
+        foreach ($this->jawaban_user as $jawaban) {
+            if ($jawaban == '0') {
+                $this->jawaban_kosong++;
+            }
+        }
+
+        if ($this->jawaban_kosong === 0) {
+            $this->jawaban_kosong = 0;
+        }
+
         $poin = SoalBerpikirKritis::find($soal_id[$index_array]);
         $poin_a = $poin->poin_opsi_a;
         $poin_b = $poin->poin_opsi_b;
@@ -150,34 +163,50 @@ class BerpikirKritis extends Component
             if ($value->indikator_nomor == 1) {
                 $nilai[] = [
                     'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_kd,
-                    'standard' => $standard_kd ?? '',
-                    'kualifikasi' => $kualifikasi_kd ?? ''
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_1,
                 ];
             } else if ($value->indikator_nomor == 2) {
                 $nilai[] = [
                     'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_mpd,
-                    'standard' => $standard_mpd ?? '',
-                    'kualifikasi' => $kualifikasi_mpd ?? ''
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_2,
                 ];
             } else if ($value->indikator_nomor == 3) {
                 $nilai[] = [
                     'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_ke,
-                    'standard' => $standard_ke ?? '',
-                    'kualifikasi' => $kualifikasi_ke ?? ''
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_3,
                 ];
             } else if ($value->indikator_nomor == 4) {
                 $nilai[] = [
                     'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_ks,
-                    'standard' => $standard_ks ?? '',
-                    'kualifikasi' => $kualifikasi_ks ?? ''
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_4,
+                ];
+            } else if ($value->indikator_nomor == 5) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_5,
+                ];
+            } else if ($value->indikator_nomor == 6) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_6,
+                ];
+            } else if ($value->indikator_nomor == 7) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_7,
+                ];
+            } else if ($value->indikator_nomor == 8) {
+                $nilai[] = [
+                    'indikator' => $value->indikator_nama,
+                    'no_indikator' => $value->indikator_nomor,
+                    'skor' => $data->nilai_indikator_8,
                 ];
             }
         }
