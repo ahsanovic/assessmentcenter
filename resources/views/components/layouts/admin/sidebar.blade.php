@@ -95,7 +95,7 @@
                                     class="nav-link">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
-                                <a href="" wire:navigate
+                                <a href="{{ route('admin.tes-selesai') }}" wire:navigate
                                     class="nav-link">Tes Selesai</a>
                             </li>
                         </ul>
@@ -178,6 +178,46 @@
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-motivasi-komitmen') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#berpikir-kritis" role="button"
+                        aria-expanded="false" aria-controls="berpikir-kritis">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Berpikir Kritis</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="berpikir-kritis">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
+                                    class="nav-link">Data Referensi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-berpikir-kritis') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#problem-solving" role="button"
+                        aria-expanded="false" aria-controls="problem-solving">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Problem Solving</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="problem-solving">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
+                                    class="nav-link">Data Referensi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-problem-solving') }}" wire:navigate
                                     class="nav-link">Soal</a>
                             </li>
                         </ul>

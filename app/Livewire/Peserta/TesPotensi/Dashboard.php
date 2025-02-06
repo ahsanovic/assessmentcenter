@@ -12,6 +12,8 @@ use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\SoalPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
+use App\Models\ProblemSolving\SoalProblemSolving;
+use App\Models\ProblemSolving\UjianProblemSolving;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -45,6 +47,11 @@ class Dashboard extends Component
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('is_finished', 'true')
             ->first(['is_finished']);
+        
+        $test_problem_solving = UjianProblemSolving::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['is_finished']);
 
         return view('livewire..peserta.tes-potensi.dashboard', [
             'test_interpersonal' => $test_interpersonal,
@@ -52,6 +59,7 @@ class Dashboard extends Component
             'test_kecerdasan_emosi' => $test_kecerdasan_emosi,
             'test_motivasi_komitmen' => $test_motivasi_komitmen,
             'test_berpikir_kritis' => $test_berpikir_kritis,
+            'problem_solving' => $test_problem_solving,
         ]);
     }
 
@@ -295,5 +303,56 @@ class Dashboard extends Component
         $ujian->save();
 
         return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
+    }
+
+    public function startTesProblemSolving()
+    {
+        // cek peserta sudah selesai tes atau belum
+        $checking_test = UjianProblemSolving::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['id']);
+
+        if ($checking_test) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Anda sudah melakukan tes ini']);
+            return;
+        }
+
+        // cek peserta sudah mulai tes / belum
+        $count_ujian = UjianProblemSolving::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'false')
+            ->count();
+
+        if ($count_ujian > 0) {
+            return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
+        }
+
+        $soal = SoalProblemSolving::get(['id']);
+        $jumlah_soal = $soal->count();
+        $soal_id = $soal->implode('id', ',');
+
+        for ($i = 0; $i < $jumlah_soal; $i++) {
+            $jawaban_kosong[$i] = 0;
+        }
+
+        $jawaban_kosong = implode(',', $jawaban_kosong);
+
+        $ujian = new UjianProblemSolving();
+        $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+        $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+        $ujian->soal_id = $soal_id;
+        $ujian->jawaban = $jawaban_kosong;
+        $ujian->nilai_indikator_1 = 0;
+        $ujian->nilai_indikator_2 = 0;
+        $ujian->nilai_indikator_3 = 0;
+        $ujian->nilai_indikator_4 = 0;
+        $ujian->nilai_indikator_5 = 0;
+        $ujian->nilai_indikator_6 = 0;
+        $ujian->nilai_indikator_7 = 0;
+        $ujian->nilai_indikator_8 = 0;
+        $ujian->save();
+
+        return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
     }
 }

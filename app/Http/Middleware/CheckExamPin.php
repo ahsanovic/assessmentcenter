@@ -22,6 +22,7 @@ class CheckExamPin
             'tes-potensi/kecerdasan-emosi/*',
             'tes-potensi/motivasi-komitmen/*',
             'tes-potensi/berpikir-kritis/*',
+            'tes-potensi/problem-solving/*',
         ];
 
         if (session()->has('exam_pin')) {

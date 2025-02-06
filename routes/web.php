@@ -107,6 +107,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('soal-berpikir-kritis', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Index::class)->name('admin.soal-berpikir-kritis');
     Route::get('soal-berpikir-kritis/create', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Create::class)->name('admin.soal-berpikir-kritis.create');
     Route::get('soal-berpikir-kritis/{id}/edit', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Edit::class)->name('admin.soal-berpikir-kritis.edit');
+    
+    // soal problem solving
+    Route::get('soal-problem-solving', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Index::class)->name('admin.soal-problem-solving');
+    Route::get('soal-problem-solving/create', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Create::class)->name('admin.soal-problem-solving.create');
+    Route::get('soal-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Edit::class)->name('admin.soal-problem-solving.edit');
 });
 
 // assessor
@@ -155,6 +160,7 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('kecerdasan-emosi/{id}', \App\Livewire\Peserta\TesPotensi\KecerdasanEmosi::class)->name('peserta.tes-potensi.kecerdasan-emosi')->middleware(CheckExamPin::class);
         Route::get('motivasi-komitmen/{id}', \App\Livewire\Peserta\TesPotensi\MotivasiKomitmen::class)->name('peserta.tes-potensi.motivasi-komitmen')->middleware(CheckExamPin::class);
         Route::get('berpikir-kritis/{id}', \App\Livewire\Peserta\TesPotensi\BerpikirKritis::class)->name('peserta.tes-potensi.berpikir-kritis')->middleware(CheckExamPin::class);
+        Route::get('problem-solving/{id}', \App\Livewire\Peserta\TesPotensi\ProblemSolving::class)->name('peserta.tes-potensi.problem-solving')->middleware(CheckExamPin::class);
     });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
