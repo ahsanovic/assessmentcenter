@@ -223,6 +223,26 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#kesadaran-diri" role="button"
+                        aria-expanded="false" aria-controls="kesadaran-diri">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Kesadaran Diri</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="kesadaran-diri">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-kesadaran-diri') }}" wire:navigate
+                                    class="nav-link">Data Referensi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-kesadaran-diri') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
 
                 <li class="nav-item nav-category"></li>
