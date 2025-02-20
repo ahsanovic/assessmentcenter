@@ -8,6 +8,8 @@ use App\Models\Interpersonal\SoalInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\KesadaranDiri\SoalKesadaranDiri;
+use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\SoalPengembanganDiri;
@@ -52,6 +54,11 @@ class Dashboard extends Component
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('is_finished', 'true')
             ->first(['is_finished']);
+        
+        $test_kesadaran_diri = UjianKesadaranDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['is_finished']);
 
         return view('livewire..peserta.tes-potensi.dashboard', [
             'test_interpersonal' => $test_interpersonal,
@@ -59,7 +66,8 @@ class Dashboard extends Component
             'test_kecerdasan_emosi' => $test_kecerdasan_emosi,
             'test_motivasi_komitmen' => $test_motivasi_komitmen,
             'test_berpikir_kritis' => $test_berpikir_kritis,
-            'problem_solving' => $test_problem_solving,
+            'test_problem_solving' => $test_problem_solving,
+            'test_kesadaran_diri' => $test_kesadaran_diri,
         ]);
     }
 
@@ -354,5 +362,51 @@ class Dashboard extends Component
         $ujian->save();
 
         return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
+    }
+
+    public function startTesKesadaranDiri()
+    {
+        // cek peserta sudah selesai tes atau belum
+        $checking_test = UjianKesadaranDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'true')
+            ->first(['id']);
+
+        if ($checking_test) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Anda sudah melakukan tes ini']);
+            return;
+        }
+
+        // cek peserta sudah mulai tes / belum
+        $count_ujian = UjianKesadaranDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'false')
+            ->count();
+
+        if ($count_ujian > 0) {
+            return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
+        }
+
+        $soal = SoalKesadaranDiri::get(['id']);
+        $jumlah_soal = $soal->count();
+        $soal_id = $soal->implode('id', ',');
+
+        for ($i = 0; $i < $jumlah_soal; $i++) {
+            $jawaban_kosong[$i] = 0;
+        }
+
+        $jawaban_kosong = implode(',', $jawaban_kosong);
+
+        $ujian = new UjianKesadaranDiri();
+        $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+        $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+        $ujian->soal_id = $soal_id;
+        $ujian->jawaban = $jawaban_kosong;
+        $ujian->nilai_indikator_1 = 0;
+        $ujian->nilai_indikator_2 = 0;
+        $ujian->nilai_indikator_3 = 0;
+        $ujian->save();
+
+        return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
     }
 }

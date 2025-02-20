@@ -171,6 +171,7 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('motivasi-komitmen/{id}', \App\Livewire\Peserta\TesPotensi\MotivasiKomitmen::class)->name('peserta.tes-potensi.motivasi-komitmen')->middleware(CheckExamPin::class);
         Route::get('berpikir-kritis/{id}', \App\Livewire\Peserta\TesPotensi\BerpikirKritis::class)->name('peserta.tes-potensi.berpikir-kritis')->middleware(CheckExamPin::class);
         Route::get('problem-solving/{id}', \App\Livewire\Peserta\TesPotensi\ProblemSolving::class)->name('peserta.tes-potensi.problem-solving')->middleware(CheckExamPin::class);
+        Route::get('kesadaran-diri/{id}', \App\Livewire\Peserta\TesPotensi\KesadaranDiri::class)->name('peserta.tes-potensi.kesadaran-diri')->middleware(CheckExamPin::class);
     });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');

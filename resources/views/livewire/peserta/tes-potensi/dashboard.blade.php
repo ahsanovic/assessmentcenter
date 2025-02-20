@@ -144,5 +144,29 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-1 col-md-3 col-lg-4">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Tes Kesadaran Diri</h5>
+                    <button class="btn btn-inverse-success"
+                        {{ isset($test_kesadaran_diri->is_finished) ? 'disabled' : '' }}
+                        x-data
+                        @click="Swal.fire({
+                            title: 'Apakah Anda yakin memulai tes?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Mulai Tes!',
+                            cancelButtonText: 'Batal',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $wire.startTesKesadaranDiri();
+                            }
+                        })"
+                    >
+                        Mulai Tes
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
