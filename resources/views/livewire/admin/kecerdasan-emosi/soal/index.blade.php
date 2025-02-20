@@ -70,7 +70,7 @@
                                                 >
                                                     Edit
                                                 </a>
-                                                <button wire:model="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
+                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
                                                     Hapus
                                                 </button>
                                             </div>
