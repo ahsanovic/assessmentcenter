@@ -213,8 +213,8 @@
                     <div class="collapse" data-bs-parent="#sidebarNav" id="problem-solving">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
-                                    class="nav-link">Data Referensi</a>
+                                <a href="{{ route('admin.ref-aspek-problem-solving') }}" wire:navigate
+                                    class="nav-link">Data Referensi Aspek</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-problem-solving') }}" wire:navigate

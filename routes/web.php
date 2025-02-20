@@ -112,6 +112,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('soal-problem-solving', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Index::class)->name('admin.soal-problem-solving');
     Route::get('soal-problem-solving/create', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Create::class)->name('admin.soal-problem-solving.create');
     Route::get('soal-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Edit::class)->name('admin.soal-problem-solving.edit');
+
+    // referensi aspek problem solving
+    Route::get('ref-aspek-problem-solving', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Index::class)->name('admin.ref-aspek-problem-solving');
+    Route::get('ref-aspek-problem-solving/create', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Create::class)->name('admin.ref-aspek-problem-solving.create');
+    Route::get('ref-aspek-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Edit::class)->name('admin.ref-aspek-problem-solving.edit');
     
     // soal kesadaran diri
     Route::get('soal-kesadaran-diri', \App\Livewire\Admin\KesadaranDiri\SoalKesadaranDiri\Index::class)->name('admin.soal-kesadaran-diri');
