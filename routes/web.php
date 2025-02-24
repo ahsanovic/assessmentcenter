@@ -113,10 +113,10 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('ref-aspek-berpikir-kritis/create', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefAspekBerpikirKritis\Create::class)->name('admin.ref-aspek-berpikir-kritis.create');
     Route::get('ref-aspek-berpikir-kritis/{id}/edit', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefAspekBerpikirKritis\Edit::class)->name('admin.ref-aspek-berpikir-kritis.edit');
 
-    // // referensi indikator berpikir kritis dan strategis
-    // Route::get('ref-indikator-berpikir-kritis', \App\Livewire\Admin\ProblemSolving\RefBerpikirKritis\RefIndikatorBerpikirKritis\Index::class)->name('admin.ref-indikator-berpikir-kritis');
-    // Route::get('ref-indikator-berpikir-kritis/create', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefIndikatorBerpikirKritis\Create::class)->name('admin.ref-indikator-berpikir-kritis.create');
-    // Route::get('ref-indikator-berpikir-kritis/{id}/edit', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefIndikatorBerpikirKritis\Edit::class)->name('admin.ref-indikator-berpikir-kritis.edit');
+    // referensi indikator berpikir kritis dan strategis
+    Route::get('ref-indikator-berpikir-kritis', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefIndikatorBerpikirKritis\Index::class)->name('admin.ref-indikator-berpikir-kritis');
+    Route::get('ref-indikator-berpikir-kritis/create', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefIndikatorBerpikirKritis\Create::class)->name('admin.ref-indikator-berpikir-kritis.create');
+    Route::get('ref-indikator-berpikir-kritis/{id}/edit', \App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefIndikatorBerpikirKritis\Edit::class)->name('admin.ref-indikator-berpikir-kritis.edit');
     
     // soal problem solving
     Route::get('soal-problem-solving', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Index::class)->name('admin.soal-problem-solving');

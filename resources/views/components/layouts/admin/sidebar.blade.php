@@ -196,10 +196,10 @@
                                 <a href="{{ route('admin.ref-aspek-berpikir-kritis') }}" wire:navigate
                                     class="nav-link">Data Referensi Aspek</a>
                             </li>
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('admin.ref-indikator-berpikir-kritis') }}" wire:navigate
                                     class="nav-link">Data Referensi Indikator</a>
-                            </li> --}}
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-berpikir-kritis') }}" wire:navigate
                                     class="nav-link">Soal</a>
