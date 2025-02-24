@@ -193,9 +193,13 @@
                     <div class="collapse" data-bs-parent="#sidebarNav" id="berpikir-kritis">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
-                                    class="nav-link">Data Referensi</a>
+                                <a href="{{ route('admin.ref-aspek-berpikir-kritis') }}" wire:navigate
+                                    class="nav-link">Data Referensi Aspek</a>
                             </li>
+                            {{-- <li class="nav-item">
+                                <a href="{{ route('admin.ref-indikator-berpikir-kritis') }}" wire:navigate
+                                    class="nav-link">Data Referensi Indikator</a>
+                            </li> --}}
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-berpikir-kritis') }}" wire:navigate
                                     class="nav-link">Soal</a>

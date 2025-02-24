@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving;
+namespace App\Livewire\Admin\BerpikirKritis\RefBerpikirKritis\RefAspekBerpikirKritis;
 
-use App\Http\Requests\RefAspekProblemSolvingRequest;
-use App\Models\ProblemSolving\RefAspekProblemSolving;
+use App\Http\Requests\RefAspekBerpikirKritisRequest;
+use App\Models\BerpikirKritis\RefAspekBerpikirKritis;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Aspek Problem Solving'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Aspek Berpikir Kritis'])]
 class Create extends Component
 {   
     public $aspek;
@@ -16,18 +16,18 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.admin.problem-solving.referensi.aspek.create');
+        return view('livewire.admin.berpikir-kritis.referensi.aspek.create');
     }
 
     protected function rules()
     {
-        $request = new RefAspekProblemSolvingRequest();
+        $request = new RefAspekBerpikirKritisRequest();
         return $request->rules();
     }
 
     protected function messages()
     {
-        $request = new RefAspekProblemSolvingRequest();
+        $request = new RefAspekBerpikirKritisRequest();
         return $request->messages();
     }
 
@@ -36,13 +36,13 @@ class Create extends Component
         $this->validate();
 
         try {
-            $check_duplicate = RefAspekProblemSolving::where('aspek_nomor', $this->aspek_nomor)->exists();
+            $check_duplicate = RefAspekBerpikirKritis::where('aspek_nomor', $this->aspek_nomor)->exists();
             if ($check_duplicate) {
                 $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor aspek ' . $this->aspek_nomor . ' sudah ada!']);
                 return;
             }
 
-            $data = new RefAspekProblemSolving();
+            $data = new RefAspekBerpikirKritis();
             $data->aspek = $this->aspek;
             $data->aspek_nomor = $this->aspek_nomor;
             $data->indikator_nomor = implode(',', $this->indikator_nomor);
@@ -53,7 +53,7 @@ class Create extends Component
                 'message' => 'berhasil tambah data'
             ]);
 
-            $this->redirect(route('admin.ref-aspek-problem-solving'), true);
+            $this->redirect(route('admin.ref-aspek-berpikir-kritis'), true);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
