@@ -217,6 +217,10 @@
                                     class="nav-link">Data Referensi Aspek</a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('admin.ref-indikator-problem-solving') }}" wire:navigate
+                                    class="nav-link">Data Referensi Indikator</a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('admin.soal-problem-solving') }}" wire:navigate
                                     class="nav-link">Soal</a>
                             </li>
