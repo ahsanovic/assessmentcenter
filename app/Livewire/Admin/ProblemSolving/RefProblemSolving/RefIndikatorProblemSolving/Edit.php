@@ -67,7 +67,7 @@ class Edit extends Component
             $data->indikator_nama = $this->indikator_nama;
             $data->indikator_nomor = $this->indikator_nomor;
 
-            $kualifikasiLevels = ['Tinggi', 'Sedang', 'Rendah'];
+            $kualifikasiLevels = ['Rendah', 'Sedang', 'Tinggi'];
             $array_kualifikasi = [];
             foreach ($this->kualifikasi_deskripsi as $index => $item) {
                 $array_kualifikasi[] = [
@@ -86,7 +86,7 @@ class Edit extends Component
 
             $this->redirect(route('admin.ref-indikator-problem-solving'), true);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
