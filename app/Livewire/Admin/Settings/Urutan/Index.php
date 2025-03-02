@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Settings;
+namespace App\Livewire\Admin\Settings\Urutan;
 
 use App\Models\RefAlatTes;
 use App\Models\Settings;
@@ -10,7 +10,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Setting Tes'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Urutan Tes'])]
 class Index extends Component
 {
     use WithPagination;
@@ -36,7 +36,7 @@ class Index extends Component
 
         $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
         
-        return view('livewire.admin.settings.index', compact('data', 'option_alat_tes'));
+        return view('livewire.admin.settings.urutan.index', compact('data', 'option_alat_tes'));
     }
 
     public function resetFilters()

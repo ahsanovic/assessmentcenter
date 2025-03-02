@@ -14,10 +14,15 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('alat-tes/create', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.create');
     Route::get('alat-tes/{id}/edit', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.edit');
 
-    // setting
-    Route::get('settings', \App\Livewire\Admin\Settings\Index::class)->name('admin.settings');
-    Route::get('settings/create', \App\Livewire\Admin\Settings\Form::class)->name('admin.settings.create');
-    Route::get('settings/{id}/edit', \App\Livewire\Admin\Settings\Form::class)->name('admin.settings.edit');
+    // urutan tes
+    Route::get('settings/urutan-tes', \App\Livewire\Admin\Settings\Urutan\Index::class)->name('admin.settings.urutan');
+    Route::get('settings/urutan-tes/create', \App\Livewire\Admin\Settings\Urutan\Form::class)->name('admin.settings.urutan.create');
+    Route::get('settings/urutan-tes/{id}/edit', \App\Livewire\Admin\Settings\Urutan\Form::class)->name('admin.settings.urutan.edit');
+    
+    // waktu tes
+    Route::get('settings/waktu-tes', \App\Livewire\Admin\Settings\Waktu\Index::class)->name('admin.settings.waktu');
+    Route::get('settings/waktu-tes/create', \App\Livewire\Admin\Settings\Waktu\Form::class)->name('admin.settings.waktu.create');
+    Route::get('settings/waktu-tes/{id}/edit', \App\Livewire\Admin\Settings\Waktu\Form::class)->name('admin.settings.waktu.edit');
 
     // event
     Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');

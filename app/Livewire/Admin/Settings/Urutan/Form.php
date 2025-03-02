@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Livewire\Admin\Settings;
+namespace App\Livewire\Admin\Settings\Urutan;
 
-use App\Livewire\Forms\SettingsForm;
+use App\Livewire\Forms\SettingUrutanForm;
 use App\Models\RefAlatTes;
 use App\Models\Settings;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Alat Tes'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Urutan Tes'])]
 class Form extends Component
 {   
-    public SettingsForm $form;
-    public $previous_url;
+    public SettingUrutanForm $form;
     public $isUpdate = false;
 
     #[Locked]
@@ -24,12 +23,11 @@ class Form extends Component
         try {
             if ($id) {
                 $this->isUpdate = true;
-                $this->previous_url = url()->previous();
     
                 $data = Settings::findOrFail($id);
                 $this->id = $data->id;
                 $this->form->alat_tes_id = $data->alat_tes_id;
-                $this->form->waktu = $data->waktu;
+                $this->form->urutan = $data->urutan;
             }
         } catch (\Throwable $th) {
             // throw $th;
@@ -40,7 +38,7 @@ class Form extends Component
     public function render()
     {
         $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
-        return view('livewire.admin.settings.form', compact('option_alat_tes'));
+        return view('livewire.admin.settings.urutan.form', compact('option_alat_tes'));
     }
 
     public function save()
@@ -59,7 +57,7 @@ class Form extends Component
             } else {
                 Settings::create([
                     'alat_tes_id' => $this->form->alat_tes_id,
-                    'waktu' => $this->form->waktu,
+                    'urutan' => $this->form->urutan,
                 ]);
     
                 session()->flash('toast', [
@@ -67,7 +65,7 @@ class Form extends Component
                     'message' => 'berhasil tambah data'
                 ]);
     
-                $this->redirect(route('admin.settings'), true);
+                $this->redirect(route('admin.settings.urutan'), true);
             }
         } catch (\Throwable $th) {
             // throw $th;

@@ -1,14 +1,14 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Setting Tes']
+        ['url' => null, 'title' => 'Urutan Tes']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Setting Tes</h6>
-                    <a href="{{ route('admin.settings.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
+                    <h6 class="card-title">Setting Urutan Tes</h6>
+                    <a href="{{ route('admin.settings.urutan.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
                         <div class="col-sm-3">
@@ -34,7 +34,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Alat Tes</th>
-                                    <th>Durasi Tes</th>
+                                    <th>Urutan Tes</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -43,13 +43,13 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->alatTes->alat_tes ?? '' }}</td>
-                                        <td>{{ $item->waktu }} menit</td>
+                                        <td>{{ $item->urutan }}</td>
                                         <td>
                                             <div class="btn-group dropstart">
                                                 <a
                                                     class="btn btn-xs btn-outline-warning"
                                                     wire:navigate
-                                                    href="{{ route('admin.settings.edit', $item->id) }}"
+                                                    href="{{ route('admin.settings.urutan.edit', $item->id) }}"
                                                 >
                                                     Edit
                                                 </a>
