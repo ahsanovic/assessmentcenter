@@ -46,6 +46,12 @@ class Form extends Component
         $this->validate();
         try {
             if ($this->isUpdate) {
+                $check_duplicate = Settings::where('urutan', $this->form->urutan)->exists();
+                if ($check_duplicate) {
+                    $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan urutan tes ' . $this->form->urutan . ' sudah ada!']);
+                    return;
+                }
+
                 Settings::whereId($this->id)->update($this->validate());
                 
                 session()->flash('toast', [
@@ -53,7 +59,7 @@ class Form extends Component
                     'message' => 'berhasil ubah data'
                 ]);
                 
-                $this->redirect($this->previous_url, true);
+                $this->redirect(route('admin.settings.urutan'), true);
             } else {
                 Settings::create([
                     'alat_tes_id' => $this->form->alat_tes_id,
@@ -68,7 +74,7 @@ class Form extends Component
                 $this->redirect(route('admin.settings.urutan'), true);
             }
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
