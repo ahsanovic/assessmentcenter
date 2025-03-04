@@ -2,6 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\Interpersonal\UjianInterpersonal;
+use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\PengembanganDiri\UjianPengembanganDiri;
+use App\Models\ProblemSolving\UjianProblemSolving;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -74,5 +81,40 @@ class Peserta extends Model implements AuthenticatableContract
     {
         return $query->where('id', $pesertaId)
                     ->where('event_id', $eventId);
+    }
+
+    public function ujianInterpersonal()
+    {
+        return $this->hasOne(UjianInterpersonal::class, 'peserta_id');
+    }
+
+    public function ujianKecerdasanEmosi()
+    {
+        return $this->hasOne(UjianKecerdasanEmosi::class, 'peserta_id');
+    }
+
+    public function ujianBerpikirKritis()
+    {
+        return $this->hasOne(UjianBerpikirKritis::class, 'peserta_id');
+    }
+
+    public function ujianPengembanganDiri()
+    {
+        return $this->hasOne(UjianPengembanganDiri::class, 'peserta_id');
+    }
+
+    public function ujianMotivasiKomitmen()
+    {
+        return $this->hasOne(UjianMotivasiKomitmen::class, 'peserta_id');
+    }
+
+    public function ujianKesadaranDiri()
+    {
+        return $this->hasOne(UjianKesadaranDiri::class, 'peserta_id');
+    }
+
+    public function ujianProblemSolving()
+    {
+        return $this->hasOne(UjianProblemSolving::class, 'peserta_id');
     }
 }

@@ -6,10 +6,13 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
+use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\HasilKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\HasilProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
@@ -234,27 +237,27 @@ class Event extends Model
     }
 
     /* HASIL TES */
-    // hasil berpikir kritis dan strategis
-    public function hasilBerpikirKritis()
+    // hasil interpersonal
+    public function hasilInterpersonal()
     {
-        return $this->hasMany(HasilBerpikirKritis::class, 'event_id', 'id');
+        return $this->hasMany(HasilInterpersonal::class, 'event_id', 'id');
     }
 
-    public function pesertaHasilBerpikirKritis()
+    public function pesertaHasilInterpersonal()
     {
         return $this->hasManyThrough(
             Peserta::class,               // Model target (Peserta)
-            HasilBerpikirKritis::class,    // Model perantara (UjianBerpikirKritis)
-            'event_id',                   // Foreign key di UjianBerpikirKritis
+            HasilInterpersonal::class,    // Model perantara (UjianInterpersonal)
+            'event_id',                   // Foreign key di UjianInterpersonal
             'id',                         // Foreign key di Peserta
             'id',                         // Local key di Event
-            'peserta_id'                  // Local key di UjianBerpikirKritis
+            'peserta_id'                  // Local key di UjianInterpersonal
         );
     }
 
-    public function pesertaIdHasilBerpikirKritis()
+    public function pesertaIdHasilInterpersonal()
     {
-        return $this->hasilBerpikirKritis()->select('peserta_id')->distinct();
+        return $this->hasilInterpersonal()->select('peserta_id')->distinct();
     }
 
     // hasil kesadaran diri
@@ -280,6 +283,29 @@ class Event extends Model
         return $this->hasilKesadaranDiri()->select('peserta_id')->distinct();
     }
 
+    // hasil berpikir kritis dan strategis
+    public function hasilBerpikirKritis()
+    {
+        return $this->hasMany(HasilBerpikirKritis::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilBerpikirKritis()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilBerpikirKritis::class,    // Model perantara (UjianBerpikirKritis)
+            'event_id',                   // Foreign key di UjianBerpikirKritis
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianBerpikirKritis
+        );
+    }
+
+    public function pesertaIdHasilBerpikirKritis()
+    {
+        return $this->hasilBerpikirKritis()->select('peserta_id')->distinct();
+    }
+
     // hasil problem solving
     public function hasilProblemSolving()
     {
@@ -301,5 +327,74 @@ class Event extends Model
     public function pesertaIdHasilProblemSolving()
     {
         return $this->hasilProblemSolving()->select('peserta_id')->distinct();
+    }
+
+    // hasil kecerdasan emosi
+    public function hasilKecerdasanEmosi()
+    {
+        return $this->hasMany(HasilKecerdasanEmosi::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilKecerdasanEmosi()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilKecerdasanEmosi::class,    // Model perantara (UjianKecerdasanEmosi)
+            'event_id',                   // Foreign key di UjianInterpersonal
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianKecerdasanEmosi
+        );
+    }
+
+    public function pesertaIdHasilKecerdasanEmosi()
+    {
+        return $this->hasilKecerdasanEmosi()->select('peserta_id')->distinct();
+    }
+
+    // hasil pengembangan diri
+    public function hasilPengembanganDiri()
+    {
+        return $this->hasMany(HasilPengembanganDiri::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilPengembanganDiri()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilPengembanganDiri::class,    // Model perantara (UjianPengembanganDiri)
+            'event_id',                   // Foreign key di UjianInterpersonal
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianPengembanganDiri
+        );
+    }
+
+    public function pesertaIdHasilPengembanganDiri()
+    {
+        return $this->hasilPengembanganDiri()->select('peserta_id')->distinct();
+    }
+
+    // hasil motivasi komitmen
+    public function hasilMotivasiKomitmen()
+    {
+        return $this->hasMany(HasilMotivasiKomitmen::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilMotivasiKomitmen()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilMotivasiKomitmen::class,    // Model perantara (UjianMotivasiKomitmen)
+            'event_id',                   // Foreign key di UjianInterpersonal
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianMotivasiKomitmen
+        );
+    }
+
+    public function pesertaIdHasilMotivasiKomitmen()
+    {
+        return $this->hasilMotivasiKomitmen()->select('peserta_id')->distinct();
     }
 }
