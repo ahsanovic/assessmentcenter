@@ -52,7 +52,7 @@ class Form extends Component
             9 => 'PK',
         ];
 
-        return view('livewire.admin.referensi-pertanyaan.form', compact('option_kode'));
+        return view('livewire.admin.pertanyaan-pengalaman.form', compact('option_kode'));
     }
 
     protected function rules()
