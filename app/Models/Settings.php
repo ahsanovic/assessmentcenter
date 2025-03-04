@@ -9,7 +9,7 @@ class Settings extends Model
     protected $table = 'setting_tes';
     protected $guarded = ['id'];
 
-    public function  alatTes()
+    public function alatTes()
     {
         return $this->belongsTo(RefAlatTes::class, 'alat_tes_id', 'id');
     }

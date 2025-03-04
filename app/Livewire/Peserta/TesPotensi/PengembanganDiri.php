@@ -7,6 +7,8 @@ use App\Models\PengembanganDiri\RefPengembanganDiri;
 use App\Models\PengembanganDiri\SoalPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\Settings;
+use App\Models\SettingWaktuTes;
+use App\Traits\StartTestTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -14,6 +16,8 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Belajar Cepat dan Pengembangan Diri'])]
 class PengembanganDiri extends Component
 {
+    use StartTestTrait;
+
     public $soal;
     public $jml_soal;
     public $id_soal;
@@ -39,8 +43,15 @@ class PengembanganDiri extends Component
         $data = UjianPengembanganDiri::select('id', 'soal_id', 'jawaban', 'created_at')
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('is_finished', 'false')
             ->first();
+
+        if ($data->is_finished == 'true') {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah menyelesaikan tes ini.'
+            ]);
+            return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+        }
 
         $this->nomor_soal = explode(',', $data->soal_id);
         $this->jawaban_user = explode(',', $data->jawaban);
@@ -49,7 +60,7 @@ class PengembanganDiri extends Component
         $this->id_ujian = $data->id;
         $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = Settings::where('alat_tes_id', 5)->first(['waktu']);
+        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
         $this->durasi_tes = $durasi_tes->waktu;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
@@ -146,225 +157,265 @@ class PengembanganDiri extends Component
 
     public function finish()
     {
-        $data = UjianPengembanganDiri::findOrFail($this->id_ujian);
-        // indikator motivasi belajar
-        if ($data->nilai_indikator_mb >= 1 && $data->nilai_indikator_mb <= 4) {
-            $standard_mb = 1;
-            $kualifikasi_mb = 'SK';
-        } else if ($data->nilai_indikator_mb >= 5 && $data->nilai_indikator_mb <= 6) {
-            $standard_mb = 2;
-            $kualifikasi_mb = 'K';
-        } else if ($data->nilai_indikator_mb >= 7 && $data->nilai_indikator_mb <= 8) {
-            $standard_mb = 3;
-            $kualifikasi_mb = 'C';
-        } else if ($data->nilai_indikator_mb >= 9 && $data->nilai_indikator_mb <= 10) {
-            $standard_mb = 4;
-            $kualifikasi_mb = 'B';
-        } else if ($data->nilai_indikator_mb >= 11) {
-            $standard_mb = 5;
-            $kualifikasi_mb = 'SB';
-        }
-
-        // indikator mencari informasi tepat/akurat
-        if ($data->nilai_indikator_mit >= 1 && $data->nilai_indikator_mit <= 14) {
-            $standard_mit = 1;
-            $kualifikasi_mit = 'SK';
-        } else if ($data->nilai_indikator_mit >= 15 && $data->nilai_indikator_mit <= 16) {
-            $standard_mit = 2;
-            $kualifikasi_mit = 'K';
-        } else if ($data->nilai_indikator_mit >= 17 && $data->nilai_indikator_mit <= 18) {
-            $standard_mit = 3;
-            $kualifikasi_mit = 'C';
-        } else if ($data->nilai_indikator_mit == 19) {
-            $standard_mit = 4;
-            $kualifikasi_mit = 'B';
-        } else if ($data->nilai_indikator_mit >= 20) {
-            $standard_mit = 5;
-            $kualifikasi_mit = 'SB';
-        }
-
-        // indikator pengembangan diri efektif
-        if ($data->nilai_indikator_pde >= 1 && $data->nilai_indikator_pde <= 17) {
-            $standard_pde = 1;
-            $kualifikasi_pde = 'SK';
-        } else if ($data->nilai_indikator_pde >= 18 && $data->nilai_indikator_pde <= 19) {
-            $standard_pde = 2;
-            $kualifikasi_pde = 'K';
-        } else if ($data->nilai_indikator_pde >= 20 && $data->nilai_indikator_pde <= 21) {
-            $standard_pde = 3;
-            $kualifikasi_pde = 'C';
-        } else if ($data->nilai_indikator_pde == 22) {
-            $standard_pde = 4;
-            $kualifikasi_pde = 'B';
-        } else if ($data->nilai_indikator_pde >= 23) {
-            $standard_pde = 5;
-            $kualifikasi_pde = 'SB';
-        }
-
-        // indikator strategis pengembangan diri
-        if ($data->nilai_indikator_spd >= 1 && $data->nilai_indikator_spd <= 29) {
-            $standard_spd = 1;
-            $kualifikasi_spd = 'SK';
-        } else if ($data->nilai_indikator_spd >= 30 && $data->nilai_indikator_spd <= 31) {
-            $standard_spd = 2;
-            $kualifikasi_spd = 'K';
-        } else if ($data->nilai_indikator_spd == 32) {
-            $standard_spd = 3;
-            $kualifikasi_spd = 'C';
-        } else if ($data->nilai_indikator_spd >= 33 && $data->nilai_indikator_spd <= 34) {
-            $standard_spd = 4;
-            $kualifikasi_spd = 'B';
-        } else if ($data->nilai_indikator_spd >= 35) {
-            $standard_spd = 5;
-            $kualifikasi_spd = 'SB';
-        }
-
-        // indikator evaluasi diri dan hasil kerja
-        if ($data->nilai_indikator_ed >= 1 && $data->nilai_indikator_ed <= 46) {
-            $standard_ed = 1;
-            $kualifikasi_ed = 'SK';
-        } else if ($data->nilai_indikator_ed >= 47 && $data->nilai_indikator_ed <= 48) {
-            $standard_ed = 2;
-            $kualifikasi_ed = 'K';
-        } else if ($data->nilai_indikator_ed >= 49 && $data->nilai_indikator_ed <= 50) {
-            $standard_ed = 3;
-            $kualifikasi_ed = 'C';
-        } else if ($data->nilai_indikator_ed >= 51 && $data->nilai_indikator_ed <= 52) {
-            $standard_ed = 4;
-            $kualifikasi_ed = 'B';
-        } else if ($data->nilai_indikator_ed >= 53) {
-            $standard_ed = 5;
-            $kualifikasi_ed = 'SB';
-        }
-
-        $indikator = RefPengembanganDiri::get(['indikator_nama', 'indikator_nomor']);
-
-        $skor = new HasilPengembanganDiri();
-        $skor->event_id = Auth::guard('peserta')->user()->event_id;
-        $skor->peserta_id = Auth::guard('peserta')->user()->id;
-        $skor->ujian_id = $data->id;
-        $nilai = [];
-        foreach ($indikator as $value) {
-            if ($value->indikator_nomor == 1) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_mb,
-                    'standard' => $standard_mb ?? '',
-                    'kualifikasi' => $kualifikasi_mb ?? ''
-                ];
-            } else if ($value->indikator_nomor == 2) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_mit,
-                    'standard' => $standard_mit ?? '',
-                    'kualifikasi' => $kualifikasi_mit ?? ''
-                ];
-            } else if ($value->indikator_nomor == 3) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_pde,
-                    'standard' => $standard_pde ?? '',
-                    'kualifikasi' => $kualifikasi_pde ?? ''
-                ];
-            } else if ($value->indikator_nomor == 4) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_spd,
-                    'standard' => $standard_spd ?? '',
-                    'kualifikasi' => $kualifikasi_spd ?? ''
-                ];
-            } else if ($value->indikator_nomor == 5) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_ed,
-                    'standard' => $standard_ed ?? '',
-                    'kualifikasi' => $kualifikasi_ed ?? ''
-                ];
+        try {
+            $data = UjianPengembanganDiri::findOrFail($this->id_ujian);
+            // indikator motivasi belajar
+            if ($data->nilai_indikator_mb >= 1 && $data->nilai_indikator_mb <= 4) {
+                $standard_mb = 1;
+                $kualifikasi_mb = 'SK';
+            } else if ($data->nilai_indikator_mb >= 5 && $data->nilai_indikator_mb <= 6) {
+                $standard_mb = 2;
+                $kualifikasi_mb = 'K';
+            } else if ($data->nilai_indikator_mb >= 7 && $data->nilai_indikator_mb <= 8) {
+                $standard_mb = 3;
+                $kualifikasi_mb = 'C';
+            } else if ($data->nilai_indikator_mb >= 9 && $data->nilai_indikator_mb <= 10) {
+                $standard_mb = 4;
+                $kualifikasi_mb = 'B';
+            } else if ($data->nilai_indikator_mb >= 11) {
+                $standard_mb = 5;
+                $kualifikasi_mb = 'SB';
             }
-        }
+    
+            // indikator mencari informasi tepat/akurat
+            if ($data->nilai_indikator_mit >= 1 && $data->nilai_indikator_mit <= 14) {
+                $standard_mit = 1;
+                $kualifikasi_mit = 'SK';
+            } else if ($data->nilai_indikator_mit >= 15 && $data->nilai_indikator_mit <= 16) {
+                $standard_mit = 2;
+                $kualifikasi_mit = 'K';
+            } else if ($data->nilai_indikator_mit >= 17 && $data->nilai_indikator_mit <= 18) {
+                $standard_mit = 3;
+                $kualifikasi_mit = 'C';
+            } else if ($data->nilai_indikator_mit == 19) {
+                $standard_mit = 4;
+                $kualifikasi_mit = 'B';
+            } else if ($data->nilai_indikator_mit >= 20) {
+                $standard_mit = 5;
+                $kualifikasi_mit = 'SB';
+            }
+    
+            // indikator pengembangan diri efektif
+            if ($data->nilai_indikator_pde >= 1 && $data->nilai_indikator_pde <= 17) {
+                $standard_pde = 1;
+                $kualifikasi_pde = 'SK';
+            } else if ($data->nilai_indikator_pde >= 18 && $data->nilai_indikator_pde <= 19) {
+                $standard_pde = 2;
+                $kualifikasi_pde = 'K';
+            } else if ($data->nilai_indikator_pde >= 20 && $data->nilai_indikator_pde <= 21) {
+                $standard_pde = 3;
+                $kualifikasi_pde = 'C';
+            } else if ($data->nilai_indikator_pde == 22) {
+                $standard_pde = 4;
+                $kualifikasi_pde = 'B';
+            } else if ($data->nilai_indikator_pde >= 23) {
+                $standard_pde = 5;
+                $kualifikasi_pde = 'SB';
+            }
+    
+            // indikator strategis pengembangan diri
+            if ($data->nilai_indikator_spd >= 1 && $data->nilai_indikator_spd <= 29) {
+                $standard_spd = 1;
+                $kualifikasi_spd = 'SK';
+            } else if ($data->nilai_indikator_spd >= 30 && $data->nilai_indikator_spd <= 31) {
+                $standard_spd = 2;
+                $kualifikasi_spd = 'K';
+            } else if ($data->nilai_indikator_spd == 32) {
+                $standard_spd = 3;
+                $kualifikasi_spd = 'C';
+            } else if ($data->nilai_indikator_spd >= 33 && $data->nilai_indikator_spd <= 34) {
+                $standard_spd = 4;
+                $kualifikasi_spd = 'B';
+            } else if ($data->nilai_indikator_spd >= 35) {
+                $standard_spd = 5;
+                $kualifikasi_spd = 'SB';
+            }
+    
+            // indikator evaluasi diri dan hasil kerja
+            if ($data->nilai_indikator_ed >= 1 && $data->nilai_indikator_ed <= 46) {
+                $standard_ed = 1;
+                $kualifikasi_ed = 'SK';
+            } else if ($data->nilai_indikator_ed >= 47 && $data->nilai_indikator_ed <= 48) {
+                $standard_ed = 2;
+                $kualifikasi_ed = 'K';
+            } else if ($data->nilai_indikator_ed >= 49 && $data->nilai_indikator_ed <= 50) {
+                $standard_ed = 3;
+                $kualifikasi_ed = 'C';
+            } else if ($data->nilai_indikator_ed >= 51 && $data->nilai_indikator_ed <= 52) {
+                $standard_ed = 4;
+                $kualifikasi_ed = 'B';
+            } else if ($data->nilai_indikator_ed >= 53) {
+                $standard_ed = 5;
+                $kualifikasi_ed = 'SB';
+            }
+    
+            $indikator = RefPengembanganDiri::get(['indikator_nama', 'indikator_nomor']);
+    
+            $skor = new HasilPengembanganDiri();
+            $skor->event_id = Auth::guard('peserta')->user()->event_id;
+            $skor->peserta_id = Auth::guard('peserta')->user()->id;
+            $skor->ujian_id = $data->id;
+            $nilai = [];
+            foreach ($indikator as $value) {
+                if ($value->indikator_nomor == 1) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_mb,
+                        'standard' => $standard_mb ?? '',
+                        'kualifikasi' => $kualifikasi_mb ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 2) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_mit,
+                        'standard' => $standard_mit ?? '',
+                        'kualifikasi' => $kualifikasi_mit ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 3) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_pde,
+                        'standard' => $standard_pde ?? '',
+                        'kualifikasi' => $kualifikasi_pde ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 4) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_spd,
+                        'standard' => $standard_spd ?? '',
+                        'kualifikasi' => $kualifikasi_spd ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 5) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_ed,
+                        'standard' => $standard_ed ?? '',
+                        'kualifikasi' => $kualifikasi_ed ?? ''
+                    ];
+                }
+            }
+    
+            // $skor->nilai = $nilai;
+    
+            $skor_total = $data->nilai_indikator_mb + $data->nilai_indikator_mit + $data->nilai_indikator_pde + $data->nilai_indikator_spd + $data->nilai_indikator_ed;
+            // $skor->skor_total = $skor_total;
+            if ($skor_total <= 120) {
+                $level_total = 1;
+                $kualifikasi_total = 'Sangat Kurang';
+            } else if ($skor_total >= 121 && $skor_total <= 124) {
+                $level_total = 2;
+                $kualifikasi_total = 'Kurang';
+            } else if ($skor_total >= 125 && $skor_total <= 127) {
+                $level_total = 3;
+                $kualifikasi_total = 'Cukup';
+            } else if ($skor_total >= 128 && $skor_total <= 131) {
+                $level_total = 4;
+                $kualifikasi_total = 'Baik';
+            } else if ($skor_total >= 132) {
+                $level_total = 5;
+                $kualifikasi_total = 'Sangat Baik';
+            }
+    
+            // $skor->level_total = $level_total;
+            // $skor->kualifikasi_total = $kualifikasi_total;
 
-        $skor->nilai = $nilai;
-
-        $skor_total = $data->nilai_indikator_mb + $data->nilai_indikator_mit + $data->nilai_indikator_pde + $data->nilai_indikator_spd + $data->nilai_indikator_ed;
-        $skor->skor_total = $skor_total;
-        if ($skor_total <= 120) {
-            $level_total = 1;
-            $kualifikasi_total = 'Sangat Kurang';
-        } else if ($skor_total >= 121 && $skor_total <= 124) {
-            $level_total = 2;
-            $kualifikasi_total = 'Kurang';
-        } else if ($skor_total >= 125 && $skor_total <= 127) {
-            $level_total = 3;
-            $kualifikasi_total = 'Cukup';
-        } else if ($skor_total >= 128 && $skor_total <= 131) {
-            $level_total = 4;
-            $kualifikasi_total = 'Baik';
-        } else if ($skor_total >= 132) {
-            $level_total = 5;
-            $kualifikasi_total = 'Sangat Baik';
-        }
-
-        $skor->level_total = $level_total;
-        $skor->kualifikasi_total = $kualifikasi_total;
-
-        $priority = ['SB', 'B', 'C', 'K', 'SK'];
-
-        // menyortir data berdasarkan urutan kualifikasi
-        usort($nilai, function ($a, $b) use ($priority) {
-            $posA = array_search($a['kualifikasi'], $priority);
-            $posB = array_search($b['kualifikasi'], $priority);
-            return $posA - $posB;
-        });
-
-        // Ambil kualifikasi tertinggi pertama
-        $top_kualifikasi = $nilai[0]['kualifikasi'];
-
-        // Ambil semua data dengan kualifikasi tertinggi
-        $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
-            return $item['kualifikasi'] === $top_kualifikasi;
-        });
-
-        // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
-        if (count($top_data) < 2) {
-            $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
-            $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
-                return $item['kualifikasi'] === $next_kualifikasi;
+            $skor = HasilPengembanganDiri::updateOrCreate(
+                [
+                    'event_id' => Auth::guard('peserta')->user()->event_id,
+                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'ujian_id' => $data->id,
+                ],
+                [
+                    'nilai' => $nilai,
+                    'skor_total' => $skor_total,
+                    'level_total' => $level_total,
+                    'kualifikasi_total' => $kualifikasi_total
+                ]
+            );
+    
+            $priority = ['SB', 'B', 'C', 'K', 'SK'];
+    
+            // menyortir data berdasarkan urutan kualifikasi
+            usort($nilai, function ($a, $b) use ($priority) {
+                $posA = array_search($a['kualifikasi'], $priority);
+                $posB = array_search($b['kualifikasi'], $priority);
+                return $posA - $posB;
             });
-            $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
+    
+            // Ambil kualifikasi tertinggi pertama
+            $top_kualifikasi = $nilai[0]['kualifikasi'];
+    
+            // Ambil semua data dengan kualifikasi tertinggi
+            $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
+                return $item['kualifikasi'] === $top_kualifikasi;
+            });
+    
+            // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
+            if (count($top_data) < 2) {
+                $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
+                $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
+                    return $item['kualifikasi'] === $next_kualifikasi;
+                });
+                $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
+            }
+    
+            // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
+            $indikator_nama = array_column($top_data, 'indikator');
+            $indikator_nomor = array_column($top_data, 'ranking');
+            $kualifikasi_array = array_column($top_data, 'kualifikasi');
+    
+            // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
+            $data_kualifikasi_1 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[0])->first();
+            $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
+            $data_kualifikasi_2 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[1])->first();
+            $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
+    
+            $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
+            $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
+            $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
+            $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
+    
+            // $skor->indikator_potensi_1 = $indikator_nama[0];
+            // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
+            // $skor->indikator_potensi_2 = $indikator_nama[1];
+            // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
+            // $skor->save();
+
+            $skor->update([
+                'indikator_potensi_1' => $indikator_nama[0],
+                'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
+                'indikator_potensi_2' => $indikator_nama[1],
+                'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
+            ]);
+    
+            // change status ujian to true (finish)
+            $data->is_finished = true;
+            $data->save();
+
+            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
+            if ($current_sequence_test) {
+                if ($current_sequence_test->urutan !== 7) {
+                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                    session(['current_test' => $next_test->alat_tes_id]);
+                    $this->startTest($next_test->alatTes->alat_tes);
+                } else {
+                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+                }
+            }
+    
+            // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
+        } catch (\Throwable $th) {
+            // throw $th;
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Terjadi kesalahan'
+            ]);
         }
-
-        // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
-        $indikator_nama = array_column($top_data, 'indikator');
-        $indikator_nomor = array_column($top_data, 'ranking');
-        $kualifikasi_array = array_column($top_data, 'kualifikasi');
-
-        // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
-        $data_kualifikasi_1 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[0])->first();
-        $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
-        $data_kualifikasi_2 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[1])->first();
-        $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
-
-        $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
-        $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
-        $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
-        $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
-
-        $skor->indikator_potensi_1 = $indikator_nama[0];
-        $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
-        $skor->indikator_potensi_2 = $indikator_nama[1];
-        $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
-        $skor->save();
-
-        // change status ujian to true (finish)
-        $data->is_finished = true;
-        $data->save();
-
-        return $this->redirect(route('peserta.tes-potensi'), navigate: true);
     }
 
     private function _getKualifikasi($value)

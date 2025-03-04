@@ -8,6 +8,8 @@ use App\Models\BerpikirKritis\RefIndikatorBerpikirKritis;
 use App\Models\BerpikirKritis\SoalBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Settings;
+use App\Models\SettingWaktuTes;
+use App\Traits\StartTestTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,6 +17,8 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Berpikir Kritis dan Strategis'])]
 class BerpikirKritis extends Component
 {
+    use StartTestTrait;
+
     public $soal;
     public $jml_soal;
     public $id_soal;
@@ -32,8 +36,15 @@ class BerpikirKritis extends Component
         $data = UjianBerpikirKritis::select('id', 'soal_id', 'jawaban', 'created_at')
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('is_finished', 'false')
             ->first();
+
+        if ($data->is_finished == 'true') {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah menyelesaikan tes ini.'
+            ]);
+            return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+        }
 
         $this->nomor_soal = explode(',', $data->soal_id);
         $this->jawaban_user = explode(',', $data->jawaban);
@@ -42,7 +53,7 @@ class BerpikirKritis extends Component
         $this->id_ujian = $data->id;
         $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = Settings::where('alat_tes_id', 4)->first(['waktu']);
+        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
         $this->durasi_tes = $durasi_tes->waktu;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
@@ -151,205 +162,244 @@ class BerpikirKritis extends Component
 
     public function finish()
     {
-        $data = UjianBerpikirKritis::findOrFail($this->id_ujian);
-        $indikator = RefIndikatorBerpikirKritis::get(['indikator_nama', 'indikator_nomor']);
-
-        $skor = new HasilBerpikirKritis();
-        $skor->event_id = Auth::guard('peserta')->user()->event_id;
-        $skor->peserta_id = Auth::guard('peserta')->user()->id;
-        $skor->ujian_id = $data->id;
-        $nilai = [];
-        foreach ($indikator as $value) {
-            if ($value->indikator_nomor == 1) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_1,
-                ];
-            } else if ($value->indikator_nomor == 2) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_2,
-                ];
-            } else if ($value->indikator_nomor == 3) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_3,
-                ];
-            } else if ($value->indikator_nomor == 4) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_4,
-                ];
-            } else if ($value->indikator_nomor == 5) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_5,
-                ];
-            } else if ($value->indikator_nomor == 6) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_6,
-                ];
-            } else if ($value->indikator_nomor == 7) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_7,
-                ];
-            } else if ($value->indikator_nomor == 8) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'no_indikator' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_8,
-                ];
-            }
-        }
-
-        $skor->nilai = $nilai;
-
-        $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
-        
-        if (($skor_total == 0) || ($skor_total >= 13 && $skor_total <= 28)) {
-            $level_total = '1';
-            $kualifikasi_total = 'Sangat Kurang';
-            $kategori_total = 'Rendah';
-        } else if ($skor_total >= 39 && $skor_total <= 46) {
-            $level_total = '2';
-            $kualifikasi_total = 'Kurang';
-            $kategori_total = 'Rendah';
-        } else if ($skor_total >= 47 && $skor_total <= 48) {
-            $level_total = '3-';
-            $kualifikasi_total = 'Cukup';
-            $kategori_total = 'Sedang';
-        } else if ($skor_total >= 49 && $skor_total <= 50) {
-            $level_total = '3';
-            $kualifikasi_total = 'Cukup';
-            $kategori_total = 'Sedang';
-        } else if ($skor_total >= 51 && $skor_total <= 52) {
-            $level_total = '3+';
-            $kualifikasi_total = 'Cukup';
-            $kategori_total = 'Sedang';
-        } else if ($skor_total >= 53 && $skor_total <= 60) {
-            $level_total = '4';
-            $kualifikasi_total = 'Baik';
-            $kategori_total = 'Tinggi';
-        } else if ($skor_total >= 61 && $skor_total <= 65) {
-            $level_total = '5';
-            $kualifikasi_total = 'Sangat Baik';
-            $kategori_total = 'Tinggi';
-        }
-
-        $skor->level_total = $level_total;
-        $skor->kualifikasi_total = $kualifikasi_total;
-        $skor->kategori_total = $kategori_total;
-        $skor->skor_total = $skor_total;
-
-        if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
-            $level_norma_umum = '3';
-        } else {
-            $level_norma_umum = $level_total;
-        }
-
-        $aspek = RefAspekBerpikirKritis::where('aspek_nomor', $level_norma_umum)->first();
-        $indikator_nomor = explode(',', $aspek->indikator_nomor);
-        $deskripsi_list = [];
-        foreach ($indikator_nomor as $indikator) {
-            $kualifikasi_deskripsi = RefIndikatorBerpikirKritis::where('indikator_nomor', $indikator)->value('kualifikasi_deskripsi');
-            $deskripsi_data = collect($kualifikasi_deskripsi);
-
-            $nilai_indikator = $data->{'nilai_indikator_' . $indikator} ?? null;
-            if (is_null($nilai_indikator)) {
-                continue;
-            }
-
-            if ($indikator == 1) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator == 4) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator == 5) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 2) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 6 && $nilai_indikator <= 8) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 3) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator == 10) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 4) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 5) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 6) {
-                if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator == 10) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 7) {
-                if ($nilai_indikator == 1) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 2 && $nilai_indikator <= 3) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator >= 4 && $nilai_indikator <= 5) {
-                    $kategori = 'Tinggi';
-                }
-            } else if ($indikator == 8) {
-                if ($nilai_indikator == 1) {
-                    $kategori = 'Rendah';
-                } else if ($nilai_indikator >= 2 && $nilai_indikator <= 4) {
-                    $kategori = 'Sedang';
-                } else if ($nilai_indikator == 5) {
-                    $kategori = 'Tinggi';
+        try {
+            $data = UjianBerpikirKritis::findOrFail($this->id_ujian);
+            $indikator = RefIndikatorBerpikirKritis::get(['indikator_nama', 'indikator_nomor']);
+    
+            // $skor = new HasilBerpikirKritis();
+            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
+            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
+            // $skor->ujian_id = $data->id;
+            $nilai = [];
+            foreach ($indikator as $value) {
+                if ($value->indikator_nomor == 1) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_1,
+                    ];
+                } else if ($value->indikator_nomor == 2) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_2,
+                    ];
+                } else if ($value->indikator_nomor == 3) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_3,
+                    ];
+                } else if ($value->indikator_nomor == 4) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_4,
+                    ];
+                } else if ($value->indikator_nomor == 5) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_5,
+                    ];
+                } else if ($value->indikator_nomor == 6) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_6,
+                    ];
+                } else if ($value->indikator_nomor == 7) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_7,
+                    ];
+                } else if ($value->indikator_nomor == 8) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_8,
+                    ];
                 }
             }
+    
+            // $skor->nilai = $nilai;
+    
+            $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
+            
+            if (($skor_total == 0) || ($skor_total >= 13 && $skor_total <= 28)) {
+                $level_total = '1';
+                $kualifikasi_total = 'Sangat Kurang';
+                $kategori_total = 'Rendah';
+            } else if ($skor_total >= 39 && $skor_total <= 46) {
+                $level_total = '2';
+                $kualifikasi_total = 'Kurang';
+                $kategori_total = 'Rendah';
+            } else if ($skor_total >= 47 && $skor_total <= 48) {
+                $level_total = '3-';
+                $kualifikasi_total = 'Cukup';
+                $kategori_total = 'Sedang';
+            } else if ($skor_total >= 49 && $skor_total <= 50) {
+                $level_total = '3';
+                $kualifikasi_total = 'Cukup';
+                $kategori_total = 'Sedang';
+            } else if ($skor_total >= 51 && $skor_total <= 52) {
+                $level_total = '3+';
+                $kualifikasi_total = 'Cukup';
+                $kategori_total = 'Sedang';
+            } else if ($skor_total >= 53 && $skor_total <= 60) {
+                $level_total = '4';
+                $kualifikasi_total = 'Baik';
+                $kategori_total = 'Tinggi';
+            } else if ($skor_total >= 61 && $skor_total <= 65) {
+                $level_total = '5';
+                $kualifikasi_total = 'Sangat Baik';
+                $kategori_total = 'Tinggi';
+            }
+    
+            // $skor->level_total = $level_total;
+            // $skor->kualifikasi_total = $kualifikasi_total;
+            // $skor->kategori_total = $kategori_total;
+            // $skor->skor_total = $skor_total;
 
-            if ($kategori) {
-                $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori)['deskripsi'] ?? null;
-                if ($deskripsi) {
-                    $deskripsi_list[] = $deskripsi;
+            $skor = HasilBerpikirKritis::updateOrCreate(
+                [
+                    'event_id' => Auth::guard('peserta')->user()->event_id,
+                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'ujian_id' => $data->id,
+                ],
+                [
+                    'nilai' => $nilai,
+                    'skor_total' => $skor_total,
+                    'level_total' => $level_total,
+                    'kualifikasi_total' => $kualifikasi_total,
+                    'kategori_total' => $kategori_total,
+                ]
+            );
+    
+            if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
+                $level_norma_umum = '3';
+            } else {
+                $level_norma_umum = $level_total;
+            }
+    
+            $aspek = RefAspekBerpikirKritis::where('aspek_nomor', $level_norma_umum)->first();
+            $indikator_nomor = explode(',', $aspek->indikator_nomor);
+            $deskripsi_list = [];
+            foreach ($indikator_nomor as $indikator) {
+                $kualifikasi_deskripsi = RefIndikatorBerpikirKritis::where('indikator_nomor', $indikator)->value('kualifikasi_deskripsi');
+                $deskripsi_data = collect($kualifikasi_deskripsi);
+    
+                $nilai_indikator = $data->{'nilai_indikator_' . $indikator} ?? null;
+                if (is_null($nilai_indikator)) {
+                    continue;
+                }
+    
+                if ($indikator == 1) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator == 4) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator == 5) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 2) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 6 && $nilai_indikator <= 8) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 3) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator == 10) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 4) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 5) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 6) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator == 10) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 7) {
+                    if ($nilai_indikator == 1) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 2 && $nilai_indikator <= 3) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator >= 4 && $nilai_indikator <= 5) {
+                        $kategori = 'Tinggi';
+                    }
+                } else if ($indikator == 8) {
+                    if ($nilai_indikator == 1) {
+                        $kategori = 'Rendah';
+                    } else if ($nilai_indikator >= 2 && $nilai_indikator <= 4) {
+                        $kategori = 'Sedang';
+                    } else if ($nilai_indikator == 5) {
+                        $kategori = 'Tinggi';
+                    }
+                }
+    
+                if ($kategori) {
+                    $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori)['deskripsi'] ?? null;
+                    if ($deskripsi) {
+                        $deskripsi_list[] = $deskripsi;
+                    }
                 }
             }
+    
+            // $skor->uraian_potensi_1 = $deskripsi_list[0] ?? null;
+            // $skor->uraian_potensi_2 = $deskripsi_list[1] ?? null;
+            // $skor->save();
+
+            $skor->update([
+                'uraian_potensi_1' => $deskripsi_list[0] ?? null,
+                'uraian_potensi_2' => $deskripsi_list[1] ?? null,
+            ]);
+    
+            // change status ujian to true (finish)
+            $data->is_finished = true;
+            $data->save();
+
+            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
+            if ($current_sequence_test) {
+                if ($current_sequence_test->urutan !== 7) {
+                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                    session(['current_test' => $next_test->alat_tes_id]);
+                    $this->startTest($next_test->alatTes->alat_tes);
+                } else {
+                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+                }
+            }
+    
+            // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Terjadi kesalahan'
+            ]);
         }
-
-        $skor->uraian_potensi_1 = $deskripsi_list[0] ?? null;
-        $skor->uraian_potensi_2 = $deskripsi_list[1] ?? null;
-        $skor->save();
-
-        // change status ujian to true (finish)
-        $data->is_finished = true;
-        $data->save();
-
-        return $this->redirect(route('peserta.tes-potensi'), navigate: true);
     }
 }

@@ -23,22 +23,24 @@
                     </button>
                 </div>
                 <div class="col-2">
-                    <button class="btn btn-inverse-dark"
-                        x-data
-                        @click="Swal.fire({
-                            title: 'Apakah Anda yakin mengakhiri tes?',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Akhiri Tes!',
-                            cancelButtonText: 'Batal',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $wire.finish();
-                            }
-                        })"
-                    >
-                        Selesai
-                    </button>
+                    @if ($jawaban_kosong == 0)
+                        <button class="btn btn-inverse-dark"
+                            x-data
+                            @click="Swal.fire({
+                                title: 'Apakah Anda yakin mengakhiri tes?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Akhiri Tes!',
+                                cancelButtonText: 'Batal',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $wire.finish();
+                                }
+                            })"
+                        >
+                            Selesai
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>

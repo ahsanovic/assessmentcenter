@@ -7,6 +7,8 @@ use App\Models\KecerdasanEmosi\RefKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\Settings;
+use App\Models\SettingWaktuTes;
+use App\Traits\StartTestTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -14,6 +16,8 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Kecerdasan Emosi'])]
 class KecerdasanEmosi extends Component
 {
+    use StartTestTrait;
+
     public $soal;
     public $jml_soal;
     public $id_soal;
@@ -31,8 +35,15 @@ class KecerdasanEmosi extends Component
         $data = UjianKecerdasanEmosi::select('id', 'soal_id', 'jawaban', 'created_at')
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('is_finished', 'false')
             ->first();
+
+        if ($data->is_finished == 'true') {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah menyelesaikan tes ini.'
+            ]);
+            return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+        }
 
         $this->nomor_soal = explode(',', $data->soal_id);
         $this->jawaban_user = explode(',', $data->jawaban);
@@ -41,7 +52,7 @@ class KecerdasanEmosi extends Component
         $this->id_ujian = $data->id;
         $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = Settings::where('alat_tes_id', 4)->first(['waktu']);
+        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
         $this->durasi_tes = $durasi_tes->waktu;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
@@ -140,230 +151,268 @@ class KecerdasanEmosi extends Component
 
     public function finish()
     {
-        $data = UjianKecerdasanEmosi::findOrFail($this->id_ujian);
+        try {
+            $data = UjianKecerdasanEmosi::findOrFail($this->id_ujian);
 
-        // indikator kesadaran diri
-        if ($data->nilai_indikator_kd >= 1 && $data->nilai_indikator_kd <= 3) {
-            $standard_kd = '1';
-            $kualifikasi_kd = 'SK';
-        } else if ($data->nilai_indikator_kd == 4) {
-            $standard_kd = '2';
-            $kualifikasi_kd = 'K';
-        } else if ($data->nilai_indikator_kd == 5) {
-            $standard_kd = '3-';
-            $kualifikasi_kd = 'C-';
-        } else if ($data->nilai_indikator_kd == 6) {
-            $standard_kd = '3';
-            $kualifikasi_kd = 'C';
-        } else if ($data->nilai_indikator_kd == 7) {
-            $standard_kd = '3+';
-            $kualifikasi_kd = 'C+';
-        } else if ($data->nilai_indikator_kd >= 8 && $data->nilai_indikator_kd <= 9) {
-            $standard_kd = '4';
-            $kualifikasi_kd = 'B';
-        } else if ($data->nilai_indikator_kd >= 10) {
-            $standard_kd = '5';
-            $kualifikasi_kd = 'SB';
-        }
-
-        // indikator motivasi dan pengaturan diri
-        if ($data->nilai_indikator_mpd >= 1 && $data->nilai_indikator_mpd <= 5) {
-            $standard_mpd = '1';
-            $kualifikasi_mpd = 'SK';
-        } else if ($data->nilai_indikator_mpd >= 6 && $data->nilai_indikator_mpd <= 7) {
-            $standard_mpd = '2';
-            $kualifikasi_mpd = 'K';
-        } else if ($data->nilai_indikator_mpd == 8) {
-            $standard_mpd = '3-';
-            $kualifikasi_mpd = 'C-';
-        } else if ($data->nilai_indikator_mpd == 9) {
-            $standard_mpd = '3';
-            $kualifikasi_mpd = 'C';
-        } else if ($data->nilai_indikator_mpd == 10) {
-            $standard_mpd = '3+';
-            $kualifikasi_mpd = 'C+';
-        } else if ($data->nilai_indikator_mpd >= 11 && $data->nilai_indikator_mpd <= 12) {
-            $standard_mpd = '4';
-            $kualifikasi_mpd = 'B';
-        } else if ($data->nilai_indikator_mpd >= 13) {
-            $standard_mpd = '5';
-            $kualifikasi_mpd = 'SB';
-        }
-
-        // indikator kesadaran emosional
-        if ($data->nilai_indikator_ke >= 1 && $data->nilai_indikator_ke <= 3) {
-            $standard_ke = '1';
-            $kualifikasi_ke = 'SK';
-        } else if ($data->nilai_indikator_ke == 4) {
-            $standard_ke = '2';
-            $kualifikasi_ke = 'K';
-        } else if ($data->nilai_indikator_ke == 5) {
-            $standard_ke = '3-';
-            $kualifikasi_ke = 'C-';
-        } else if ($data->nilai_indikator_ke == 6) {
-            $standard_ke = '3';
-            $kualifikasi_ke = 'C';
-        } else if ($data->nilai_indikator_ke == 7) {
-            $standard_ke = '3+';
-            $kualifikasi_ke = 'C+';
-        } else if ($data->nilai_indikator_ke >= 8 && $data->nilai_indikator_ke <= 9) {
-            $standard_ke = '4';
-            $kualifikasi_ke = 'B';
-        } else if ($data->nilai_indikator_ke >= 10) {
-            $standard_ke = '5';
-            $kualifikasi_ke = 'SB';
-        }
-
-        // indikator ketrampilan sosial
-        if ($data->nilai_indikator_ks >= 1 && $data->nilai_indikator_ks <= 3) {
-            $standard_ks = '1';
-            $kualifikasi_ks = 'SK';
-        } else if ($data->nilai_indikator_ks >= 4 && $data->nilai_indikator_ks <= 5) {
-            $standard_ks = '2';
-            $kualifikasi_ks = 'K';
-        } else if ($data->nilai_indikator_ks == 6) {
-            $standard_ks = '3-';
-            $kualifikasi_ks = 'C-';
-        } else if ($data->nilai_indikator_ks == 7) {
-            $standard_ks = '3';
-            $kualifikasi_ks = 'C';
-        } else if ($data->nilai_indikator_ks == 8) {
-            $standard_ks = '3+';
-            $kualifikasi_ks = 'C+';
-        } else if ($data->nilai_indikator_ks >= 9 && $data->nilai_indikator_ks <= 10) {
-            $standard_ks = '4';
-            $kualifikasi_ks = 'B';
-        } else if ($data->nilai_indikator_ks >= 11) {
-            $standard_ks = '5';
-            $kualifikasi_ks = 'SB';
-        }
-
-        $indikator = RefKecerdasanEmosi::get(['indikator_nama', 'indikator_nomor']);
-
-        $skor = new HasilKecerdasanEmosi();
-        $skor->event_id = Auth::guard('peserta')->user()->event_id;
-        $skor->peserta_id = Auth::guard('peserta')->user()->id;
-        $skor->ujian_id = $data->id;
-        $nilai = [];
-        foreach ($indikator as $value) {
-            if ($value->indikator_nomor == 1) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_kd,
-                    'standard' => $standard_kd ?? '',
-                    'kualifikasi' => $kualifikasi_kd ?? ''
-                ];
-            } else if ($value->indikator_nomor == 2) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_mpd,
-                    'standard' => $standard_mpd ?? '',
-                    'kualifikasi' => $kualifikasi_mpd ?? ''
-                ];
-            } else if ($value->indikator_nomor == 3) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_ke,
-                    'standard' => $standard_ke ?? '',
-                    'kualifikasi' => $kualifikasi_ke ?? ''
-                ];
-            } else if ($value->indikator_nomor == 4) {
-                $nilai[] = [
-                    'indikator' => $value->indikator_nama,
-                    'ranking' => $value->indikator_nomor,
-                    'skor' => $data->nilai_indikator_ks,
-                    'standard' => $standard_ks ?? '',
-                    'kualifikasi' => $kualifikasi_ks ?? ''
-                ];
+            // indikator kesadaran diri
+            if ($data->nilai_indikator_kd >= 1 && $data->nilai_indikator_kd <= 3) {
+                $standard_kd = '1';
+                $kualifikasi_kd = 'SK';
+            } else if ($data->nilai_indikator_kd == 4) {
+                $standard_kd = '2';
+                $kualifikasi_kd = 'K';
+            } else if ($data->nilai_indikator_kd == 5) {
+                $standard_kd = '3-';
+                $kualifikasi_kd = 'C-';
+            } else if ($data->nilai_indikator_kd == 6) {
+                $standard_kd = '3';
+                $kualifikasi_kd = 'C';
+            } else if ($data->nilai_indikator_kd == 7) {
+                $standard_kd = '3+';
+                $kualifikasi_kd = 'C+';
+            } else if ($data->nilai_indikator_kd >= 8 && $data->nilai_indikator_kd <= 9) {
+                $standard_kd = '4';
+                $kualifikasi_kd = 'B';
+            } else if ($data->nilai_indikator_kd >= 10) {
+                $standard_kd = '5';
+                $kualifikasi_kd = 'SB';
             }
-        }
 
-        $skor->nilai = $nilai;
+            // indikator motivasi dan pengaturan diri
+            if ($data->nilai_indikator_mpd >= 1 && $data->nilai_indikator_mpd <= 5) {
+                $standard_mpd = '1';
+                $kualifikasi_mpd = 'SK';
+            } else if ($data->nilai_indikator_mpd >= 6 && $data->nilai_indikator_mpd <= 7) {
+                $standard_mpd = '2';
+                $kualifikasi_mpd = 'K';
+            } else if ($data->nilai_indikator_mpd == 8) {
+                $standard_mpd = '3-';
+                $kualifikasi_mpd = 'C-';
+            } else if ($data->nilai_indikator_mpd == 9) {
+                $standard_mpd = '3';
+                $kualifikasi_mpd = 'C';
+            } else if ($data->nilai_indikator_mpd == 10) {
+                $standard_mpd = '3+';
+                $kualifikasi_mpd = 'C+';
+            } else if ($data->nilai_indikator_mpd >= 11 && $data->nilai_indikator_mpd <= 12) {
+                $standard_mpd = '4';
+                $kualifikasi_mpd = 'B';
+            } else if ($data->nilai_indikator_mpd >= 13) {
+                $standard_mpd = '5';
+                $kualifikasi_mpd = 'SB';
+            }
 
-        $skor_total = $data->nilai_indikator_kd + $data->nilai_indikator_mpd + $data->nilai_indikator_ke + $data->nilai_indikator_ks;
-        $skor->skor_total = $skor_total;
-        if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 23)) {
-            $level_total = '1';
-            $kualifikasi_total = 'Sangat Kurang';
-        } else if ($skor_total >= 24 && $skor_total <= 25) {
-            $level_total = '2';
-            $kualifikasi_total = 'Kurang';
-        } else if ($skor_total >= 26 && $skor_total <= 27) {
-            $level_total = '3-';
-            $kualifikasi_total = 'Cukup';
-        } else if ($skor_total >= 28 && $skor_total <= 29) {
-            $level_total = '3';
-            $kualifikasi_total = 'Cukup';
-        } else if ($skor_total >= 30 && $skor_total <= 31) {
-            $level_total = '3+';
-            $kualifikasi_total = 'Cukup';
-        } else if ($skor_total >= 32 && $skor_total <= 35) {
-            $level_total = '4';
-            $kualifikasi_total = 'Baik';
-        } else if ($skor_total >= 36) {
-            $level_total = '5';
-            $kualifikasi_total = 'Sangat Baik';
-        }
+            // indikator kesadaran emosional
+            if ($data->nilai_indikator_ke >= 1 && $data->nilai_indikator_ke <= 3) {
+                $standard_ke = '1';
+                $kualifikasi_ke = 'SK';
+            } else if ($data->nilai_indikator_ke == 4) {
+                $standard_ke = '2';
+                $kualifikasi_ke = 'K';
+            } else if ($data->nilai_indikator_ke == 5) {
+                $standard_ke = '3-';
+                $kualifikasi_ke = 'C-';
+            } else if ($data->nilai_indikator_ke == 6) {
+                $standard_ke = '3';
+                $kualifikasi_ke = 'C';
+            } else if ($data->nilai_indikator_ke == 7) {
+                $standard_ke = '3+';
+                $kualifikasi_ke = 'C+';
+            } else if ($data->nilai_indikator_ke >= 8 && $data->nilai_indikator_ke <= 9) {
+                $standard_ke = '4';
+                $kualifikasi_ke = 'B';
+            } else if ($data->nilai_indikator_ke >= 10) {
+                $standard_ke = '5';
+                $kualifikasi_ke = 'SB';
+            }
 
-        $skor->level_total = $level_total;
-        $skor->kualifikasi_total = $kualifikasi_total;
+            // indikator ketrampilan sosial
+            if ($data->nilai_indikator_ks >= 1 && $data->nilai_indikator_ks <= 3) {
+                $standard_ks = '1';
+                $kualifikasi_ks = 'SK';
+            } else if ($data->nilai_indikator_ks >= 4 && $data->nilai_indikator_ks <= 5) {
+                $standard_ks = '2';
+                $kualifikasi_ks = 'K';
+            } else if ($data->nilai_indikator_ks == 6) {
+                $standard_ks = '3-';
+                $kualifikasi_ks = 'C-';
+            } else if ($data->nilai_indikator_ks == 7) {
+                $standard_ks = '3';
+                $kualifikasi_ks = 'C';
+            } else if ($data->nilai_indikator_ks == 8) {
+                $standard_ks = '3+';
+                $kualifikasi_ks = 'C+';
+            } else if ($data->nilai_indikator_ks >= 9 && $data->nilai_indikator_ks <= 10) {
+                $standard_ks = '4';
+                $kualifikasi_ks = 'B';
+            } else if ($data->nilai_indikator_ks >= 11) {
+                $standard_ks = '5';
+                $kualifikasi_ks = 'SB';
+            }
 
-        $priority = ['SB', 'B', 'C+', 'C', 'C-', 'K', 'SK'];
+            $indikator = RefKecerdasanEmosi::get(['indikator_nama', 'indikator_nomor']);
 
-        // menyortir data berdasarkan urutan kualifikasi
-        usort($nilai, function ($a, $b) use ($priority) {
-            $posA = array_search($a['kualifikasi'], $priority);
-            $posB = array_search($b['kualifikasi'], $priority);
-            return $posA - $posB;
-        });
+            // $skor = new HasilKecerdasanEmosi();
+            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
+            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
+            // $skor->ujian_id = $data->id;
+            $nilai = [];
+            foreach ($indikator as $value) {
+                if ($value->indikator_nomor == 1) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_kd,
+                        'standard' => $standard_kd ?? '',
+                        'kualifikasi' => $kualifikasi_kd ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 2) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_mpd,
+                        'standard' => $standard_mpd ?? '',
+                        'kualifikasi' => $kualifikasi_mpd ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 3) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_ke,
+                        'standard' => $standard_ke ?? '',
+                        'kualifikasi' => $kualifikasi_ke ?? ''
+                    ];
+                } else if ($value->indikator_nomor == 4) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'ranking' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_ks,
+                        'standard' => $standard_ks ?? '',
+                        'kualifikasi' => $kualifikasi_ks ?? ''
+                    ];
+                }
+            }
 
-        // Ambil kualifikasi tertinggi pertama
-        $top_kualifikasi = $nilai[0]['kualifikasi'];
+            // $skor->nilai = $nilai;
 
-        // Ambil semua data dengan kualifikasi tertinggi
-        $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
-            return $item['kualifikasi'] === $top_kualifikasi;
-        });
+            $skor_total = $data->nilai_indikator_kd + $data->nilai_indikator_mpd + $data->nilai_indikator_ke + $data->nilai_indikator_ks;
+            // $skor->skor_total = $skor_total;
+            if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 23)) {
+                $level_total = '1';
+                $kualifikasi_total = 'Sangat Kurang';
+            } else if ($skor_total >= 24 && $skor_total <= 25) {
+                $level_total = '2';
+                $kualifikasi_total = 'Kurang';
+            } else if ($skor_total >= 26 && $skor_total <= 27) {
+                $level_total = '3-';
+                $kualifikasi_total = 'Cukup';
+            } else if ($skor_total >= 28 && $skor_total <= 29) {
+                $level_total = '3';
+                $kualifikasi_total = 'Cukup';
+            } else if ($skor_total >= 30 && $skor_total <= 31) {
+                $level_total = '3+';
+                $kualifikasi_total = 'Cukup';
+            } else if ($skor_total >= 32 && $skor_total <= 35) {
+                $level_total = '4';
+                $kualifikasi_total = 'Baik';
+            } else if ($skor_total >= 36) {
+                $level_total = '5';
+                $kualifikasi_total = 'Sangat Baik';
+            }
 
-        // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
-        if (count($top_data) < 2) {
-            $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
-            $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
-                return $item['kualifikasi'] === $next_kualifikasi;
+            // $skor->level_total = $level_total;
+            // $skor->kualifikasi_total = $kualifikasi_total;
+
+            $skor = HasilKecerdasanEmosi::updateOrCreate(
+                [
+                    'event_id' => Auth::guard('peserta')->user()->event_id,
+                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'ujian_id' => $data->id,
+                ],
+                [
+                    'nilai' => $nilai,
+                    'skor_total' => $skor_total,
+                    'level_total' => $level_total,
+                    'kualifikasi_total' => $kualifikasi_total
+                ]
+            );
+
+            $priority = ['SB', 'B', 'C+', 'C', 'C-', 'K', 'SK'];
+
+            // menyortir data berdasarkan urutan kualifikasi
+            usort($nilai, function ($a, $b) use ($priority) {
+                $posA = array_search($a['kualifikasi'], $priority);
+                $posB = array_search($b['kualifikasi'], $priority);
+                return $posA - $posB;
             });
-            $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
+
+            // Ambil kualifikasi tertinggi pertama
+            $top_kualifikasi = $nilai[0]['kualifikasi'];
+
+            // Ambil semua data dengan kualifikasi tertinggi
+            $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
+                return $item['kualifikasi'] === $top_kualifikasi;
+            });
+
+            // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
+            if (count($top_data) < 2) {
+                $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
+                $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
+                    return $item['kualifikasi'] === $next_kualifikasi;
+                });
+                $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
+            }
+
+            // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
+            $indikator_nama = array_column($top_data, 'indikator');
+            $indikator_nomor = array_column($top_data, 'ranking');
+            $kualifikasi_array = array_column($top_data, 'kualifikasi');
+
+            // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
+            $data_kualifikasi_1 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[0])->first();
+            $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
+            $data_kualifikasi_2 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[1])->first();
+            $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
+
+            $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
+            $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
+            $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
+            $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
+
+            // $skor->indikator_potensi_1 = $indikator_nama[0];
+            // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
+            // $skor->indikator_potensi_2 = $indikator_nama[1];
+            // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
+            // $skor->save();
+            $skor->update([
+                'indikator_potensi_1' => $indikator_nama[0],
+                'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
+                'indikator_potensi_2' => $indikator_nama[1],
+                'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
+            ]);
+
+            // change status ujian to true (finish)
+            $data->is_finished = true;
+            $data->save();
+
+            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
+            if ($current_sequence_test) {
+                if ($current_sequence_test->urutan !== 7) {
+                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                    session(['current_test' => $next_test->alat_tes_id]);
+                    $this->startTest($next_test->alatTes->alat_tes);
+                } else {
+                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+                }
+            }
+        } catch (\Throwable $th) {
+            // throw $th;
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Terjadi kesalahan'
+            ]);
         }
-
-        // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
-        $indikator_nama = array_column($top_data, 'indikator');
-        $indikator_nomor = array_column($top_data, 'ranking');
-        $kualifikasi_array = array_column($top_data, 'kualifikasi');
-
-        // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
-        $data_kualifikasi_1 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[0])->first();
-        $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
-        $data_kualifikasi_2 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[1])->first();
-        $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
-
-        $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
-        $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
-        $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
-        $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
-
-        $skor->indikator_potensi_1 = $indikator_nama[0];
-        $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
-        $skor->indikator_potensi_2 = $indikator_nama[1];
-        $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
-        $skor->save();
-
-        // change status ujian to true (finish)
-        $data->is_finished = true;
-        $data->save();
-
-        return $this->redirect(route('peserta.tes-potensi'), navigate: true);
+        
     }
 
     private function _getKualifikasi($value)
@@ -375,7 +424,13 @@ class KecerdasanEmosi extends Component
             case 'B':
                 $kualifikasi = 'Baik';
                 break;
+            case 'C+':
+                $kualifikasi = 'Cukup';
+                break;
             case 'C':
+                $kualifikasi = 'Cukup';
+                break;
+            case 'C-':
                 $kualifikasi = 'Cukup';
                 break;
             case 'K':
