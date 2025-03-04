@@ -15,10 +15,13 @@
                                     <th>#</th>
                                     <th>Nama Event</th>
                                     <th>Jumlah Peserta</th>
-                                    <th>Tes Interpersonal</th>
-                                    <th>Tes Pengembangan Diri</th>
-                                    <th>Tes Kecerdasan Emosi</th>
-                                    <th>Tes Motivasi & Komitmen</th>
+                                    <th>Interpersonal</th>
+                                    <th>Kesadaran Diri</th>
+                                    <th>Berpikir Kritis dan Strategis</th>
+                                    <th>Problem Solving</th>
+                                    <th>Kecerdasan Emosi</th>
+                                    <th>Pengembangan Diri</th>
+                                    <th>Motivasi Komitmen</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,14 +38,32 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-warning" wire:navigate
-                                                href="{{ route('admin.tes-berlangsung.show-peserta-pengembangan-diri', ['idEvent' => $item->id]) }}">
-                                                    {{ $item->ujian_pengembangan_diri_count }} orang
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-kesadaran-diri', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_kesadaran_diri_count }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-berpikir-kritis', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_berpikir_kritis_count }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-problem-solving', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_problem_solving_count }} orang
                                             </a>
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-warning" wire:navigate
                                                 href="{{ route('admin.tes-berlangsung.show-peserta-kecerdasan-emosi', ['idEvent' => $item->id]) }}">
                                                     {{ $item->ujian_kecerdasan_emosi_count }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-berlangsung.show-peserta-pengembangan-diri', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->ujian_pengembangan_diri_count }} orang
                                             </a>
                                         </td>
                                         <td>

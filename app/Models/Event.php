@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Models\BerpikirKritis\HasilBerpikirKritis;
+use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\HasilKesadaranDiri;
+use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\HasilProblemSolving;
+use App\Models\ProblemSolving\UjianProblemSolving;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
@@ -92,28 +95,73 @@ class Event extends Model
         return $this->ujianInterpersonal()->select('peserta_id')->distinct();
     }
 
-
-    // ujian pengembangan diri
-    public function ujianPengembanganDiri()
+    // ujian kesadaran diri
+    public function ujianKesadaranDiri()
     {
-        return $this->hasMany(UjianPengembanganDiri::class, 'event_id', 'id');
+        return $this->hasMany(UjianKesadaranDiri::class, 'event_id', 'id');
     }
 
-    public function pesertaTesPengembanganDiri()
+    public function pesertaTesKesadaranDiri()
     {
         return $this->hasManyThrough(
             Peserta::class,               // Model target (Peserta)
-            UjianPengembanganDiri::class,    // Model perantara (UjianPengembanganDiri)
-            'event_id',                   // Foreign key di UjianPengembanganDiri
+            UjianKesadaranDiri::class,    // Model perantara (UjianKesadaranDiri)
+            'event_id',                   // Foreign key di UjianKesadaranDiri
             'id',                         // Foreign key di Peserta
             'id',                         // Local key di Event
-            'peserta_id'                  // Local key di UjianPengembanganDiri
+            'peserta_id'                  // Local key di UjianKesadaranDiri
         );
     }
 
-    public function pesertaIdTesPengembanganDiri()
+    public function pesertaIdTesKesadaranDiri()
     {
-        return $this->ujianPengembanganDiri()->select('peserta_id')->distinct();
+        return $this->ujianKesadaranDiri()->select('peserta_id')->distinct();
+    }
+
+    // ujian berpikir kritis dan strategis
+    public function ujianBerpikirKritis()
+    {
+        return $this->hasMany(UjianBerpikirKritis::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesBerpikirKritis()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianBerpikirKritis::class,    // Model perantara (UjianBerpikirKritis)
+            'event_id',                   // Foreign key di UjianBerpikirKritis
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianBerpikirKritis
+        );
+    }
+
+    public function pesertaIdTesBerpikirKritis()
+    {
+        return $this->ujianBerpikirKritis()->select('peserta_id')->distinct();
+    }
+
+    // ujian problem solving
+    public function ujianProblemSolving()
+    {
+        return $this->hasMany(UjianProblemSolving::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesProblemSolving()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianProblemSolving::class,    // Model perantara (UjianProblemSolving)
+            'event_id',                   // Foreign key di UjianProblemSolving
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianProblemSolving
+        );
+    }
+
+    public function pesertaIdTesProblemSolving()
+    {
+        return $this->ujianProblemSolving()->select('peserta_id')->distinct();
     }
 
     // ujian kecerdasan emosi
@@ -139,6 +187,29 @@ class Event extends Model
         return $this->ujianKecerdasanEmosi()->select('peserta_id')->distinct();
     }
 
+    // ujian pengembangan diri
+    public function ujianPengembanganDiri()
+    {
+        return $this->hasMany(UjianPengembanganDiri::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesPengembanganDiri()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianPengembanganDiri::class,    // Model perantara (UjianPengembanganDiri)
+            'event_id',                   // Foreign key di UjianPengembanganDiri
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianPengembanganDiri
+        );
+    }
+
+    public function pesertaIdTesPengembanganDiri()
+    {
+        return $this->ujianPengembanganDiri()->select('peserta_id')->distinct();
+    }
+
     // ujian motivasi dan komitmen
     public function ujianMotivasiKomitmen()
     {
@@ -162,6 +233,7 @@ class Event extends Model
         return $this->ujianMotivasiKomitmen()->select('peserta_id')->distinct();
     }
 
+    /* HASIL TES */
     // hasil berpikir kritis dan strategis
     public function hasilBerpikirKritis()
     {
