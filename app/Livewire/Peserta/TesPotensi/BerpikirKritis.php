@@ -8,8 +8,8 @@ use App\Models\BerpikirKritis\RefIndikatorBerpikirKritis;
 use App\Models\BerpikirKritis\SoalBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Settings;
-use App\Models\SettingWaktuTes;
 use App\Traits\StartTestTrait;
+use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -17,7 +17,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Berpikir Kritis dan Strategis'])]
 class BerpikirKritis extends Component
 {
-    use StartTestTrait;
+    use StartTestTrait, TimerTrait;
 
     public $soal;
     public $jml_soal;
@@ -27,7 +27,6 @@ class BerpikirKritis extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
-    public $durasi_tes;
 
     public function mount($id)
     {
@@ -51,10 +50,9 @@ class BerpikirKritis extends Component
         $this->soal = SoalBerpikirKritis::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalBerpikirKritis::count();
         $this->id_ujian = $data->id;
-        $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
-        $this->durasi_tes = $durasi_tes->waktu;
+        $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
+        $this->timerTest($first_sequence->alatTes->alat_tes);
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
@@ -165,7 +163,7 @@ class BerpikirKritis extends Component
         try {
             $data = UjianBerpikirKritis::findOrFail($this->id_ujian);
             $indikator = RefIndikatorBerpikirKritis::get(['indikator_nama', 'indikator_nomor']);
-    
+
             // $skor = new HasilBerpikirKritis();
             // $skor->event_id = Auth::guard('peserta')->user()->event_id;
             // $skor->peserta_id = Auth::guard('peserta')->user()->id;
@@ -222,11 +220,11 @@ class BerpikirKritis extends Component
                     ];
                 }
             }
-    
+
             // $skor->nilai = $nilai;
-    
+
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
-            
+
             if (($skor_total == 0) || ($skor_total >= 13 && $skor_total <= 28)) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
@@ -256,7 +254,7 @@ class BerpikirKritis extends Component
                 $kualifikasi_total = 'Sangat Baik';
                 $kategori_total = 'Tinggi';
             }
-    
+
             // $skor->level_total = $level_total;
             // $skor->kualifikasi_total = $kualifikasi_total;
             // $skor->kategori_total = $kategori_total;
@@ -276,25 +274,25 @@ class BerpikirKritis extends Component
                     'kategori_total' => $kategori_total,
                 ]
             );
-    
+
             if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
                 $level_norma_umum = '3';
             } else {
                 $level_norma_umum = $level_total;
             }
-    
+
             $aspek = RefAspekBerpikirKritis::where('aspek_nomor', $level_norma_umum)->first();
             $indikator_nomor = explode(',', $aspek->indikator_nomor);
             $deskripsi_list = [];
             foreach ($indikator_nomor as $indikator) {
                 $kualifikasi_deskripsi = RefIndikatorBerpikirKritis::where('indikator_nomor', $indikator)->value('kualifikasi_deskripsi');
                 $deskripsi_data = collect($kualifikasi_deskripsi);
-    
+
                 $nilai_indikator = $data->{'nilai_indikator_' . $indikator} ?? null;
                 if (is_null($nilai_indikator)) {
                     continue;
                 }
-    
+
                 if ($indikator == 1) {
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
                         $kategori = 'Rendah';
@@ -360,7 +358,7 @@ class BerpikirKritis extends Component
                         $kategori = 'Tinggi';
                     }
                 }
-    
+
                 if ($kategori) {
                     $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori)['deskripsi'] ?? null;
                     if ($deskripsi) {
@@ -368,7 +366,7 @@ class BerpikirKritis extends Component
                     }
                 }
             }
-    
+
             // $skor->uraian_potensi_1 = $deskripsi_list[0] ?? null;
             // $skor->uraian_potensi_2 = $deskripsi_list[1] ?? null;
             // $skor->save();
@@ -377,22 +375,19 @@ class BerpikirKritis extends Component
                 'uraian_potensi_1' => $deskripsi_list[0] ?? null,
                 'uraian_potensi_2' => $deskripsi_list[1] ?? null,
             ]);
-    
+
             // change status ujian to true (finish)
             $data->is_finished = true;
             $data->save();
 
-            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
-            if ($current_sequence_test) {
-                if ($current_sequence_test->urutan !== 7) {
-                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
-                    session(['current_test' => $next_test->alat_tes_id]);
-                    $this->startTest($next_test->alatTes->alat_tes);
-                } else {
-                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
-                }
+            $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
+            if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
+                $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else {
+                return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
-    
+
             // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
             //throw $th;

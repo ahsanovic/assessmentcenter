@@ -9,6 +9,7 @@ class UjianInterpersonal extends Model
 {
     protected $table = 'ujian_interpersonal';
     protected $guarded = ['id'];
+    protected $casts = ['waktu_tes_berakhir' => 'datetime'];
 
     public function peserta()
     {

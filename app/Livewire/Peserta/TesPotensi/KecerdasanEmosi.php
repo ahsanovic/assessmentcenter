@@ -7,7 +7,6 @@ use App\Models\KecerdasanEmosi\RefKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\Settings;
-use App\Models\SettingWaktuTes;
 use App\Traits\StartTestTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -26,7 +25,6 @@ class KecerdasanEmosi extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
-    public $durasi_tes;
 
     public function mount($id)
     {
@@ -50,10 +48,9 @@ class KecerdasanEmosi extends Component
         $this->soal = SoalKecerdasanEmosi::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalKecerdasanEmosi::count();
         $this->id_ujian = $data->id;
-        $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
-        $this->durasi_tes = $durasi_tes->waktu;
+        $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
+        $this->timerTest($first_sequence->alatTes->alat_tes);
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
@@ -395,15 +392,12 @@ class KecerdasanEmosi extends Component
             $data->is_finished = true;
             $data->save();
 
-            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
-            if ($current_sequence_test) {
-                if ($current_sequence_test->urutan !== 7) {
-                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
-                    session(['current_test' => $next_test->alat_tes_id]);
-                    $this->startTest($next_test->alatTes->alat_tes);
-                } else {
-                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
-                }
+            $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
+            if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
+                $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else {
+                return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
         } catch (\Throwable $th) {
             // throw $th;

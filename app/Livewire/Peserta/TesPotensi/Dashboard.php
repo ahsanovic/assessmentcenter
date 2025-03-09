@@ -22,10 +22,10 @@ class Dashboard extends Component
     public function start()
     {
         if ($this->first_test) {
-            session(['current_test' => $this->first_test->alat_tes_id]);
+            // session(['current_test' => $this->first_test->alat_tes_id]);
             $this->first_test->load('alatTes');
 
-            $this->startTest($this->first_test->alatTes->alat_tes);
+            $this->startTest($this->first_test->alatTes->alat_tes, $this->first_test->urutan);
         }
     }
 

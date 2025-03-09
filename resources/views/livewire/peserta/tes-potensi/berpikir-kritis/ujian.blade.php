@@ -161,15 +161,14 @@
         })
     }
 
-    var waktu = new Date({{ $timer }} * 1000).getTime();
-    var waktuJS = waktu + {{ $durasi_tes }} * 60000;
+    var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
     
     // Update the count down every 1 second
     var x = setInterval(function() {
         var now = new Date().getTime();
         
         // Find the distance between now an the count down date
-        var distance = waktuJS - now;
+        var distance = waktuBerakhir - now;
         
         // Time calculations for days, hours, minutes and seconds
         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

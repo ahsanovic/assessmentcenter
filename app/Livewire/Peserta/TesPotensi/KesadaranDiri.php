@@ -7,8 +7,8 @@ use App\Models\KesadaranDiri\RefKesadaranDiri;
 use App\Models\KesadaranDiri\SoalKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\Settings;
-use App\Models\SettingWaktuTes;
 use App\Traits\StartTestTrait;
+use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -16,7 +16,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Kesadaran Diri'])]
 class KesadaranDiri extends Component
 {
-    use StartTestTrait;
+    use StartTestTrait, TimerTrait;
 
     public $soal;
     public $jml_soal;
@@ -26,7 +26,6 @@ class KesadaranDiri extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
-    public $durasi_tes;
 
     public function mount($id)
     {
@@ -36,7 +35,7 @@ class KesadaranDiri extends Component
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        
+
         if ($data->is_finished == 'true') {
             session()->flash('toast', [
                 'type' => 'error',
@@ -50,10 +49,9 @@ class KesadaranDiri extends Component
         $this->soal = SoalKesadaranDiri::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalKesadaranDiri::count();
         $this->id_ujian = $data->id;
-        $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
-        $this->durasi_tes = $durasi_tes->waktu;
+        $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
+        $this->timerTest($first_sequence->alatTes->alat_tes);
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
@@ -152,7 +150,7 @@ class KesadaranDiri extends Component
     {
         try {
             $data = UjianKesadaranDiri::findOrFail($this->id_ujian);
-            
+
             // indikator 1
             if ($data->nilai_indikator_1 <= 49) {
                 $kategori_1 = 'SK';
@@ -183,7 +181,7 @@ class KesadaranDiri extends Component
                 $kategori_kualifikasi_1 = 'Sangat Baik';
                 $kategori_1 = 'Tinggi';
             }
-    
+
             // indikator 2
             if ($data->nilai_indikator_2 <= 50) {
                 $kategori_2 = 'SK';
@@ -214,7 +212,7 @@ class KesadaranDiri extends Component
                 $kategori_kualifikasi_2 = 'Sangat Baik';
                 $kategori_2 = 'Tinggi';
             }
-    
+
             // indikator 3
             if ($data->nilai_indikator_3 <= 41) {
                 $kategori_3 = 'SK';
@@ -245,9 +243,9 @@ class KesadaranDiri extends Component
                 $kategori_kualifikasi_3 = 'Sangat Baik';
                 $kualifikasi_3 = 'Tinggi';
             }
-    
+
             $indikator = RefKesadaranDiri::get(['indikator_nama', 'indikator_nomor']);
-    
+
             // $skor = new HasilKesadaranDiri();
             // $skor->event_id = Auth::guard('peserta')->user()->event_id;
             // $skor->peserta_id = Auth::guard('peserta')->user()->id;
@@ -283,11 +281,11 @@ class KesadaranDiri extends Component
                     ];
                 }
             }
-    
+
             // $skor->nilai = $nilai;
-    
+
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3;
-            
+
             if (($skor_total == 0 || $skor_total <= 143)) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
@@ -317,7 +315,7 @@ class KesadaranDiri extends Component
                 $kualifikasi_total = 'Sangat Baik';
                 $kategori_total = 'SB';
             }
-    
+
             // $skor->level_total = $level_total;
             // $skor->kualifikasi_total = $kualifikasi_total;
             // $skor->kategori_total = $kategori_total;
@@ -336,48 +334,48 @@ class KesadaranDiri extends Component
                     'kategori_total' => $kategori_total,
                 ]
             );
-    
+
             $priority = ['SB', 'B', 'C+', 'C', 'C-', 'K', 'SK'];
-    
+
             // menyortir data berdasarkan urutan kategori
             usort($nilai, function ($a, $b) use ($priority) {
                 $posA = array_search($a['kategori'], $priority);
                 $posB = array_search($b['kategori'], $priority);
                 return $posA - $posB;
             });
-    
+
             // Ambil kategori tertinggi pertama
             $top_kategori = $nilai[0]['kategori'];
-    
+
             // Ambil semua data dengan kategori tertinggi
-            $top_data = array_filter($nilai, function($item) use ($top_kategori) {
+            $top_data = array_filter($nilai, function ($item) use ($top_kategori) {
                 return $item['kategori'] === $top_kategori;
             });
-    
+
             // Jika jumlah data kurang dari 2, ambil tambahan data dari kategori berikutnya
             if (count($top_data) < 2) {
                 $next_kategori = $nilai[count($top_data)]['kategori'];
-                $next_data = array_filter($nilai, function($item) use ($next_kategori) {
+                $next_data = array_filter($nilai, function ($item) use ($next_kategori) {
                     return $item['kategori'] === $next_kategori;
                 });
                 $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
             }
-    
+
             // Ambil nilai indikator nama, indikator nomor, dan kategori dari hasil
             $indikator_nomor = array_column($top_data, 'no_indikator');
             $kategori_array = array_column($top_data, 'kategori');
-    
+
             // cari uraian potensi berdasar indikator dengan kategori tertinggi pertama dan kedua
             $data_kategori_1 = RefKesadaranDiri::whereIndikatorNomor($indikator_nomor[0])->first();
             $kategori_1 = $data_kategori_1->kualifikasi;
             $data_kategori_2 = RefKesadaranDiri::whereIndikatorNomor($indikator_nomor[1])->first();
             $kategori_2 = $data_kategori_2->kualifikasi;
-    
+
             $first_qualification = $this->_getKualifikasi($kategori_array[0]);
             $second_qualification = $this->_getKualifikasi($kategori_array[1]);
             $uraian_potensi_1 = collect($kategori_1)->firstWhere('kualifikasi', $first_qualification);
             $uraian_potensi_2 = collect($kategori_2)->firstWhere('kualifikasi', $second_qualification);
-    
+
             // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
             // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
             // $skor->save();
@@ -385,22 +383,19 @@ class KesadaranDiri extends Component
                 'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
                 'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
             ]);
-    
+
             // change status ujian to true (finish)
             $data->is_finished = true;
             $data->save();
 
-            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
-            if ($current_sequence_test) {
-                if ($current_sequence_test->urutan !== 7) {
-                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
-                    session(['current_test' => $next_test->alat_tes_id]);
-                    $this->startTest($next_test->alatTes->alat_tes);
-                } else {
-                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
-                }
+            $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
+            if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
+                $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else {
+                return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
-    
+
             // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
             //throw $th;

@@ -7,8 +7,8 @@ use App\Models\Interpersonal\RefInterpersonal;
 use App\Models\Interpersonal\SoalInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\Settings;
-use App\Models\SettingWaktuTes;
 use App\Traits\StartTestTrait;
+use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -16,7 +16,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Interpersonal'])]
 class Interpersonal extends Component
 {
-    use StartTestTrait;
+    use StartTestTrait, TimerTrait;
 
     public $soal;
     public $jml_soal;
@@ -26,7 +26,6 @@ class Interpersonal extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
-    public $durasi_tes;
 
     public function mount($id)
     {
@@ -50,10 +49,9 @@ class Interpersonal extends Component
         $this->soal = SoalInterpersonal::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalInterpersonal::count();
         $this->id_ujian = $data->id;
-        $this->timer = $data->created_at->timestamp;
 
-        $durasi_tes = SettingWaktuTes::whereIsActive('true')->first(['waktu']);
-        $this->durasi_tes = $durasi_tes->waktu;
+        $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
+        $this->timerTest($first_sequence->alatTes->alat_tes);
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
@@ -61,7 +59,6 @@ class Interpersonal extends Component
                 $this->jawaban_kosong = $j;
             }
         }
-
     }
 
     public function render()
@@ -121,7 +118,7 @@ class Interpersonal extends Component
             [28, 36, 'nilai_indikator_de'],
             [37, 45, 'nilai_indikator_smk'],
         ];
-    
+
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $skor = $data->{$indikator};
@@ -383,14 +380,14 @@ class Interpersonal extends Component
             $top_kualifikasi = $nilai[0]['kualifikasi'];
 
             // Ambil semua data dengan kualifikasi tertinggi
-            $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
+            $top_data = array_filter($nilai, function ($item) use ($top_kualifikasi) {
                 return $item['kualifikasi'] === $top_kualifikasi;
             });
 
             // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
             if (count($top_data) < 2) {
                 $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
-                $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
+                $next_data = array_filter($nilai, function ($item) use ($next_kualifikasi) {
                     return $item['kualifikasi'] === $next_kualifikasi;
                 });
                 $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
@@ -428,15 +425,13 @@ class Interpersonal extends Component
             $data->is_finished = true;
             $data->save();
 
-            $current_sequence_test = Settings::where('alat_tes_id', session('current_test'))->first(['urutan']);
-            if ($current_sequence_test) {
-                if ($current_sequence_test->urutan !== 7) {
-                    $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
-                    session(['current_test' => $next_test->alat_tes_id]);
-                    $this->startTest($next_test->alatTes->alat_tes);
-                } else {
-                    return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
-                }
+            $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
+            if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
+                $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+                // session(['current_test' => $next_test->alat_tes_id]);
+                $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else {
+                return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
         } catch (\Throwable $th) {
             //throw $th;
