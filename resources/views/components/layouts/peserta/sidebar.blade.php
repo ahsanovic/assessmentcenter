@@ -13,6 +13,7 @@
         <div class="sidebar-body">
             <ul class="nav" id="sidebarNav">
 
+                @if (!session('exam_pin'))
                 <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
                     <a href="{{ route('peserta.dashboard') }}" class="nav-link" wire:navigate>
                         <i class="link-icon" data-feather="box"></i>
@@ -25,16 +26,17 @@
                         <span class="link-title">Portofolio</span>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item nav-category">Menu Tes</li>
-                <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
+                <li class="nav-item">
                     <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate>
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
                 
-                <li class="nav-item nav-category"></li>
-                <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
+                <li class="nav-item nav-category">Logout</li>
+                <li class="nav-item">
                     <form action="{{ route('peserta.logout') }}" method="post">
                         @csrf
                         <button type="submit" class="btn btn-sm ">
