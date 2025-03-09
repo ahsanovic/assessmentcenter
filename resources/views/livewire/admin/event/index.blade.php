@@ -66,7 +66,7 @@
                                     <th>Jabatan yg Diujikan</th>
                                     <th>Jumlah Peserta</th>
                                     <th>Peserta Terinput</th>
-                                    <th>Alat Tes</th>
+                                    {{-- <th>Alat Tes</th> --}}
                                     <th>Assessor</th>
                                     <th>Status</th>
                                     <th></th>
@@ -92,12 +92,12 @@
                                                     {{ $item->peserta_count }} orang
                                             </a>
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             <button type="button" class="btn btn-info btn-xs" data-bs-toggle="modal"
                                                 data-bs-target="#modalAlatTes{{ $item->id }}">
                                                 Lihat
                                             </button>
-                                        </td>
+                                        </td> --}}
                                         <td>
                                             <a class="btn btn-xs btn-primary" wire:navigate
                                                 href="{{ route('admin.event.show-assessor', ['idEvent' => $item->id]) }}">
@@ -134,7 +134,7 @@
         <x-pagination :items="$data" />
     </div>
 
-    <!-- Modal -->
+    {{-- <!-- Modal -->
     @foreach ($data as $index => $item)
         <div class="modal fade" id="modalAlatTes{{ $item->id }}" tabindex="-1" aria-labelledby="modalAlatTes"
             aria-hidden="true">
@@ -161,4 +161,4 @@
             </div>
         </div>
     @endforeach
-</div>
+</div> --}}

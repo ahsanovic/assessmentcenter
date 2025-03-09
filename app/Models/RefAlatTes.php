@@ -11,6 +11,6 @@ class RefAlatTes extends Model
 
     public function event()
     {
-        return $this->belongsToMany(Event::class, 'event_alat_tes', 'ref_alat_tes_id', 'event_id');
+        return $this->belongsToMany(Event::class, 'event_alat_tes', 'ref_alat_tes_id', 'event_id')->withTimestamps();
     }
 }

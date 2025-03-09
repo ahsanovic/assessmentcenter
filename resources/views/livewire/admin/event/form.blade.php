@@ -22,6 +22,24 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
+                                    <label for="metode-tes" class="form-label">Metode Tes</label>
+                                    <select wire:model="metode_tes_id"
+                                        class="form-select @error('metode_tes_id') is-invalid @enderror"
+                                        id="metode-tes">
+                                        <option value="">-pilih-</option>
+                                        @foreach ($option_metode_tes as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('metode_tes_id')
+                                        <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
                                     <label for="jabatan-diuji" class="form-label">Jenis Jabatan yang Diujikan</label>
                                     <select wire:model="jabatan_diuji_id"
                                         class="form-select @error('jabatan_diuji_id') is-invalid @enderror"
@@ -39,12 +57,12 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="mb-3">
+                                <div class="mb-3" wire:ignore>
                                     <label for="jenis-indikator" class="form-label">Alat Tes</label>
-                                    <select wire:model="alat_tes_id"
-                                        class="form-select @error('alat_tes_id') is-invalid @enderror" multiple>
+                                    <select wire:model="alat_tes_id" id="alat_tes_id"
+                                        class="form-select @error('alat_tes_id') is-invalid @enderror" multiple="multiple">
                                         @foreach ($option_alat_tes as $key => $item)
-                                            <option value="{{ $key }}">{{ $item }}</option>
+                                            <option value="{{ $key }}" {{ in_array($key, $alat_tes_id ?: []) ? 'selected' : '' }}>{{ $item }}</option>
                                         @endforeach
                                     </select>
                                     @error('alat_tes_id')
@@ -55,12 +73,12 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="mb-3">
-                                    <label for="jenis-indikator" class="form-label">Assessor</label>
-                                    <select wire:model="assessor"
-                                        class="form-select @error('assessor') is-invalid @enderror" multiple>
+                                <div class="mb-3" wire:ignore>
+                                    <label for="assessor" class="form-label">Assessor</label>
+                                    <select wire:model="assessor" id="assessor"
+                                        class="form-select @error('assessor') is-invalid @enderror" multiple="multiple">
                                         @foreach ($option_assessor as $key => $item)
-                                            <option value="{{ $key }}">{{ $item }}</option>
+                                            <option value="{{ $key }}" {{ in_array($key, $assessor ?: []) ? 'selected' : '' }}>{{ $item }}</option>
                                         @endforeach
                                     </select>
                                     @error('assessor')
@@ -159,15 +177,19 @@
                                     <label class="form-label">Pengisian Portofolio Peserta</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input @error('is_open') is-invalid @enderror" wire:model="is_open"
-                                        id="radioInline" value="true" {{ $is_open == 'true' ? 'checked' : '' }}>
+                                    <input type="radio"
+                                        class="form-check-input @error('is_open') is-invalid @enderror"
+                                        wire:model="is_open" id="radioInline" value="true"
+                                        {{ $is_open == 'true' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="radioInline">
                                         Buka
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input @error('is_open') is-invalid @enderror" wire:model="is_open"
-                                        id="radioInline1" value="false" {{ $is_open == 'false' ? 'checked' : '' }}>
+                                    <input type="radio"
+                                        class="form-check-input @error('is_open') is-invalid @enderror"
+                                        wire:model="is_open" id="radioInline1" value="false"
+                                        {{ $is_open == 'false' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="radioInline1">
                                         Tutup
                                     </label>
@@ -214,3 +236,25 @@
         </div>
     </div>
 </div>
+@push('js')
+    @script()
+        <script>
+            $(document).ready(function() {
+                $('#alat_tes_id').select2()
+                $('#assessor').select2()
+
+                $('#alat_tes_id').on('change', function() {
+                    let data = $(this).val()
+                    $wire.set('alat_tes_id', data, false)
+                    $wire.alat_tes_id = data
+                })
+
+                $('#assessor').on('change', function() {
+                    let data = $(this).val()
+                    $wire.set('assessor', data, false)
+                    $wire.assessor = data
+                })
+            })
+        </script>
+    @endscript
+@endpush

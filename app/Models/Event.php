@@ -55,12 +55,12 @@ class Event extends Model
 
     public function alatTes()
     {
-        return $this->belongsToMany(RefAlatTes::class, 'event_alat_tes', 'event_id', 'ref_alat_tes_id');
+        return $this->belongsToMany(RefAlatTes::class, 'event_alat_tes', 'event_id', 'ref_alat_tes_id')->withTimestamps();
     }
 
     public function assessor()
     {
-        return $this->belongsToMany(Assessor::class, 'assessor_event', 'event_id', 'assessor_id');
+        return $this->belongsToMany(Assessor::class, 'assessor_event', 'event_id', 'assessor_id')->withTimestamps();
     }
 
     public function assessorPeserta()

@@ -30,8 +30,7 @@
 
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/vendors/select2/select2.min.css') }}"> --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/vendors/select2/select2.min.css') }}">
     <!-- End plugin css for this page -->
 
     <!-- inject:css -->
@@ -73,9 +72,8 @@
     <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ asset('assets/js/flatpickr.js') }}"></script>
 
-    {{-- <script src="{{ asset('assets/vendors/select2/select2.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/js/select2.js') }}"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="{{ asset('assets/vendors/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2.js') }}"></script>
     <!-- Plugin js for this page -->
     <script src="{{ asset('assets/vendors/ace-builds/src-min/ace.js') }}"></script>
     <script src="{{ asset('assets/vendors/ace-builds/src-min/theme-chaos.js') }}"></script>

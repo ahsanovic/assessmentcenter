@@ -30,7 +30,7 @@ class Assessor extends Model implements AuthenticatableContract
 
     public function event()
     {
-        return $this->belongsToMany(Event::class, 'assessor_event', 'assessor_id', 'event_id');
+        return $this->belongsToMany(Event::class, 'assessor_event', 'assessor_id', 'event_id')->withTimestamps();
     }
 
     public function peserta()
