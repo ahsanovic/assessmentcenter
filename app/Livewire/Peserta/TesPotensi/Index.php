@@ -13,10 +13,8 @@ class Index extends Component
 {
     public $pin_ujian;
 
-    #[Validate(['pin_ujian' => 'required|numeric|digits:4'], message: [
+    #[Validate(['pin_ujian' => 'required'], message: [
         'pin_ujian.required' => 'harus diisi',
-        'pin_ujian.numeric' => 'harus angka',
-        'pin_ujian.digits' => 'pin ujian harus 4 digit'
     ])]
 
     public function render()
