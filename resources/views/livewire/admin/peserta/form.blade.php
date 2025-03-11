@@ -157,3 +157,17 @@
         </div>
     </div>
 </div>
+@push('js')
+    @script()
+        <script>
+            $(document).ready(function() {
+                $('#event').select2()
+                $('#event').on('change', function() {
+                    let data = $(this).val()
+                    $wire.set('event_id', data, false)
+                    $wire.assessor = data
+                })
+            })
+        </script>
+    @endscript
+@endpush
