@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3" wire:ignore>
                                     <label for="jenis-indikator" class="form-label">Alat Tes</label>
@@ -70,7 +70,7 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3" wire:ignore>
@@ -240,15 +240,7 @@
     @script()
         <script>
             $(document).ready(function() {
-                $('#alat_tes_id').select2()
                 $('#assessor').select2()
-
-                $('#alat_tes_id').on('change', function() {
-                    let data = $(this).val()
-                    $wire.set('alat_tes_id', data, false)
-                    $wire.alat_tes_id = data
-                })
-
                 $('#assessor').on('change', function() {
                     let data = $(this).val()
                     $wire.set('assessor', data, false)

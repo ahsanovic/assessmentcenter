@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\RefAlatTes;
 use App\Models\RefJabatanDiuji;
 use App\Models\RefMetodeTes;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -22,7 +23,7 @@ class Form extends Component
     public $metode_tes_id;
     public $pin_ujian;
     public $jumlah_peserta;
-    public array $alat_tes_id = [];
+    // public array $alat_tes_id = [];
     public array $assessor = [];
     public $is_finished;
     public $is_open;
@@ -39,7 +40,7 @@ class Form extends Component
             if ($id) {
                 $this->isUpdate = true;
     
-                $data = Event::with(['alatTes', 'assessor'])->findOrFail($id);
+                $data = Event::with(['assessor'])->findOrFail($id);
                 $this->id = $data->id;
                 $this->nama_event = $data->nama_event;
                 $this->metode_tes_id = $data->metode_tes_id;
@@ -47,7 +48,7 @@ class Form extends Component
                 $this->tgl_mulai = $data->tgl_mulai;
                 $this->tgl_selesai = $data->tgl_selesai;
                 $this->jumlah_peserta = $data->jumlah_peserta;
-                $this->alat_tes_id = $data->alatTes()->pluck('id')->toArray() ?? [];
+                // $this->alat_tes_id = $data->alatTes()->pluck('id')->toArray() ?? [];
                 $this->assessor = $data->assessor()->pluck('id')->toArray() ?? [];
                 $this->is_finished = $data->is_finished;
                 $this->is_open = $data->is_open;
@@ -64,11 +65,11 @@ class Form extends Component
     public function render()
     {
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-        $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
+        // $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
         $option_assessor = Assessor::pluck('nama', 'id');
         $option_metode_tes = RefMetodeTes::pluck('metode_tes', 'id');
 
-        return view('livewire.admin.event.form', compact('option_jabatan_diuji', 'option_alat_tes', 'option_assessor', 'option_metode_tes'));
+        return view('livewire.admin.event.form', compact('option_jabatan_diuji', 'option_assessor', 'option_metode_tes'));
     }
 
     protected function rules()
@@ -78,10 +79,10 @@ class Form extends Component
             'metode_tes_id' => ['required'],
             'jabatan_diuji_id' => ['required'],
             'tgl_mulai' => ['required', 'date_format:d-m-Y'],
-            'tgl_selesai' => ['required', 'date_format:d-m-Y'],
+            'tgl_selesai' => ['required', 'date_format:d-m-Y', 'after_or_equal:tgl_mulai'],
             'jumlah_peserta' => ['required', 'numeric'],
-            'alat_tes_id' => 'required|array',
-            'alat_tes_id.*' => 'exists:ref_alat_tes,id',
+            // 'alat_tes_id' => 'required|array',
+            // 'alat_tes_id.*' => 'exists:ref_alat_tes,id',
             'assessor' => 'required|array',
             'assessor.*' => 'exists:assessor,id',
             'pin_ujian' => ['required'],
@@ -108,9 +109,10 @@ class Form extends Component
             'tgl_mulai.date_format' => 'format tanggal mulai tidak valid',
             'tgl_selesai.required' => 'harus diisi',
             'tgl_selesai.date_format' => 'format tanggal selesai tidak valid',
+            'tgl_selesai.after_or_equal' => 'tanggal selesai tidak boleh sebelum tanggal mulai',
             'jumlah_peserta.required' => 'harus diisi',
             'jumlah_peserta.numeric' => 'harus berupa angka',
-            'alat_tes_id.required' => 'harus dipilih',
+            // 'alat_tes_id.required' => 'harus dipilih',
             'assessor.required' => 'harus dipilih',
             'pin_ujian.required' => 'harus diisi',
             'is_open.required' => 'harus dipilih'
@@ -125,16 +127,6 @@ class Form extends Component
 
             if ($this->isUpdate) {
                 $data = Event::findOrFail($this->id);
-                // $data->nama_event = $this->nama_event;
-                // $data->metode_tes_id = $this->metode_tes_id;
-                // $data->jabatan_diuji_id = $this->jabatan_diuji_id;
-                // $data->tgl_mulai = $this->tgl_mulai;
-                // $data->tgl_selesai = $this->tgl_selesai;
-                // $data->jumlah_peserta = $this->jumlah_peserta;
-                // $data->pin_ujian = $this->pin_ujian;
-                // $data->is_finished = $this->is_finished;
-                // $data->is_open = $this->is_open;
-                
                 $data->fill([
                     'nama_event' => $this->nama_event,
                     'metode_tes_id' => $this->metode_tes_id,
@@ -150,7 +142,7 @@ class Form extends Component
 
                 // sync pivot tables
                 $data->assessor()->sync(is_array($this->assessor) ? $this->assessor : []);
-                $data->alatTes()->sync(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
+                // $data->alatTes()->sync(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
 
                 DB::commit();
                 session()->flash('toast', [
@@ -176,8 +168,8 @@ class Form extends Component
                 // $event->alatTes()->attach($this->alat_tes_id);
                 
                 // Menggunakan syncWithoutDetaching() agar tidak duplikasi
-                $event->alatTes()->syncWithoutDetaching(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
                 $event->assessor()->syncWithoutDetaching(is_array($this->assessor) ? $this->assessor : []);
+                // $event->alatTes()->syncWithoutDetaching(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
     
                 DB::commit();
                 session()->flash('toast', [
@@ -189,7 +181,7 @@ class Form extends Component
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            // throw $th;
+            throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
