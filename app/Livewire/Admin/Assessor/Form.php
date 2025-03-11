@@ -58,10 +58,10 @@ class Form extends Component
     {
         $rules = [
             'nama' => ['required'],
-            'nip' => ['required', 'numeric', 'digits:18'],
-            'jabatan' => ['required'],
-            'instansi' => ['required'],
-            'gol_pangkat_id' => ['required'],
+            'nip' => ['required', 'numeric', 'digits_between:16,18'],
+            // 'jabatan' => ['required'],
+            // 'instansi' => ['required'],
+            // 'gol_pangkat_id' => ['required'],
             'password' => $this->isUpdate ? ['nullable', 'min:8'] : ['required', 'min:8'],
         ];
 
@@ -74,12 +74,12 @@ class Form extends Component
             'nama.required' => 'harus diisi',
             'nip.required' => 'harus diisi',
             'nip.numeric' => 'harus angka',
-            'nip.digits' => 'nip harus 18 digit',
-            'instansi.required' => 'harus diisi',
-            'jabatan.required' => 'harus diisi',
+            'nip.digits_between' => 'nik harus 16 digit dan nip harus 18 digit',
+            // 'instansi.required' => 'harus diisi',
+            // 'jabatan.required' => 'harus diisi',
             'password.required' => 'harus  diisi',
             'password.min' => 'minimal 8 karakter',
-            'gol_pangkat_id' => 'harus dipilih'
+            // 'gol_pangkat_id' => 'harus dipilih'
         ];
     }
 

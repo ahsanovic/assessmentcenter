@@ -28,12 +28,12 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label">NIP</label>
+                                    <label class="form-label">NIP / NIK</label>
                                     <input
                                         type="number"
                                         wire:model="nip"
                                         class="form-control @error('nip') is-invalid @enderror"
-                                        placeholder="masukkan nip"
+                                        placeholder="masukkan nip (jika pns) atau nik (jika bukan pns)"
                                     >
                                     @error('nip')
                                     <label class="error invalid-feedback">{{ $message }}</label>
