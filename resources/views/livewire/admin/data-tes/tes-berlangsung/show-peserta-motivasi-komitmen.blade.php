@@ -31,6 +31,7 @@
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>
+                                    <th>Mulai Tes</th>
                                     <th>Status Tes</th>
                                     <th></th>
                                 </tr>
@@ -42,7 +43,8 @@
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
-                                        <td class="text-wrap">{{ $item->instansi }}</td>
+                                        <td class="text-wrap">{{ $item->instansi }} <br/> {{ $item->unit_kerja }}</td>
+                                        <td class="text-wrap">{{ \Carbon\Carbon::parse($item->mulai_tes)->translatedFormat('d F Y / H:i:s') }}</td>
                                         <td>
                                             @if ($item->is_finished == 'false')
                                                 <span class="badge bg-danger text-white">Belum Selesai</span>

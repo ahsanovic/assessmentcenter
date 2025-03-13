@@ -45,7 +45,7 @@ class ShowPesertaMotivasiKomitmen extends Component
     {
         $data = Peserta::join('ujian_motivasi_komitmen', 'ujian_motivasi_komitmen.peserta_id', '=', 'peserta.id')
                 ->whereIn('peserta.id', $this->event->pesertaIdTesMotivasiKomitmen->pluck('peserta_id'))
-                ->select('peserta.*', 'ujian_motivasi_komitmen.is_finished', 'ujian_motivasi_komitmen.id as ujian_motivasi_komitmen_id')
+                ->select('peserta.*', 'ujian_motivasi_komitmen.is_finished', 'ujian_motivasi_komitmen.id as ujian_motivasi_komitmen_id', 'ujian_motivasi_komitmen.created_at as mulai_tes')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')

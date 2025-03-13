@@ -45,7 +45,7 @@ class ShowPesertaProblemSolving extends Component
     {
         $data = Peserta::join('ujian_problem_solving', 'ujian_problem_solving.peserta_id', '=', 'peserta.id')
                 ->whereIn('peserta.id', $this->event->pesertaIdTesProblemSolving->pluck('peserta_id'))
-                ->select('peserta.*', 'ujian_problem_solving.is_finished', 'ujian_problem_solving.id as ujian_problem_solving_id')
+                ->select('peserta.*', 'ujian_problem_solving.is_finished', 'ujian_problem_solving.id as ujian_problem_solving_id', 'ujian_problem_solving.created_at as mulai_tes')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')

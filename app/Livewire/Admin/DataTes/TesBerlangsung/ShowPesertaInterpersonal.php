@@ -45,7 +45,7 @@ class ShowPesertaInterpersonal extends Component
     {
         $data = Peserta::join('ujian_interpersonal', 'ujian_interpersonal.peserta_id', '=', 'peserta.id')
                 ->whereIn('peserta.id', $this->event->pesertaIdTesInterpersonal->pluck('peserta_id'))
-                ->select('peserta.*', 'ujian_interpersonal.is_finished', 'ujian_interpersonal.id as ujian_interpersonal_id')
+                ->select('peserta.*', 'ujian_interpersonal.is_finished', 'ujian_interpersonal.id as ujian_interpersonal_id', 'ujian_interpersonal.created_at as mulai_tes')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')

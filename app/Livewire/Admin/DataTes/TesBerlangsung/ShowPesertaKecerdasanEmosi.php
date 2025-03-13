@@ -45,7 +45,7 @@ class ShowPesertaKecerdasanEmosi extends Component
     {
         $data = Peserta::join('ujian_kecerdasan_emosi', 'ujian_kecerdasan_emosi.peserta_id', '=', 'peserta.id')
                 ->whereIn('peserta.id', $this->event->pesertaIdTesKecerdasanEmosi->pluck('peserta_id'))
-                ->select('peserta.*', 'ujian_kecerdasan_emosi.is_finished', 'ujian_kecerdasan_emosi.id as ujian_kecerdasan_emosi_id')
+                ->select('peserta.*', 'ujian_kecerdasan_emosi.is_finished', 'ujian_kecerdasan_emosi.id as ujian_kecerdasan_emosi_id', 'ujian_kecerdasan_emosi.created_at as mulai_tes')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')

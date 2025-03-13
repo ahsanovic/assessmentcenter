@@ -13,15 +13,15 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nama Event</th>
-                                    <th>Jumlah Peserta</th>
-                                    <th>Interpersonal</th>
-                                    <th>Kesadaran Diri</th>
-                                    <th>Berpikir Kritis dan Strategis</th>
-                                    <th>Problem Solving</th>
-                                    <th>Kecerdasan Emosi</th>
-                                    <th>Pengembangan Diri</th>
-                                    <th>Motivasi Komitmen</th>
+                                    <th class="text-wrap">Nama Event</th>
+                                    <th class="text-wrap">Jumlah Peserta</th>
+                                    <th class="text-wrap">Interpersonal</th>
+                                    <th class="text-wrap">Kesadaran Diri</th>
+                                    <th class="text-wrap">Berpikir Kritis dan Strategis</th>
+                                    <th class="text-wrap">Problem Solving</th>
+                                    <th class="text-wrap">Kecerdasan Emosi</th>
+                                    <th class="text-wrap">Pengembangan Diri</th>
+                                    <th class="text-wrap">Motivasi Komitmen</th>
                                 </tr>
                             </thead>
                             <tbody>
