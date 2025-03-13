@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Tes Selesai'])]
-class ShowPeserta extends Component
+class ShowPesertaInterpersonal extends Component
 {
     use WithPagination;
 
@@ -38,43 +38,44 @@ class ShowPeserta extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with('peserta')->findOrFail($this->id_event);
+        $this->event = Event::with(['pesertaTesInterpersonal'])->findOrFail($this->id_event);
     }
 
     public function render()
     {
-        $data = $this->event->peserta()
+        $data = Peserta::join('hasil_interpersonal', 'hasil_interpersonal.peserta_id', '=', 'peserta.id')
+                ->join('ujian_interpersonal', 'ujian_interpersonal.peserta_id', '=', 'peserta.id')
+                ->whereIn('peserta.id', $this->event->pesertaIdTesInterpersonal->pluck('peserta_id'))
+                ->select('peserta.*', 'hasil_interpersonal.id as hasil_interpersonal_id', 'hasil_interpersonal.created_at as waktu_selesai', 'is_finished')
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                         ->orWhere('instansi', 'like', '%' . $this->search . '%');
                 })
-                ->whereHas('ujianInterpersonal', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianKesadaranDiri', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianBerpikirKritis', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianProblemSolving', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianPengembanganDiri', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianKecerdasanEmosi', function($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianMotivasiKomitmen', function($query) {
-                    $query->where('is_finished', 'true');
-                })
                 ->paginate(10);
 
-        return view('livewire.admin.data-tes.tes-selesai.show-peserta', [
+        return view('livewire.admin.data-tes.tes-selesai.show-peserta-interpersonal', [
             'data' => $data
         ]);
+    }
+
+    public function deleteConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('show-delete-confirmation');
+    }
+
+    #[On('delete')]
+    public function destroy()
+    {
+        try {
+            HasilInterpersonal::find($this->selected_id)->delete();
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
+        }
     }
 }

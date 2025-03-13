@@ -40,30 +40,31 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::withCount(['peserta', 'peserta as peserta_selesai_count' => function ($query) {
+        $data = Event::withCount(['peserta', 'hasilInterpersonal', 'hasilKesadaranDiri', 'hasilBerpikirKritis', 'hasilProblemSolving', 'hasilPengembanganDiri', 
+                                    'hasilKecerdasanEmosi', 'hasilMotivasiKomitmen', 'peserta as peserta_selesai_count' => function ($query) {
                 $query->whereHas('ujianInterpersonal', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianKesadaranDiri', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianBerpikirKritis', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianPengembanganDiri', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianProblemSolving', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianKecerdasanEmosi', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 })
                 ->whereHas('ujianMotivasiKomitmen', function ($query) {
-                    $query->where('is_finished', true);
+                    $query->where('is_finished', 'true');
                 });
             }])
-            ->with(['peserta'])
+            ->with(['peserta', 'hasilInterpersonal', 'hasilKesadaranDiri', 'hasilBerpikirKritis', 'hasilProblemSolving', 'hasilPengembanganDiri', 'hasilKecerdasanEmosi', 'hasilMotivasiKomitmen'])
             ->when($this->search, function($query) {
                 $query->where('nama_event', 'like', '%' . $this->search . '%');
             })

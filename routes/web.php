@@ -44,6 +44,13 @@ Route::prefix('/bkdac')->group(function () {
     // data tes selesai
     Route::get('tes-selesai', \App\Livewire\Admin\DataTes\TesSelesai\Index::class)->name('admin.tes-selesai');
     Route::get('tes-selesai/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.show-peserta');
+    Route::get('tes-selesai/{idEvent}/show-peserta-interpersonal', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaInterpersonal::class)->name('admin.tes-selesai.show-peserta-interpersonal');
+    Route::get('tes-selesai/{idEvent}/show-peserta-kesadaran-diri', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaKesadaranDiri::class)->name('admin.tes-selesai.show-peserta-kesadaran-diri');
+    Route::get('tes-selesai/{idEvent}/show-peserta-berpikir-kritis', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaBerpikirKritis::class)->name('admin.tes-selesai.show-peserta-berpikir-kritis');
+    Route::get('tes-selesai/{idEvent}/show-peserta-problem-solving', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaProblemSolving::class)->name('admin.tes-selesai.show-peserta-problem-solving');
+    Route::get('tes-selesai/{idEvent}/show-peserta-kecerdasan-emosi', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaKecerdasanEmosi::class)->name('admin.tes-selesai.show-peserta-kecerdasan-emosi');
+    Route::get('tes-selesai/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaPengembanganDiri::class)->name('admin.tes-selesai.show-peserta-pengembangan-diri');
+    Route::get('tes-selesai/{idEvent}/show-peserta-motivasi-komitmen', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaMotivasiKomitmen::class)->name('admin.tes-selesai.show-peserta-motivasi-komitmen');
     Route::get('tes-selesai/{idEvent}/{nip}/show-report', \App\Livewire\Admin\DataTes\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
 
     // peserta

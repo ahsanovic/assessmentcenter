@@ -8,7 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Hasil Tes - {{ $event->nama_event }}</h6>
+                    <h6 class="card-title">Hasil Tes Motivasi Komitmen - {{ $event->nama_event }}</h6>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
                         <div class="col-sm-4">
@@ -30,9 +30,9 @@
                                     <th>Nama Peserta</th>
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
-                                    <th>Instansi</th>
-                                    <th>Unit Kerja</th>
-                                    <th>Report</th>
+                                    <th>Instansi / Unit Kerja</th>
+                                    <th>Selesai Tes</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,17 +42,14 @@
                                         <td class="text-wrap">{{ $item->nama }}</td>
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }} - {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
-                                        <td class="text-wrap">{{ $item->instansi }}</td>
-                                        <td class="text-wrap">{{ $item->unit_kerja }}</td>
+                                        <td class="text-wrap">{{ $item->instansi }} <br /> {{ $item->unit_kerja }}</td>
+                                        <td class="text-wrap">{{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}</td>
                                         <td>
-                                            <a href="{{ route('admin.tes-selesai.show-report', [
-                                                    'idEvent' => $item->event_id,
-                                                    'nip' => $item->nip
-                                                ]) }}" class="btn btn-sm btn-inverse-sucess"
-                                                wire:navigate
-                                            >
-                                                <i class="link-icon text-danger" data-feather="file"></i>
-                                            </a>
+                                            @if ($item->is_finished == 'true')
+                                                <button wire:click="deleteConfirmation('{{ $item->hasil_motivasi_komitmen_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
+                                                    Hapus
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

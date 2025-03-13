@@ -24,7 +24,7 @@
                             <div class="mb-3">
                                 <div class="input-group flatpickr" id="flatpickr-date">
                                     <input type="text" wire:model.live="tgl_mulai"
-                                        class="form-control flatpickr-input" placeholder="tgl pelaksanaan"
+                                        class="form-control flatpickr-input" placeholder="tgl mulai pelaksanaan"
                                         data-input="" readonly="readonly">
                                     <span class="input-group-text input-group-addon" data-toggle="">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -58,8 +58,15 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Event</th>
-                                    <th>Jumlah Peserta</th>
-                                    <th>Peserta Selesai Tes</th>
+                                    <th class="text-wrap">Jumlah Peserta</th>
+                                    <th>Interpersonal</th>
+                                    <th class="text-wrap">Kesadaran Diri</th>
+                                    <th class="text-wrap">Berpikir Kritis dan Strategis</th>
+                                    <th class="text-wrap">Problem Solving</th>
+                                    <th class="text-wrap">Kecerdasan Emosi</th>
+                                    <th class="text-wrap">Pengembangan Diri</th>
+                                    <th class="text-wrap">Motivasi Komitmen</th>
+                                    <th class="text-wrap">Semua Tes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -70,8 +77,50 @@
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-interpersonal', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_interpersonal_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-kesadaran-diri', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_kesadaran_diri_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-berpikir-kritis', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_berpikir_kritis_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-problem-solving', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_problem_solving_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-kecerdasan-emosi', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_kecerdasan_emosi_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-pengembangan-diri', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_pengembangan_diri_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                                href="{{ route('admin.tes-selesai.show-peserta-motivasi-komitmen', ['idEvent' => $item->id]) }}">
+                                                    {{ $item->hasil_motivasi_komitmen_count ?? 0 }} orang
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-xs btn-warning" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta', ['idEvent' => $item->id]) }}">
-                                                    {{ $item->peserta_selesai_count }} orang
+                                                    {{ $item->peserta_selesai_count ?? 0 }} orang
                                             </a>
                                         </td>
                                     </tr>
