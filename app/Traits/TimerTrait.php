@@ -42,77 +42,77 @@ trait TimerTrait
 
     protected function _timerInterpersonal()
     {
-        $first_tes = UjianInterpersonal::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianInterpersonal::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerPengembanganDiri()
     {
-        $first_tes = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
     
     protected function _timerKecerdasanEmosi()
     {
-        $first_tes = UjianKecerdasanEmosi::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianKecerdasanEmosi::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerMotivasiKomitmen()
     {
-        $first_tes = UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
     
     protected function _timerBerpikirKritis()
     {
-        $first_tes = UjianBerpikirKritis::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianBerpikirKritis::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerProblemSolving()
     {
-        $first_tes = UjianProblemSolving::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianProblemSolving::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerKesadaranDiri()
     {
-        $first_tes = UjianKesadaranDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $first_test = UjianKesadaranDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_tes) {
-            $this->waktu_tes_berakhir = $first_tes->waktu_tes_berakhir;
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }

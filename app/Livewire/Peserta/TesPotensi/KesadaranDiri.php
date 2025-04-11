@@ -134,6 +134,8 @@ class KesadaranDiri extends Component
 
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => $nomor_soal + 1]), true);
+        } else if ($nomor_soal == $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => $nomor_soal]), true);
         }
     }
 
@@ -246,10 +248,6 @@ class KesadaranDiri extends Component
 
             $indikator = RefKesadaranDiri::get(['indikator_nama', 'indikator_nomor']);
 
-            // $skor = new HasilKesadaranDiri();
-            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
-            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
-            // $skor->ujian_id = $data->id;
             $nilai = [];
             foreach ($indikator as $value) {
                 if ($value->indikator_nomor == 1) {
@@ -281,8 +279,6 @@ class KesadaranDiri extends Component
                     ];
                 }
             }
-
-            // $skor->nilai = $nilai;
 
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3;
 
@@ -316,10 +312,6 @@ class KesadaranDiri extends Component
                 $kategori_total = 'SB';
             }
 
-            // $skor->level_total = $level_total;
-            // $skor->kualifikasi_total = $kualifikasi_total;
-            // $skor->kategori_total = $kategori_total;
-            // $skor->skor_total = $skor_total;
             $skor = HasilKesadaranDiri::updateOrCreate(
                 [
                     'event_id' => Auth::guard('peserta')->user()->event_id,
@@ -344,45 +336,36 @@ class KesadaranDiri extends Component
                 return $posA - $posB;
             });
 
-            // Ambil kategori tertinggi pertama
-            $top_kategori = $nilai[0]['kategori'];
-
-            // Ambil semua data dengan kategori tertinggi
-            $top_data = array_filter($nilai, function ($item) use ($top_kategori) {
-                return $item['kategori'] === $top_kategori;
+            // Ambil 3 data setelah diurutkan, kemudian urutkan berdasar nomor indikator
+            $top_data = array_slice($nilai, 0, 3);
+            usort($top_data, function ($a, $b) {
+                return $a['no_indikator'] - $b['no_indikator'];
             });
 
-            // Jika jumlah data kurang dari 2, ambil tambahan data dari kategori berikutnya
-            if (count($top_data) < 2) {
-                $next_kategori = $nilai[count($top_data)]['kategori'];
-                $next_data = array_filter($nilai, function ($item) use ($next_kategori) {
-                    return $item['kategori'] === $next_kategori;
-                });
-                $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
+            // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
+            $indikator_nomor = array_column($top_data, 'no_indikator');
+            $kualifikasi_array = array_column($top_data, 'kategori');
+
+            $data_to_save = [];
+
+            foreach ($indikator_nomor as $index => $nomor) {
+                $data_kualifikasi = RefKesadaranDiri::whereIndikatorNomor($nomor)->first();
+
+                if ($data_kualifikasi) {
+                    $kualifikasi_data = $data_kualifikasi->kualifikasi;
+                    $selected_kualifikasi = $this->_getKualifikasi($kualifikasi_array[$index]);
+                    $uraian_potensi = collect($kualifikasi_data)->firstWhere('kualifikasi', $selected_kualifikasi);
+
+                    // Simpan dalam format field indikator_potensi_1, uraian_potensi_1, dst
+                    // $field_indikator = "indikator_potensi_" . ($index + 1);
+                    $field_uraian_potensi = "uraian_potensi_" . ($index + 1);
+
+                    // $data_to_save[$field_indikator] = $data_kualifikasi->indikator_nama;
+                    $data_to_save[$field_uraian_potensi] = $uraian_potensi;
+                }
             }
 
-            // Ambil nilai indikator nama, indikator nomor, dan kategori dari hasil
-            $indikator_nomor = array_column($top_data, 'no_indikator');
-            $kategori_array = array_column($top_data, 'kategori');
-
-            // cari uraian potensi berdasar indikator dengan kategori tertinggi pertama dan kedua
-            $data_kategori_1 = RefKesadaranDiri::whereIndikatorNomor($indikator_nomor[0])->first();
-            $kategori_1 = $data_kategori_1->kualifikasi;
-            $data_kategori_2 = RefKesadaranDiri::whereIndikatorNomor($indikator_nomor[1])->first();
-            $kategori_2 = $data_kategori_2->kualifikasi;
-
-            $first_qualification = $this->_getKualifikasi($kategori_array[0]);
-            $second_qualification = $this->_getKualifikasi($kategori_array[1]);
-            $uraian_potensi_1 = collect($kategori_1)->firstWhere('kualifikasi', $first_qualification);
-            $uraian_potensi_2 = collect($kategori_2)->firstWhere('kualifikasi', $second_qualification);
-
-            // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
-            // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
-            // $skor->save();
-            $skor->update([
-                'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
-                'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
-            ]);
+            $skor->update($data_to_save);
 
             // change status ujian to true (finish)
             $data->is_finished = true;
@@ -429,6 +412,9 @@ class KesadaranDiri extends Component
                 break;
             case 'SK':
                 $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
+            default:
+                $kualifikasi = '';
                 break;
         }
 

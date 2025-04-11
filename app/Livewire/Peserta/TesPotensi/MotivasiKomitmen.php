@@ -135,6 +135,8 @@ class MotivasiKomitmen extends Component
 
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => $nomor_soal + 1]), true);
+        } else if ($nomor_soal == $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => $nomor_soal]), true);
         }
     }
 
@@ -156,13 +158,13 @@ class MotivasiKomitmen extends Component
             if ($data->nilai_indikator_1 >= 1 && $data->nilai_indikator_1 <= 6) {
                 $standard_1 = '1';
                 $kualifikasi_1 = '1/SK';
-            } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 8) {
+            } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 9) {
                 $standard_1 = '2';
                 $kualifikasi_1 = '1/K';
-            } else if ($data->nilai_indikator_1 == 9) {
+            } else if ($data->nilai_indikator_1 == 10) {
                 $standard_1 = '3-';
                 $kualifikasi_1 = '1/C-';
-            } else if ($data->nilai_indikator_1 >= 10 && $data->nilai_indikator_1 <= 11) {
+            } else if ($data->nilai_indikator_1 == 11) {
                 $standard_1 = '3';
                 $kualifikasi_1 = '1/C';
             } else if ($data->nilai_indikator_1 == 12) {
@@ -192,10 +194,10 @@ class MotivasiKomitmen extends Component
             } else if ($data->nilai_indikator_2 == 13) {
                 $standard_2 = '3+';
                 $kualifikasi_2 = '2/C+';
-            } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 15) {
+            } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 16) {
                 $standard_2 = '4';
                 $kualifikasi_2 = '2/B';
-            } else if ($data->nilai_indikator_2 >= 16) {
+            } else if ($data->nilai_indikator_2 >= 17) {
                 $standard_2 = '5';
                 $kualifikasi_2 = '2/SB';
             }
@@ -204,13 +206,13 @@ class MotivasiKomitmen extends Component
             if ($data->nilai_indikator_3 >= 1 && $data->nilai_indikator_3 <= 6) {
                 $standard_3 = '1';
                 $kualifikasi_3 = '3/SK';
-            } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 10) {
+            } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 11) {
                 $standard_3 = '2';
                 $kualifikasi_3 = '3/K';
-            } else if ($data->nilai_indikator_3 == 11) {
+            } else if ($data->nilai_indikator_3 == 12) {
                 $standard_3 = '3-';
                 $kualifikasi_3 = '3/C-';
-            } else if ($data->nilai_indikator_3 >= 12 && $data->nilai_indikator_3 <= 14) {
+            } else if ($data->nilai_indikator_3 >= 13 && $data->nilai_indikator_3 <= 14) {
                 $standard_3 = '3';
                 $kualifikasi_3 = '3/C';
             } else if ($data->nilai_indikator_3 == 15) {
@@ -228,10 +230,10 @@ class MotivasiKomitmen extends Component
             if ($data->nilai_indikator_4 >= 1 && $data->nilai_indikator_4 <= 12) {
                 $standard_4 = '1';
                 $kualifikasi_4 = '4/SK';
-            } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 18) {
+            } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 19) {
                 $standard_4 = '2';
                 $kualifikasi_4 = '4/K';
-            } else if ($data->nilai_indikator_4 >= 19 && $data->nilai_indikator_4 <= 21) {
+            } else if ($data->nilai_indikator_4 >= 20 && $data->nilai_indikator_4 <= 21) {
                 $standard_4 = '3-';
                 $kualifikasi_4 = '4/C-';
             } else if ($data->nilai_indikator_4 >= 22 && $data->nilai_indikator_4 <= 24) {
@@ -252,13 +254,13 @@ class MotivasiKomitmen extends Component
             if ($data->nilai_indikator_5 >= 1 && $data->nilai_indikator_5 <= 18) {
                 $standard_5 = '1';
                 $kualifikasi_5 = '5/SK';
-            } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 25) {
+            } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 26) {
                 $standard_5 = '2';
                 $kualifikasi_5 = '5/K';
-            } else if ($data->nilai_indikator_5 >= 26 && $data->nilai_indikator_5 <= 27) {
+            } else if ($data->nilai_indikator_5 >= 27 && $data->nilai_indikator_5 <= 29) {
                 $standard_5 = '3-';
                 $kualifikasi_5 = '5/C-';
-            } else if ($data->nilai_indikator_5 >= 29 && $data->nilai_indikator_5 <= 30) {
+            } else if ($data->nilai_indikator_5 == 30) {
                 $standard_5 = '3';
                 $kualifikasi_5 = '5/C';
             } else if ($data->nilai_indikator_5 >= 31 && $data->nilai_indikator_5 <= 32) {
@@ -273,11 +275,6 @@ class MotivasiKomitmen extends Component
             }
     
             $indikator = RefMotivasiKomitmen::get(['indikator_nama', 'indikator_nomor']);
-    
-            // $skor = new HasilMotivasiKomitmen();
-            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
-            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
-            // $skor->ujian_id = $data->id;
             $nilai = [];
             foreach ($indikator as $value) {
                 if ($value->indikator_nomor == 1) {
@@ -323,10 +320,7 @@ class MotivasiKomitmen extends Component
                 }
             }
     
-            // $skor->nilai = $nilai;
-    
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5;
-            // $skor->skor_total = $skor_total;
     
             $priority = [
                 '5/SB',
@@ -386,15 +380,7 @@ class MotivasiKomitmen extends Component
             }) : [];
     
             $kualifikasi_tertinggi = $top_data[0]['kualifikasi'];
-            // $skor->kualifikasi = $kualifikasi_tertinggi;
-    
             $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kualifikasi_tertinggi . '%')->first();
-            // if ($deskripsi) {
-            //     $skor->level = $deskripsi->level;
-            //     $skor->deskripsi = $deskripsi->deskripsi;
-            // }
-    
-            // $skor->save();
 
             HasilMotivasiKomitmen::updateOrCreate(
                 [
@@ -407,7 +393,7 @@ class MotivasiKomitmen extends Component
                     'skor_total' => $skor_total,
                     'level' => $deskripsi->level,
                     'deskripsi' => $deskripsi->deskripsi,
-                    'kualifikasi' => $kualifikasi_tertinggi
+                    'kualifikasi_total' => $this->_getKualifikasi($deskripsi->level)
                 ]
             );
     
@@ -425,11 +411,37 @@ class MotivasiKomitmen extends Component
     
             // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             session()->flash('toast', [
                 'type' => 'error',
                 'message' => 'Terjadi kesalahan'
             ]);
         }
+    }
+
+    private function _getKualifikasi($level)
+    {
+        switch ($level) {
+            case '5':
+                $kualifikasi = 'Sangat Baik';
+                break;
+            case '4':
+                $kualifikasi = 'Baik';
+                break;
+            case '3':
+                $kualifikasi = 'Cukup';
+                break;
+            case '2':
+                $kualifikasi = 'Kurang';
+                break;
+            case '1':
+                $kualifikasi = 'Sangat Kurang';
+                break;
+            default:
+                $kualifikasi = '';
+                break;
+        }
+
+        return $kualifikasi;
     }
 }

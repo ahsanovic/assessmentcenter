@@ -148,6 +148,8 @@ class ProblemSolving extends Component
 
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => $nomor_soal + 1]), true);
+        } else if ($nomor_soal == $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => $nomor_soal]), true);
         }
     }
 
@@ -164,67 +166,6 @@ class ProblemSolving extends Component
     {
         try {
             $data = UjianProblemSolving::findOrFail($this->id_ujian);
-            $indikator = RefIndikatorProblemSolving::get(['indikator_nama', 'indikator_nomor']);
-    
-            // $skor = new HasilProblemSolving();
-            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
-            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
-            // $skor->ujian_id = $data->id;
-            $nilai = [];
-            foreach ($indikator as $value) {
-                if ($value->indikator_nomor == 1) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_1,
-                    ];
-                } else if ($value->indikator_nomor == 2) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_2,
-                    ];
-                } else if ($value->indikator_nomor == 3) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_3,
-                    ];
-                } else if ($value->indikator_nomor == 4) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_4,
-                    ];
-                } else if ($value->indikator_nomor == 5) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_5,
-                    ];
-                } else if ($value->indikator_nomor == 6) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_6,
-                    ];
-                } else if ($value->indikator_nomor == 7) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_7,
-                    ];
-                } else if ($value->indikator_nomor == 8) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'no_indikator' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_8,
-                    ];
-                }
-            }
-    
-            // $skor->nilai = $nilai;
-    
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
             
             if (($skor_total == 0) || ($skor_total >= 14 && $skor_total <= 45)) {
@@ -256,11 +197,6 @@ class ProblemSolving extends Component
                 $kualifikasi_total = 'Sangat Baik';
                 $kategori_total = 'Tinggi';
             }
-    
-            // $skor->level_total = $level_total;
-            // $skor->kualifikasi_total = $kualifikasi_total;
-            // $skor->kategori_total = $kategori_total;
-            // $skor->skor_total = $skor_total;
 
             $skor = HasilProblemSolving::updateOrCreate(
                 [
@@ -269,7 +205,6 @@ class ProblemSolving extends Component
                     'ujian_id' => $data->id,
                 ],
                 [
-                    'nilai' => $nilai,
                     'skor_total' => $skor_total,
                     'level_total' => $level_total,
                     'kualifikasi_total' => $kualifikasi_total,
@@ -277,25 +212,33 @@ class ProblemSolving extends Component
                 ]
             );
     
-            if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
-                $level_norma_umum = '3';
-            } else {
-                $level_norma_umum = $level_total;
-            }
+            // if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
+            //     $level_norma_umum = '3';
+            // } else {
+            //     $level_norma_umum = $level_total;
+            // }
     
-            $aspek = RefAspekProblemSolving::where('aspek_nomor', $level_norma_umum)->first();
-            $indikator_nomor = explode(',', $aspek->indikator_nomor);
+            // $aspek = RefAspekProblemSolving::where('aspek_nomor', $level_norma_umum)->first();
+            // $indikator_nomor = explode(',', $aspek->indikator_nomor);
+            $indikator = RefIndikatorProblemSolving::get(['indikator_nama', 'indikator_nomor']);
             $deskripsi_list = [];
-            foreach ($indikator_nomor as $indikator) {
-                $kualifikasi_deskripsi = RefIndikatorProblemSolving::where('indikator_nomor', $indikator)->value('kualifikasi_deskripsi');
+            $nilai = [];
+            foreach ($indikator as $value) {
+                $kualifikasi_deskripsi = RefIndikatorProblemSolving::where('indikator_nomor', $value->indikator_nomor)->value('kualifikasi_deskripsi');
                 $deskripsi_data = collect($kualifikasi_deskripsi);
-    
-                $nilai_indikator = $data->{'nilai_indikator_' . $indikator} ?? null;
+
+                $nilai_indikator = $data->{'nilai_indikator_' . $value->indikator_nomor} ?? null;
                 if (is_null($nilai_indikator)) {
                     continue;
                 }
-    
-                if ($indikator == 1) {
+
+                if ($value->indikator_nomor == 1) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_1,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 4 && $nilai_indikator <= 7) {
@@ -303,7 +246,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator >= 8 && $nilai_indikator <= 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 2) {
+                } else if ($value->indikator_nomor == 2) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_2,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 6) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 7 && $nilai_indikator <= 8) {
@@ -311,7 +260,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 3) {
+                } else if ($value->indikator_nomor == 3) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_3,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
@@ -319,7 +274,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator == 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 4) {
+                } else if ($value->indikator_nomor == 4) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_4,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
@@ -327,7 +288,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator >= 5) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 5) {
+                } else if ($value->indikator_nomor == 5) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_5,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 4 && $nilai_indikator <= 7) {
@@ -335,7 +302,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator >= 8 && $nilai_indikator <= 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 6) {
+                } else if ($value->indikator_nomor == 6) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_6,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
@@ -343,7 +316,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator == 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 7) {
+                } else if ($value->indikator_nomor == 7) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_7,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
@@ -351,7 +330,13 @@ class ProblemSolving extends Component
                     } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
                         $kategori = 'Tinggi';
                     }
-                } else if ($indikator == 8) {
+                } else if ($value->indikator_nomor == 8) {
+                    $nilai[] = [
+                        'indikator' => $value->indikator_nama,
+                        'no_indikator' => $value->indikator_nomor,
+                        'skor' => $data->nilai_indikator_8,
+                    ];
+
                     if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
@@ -360,22 +345,25 @@ class ProblemSolving extends Component
                         $kategori = 'Tinggi';
                     }
                 }
-    
+
                 if ($kategori) {
-                    $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori)['deskripsi'] ?? null;
+                    $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori) ?? null;
                     if ($deskripsi) {
                         $deskripsi_list[] = $deskripsi;
                     }
                 }
             }
-    
-            // $skor->uraian_potensi_1 = $deskripsi_list[0] ?? null;
-            // $skor->uraian_potensi_2 = $deskripsi_list[1] ?? null;
-            // $skor->save();
 
             $skor->update([
+                'nilai' => $nilai,
                 'uraian_potensi_1' => $deskripsi_list[0] ?? null,
                 'uraian_potensi_2' => $deskripsi_list[1] ?? null,
+                'uraian_potensi_3' => $deskripsi_list[2] ?? null,
+                'uraian_potensi_4' => $deskripsi_list[3] ?? null,
+                'uraian_potensi_5' => $deskripsi_list[4] ?? null,
+                'uraian_potensi_6' => $deskripsi_list[5] ?? null,
+                'uraian_potensi_7' => $deskripsi_list[6] ?? null,
+                'uraian_potensi_8' => $deskripsi_list[7] ?? null,
             ]);
     
             // change status ujian to true (finish)

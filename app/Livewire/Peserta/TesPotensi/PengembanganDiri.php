@@ -141,6 +141,8 @@ class PengembanganDiri extends Component
 
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => $nomor_soal + 1]), true);
+        } else if ($nomor_soal == $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => $nomor_soal]), true);
         }
     }
 
@@ -157,6 +159,7 @@ class PengembanganDiri extends Component
     {
         try {
             $data = UjianPengembanganDiri::findOrFail($this->id_ujian);
+
             // indikator motivasi belajar
             if ($data->nilai_indikator_mb >= 1 && $data->nilai_indikator_mb <= 4) {
                 $standard_mb = 1;
@@ -247,14 +250,10 @@ class PengembanganDiri extends Component
                 $kualifikasi_ed = 'SB';
             }
     
-            $indikator = RefPengembanganDiri::get(['indikator_nama', 'indikator_nomor']);
+            $indikator_list = RefPengembanganDiri::get(['indikator_nama', 'indikator_nomor']);
     
-            $skor = new HasilPengembanganDiri();
-            $skor->event_id = Auth::guard('peserta')->user()->event_id;
-            $skor->peserta_id = Auth::guard('peserta')->user()->id;
-            $skor->ujian_id = $data->id;
             $nilai = [];
-            foreach ($indikator as $value) {
+            foreach ($indikator_list as $value) {
                 if ($value->indikator_nomor == 1) {
                     $nilai[] = [
                         'indikator' => $value->indikator_nama,
@@ -298,14 +297,11 @@ class PengembanganDiri extends Component
                 }
             }
     
-            // $skor->nilai = $nilai;
-    
             $skor_total = $data->nilai_indikator_mb + $data->nilai_indikator_mit + $data->nilai_indikator_pde + $data->nilai_indikator_spd + $data->nilai_indikator_ed;
-            // $skor->skor_total = $skor_total;
-            if ($skor_total <= 120) {
+            if ($skor_total <= 119) {
                 $level_total = 1;
                 $kualifikasi_total = 'Sangat Kurang';
-            } else if ($skor_total >= 121 && $skor_total <= 124) {
+            } else if ($skor_total >= 120 && $skor_total <= 124) {
                 $level_total = 2;
                 $kualifikasi_total = 'Kurang';
             } else if ($skor_total >= 125 && $skor_total <= 127) {
@@ -318,9 +314,6 @@ class PengembanganDiri extends Component
                 $level_total = 5;
                 $kualifikasi_total = 'Sangat Baik';
             }
-    
-            // $skor->level_total = $level_total;
-            // $skor->kualifikasi_total = $kualifikasi_total;
 
             $skor = HasilPengembanganDiri::updateOrCreate(
                 [
@@ -337,61 +330,43 @@ class PengembanganDiri extends Component
             );
     
             $priority = ['SB', 'B', 'C', 'K', 'SK'];
-    
-            // menyortir data berdasarkan urutan kualifikasi
             usort($nilai, function ($a, $b) use ($priority) {
                 $posA = array_search($a['kualifikasi'], $priority);
                 $posB = array_search($b['kualifikasi'], $priority);
                 return $posA - $posB;
             });
-    
-            // Ambil kualifikasi tertinggi pertama
-            $top_kualifikasi = $nilai[0]['kualifikasi'];
-    
-            // Ambil semua data dengan kualifikasi tertinggi
-            $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
-                return $item['kualifikasi'] === $top_kualifikasi;
+
+            // Ambil 5 data setelah diurutkan, kemudian urutkan berdasar ranking (nomor indikator)
+            $top_data = array_slice($nilai, 0, 5);
+            usort($top_data, function ($a, $b) {
+                return $a['ranking'] - $b['ranking'];
             });
-    
-            // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
-            if (count($top_data) < 2) {
-                $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
-                $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
-                    return $item['kualifikasi'] === $next_kualifikasi;
-                });
-                $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
-            }
-    
+
             // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
-            $indikator_nama = array_column($top_data, 'indikator');
             $indikator_nomor = array_column($top_data, 'ranking');
             $kualifikasi_array = array_column($top_data, 'kualifikasi');
-    
-            // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
-            $data_kualifikasi_1 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[0])->first();
-            $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
-            $data_kualifikasi_2 = RefPengembanganDiri::whereIndikatorNomor($indikator_nomor[1])->first();
-            $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
-    
-            $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
-            $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
-            $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
-            $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
-    
-            // $skor->indikator_potensi_1 = $indikator_nama[0];
-            // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
-            // $skor->indikator_potensi_2 = $indikator_nama[1];
-            // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
-            // $skor->save();
 
-            $skor->update([
-                'indikator_potensi_1' => $indikator_nama[0],
-                'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
-                'indikator_potensi_2' => $indikator_nama[1],
-                'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
-            ]);
-    
-            // change status ujian to true (finish)
+            $data_to_save = [];
+
+            foreach ($indikator_nomor as $index => $nomor) {
+                $data_kualifikasi = RefPengembanganDiri::whereIndikatorNomor($nomor)->first();
+
+                if ($data_kualifikasi) {
+                    $kualifikasi_data = $data_kualifikasi->kualifikasi;
+                    $selected_kualifikasi = $this->_getKualifikasi($kualifikasi_array[$index]);
+                    $uraian_potensi = collect($kualifikasi_data)->firstWhere('kualifikasi', $selected_kualifikasi);
+
+                    // Simpan dalam format field indikator_potensi_1, uraian_potensi_1, dst
+                    // $field_indikator = "indikator_potensi_" . ($index + 1);
+                    $field_uraian_potensi = "uraian_potensi_" . ($index + 1);
+
+                    // $data_to_save[$field_indikator] = $data_kualifikasi->indikator_nama;
+                    $data_to_save[$field_uraian_potensi] = $uraian_potensi;
+                }
+            }
+
+            $skor->update($data_to_save);
+
             $data->is_finished = true;
             $data->save();
 
@@ -402,7 +377,7 @@ class PengembanganDiri extends Component
             } else {
                 return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
-    
+
             // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
             // throw $th;
@@ -430,6 +405,9 @@ class PengembanganDiri extends Component
                 break;
             case 'SK':
                 $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
+            default:
+                $kualifikasi = '';
                 break;
         }
 

@@ -130,7 +130,7 @@
                 <div class="col mt-2">
                     @for ($i = 0; $i < 1; $i++)
                         <div class="d-flex flex-wrap btn-group btn-group-sm" role="group" aria-label="Basic example">
-                            @for ($j = 1; $j <= 13; $j++)
+                            @for ($j = 1; $j <= 10; $j++)
                                 <button wire:click="navigate({{ $nomor_soal }})"
                                     class="btn btn-sm btn-<?php
                                     if ($jawaban[$nomor_soal - 1] === '0') {

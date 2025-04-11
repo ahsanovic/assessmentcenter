@@ -8,6 +8,7 @@ use App\Models\KecerdasanEmosi\SoalKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\Settings;
 use App\Traits\StartTestTrait;
+use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,7 +16,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Kecerdasan Emosi'])]
 class KecerdasanEmosi extends Component
 {
-    use StartTestTrait;
+    use StartTestTrait, TimerTrait;
 
     public $soal;
     public $jml_soal;
@@ -134,6 +135,8 @@ class KecerdasanEmosi extends Component
 
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => $nomor_soal + 1]), true);
+        } else if ($nomor_soal == $this->jml_soal) {
+            $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => $nomor_soal]), true);
         }
     }
 
@@ -155,19 +158,19 @@ class KecerdasanEmosi extends Component
             if ($data->nilai_indikator_kd >= 1 && $data->nilai_indikator_kd <= 3) {
                 $standard_kd = '1';
                 $kualifikasi_kd = 'SK';
-            } else if ($data->nilai_indikator_kd == 4) {
+            } else if ($data->nilai_indikator_kd >= 4 && $data->nilai_indikator_kd <= 5) {
                 $standard_kd = '2';
                 $kualifikasi_kd = 'K';
-            } else if ($data->nilai_indikator_kd == 5) {
+            } else if ($data->nilai_indikator_kd == 6) {
                 $standard_kd = '3-';
                 $kualifikasi_kd = 'C-';
-            } else if ($data->nilai_indikator_kd == 6) {
+            } else if ($data->nilai_indikator_kd == 7) {
                 $standard_kd = '3';
                 $kualifikasi_kd = 'C';
-            } else if ($data->nilai_indikator_kd == 7) {
+            } else if ($data->nilai_indikator_kd == 8) {
                 $standard_kd = '3+';
                 $kualifikasi_kd = 'C+';
-            } else if ($data->nilai_indikator_kd >= 8 && $data->nilai_indikator_kd <= 9) {
+            } else if ($data->nilai_indikator_kd == 9) {
                 $standard_kd = '4';
                 $kualifikasi_kd = 'B';
             } else if ($data->nilai_indikator_kd >= 10) {
@@ -249,10 +252,6 @@ class KecerdasanEmosi extends Component
 
             $indikator = RefKecerdasanEmosi::get(['indikator_nama', 'indikator_nomor']);
 
-            // $skor = new HasilKecerdasanEmosi();
-            // $skor->event_id = Auth::guard('peserta')->user()->event_id;
-            // $skor->peserta_id = Auth::guard('peserta')->user()->id;
-            // $skor->ujian_id = $data->id;
             $nilai = [];
             foreach ($indikator as $value) {
                 if ($value->indikator_nomor == 1) {
@@ -290,35 +289,30 @@ class KecerdasanEmosi extends Component
                 }
             }
 
-            // $skor->nilai = $nilai;
 
             $skor_total = $data->nilai_indikator_kd + $data->nilai_indikator_mpd + $data->nilai_indikator_ke + $data->nilai_indikator_ks;
-            // $skor->skor_total = $skor_total;
-            if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 23)) {
+            if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 21)) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
-            } else if ($skor_total >= 24 && $skor_total <= 25) {
+            } else if ($skor_total >= 22 && $skor_total <= 26) {
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
-            } else if ($skor_total >= 26 && $skor_total <= 27) {
+            } else if ($skor_total == 27) {
                 $level_total = '3-';
                 $kualifikasi_total = 'Cukup';
             } else if ($skor_total >= 28 && $skor_total <= 29) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
-            } else if ($skor_total >= 30 && $skor_total <= 31) {
+            } else if ($skor_total == 30) {
                 $level_total = '3+';
                 $kualifikasi_total = 'Cukup';
-            } else if ($skor_total >= 32 && $skor_total <= 35) {
+            } else if ($skor_total >= 31 && $skor_total <= 35) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
             } else if ($skor_total >= 36) {
                 $level_total = '5';
                 $kualifikasi_total = 'Sangat Baik';
             }
-
-            // $skor->level_total = $level_total;
-            // $skor->kualifikasi_total = $kualifikasi_total;
 
             $skor = HasilKecerdasanEmosi::updateOrCreate(
                 [
@@ -336,57 +330,42 @@ class KecerdasanEmosi extends Component
 
             $priority = ['SB', 'B', 'C+', 'C', 'C-', 'K', 'SK'];
 
-            // menyortir data berdasarkan urutan kualifikasi
             usort($nilai, function ($a, $b) use ($priority) {
                 $posA = array_search($a['kualifikasi'], $priority);
                 $posB = array_search($b['kualifikasi'], $priority);
                 return $posA - $posB;
             });
 
-            // Ambil kualifikasi tertinggi pertama
-            $top_kualifikasi = $nilai[0]['kualifikasi'];
-
-            // Ambil semua data dengan kualifikasi tertinggi
-            $top_data = array_filter($nilai, function($item) use ($top_kualifikasi) {
-                return $item['kualifikasi'] === $top_kualifikasi;
+            // Ambil 4 data setelah diurutkan, kemudian urutkan berdasar ranking (nomor indikator)
+            $top_data = array_slice($nilai, 0, 4);
+            usort($top_data, function ($a, $b) {
+                return $a['ranking'] - $b['ranking'];
             });
 
-            // Jika jumlah data kurang dari 2, ambil tambahan data dari kualifikasi berikutnya
-            if (count($top_data) < 2) {
-                $next_kualifikasi = $nilai[count($top_data)]['kualifikasi'];
-                $next_data = array_filter($nilai, function($item) use ($next_kualifikasi) {
-                    return $item['kualifikasi'] === $next_kualifikasi;
-                });
-                $top_data = array_merge($top_data, array_slice($next_data, 0, 2 - count($top_data)));
-            }
-
             // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
-            $indikator_nama = array_column($top_data, 'indikator');
             $indikator_nomor = array_column($top_data, 'ranking');
             $kualifikasi_array = array_column($top_data, 'kualifikasi');
 
-            // cari uraian potensi berdasar indikator dengan kualifikasi tertinggi pertama dan kedua
-            $data_kualifikasi_1 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[0])->first();
-            $kualifikasi_1 = $data_kualifikasi_1->kualifikasi;
-            $data_kualifikasi_2 = RefKecerdasanEmosi::whereIndikatorNomor($indikator_nomor[1])->first();
-            $kualifikasi_2 = $data_kualifikasi_2->kualifikasi;
+            $data_to_save = [];
 
-            $first_qualification = $this->_getKualifikasi($kualifikasi_array[0]);
-            $second_qualification = $this->_getKualifikasi($kualifikasi_array[1]);
-            $uraian_potensi_1 = collect($kualifikasi_1)->firstWhere('kualifikasi', $first_qualification);
-            $uraian_potensi_2 = collect($kualifikasi_2)->firstWhere('kualifikasi', $second_qualification);
+            foreach ($indikator_nomor as $index => $nomor) {
+                $data_kualifikasi = RefKecerdasanEmosi::whereIndikatorNomor($nomor)->first();
 
-            // $skor->indikator_potensi_1 = $indikator_nama[0];
-            // $skor->uraian_potensi_1 = $uraian_potensi_1['uraian_potensi'];
-            // $skor->indikator_potensi_2 = $indikator_nama[1];
-            // $skor->uraian_potensi_2 = $uraian_potensi_2['uraian_potensi'];
-            // $skor->save();
-            $skor->update([
-                'indikator_potensi_1' => $indikator_nama[0],
-                'uraian_potensi_1' => $uraian_potensi_1['uraian_potensi'] ?? '',
-                'indikator_potensi_2' => $indikator_nama[1],
-                'uraian_potensi_2' => $uraian_potensi_2['uraian_potensi'] ?? '',
-            ]);
+                if ($data_kualifikasi) {
+                    $kualifikasi_data = $data_kualifikasi->kualifikasi;
+                    $selected_kualifikasi = $this->_getKualifikasi($kualifikasi_array[$index]);
+                    $uraian_potensi = collect($kualifikasi_data)->firstWhere('kualifikasi', $selected_kualifikasi);
+
+                    // Simpan dalam format field indikator_potensi_1, uraian_potensi_1, dst
+                    // $field_indikator = "indikator_potensi_" . ($index + 1);
+                    $field_uraian_potensi = "uraian_potensi_" . ($index + 1);
+
+                    // $data_to_save[$field_indikator] = $data_kualifikasi->indikator_nama;
+                    $data_to_save[$field_uraian_potensi] = $uraian_potensi;
+                }
+            }
+
+            $skor->update($data_to_save);
 
             // change status ujian to true (finish)
             $data->is_finished = true;
@@ -432,6 +411,9 @@ class KecerdasanEmosi extends Component
                 break;
             case 'SK':
                 $kualifikasi = 'Kurang/Sangat Kurang';
+                break;
+            default:
+                $kualifikasi = '';
                 break;
         }
 
