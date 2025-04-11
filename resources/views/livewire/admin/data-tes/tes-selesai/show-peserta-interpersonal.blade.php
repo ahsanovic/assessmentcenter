@@ -31,7 +31,7 @@
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi / Unit Kerja</th>
-                                    <th>Selesai Tes</th>
+                                    <th>Mulai / Selesai Tes</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -43,7 +43,10 @@
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }} - {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }} <br/> {{ $item->unit_kerja }}</td>
-                                        <td class="text-wrap">{{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}</td>
+                                        <td class="text-wrap">
+                                            {{ \Carbon\Carbon::parse($item->waktu_mulai)->translatedFormat('d F Y / H:i:s') }} <br/>
+                                            {{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}
+                                        </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
                                                 <button wire:click="deleteConfirmation('{{ $item->hasil_interpersonal_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
