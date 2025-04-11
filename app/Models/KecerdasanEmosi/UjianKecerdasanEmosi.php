@@ -8,4 +8,5 @@ class UjianKecerdasanEmosi extends Model
 {
     protected $table = 'ujian_kecerdasan_emosi';
     protected $guarded = ['id'];
+    protected $casts = ['waktu_tes_berakhir' => 'datetime'];
 }
