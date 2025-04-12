@@ -13,7 +13,7 @@
                             <div class="col-sm-12">
                                 <div class="mb-3">
                                     <label class="form-label">Alat Tes</label>
-                                    <input type="text" wire:model="form.alat_tes" class="form-control @error('form.alat_tes') is-invalid @enderror">
+                                    <input type="text" wire:model="form.alat_tes" class="form-control @error('form.alat_tes') is-invalid @enderror" {{ $isUpdate == true ? 'disabled' : '' }}>
                                     @error('form.alat_tes')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
