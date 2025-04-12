@@ -48,10 +48,18 @@
                                             <a href="{{ route('admin.tes-selesai.show-report', [
                                                     'idEvent' => $item->event_id,
                                                     'nip' => $item->nip
-                                                ]) }}" class="btn btn-sm btn-inverse-sucess"
+                                                ]) }}" class="btn btn-sm btn-inverse-success"
                                                 wire:navigate
                                             >
-                                                <i class="link-icon text-danger" data-feather="file"></i>
+                                                Lihat
+                                            </a>
+                                            <a href="{{ route('admin.tes-selesai.download', [
+                                                    'idEvent' => $item->event_id,
+                                                    'nip' => $item->nip
+                                                ]) }}" class="btn btn-sm btn-inverse-danger"
+                                                target="_blank"
+                                            >
+                                                Download
                                             </a>
                                         </td>
                                     </tr>

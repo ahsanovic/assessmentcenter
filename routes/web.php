@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LogoutAssessorController;
 use App\Http\Controllers\LogoutPesertaController;
+use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Middleware\CheckExamPin;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,7 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('tes-selesai/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaPengembanganDiri::class)->name('admin.tes-selesai.show-peserta-pengembangan-diri');
     Route::get('tes-selesai/{idEvent}/show-peserta-motivasi-komitmen', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaMotivasiKomitmen::class)->name('admin.tes-selesai.show-peserta-motivasi-komitmen');
     Route::get('tes-selesai/{idEvent}/{nip}/show-report', \App\Livewire\Admin\DataTes\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
+    Route::get('tes-selesai/{idEvent}/{nip}/download', [DownloadLaporanPenilaianController::class, 'createPdf'])->name('admin.tes-selesai.download');
 
     // peserta
     Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
