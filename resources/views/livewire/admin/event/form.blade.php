@@ -20,6 +20,16 @@
                             </div><!-- Col -->
                         </div><!-- Row -->
                         <div class="row">
+                            <div class="col-sm-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nomor Surat Laporan Hasil Penilaian</label>
+                                    <input type="text" wire:model="no_surat"
+                                        class="form-control"
+                                        placeholder="masukkan nomor surat untuk laporan hasil penilaian">
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label for="metode-tes" class="form-label">Metode Tes</label>

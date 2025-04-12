@@ -4,10 +4,8 @@ namespace App\Livewire\Admin\Event;
 
 use App\Models\Assessor;
 use App\Models\Event;
-use App\Models\RefAlatTes;
 use App\Models\RefJabatanDiuji;
 use App\Models\RefMetodeTes;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -19,6 +17,7 @@ class Form extends Component
     public $tgl_mulai;
     public $tgl_selesai;
     public $nama_event;
+    public $no_surat;
     public $jabatan_diuji_id;
     public $metode_tes_id;
     public $pin_ujian;
@@ -129,6 +128,7 @@ class Form extends Component
                 $data = Event::findOrFail($this->id);
                 $data->fill([
                     'nama_event' => $this->nama_event,
+                    'no_surat' => $this->no_surat,
                     'metode_tes_id' => $this->metode_tes_id,
                     'jabatan_diuji_id' => $this->jabatan_diuji_id,
                     'tgl_mulai' => $this->tgl_mulai,
@@ -154,6 +154,7 @@ class Form extends Component
             } else {
                 $event = Event::create([
                     'nama_event' => $this->nama_event,
+                    'no_surat' => $this->no_surat,
                     'metode_tes_id' => $this->metode_tes_id,
                     'jabatan_diuji_id' => $this->jabatan_diuji_id,
                     'tgl_mulai' => $this->tgl_mulai,
@@ -181,7 +182,7 @@ class Form extends Component
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            throw $th;
+            // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
