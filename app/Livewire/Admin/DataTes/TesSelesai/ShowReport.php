@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\DataTes\TesSelesai;
 
 use App\Models\Event;
-use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\Peserta;
 use App\Models\Settings;
 use Livewire\Attributes\Layout;
@@ -14,11 +13,13 @@ class ShowReport extends Component
 {
     public $nip;
     public $peserta;
+    public $id_event;
 
-    public function mount($nip)
+    public function mount($nip, $idEvent)
     {
         $this->nip = $nip;
         $this->peserta = Peserta::whereNip($this->nip)->first();
+        $this->id_event = $idEvent;
     }
 
     public function render()
