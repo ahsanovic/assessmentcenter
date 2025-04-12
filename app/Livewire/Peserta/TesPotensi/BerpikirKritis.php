@@ -3,7 +3,6 @@
 namespace App\Livewire\Peserta\TesPotensi;
 
 use App\Models\BerpikirKritis\HasilBerpikirKritis;
-use App\Models\BerpikirKritis\RefAspekBerpikirKritis;
 use App\Models\BerpikirKritis\RefIndikatorBerpikirKritis;
 use App\Models\BerpikirKritis\SoalBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
@@ -210,15 +209,6 @@ class BerpikirKritis extends Component
                     'kategori_total' => $kategori_total,
                 ]
             );
-
-            // if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
-            //     $level_norma_umum = '3';
-            // } else {
-            //     $level_norma_umum = $level_total;
-            // }
-
-            // $aspek = RefAspekBerpikirKritis::where('aspek_nomor', $level_norma_umum)->first();
-            // $indikator_nomor = explode(',', $aspek->indikator_nomor);
             
             $deskripsi_list = [];
             $nilai = [];
