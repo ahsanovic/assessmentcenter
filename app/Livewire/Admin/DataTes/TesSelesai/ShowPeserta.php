@@ -3,10 +3,7 @@
 namespace App\Livewire\Admin\DataTes\TesSelesai;
 
 use App\Models\Event;
-use App\Models\Interpersonal\HasilInterpersonal;
-use App\Models\Peserta;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
