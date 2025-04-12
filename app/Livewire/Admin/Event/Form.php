@@ -42,6 +42,7 @@ class Form extends Component
                 $data = Event::with(['assessor'])->findOrFail($id);
                 $this->id = $data->id;
                 $this->nama_event = $data->nama_event;
+                $this->no_surat = $data->no_surat;
                 $this->metode_tes_id = $data->metode_tes_id;
                 $this->jabatan_diuji_id = $data->jabatan_diuji_id;
                 $this->tgl_mulai = $data->tgl_mulai;
