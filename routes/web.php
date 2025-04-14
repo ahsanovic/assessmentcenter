@@ -32,6 +32,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
     Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
 
+    // nomor laporan
+    Route::get('nomor-laporan', \App\Livewire\Admin\NomorLaporan\Index::class)->name('admin.nomor-laporan');
+    Route::get('nomor-laporan/create', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.create');
+    Route::get('nomor-laporan/{id}/edit', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.edit');
+
     // data tes berlangsung
     Route::get('tes-berlangsung', \App\Livewire\Admin\DataTes\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');
     Route::get('tes-berlangsung/{idEvent}/show-peserta-interpersonal', \App\Livewire\Admin\DataTes\TesBerlangsung\ShowPesertaInterpersonal::class)->name('admin.tes-berlangsung.show-peserta-interpersonal');

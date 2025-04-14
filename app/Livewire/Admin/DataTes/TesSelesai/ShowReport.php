@@ -27,7 +27,10 @@ class ShowReport extends Component
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
         $data = Event::with(['peserta' => function ($query) {
                         $query->where('id', $this->peserta->id);
-                    }, 
+                    },
+                    'nomorLaporan' => function ($query) {
+                        $query->where('event_id', $this->id_event);
+                    },
                     'hasilInterpersonal',
                     'hasilKesadaranDiri',
                     'hasilBerpikirKritis',

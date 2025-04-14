@@ -216,7 +216,7 @@
     </div>
     
     <div class="nomor-surat">
-        NOMOR : {{ $data->no_surat ?? '' }}
+        NOMOR : {{ $data->nomorLaporan[0]->nomor ?? '' }}
     </div>
     
     <!-- Tujuan -->
@@ -224,7 +224,9 @@
         <tr>
             <td width="35">Tujuan :</td>
             <td>Pemetaan Potensi</td>
-            <td width="200" style="text-align: right">Tanggal Pemeriksaan : {{ $data->ujianInterpersonal[0]->created_at->format('d F Y') ?? '-' }}</td>
+            <td width="200" style="text-align: right">
+                Tanggal Pemeriksaan : {{ \Carbon\Carbon::parse($data->nomorLaporan[0]->tanggal)->format('d F Y') ?? '-' }}
+            </td>
         </tr>
     </table>
     

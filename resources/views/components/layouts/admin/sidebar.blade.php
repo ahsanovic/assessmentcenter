@@ -85,6 +85,12 @@
                         <span class="link-title">Distribusi Peserta</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.nomor-laporan') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Nomor Laporan Penilaian</span>
+                    </a>
+                </li>
 
                 <li class="nav-item nav-category">Tes</li>
                 <li class="nav-item">

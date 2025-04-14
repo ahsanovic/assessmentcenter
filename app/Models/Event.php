@@ -43,6 +43,11 @@ class Event extends Model
         return date('d-m-Y', strtotime($value));
     }
 
+    public function nomorLaporan()
+    {
+        return $this->hasMany(NomorLaporan::class, 'event_id', 'id');
+    }
+
     public function peserta()
     {
         return $this->hasMany(Peserta::class, 'event_id', 'id')->where('is_active', 'true');

@@ -18,7 +18,10 @@ class DownloadLaporanPenilaianController extends Controller
         $data = Event::with([
                 'peserta' => function ($query) use ($peserta) {
                     $query->where('id', $peserta->id);
-                }, 
+                },
+                'nomorLaporan' => function ($query) use ($idEvent) {
+                    $query->where('event_id', $idEvent);
+                },
                 'hasilInterpersonal',
                 'hasilKesadaranDiri',
                 'hasilBerpikirKritis',
@@ -26,9 +29,6 @@ class DownloadLaporanPenilaianController extends Controller
                 'hasilPengembanganDiri',
                 'hasilKecerdasanEmosi',
                 'hasilMotivasiKomitmen',
-                'ujianInterpersonal' => function ($query) {
-                    $query->select('id', 'event_id', 'created_at');
-                }, 
             ])
             ->where('id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
