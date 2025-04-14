@@ -150,7 +150,7 @@ class DownloadLaporanPenilaianController extends Controller
 
             if (!$data) continue;
     
-            $pdf = Pdf::loadView('livewire.admin.data-tes.tes-selesai.download-zip', [
+            $pdf = Pdf::loadView('livewire.admin.data-tes.tes-selesai.download-pdf', [
                 'peserta' => $peserta,
                 'aspek_potensi' => $aspek_potensi,
                 'data' => $data,
