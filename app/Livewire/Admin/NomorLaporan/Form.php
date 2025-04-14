@@ -61,7 +61,9 @@ class Form extends Component
                 
                 $this->redirect(route('admin.nomor-laporan'), true);
             } else {
-                $check_duplicate = NomorLaporan::where('nomor', $this->form->nomor)->exists();
+                $tanggal = date('Y-m-d', strtotime($this->form->tanggal));
+                $check_duplicate = NomorLaporan::where('nomor', $this->form->nomor)->where('tanggal', $tanggal)->exists();
+
                 if ($check_duplicate) {
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor ' . $this->form->nomor . ' sudah ada!']);
                     return;
