@@ -16,6 +16,7 @@ class ShowPeserta extends Component
     public $event;
     public $id_event;
     public $selected_id;
+    public $tanggal_tes;
 
     #[Url(as: 'q')]
     public ?string $search =  '';
@@ -27,7 +28,7 @@ class ShowPeserta extends Component
 
     public function resetFilters()
     {
-        $this->reset(['search']);
+        $this->reset(['search', 'tanggal_tes']);
         $this->resetPage();
         $this->render();
     }
@@ -41,11 +42,20 @@ class ShowPeserta extends Component
     public function render()
     {
         $data = $this->event->peserta()
+                ->with(['ujianInterpersonal' => function ($query) {
+                    $query->select('id', 'peserta_id', 'created_at');
+                }])
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                         ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                })
+                ->when($this->tanggal_tes, function ($query) {
+                    $tanggal_tes = date('Y-m-d', strtotime($this->tanggal_tes));
+                    $query->whereHas('ujianInterpersonal', function ($query) use ($tanggal_tes) {
+                        $query->whereDate('created_at', $tanggal_tes);
+                    });
                 })
                 ->whereHas('ujianInterpersonal', function($query) {
                     $query->where('is_finished', 'true');
