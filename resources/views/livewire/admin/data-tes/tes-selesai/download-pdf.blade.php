@@ -189,9 +189,28 @@
         .italic {
             font-style: italic;
         }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            text-align: center;
+        }
+
+        .footer img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
+    <!-- Footer -->
+    <div class="footer">
+        <img src="{{ public_path('assets/images/tte-footer.png') }}" alt="footer" />
+    </div>
+
     <!-- Header -->
     <table class="header">
         <tr>
