@@ -17,7 +17,6 @@ class Form extends Component
     public $tgl_mulai;
     public $tgl_selesai;
     public $nama_event;
-    public $no_surat;
     public $jabatan_diuji_id;
     public $metode_tes_id;
     public $pin_ujian;
@@ -42,7 +41,6 @@ class Form extends Component
                 $data = Event::with(['assessor'])->findOrFail($id);
                 $this->id = $data->id;
                 $this->nama_event = $data->nama_event;
-                $this->no_surat = $data->no_surat;
                 $this->metode_tes_id = $data->metode_tes_id;
                 $this->jabatan_diuji_id = $data->jabatan_diuji_id;
                 $this->tgl_mulai = $data->tgl_mulai;
@@ -129,7 +127,6 @@ class Form extends Component
                 $data = Event::findOrFail($this->id);
                 $data->fill([
                     'nama_event' => $this->nama_event,
-                    'no_surat' => $this->no_surat,
                     'metode_tes_id' => $this->metode_tes_id,
                     'jabatan_diuji_id' => $this->jabatan_diuji_id,
                     'tgl_mulai' => $this->tgl_mulai,
@@ -155,7 +152,6 @@ class Form extends Component
             } else {
                 $event = Event::create([
                     'nama_event' => $this->nama_event,
-                    'no_surat' => $this->no_surat,
                     'metode_tes_id' => $this->metode_tes_id,
                     'jabatan_diuji_id' => $this->jabatan_diuji_id,
                     'tgl_mulai' => $this->tgl_mulai,
