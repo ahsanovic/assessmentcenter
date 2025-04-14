@@ -61,9 +61,72 @@ class DownloadLaporanPenilaianController extends Controller
             'peserta' => $peserta,
             'aspek_potensi' => $aspek_potensi,
             'data' => $data,
+            'capaian_level_interpersonal' => $this->_capaianLevel($data->hasilInterpersonal[0]->level_total),
+            'capaian_level_kecerdasan_emosi' => $this->_capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
+            'capaian_level_pengembangan_diri' => $this->_capaianLevel($data->hasilPengembanganDiri[0]->level_total),
+            'capaian_level_problem_solving' => $this->_capaianLevel($data->hasilProblemSolving[0]->level_total),
+            'capaian_level_motivasi_komitmen' => $this->_capaianLevel($data->hasilMotivasiKomitmen[0]->level_total),
+            'capaian_level_berpikir_kritis' => $this->_capaianLevel($data->hasilBerpikirKritis[0]->level_total),
+            'capaian_level_kesadaran_diri' => $this->_capaianLevel($data->hasilKesadaranDiri[0]->level_total),
         ])->setPaper('A4', 'portrait');
 
         // return $pdf->download('report-' . $peserta->nip . '-' . $peserta->nama . '.pdf');
         return $pdf->stream('report-' . $peserta->nip . '-' . $peserta->nama . '.pdf');
+    }
+
+    private function _capaianLevel($level_total)
+    {
+        switch ($level_total) {
+            case '5+':
+                $capaian_level = '5.5';
+                break;
+            case '5':
+                $capaian_level =  '5';
+                break;
+            case '5-':
+                $capaian_level =  '4.5';
+                break;
+            case '4+':
+                $capaian_level =  '4.33';
+                break;
+            case '4':
+                $capaian_level =  '4';
+                break;
+            case '4-':
+                $capaian_level =  '3.67';
+                break;
+            case '3+':
+                $capaian_level =  '3.5';
+                break;
+            case '3':
+                $capaian_level =  '3';
+                break;
+            case '3-':
+                $capaian_level =  '2.5';
+                break;
+            case '2+':
+                $capaian_level =  '2.33';
+                break;
+            case '2':
+                $capaian_level =  '2';
+                break;
+            case '2-':
+                $capaian_level =  '1.67';
+                break;
+            case '1+':
+                $capaian_level =  '1.33';
+                break;
+            case '1':
+                $capaian_level =  '1';
+                break;
+            case '1-':
+                $capaian_level =  '0.67';
+                break;
+            default:
+                $capaian_level =  '0';
+                break;
+        }
+
+        return $capaian_level;
     }
 }

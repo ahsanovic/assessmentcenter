@@ -159,7 +159,7 @@
         
         .ttd-section {
             width: 100%;
-            margin-top: 30px;
+            margin-top: 50px;
         }
         
         .ttd-box {
@@ -278,31 +278,31 @@
                 </td>
                 @switch($item->alatTes->alat_tes)
                     @case('Kemampuan Interpersonal')
-                        <td style="text-align: center">{{ $data->hasilInterpersonal[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_interpersonal ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilInterpersonal[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Kecerdasan Emosi')
-                        <td style="text-align: center">{{ $data->hasilKecerdasanEmosi[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_kecerdasan_emosi ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilKecerdasanEmosi[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Belajar Cepat dan Pengembangan Diri')
-                        <td style="text-align: center">{{ $data->hasilPengembanganDiri[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_pengembangan_diri ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilPengembanganDiri[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Problem Solving')
-                        <td style="text-align: center">{{ $data->hasilProblemSolving[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_problem_solving ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilProblemSolving[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Motivasi dan Komitmen')
-                        <td  style="text-align: center">{{ $data->hasilMotivasiKomitmen[0]->level_total ?? '-' }}</td>
+                        <td  style="text-align: center">{{ $capaian_level_motivasi_komitmen ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilMotivasiKomitmen[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Berpikir Kritis dan Strategis')
-                        <td style="text-align: center">{{ $data->hasilBerpikirKritis[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_berpikir_kritis ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilBerpikirKritis[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                     @case('Kesadaran Diri')
-                        <td style="text-align: center">{{ $data->hasilKesadaranDiri[0]->level_total ?? '-' }}</td>
+                        <td style="text-align: center">{{ $capaian_level_kesadaran_diri ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilKesadaranDiri[0]->kualifikasi_total ?? '-' }}</td>
                         @break
                 @endswitch
@@ -310,12 +310,39 @@
         @endforeach
         <tr>
             <td colspan="2"><b>Job Person Match (JPM)</b></td>
-            <td><b>{{ $jpm ?? '102.08%' }}</b></td>
+            <td style="text-align: center">
+                @php
+                    $capaian_level = [
+                        $capaian_level_interpersonal,
+                        $capaian_level_kecerdasan_emosi,
+                        $capaian_level_pengembangan_diri,
+                        $capaian_level_problem_solving,
+                        $capaian_level_motivasi_komitmen,
+                        $capaian_level_berpikir_kritis,
+                        $capaian_level_kesadaran_diri
+                    ];
+
+                    $jpm = array_sum(array_map('floatval', $capaian_level)) / (3 * 7);
+                @endphp
+                <b>
+                    {{ number_format($jpm * 100, 2) }} %
+                </b>
+            </td>
             <td></td>
         </tr>
         <tr>
             <td colspan="2"><b>Kategori</b></td>
-            <td><b>{{ $kategori ?? 'Optimal' }}</b></td>
+            <td style="text-align: center">
+                <b>
+                    @if ($jpm >= 0.9)
+                        {{ 'Optimal' }}
+                    @elseif ($jpm >= 0.78)
+                        {{ 'Cukup Optimal' }}
+                    @else
+                        {{ 'Kurang Optimal' }}
+                    @endif
+                </b>
+            </td>
             <td></td>
         </tr>
     </table>
