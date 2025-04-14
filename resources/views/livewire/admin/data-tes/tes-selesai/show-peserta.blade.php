@@ -69,7 +69,7 @@
                                         <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }} - {{  $item->golPangkat->golongan ?? '' }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }} <br /> {{ $item->unit_kerja }}</td>
-                                        <td class="text-wrap">{{ $item->ujianInterpersonal->created_at->format('d F Y') }}</td>
+                                        <td class="text-wrap">{{ optional($item->ujianInterpersonal)->created_at->format('d F Y') }}</td>
                                         <td>
                                             <a href="{{ route('admin.tes-selesai.show-report', [
                                                     'idEvent' => $item->event_id,
