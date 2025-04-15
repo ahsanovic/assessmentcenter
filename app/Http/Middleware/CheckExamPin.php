@@ -24,6 +24,7 @@ class CheckExamPin
             'tes-potensi/berpikir-kritis/*',
             'tes-potensi/problem-solving/*',
             'tes-potensi/kesadaran-diri/*',
+            'tes-potensi/kuesioner',
         ];
 
         if (session()->has('exam_pin')) {

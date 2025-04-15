@@ -61,6 +61,11 @@ Route::prefix('/bkdac')->group(function () {
     Route::get('tes-selesai/{idEvent}/{nip}/download', [DownloadLaporanPenilaianController::class, 'createPdf'])->name('admin.tes-selesai.download');
     Route::get('tes-selesai/{idEvent}/download-all', [DownloadLaporanPenilaianController::class, 'downloadAll'])->name('admin.tes-selesai.download-all-laporan');
 
+    // kuesioner
+    Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');
+    Route::get('kuesioner/create', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.create');
+    Route::get('kuesioner/{id}/edit', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.edit');
+
     // peserta
     Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
     Route::get('peserta/create', \App\Livewire\Admin\Peserta\Form::class)->name('admin.peserta.create');
@@ -215,7 +220,9 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('berpikir-kritis/{id}', \App\Livewire\Peserta\TesPotensi\BerpikirKritis::class)->name('peserta.tes-potensi.berpikir-kritis')->middleware(CheckExamPin::class);
         Route::get('problem-solving/{id}', \App\Livewire\Peserta\TesPotensi\ProblemSolving::class)->name('peserta.tes-potensi.problem-solving')->middleware(CheckExamPin::class);
         Route::get('kesadaran-diri/{id}', \App\Livewire\Peserta\TesPotensi\KesadaranDiri::class)->name('peserta.tes-potensi.kesadaran-diri')->middleware(CheckExamPin::class);
+        Route::get('kuesioner', \App\Livewire\Peserta\Kuesioner\Index::class)->name('peserta.kuesioner')->middleware(CheckExamPin::class);
     });
+
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
 });

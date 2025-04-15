@@ -51,6 +51,12 @@
                         <span class="link-title">Pertanyaan Penilaian</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.kuesioner') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Pertanyaan Kuesioner</span>
+                    </a>
+                </li>
 
                 <li class="nav-item nav-category">Setting</li>
                 <li class="nav-item">
