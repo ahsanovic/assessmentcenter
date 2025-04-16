@@ -20,12 +20,6 @@
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="" class="nav-link">
-                        <i class="link-icon" data-feather="info"></i>
-                        <span class="link-title">Informasi</span>
-                    </a>
-                </li>
                 <li class="nav-item nav-category">Master Data</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.alat-tes') }}" wire:navigate class="nav-link">
@@ -273,13 +267,13 @@
 
                 <li class="nav-item nav-category"></li>
                 <li class="nav-item">
-                    {{-- <form action="{{ route('admin.logout') }}" method="post">
+                    <form action="{{ route('admin.logout') }}" method="post">
                         @csrf
                         <button type="submit" class="btn btn-sm ">
                             <i class="icon-md" data-feather="log-out"></i>
                             <span class="link-title">Logout</span>
                         </button>
-                    </form> --}}
+                    </form>
                 </li>
             </ul>
         </div>
