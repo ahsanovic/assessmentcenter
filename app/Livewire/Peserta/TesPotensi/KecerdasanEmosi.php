@@ -375,6 +375,8 @@ class KecerdasanEmosi extends Component
             if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
                 $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
                 $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else if ($current_sequence_test && $current_sequence_test->urutan == 7) {
+                return $this->redirect(route('peserta.kuesioner'), navigate: true);
             } else {
                 return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }

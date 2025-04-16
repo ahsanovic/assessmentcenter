@@ -7,6 +7,7 @@ use App\Models\MotivasiKomitmen\RefDeskripsiMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\NilaiJpm;
 use App\Models\Settings;
 use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
@@ -405,11 +406,11 @@ class MotivasiKomitmen extends Component
             if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
                 $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
                 $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+            } else if ($current_sequence_test && $current_sequence_test->urutan == 7) {
+                return $this->redirect(route('peserta.kuesioner'), navigate: true);
             } else {
                 return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
-    
-            // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
             // throw $th;
             session()->flash('toast', [
