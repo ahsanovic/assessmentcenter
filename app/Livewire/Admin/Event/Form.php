@@ -81,7 +81,7 @@ class Form extends Component
             'jumlah_peserta' => ['required', 'numeric'],
             // 'alat_tes_id' => 'required|array',
             // 'alat_tes_id.*' => 'exists:ref_alat_tes,id',
-            'assessor' => 'required|array',
+            'assessor' => 'array',
             'assessor.*' => 'exists:assessor,id',
             'pin_ujian' => ['required'],
             'is_open' => ['required']
@@ -111,7 +111,6 @@ class Form extends Component
             'jumlah_peserta.required' => 'harus diisi',
             'jumlah_peserta.numeric' => 'harus berupa angka',
             // 'alat_tes_id.required' => 'harus dipilih',
-            'assessor.required' => 'harus dipilih',
             'pin_ujian.required' => 'harus diisi',
             'is_open.required' => 'harus dipilih'
         ];

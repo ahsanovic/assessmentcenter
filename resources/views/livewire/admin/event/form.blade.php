@@ -76,7 +76,7 @@
                                 <div class="mb-3" wire:ignore>
                                     <label for="assessor" class="form-label">Assessor</label>
                                     <select wire:model="assessor" id="assessor"
-                                        class="form-select @error('assessor') is-invalid @enderror" multiple="multiple">
+                                        class="form-control @error('assessor') is-invalid @enderror" multiple="multiple">
                                         @foreach ($option_assessor as $key => $item)
                                             <option value="{{ $key }}" {{ in_array($key, $assessor ?: []) ? 'selected' : '' }}>{{ $item }}</option>
                                         @endforeach
