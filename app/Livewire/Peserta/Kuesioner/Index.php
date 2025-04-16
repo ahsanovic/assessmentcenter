@@ -63,9 +63,9 @@ class Index extends Component
                 'message' => 'berhasil mengirimkan kuesioner'
             ]);
 
-            $this->redirect(route('peserta.tes-potensi'), true);
+            $this->redirect(route('peserta.tes-potensi.hasil-nilai'), true);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             session()->flash('toast', [
                 'type' => 'error',
                 'message' => 'Gagal mengirimkan kuesioner'

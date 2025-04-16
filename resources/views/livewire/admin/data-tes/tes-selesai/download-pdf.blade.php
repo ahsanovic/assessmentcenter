@@ -342,10 +342,11 @@
                         $capaian_level_berpikir_kritis,
                         $capaian_level_kesadaran_diri
                     ];
-
-                    $jpm = array_sum(array_map('floatval', $capaian_level)) / (3 * 7);
                 @endphp
                 <b>
+                    @php
+                        $jpm = countJpm($capaian_level);
+                    @endphp
                     {{ number_format($jpm * 100, 2) }} %
                 </b>
             </td>
@@ -355,13 +356,7 @@
             <td colspan="2"><b>Kategori</b></td>
             <td style="text-align: center">
                 <b>
-                    @if ($jpm >= 0.9)
-                        {{ 'Optimal' }}
-                    @elseif ($jpm >= 0.78)
-                        {{ 'Cukup Optimal' }}
-                    @else
-                        {{ 'Kurang Optimal' }}
-                    @endif
+                    {{ getKategori($jpm) }}
                 </b>
             </td>
             <td></td>

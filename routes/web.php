@@ -221,6 +221,7 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('problem-solving/{id}', \App\Livewire\Peserta\TesPotensi\ProblemSolving::class)->name('peserta.tes-potensi.problem-solving')->middleware(CheckExamPin::class);
         Route::get('kesadaran-diri/{id}', \App\Livewire\Peserta\TesPotensi\KesadaranDiri::class)->name('peserta.tes-potensi.kesadaran-diri')->middleware(CheckExamPin::class);
         Route::get('kuesioner', \App\Livewire\Peserta\Kuesioner\Index::class)->name('peserta.kuesioner')->middleware(CheckExamPin::class);
+        Route::get('hasil-nilai', \App\Livewire\Peserta\TesPotensi\HasilNilai::class)->name('peserta.tes-potensi.hasil-nilai')->middleware(CheckExamPin::class);
     });
 
 
