@@ -40,7 +40,7 @@ class Login extends Component
             ->first();
         
         if (!$peserta) {
-            $this->addError('nip', 'Akun tidak ditemukan.');
+            $this->addError('nip', 'Tes sudah selesai / akun tidak ditemukan.');
         }
 
         if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'password'))) {
