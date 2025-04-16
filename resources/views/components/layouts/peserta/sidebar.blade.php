@@ -29,7 +29,13 @@
                 @endif
                 <li class="nav-item nav-category">Menu Tes</li>
                 <li class="nav-item">
-                    <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate>
+                    @php
+                        $event_id = auth()->guard('peserta')->user()->event_id;
+                        $peserta_id = auth()->guard('peserta')->user()->id;
+                        $data = getFinishedTes($event_id, $peserta_id);
+                        $test_started = collect($data)->contains(true);
+                    @endphp
+                    <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate style="{{ $test_started ? 'pointer-events: none;' : ''}}">
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Potensi</span>
                     </a>

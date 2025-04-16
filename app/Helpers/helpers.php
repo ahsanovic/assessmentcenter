@@ -1,5 +1,13 @@
 <?php
 
+use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\Interpersonal\UjianInterpersonal;
+use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\PengembanganDiri\UjianPengembanganDiri;
+use App\Models\ProblemSolving\UjianProblemSolving;
+
 if (!function_exists('countJpm')) {
     function countJpm($capaian_level)
     {
@@ -78,5 +86,41 @@ if (!function_exists('capaianLevel')) {
         }
 
         return $capaian_level;
+    }
+}
+
+if (!function_exists('getFinishedTes')) {
+    function getFinishedTes($event_id, $peserta_id)
+    {
+        return [
+            'tes_interpersonal' => UjianInterpersonal::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_kesadaran_diri' => UjianKesadaranDiri::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_berpikir_kritis' => UjianBerpikirKritis::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_problem_solving' => UjianProblemSolving::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_kecerdasan_emosi' => UjianKecerdasanEmosi::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_motivasi_komitmen' => UjianMotivasiKomitmen::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'tes_pengembangan_diri' => UjianPengembanganDiri::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
     }
 }

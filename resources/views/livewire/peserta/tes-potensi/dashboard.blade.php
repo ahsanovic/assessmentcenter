@@ -1,10 +1,20 @@
 <div>
+    @php
+        $event_id = auth()->guard('peserta')->user()->event_id;
+        $peserta_id = auth()->guard('peserta')->user()->id;
+        $data = getFinishedTes($event_id, $peserta_id);
+        $finished_all_test = count(array_filter($data)) === count($data);
+    @endphp
+
+    @if ($finished_all_test)
+    <x-alert type="danger" teks="Anda sudah melakukan semua tes!" />
+    @endif
+
     <div class="row">
-        <div class="col-sm-1 col-md-3 col-lg-4">
+        <div class="col-sm-12 col-md-12 col-lg-12">
             <div class="card mt-4">
-                <div class="card-body">
+                <div class="card-body d-flex justify-content-center text-center">
                     <button class="btn btn-inverse-success" 
-                        {{-- {{ session('current_test') !== null ? 'disabled' : '' }} --}}
                         x-data
                         @click="Swal.fire({
                             title: 'Apakah Anda yakin memulai tes?',
@@ -17,6 +27,7 @@
                                 $wire.start();
                             }
                         })"
+                        disabled={{ $finished_all_test ? 'disabled' : '' }}
                     >
                         Mulai Tes
                     </button>
