@@ -88,14 +88,14 @@
                                     <label class="form-label">Status</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model="is_active" id="radioInline" value="t" {{ $is_active == 't' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="radioInline">
+                                    <input type="radio" class="form-check-input" wire:model="is_active" id="radioInline2" value="t" {{ $is_active == 't' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="radioInline2">
                                             Aktif
                                         </label>
                                     </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model="is_active" id="radioInline1" value="f" {{ $is_active == 'f' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="radioInline1">
+                                    <input type="radio" class="form-check-input" wire:model="is_active" id="radioInline3" value="f" {{ $is_active == 'f' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="radioInline3">
                                         Non Aktif
                                     </label>
                                 </div>
