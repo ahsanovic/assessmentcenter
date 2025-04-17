@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Auth;
 
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -20,8 +21,14 @@ class Login extends Component
             'username.required' => 'wajib diisi.',
             'password.required' => 'wajib diisi.',
         ]);
+
+        $active_user = User::where('username', $this->username)->where('is_active', 't')->first();
+        if (!$active_user) {
+            $this->addError('username', 'Akun tidak aktif');
+            return;
+        }
         
-        if (auth()->guard('admin')->attempt($this->only('username', 'password'))) {
+        if ($active_user && auth()->guard('admin')->attempt($this->only('username', 'password'))) {
             request()->session()->regenerate();
             return $this->redirect(route('admin.dashboard'), navigate: true);
         }
