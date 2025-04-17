@@ -174,6 +174,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('ref-kesadaran-diri/create', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Create::class)->name('admin.ref-kesadaran-diri.create');
         Route::get('ref-kesadaran-diri/{id}/edit', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Edit::class)->name('admin.ref-kesadaran-diri.edit');
 
+        // users
+        Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
+        Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');
+        Route::get('users/{id}/edit', \App\Livewire\Admin\Users\Form::class)->name('admin.user.edit');
+
         Route::post('logout', LogoutAdminController::class)->name('admin.logout');
     });
 });

@@ -264,6 +264,16 @@
                     </div>
                 </li>
 
+                @if (auth()->guard('admin')->user()->role === 'admin')
+                <li class="nav-item nav-category">User</li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.user') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">User</span>
+                    </a>
+                </li>
+                @endif
+
 
                 <li class="nav-item nav-category"></li>
                 <li class="nav-item">
