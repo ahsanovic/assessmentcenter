@@ -56,11 +56,14 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
-                        <a href="{{ route('admin.ref-aspek-problem-solving') }}" wire:navigate
-                            class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                        <button type="submit" class="btn btn-sm btn-inverse-success">
-                            Update
-                        </button>
+
+                        <div class="mt-3">
+                            <a href="{{ route('admin.ref-aspek-problem-solving') }}" wire:navigate
+                                class="btn btn-sm btn-inverse-danger me-2">Batal</a>
+                            <button type="submit" class="btn btn-sm btn-inverse-success">
+                                Update
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -42,7 +42,7 @@
                                     </label>
                                 </div>
                                 @error('form.is_active')
-                                <label class="error invalid-feedback">{{ $message }}</label>
+                                <label class="error invalid-feedback d-block">{{ $message }}</label>
                                 @enderror
                             </div><!-- Col -->
                         </div><!-- Row -->

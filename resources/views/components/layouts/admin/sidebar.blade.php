@@ -94,13 +94,13 @@
 
                 <li class="nav-item nav-category">Tes</li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#pengembangan-diri" role="button"
-                        aria-expanded="false" aria-controls="pengembangan-diri">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
+                        aria-expanded="false" aria-controls="data-tes">
                         <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Data Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
-                    <div class="collapse" data-bs-parent="#sidebarNav" id="pengembangan-diri">
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung') }}" wire:navigate

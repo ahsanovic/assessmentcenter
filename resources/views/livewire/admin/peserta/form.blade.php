@@ -143,14 +143,16 @@
                                 </div><!-- Col -->
                             </div><!-- Row -->
                         @endif
-
-                        <a href="{{ route('admin.peserta') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-inverse-success"
-                        >
-                            {{ $isUpdate == true ? 'Ubah' : 'Simpan' }}
-                        </button>
+                        
+                        <div class="mt-3">
+                            <a href="{{ route('admin.peserta') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-inverse-success"
+                            >
+                                {{ $isUpdate == true ? 'Ubah' : 'Simpan' }}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

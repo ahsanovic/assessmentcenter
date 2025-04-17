@@ -44,13 +44,16 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
-                        <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-inverse-success"
-                        >
-                            Simpan
-                        </button>
+
+                        <div class="mt-3">
+                            <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-inverse-success"
+                            >
+                                Simpan
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
