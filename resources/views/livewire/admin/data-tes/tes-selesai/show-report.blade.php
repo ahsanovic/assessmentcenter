@@ -101,12 +101,34 @@
                                     @endforeach
                                     <tr>
                                         <td colspan="2"><strong>Job Person Match (JPM)</strong></td>
-                                        <td></td>
+                                        <td>
+                                            @php
+                                                $capaian_level = [
+                                                    $capaian_level_interpersonal,
+                                                    $capaian_level_kecerdasan_emosi,
+                                                    $capaian_level_pengembangan_diri,
+                                                    $capaian_level_problem_solving,
+                                                    $capaian_level_motivasi_komitmen,
+                                                    $capaian_level_berpikir_kritis,
+                                                    $capaian_level_kesadaran_diri
+                                                ];
+                                            @endphp
+                                            <b>
+                                                @php
+                                                    $jpm = countJpm($capaian_level);
+                                                @endphp
+                                                {{ number_format($jpm * 100, 2) }} %
+                                            </b>
+                                        </td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2"><strong>Kategori</strong></td>
-                                        <td></td>
+                                        <td>
+                                            <b>
+                                                {{ getKategori($jpm) }}
+                                            </b>
+                                        </td>
                                         <td></td>
                                     </tr>
                                 </tbody>

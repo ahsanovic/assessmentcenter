@@ -7,7 +7,6 @@ use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\Settings;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class DownloadLaporanPenilaianController extends Controller
