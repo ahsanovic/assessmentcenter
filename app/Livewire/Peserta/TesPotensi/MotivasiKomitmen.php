@@ -392,7 +392,8 @@ class MotivasiKomitmen extends Component
                 [
                     'nilai' => $nilai,
                     'skor_total' => $skor_total,
-                    'level' => $deskripsi->level,
+                    'kategori_penilaian' => $kualifikasi_tertinggi,
+                    'level_total' => $this->_getLevel($kualifikasi_tertinggi),
                     'deskripsi' => $deskripsi->deskripsi,
                     'kualifikasi_total' => $this->_getKualifikasi($deskripsi->level)
                 ]
@@ -420,10 +421,34 @@ class MotivasiKomitmen extends Component
         }
     }
 
-    private function _getKualifikasi($level)
+    private function _getLevel($kualifikasi)
     {
-        switch ($level) {
-            case '5':
+        $level_5 = ['5/SB', '5/B', '4/SB', '4/B'];
+        $level_4 = ['3/SB', '3/B', '4/C+', '5/C+'];
+        $level_3 = ['1/C+', '2/C+', '2/C', '3/C', '3/C-', '4/C-', '5/C-', '1/SB', '1/B', '4/C', '5/C', '2/SB', '2B', '3/C+'];
+        $level_2 = ['2/C-', '1/C', '1/C-'];
+        $level_1 = ['1/K', '2/K', '3/K', '4/K', '5/K', '1/SK', '2/SK', '3/SK', '4/SK', '5/SK'];
+
+        if (in_array($kualifikasi, $level_5)) {
+            return '5';
+        } else if (in_array($kualifikasi, $level_4)) {
+            return '4';
+        } else if (in_array($kualifikasi, $level_3)) {
+            return '3';
+        } else if (in_array($kualifikasi, $level_2)) {
+            return '2';
+        } else if (in_array($kualifikasi, $level_1)) {
+            return '1';
+        }
+    }
+
+    private function _getKualifikasi($value)
+    {
+        switch ($value) {
+            case '5B':
+                $kualifikasi = 'Sangat Baik';
+                break;
+            case '5A':
                 $kualifikasi = 'Sangat Baik';
                 break;
             case '4':
