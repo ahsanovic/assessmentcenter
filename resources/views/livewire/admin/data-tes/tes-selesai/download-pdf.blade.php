@@ -168,8 +168,12 @@
         }
         
         .ttd-jabatan {
-            margin-bottom: 80px;
+            margin-bottom: 10px;
             font-size: 13px;
+        }
+
+        .tte {
+            margin-bottom: 10px;
         }
         
         .ttd-nama {
@@ -439,6 +443,9 @@
             <div class="ttd-jabatan">
                 Kepala Badan Kepegawaian Daerah<br>
                 Provinsi Jawa Timur
+            </div>
+            <div class="tte">
+                <img src="{{ public_path('assets/images/tte.png') }}" height="80" width="80" alt="tte">
             </div>
             <div class="ttd-nama">INDAH WAHYUNI, S.H., M.Si.</div>
             <div class="ttd-nip">NIP. 19670409 199202 2 003</div>
