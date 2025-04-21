@@ -28,12 +28,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.assessor') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Assessor</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ route('admin.pertanyaan-pengalaman') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="message-square"></i>
                         <span class="link-title">Pertanyaan Pengalaman</span>
@@ -77,6 +71,12 @@
                     <a href="{{ route('admin.peserta') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="message-square"></i>
                         <span class="link-title">Data Peserta</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.assessor') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Data Assessor</span>
                     </a>
                 </li>
                 <li class="nav-item">
