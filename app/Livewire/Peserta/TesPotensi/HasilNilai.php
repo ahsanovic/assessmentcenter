@@ -12,21 +12,42 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Hasil Nilai Tes'])]
 class HasilNilai extends Component
 {
-    public function render()
+    public $data;
+    public $peserta;
+    public $id_event;
+    public $nilai;
+
+    public function mount()
     {
-        $peserta = Peserta::where('id', Auth::guard('peserta')->user()->id)->firstOrFail();
-        $idEvent = $peserta->event_id;
-        $data = Event::with([
+        $this->peserta = Peserta::where('id', Auth::guard('peserta')->user()->id)->firstOrFail();
+        $idEvent = $this->peserta->event_id;
+        $peserta = $this->peserta;
+
+        $this->data = Event::with([
             'peserta' => function ($query) use ($peserta) {
                 $query->where('id', $peserta->id);
             },
-            'hasilInterpersonal',
-            'hasilKesadaranDiri',
-            'hasilBerpikirKritis',
-            'hasilProblemSolving',
-            'hasilPengembanganDiri',
-            'hasilKecerdasanEmosi',
-            'hasilMotivasiKomitmen',
+            'hasilInterpersonal' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilKesadaranDiri' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilBerpikirKritis' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilProblemSolving' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilPengembanganDiri' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilKecerdasanEmosi' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilMotivasiKomitmen' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
         ])
         ->where('id', $idEvent)
         ->whereHas('ujianInterpersonal', function ($query) {
@@ -56,13 +77,13 @@ class HasilNilai extends Component
         ->firstOrFail();
 
         $capaian_level = [
-            'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
-            'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
-            'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
-            'capaian_level_problem_solving' => capaianLevel($data->hasilProblemSolving[0]->level_total),
-            'capaian_level_motivasi_komitmen' => capaianLevel($data->hasilMotivasiKomitmen[0]->level_total),
-            'capaian_level_berpikir_kritis' => capaianLevel($data->hasilBerpikirKritis[0]->level_total),
-            'capaian_level_kesadaran_diri' => capaianLevel($data->hasilKesadaranDiri[0]->level_total),
+            'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
+            'capaian_level_kecerdasan_emosi' => capaianLevel($this->data->hasilKecerdasanEmosi[0]->level_total),
+            'capaian_level_pengembangan_diri' => capaianLevel($this->data->hasilPengembanganDiri[0]->level_total),
+            'capaian_level_problem_solving' => capaianLevel($this->data->hasilProblemSolving[0]->level_total),
+            'capaian_level_motivasi_komitmen' => capaianLevel($this->data->hasilMotivasiKomitmen[0]->level_total),
+            'capaian_level_berpikir_kritis' => capaianLevel($this->data->hasilBerpikirKritis[0]->level_total),
+            'capaian_level_kesadaran_diri' => capaianLevel($this->data->hasilKesadaranDiri[0]->level_total),
         ];
 
         $count_jpm = countJpm($capaian_level);
@@ -77,10 +98,15 @@ class HasilNilai extends Component
             'kategori' => $kategori
         ]);
 
-        $nilai = NilaiJpm::where('event_id', $idEvent)
+        $this->nilai = NilaiJpm::where('event_id', $idEvent)
             ->where('peserta_id', $peserta->id)
             ->firstOrFail();
+    }
 
-        return view('livewire..peserta.tes-potensi.hasil-nilai', compact('nilai'));
+    public function render()
+    {
+        return view('livewire..peserta.tes-potensi.hasil-nilai', [
+            'nilai' => $this->nilai
+        ]);
     }
 }
