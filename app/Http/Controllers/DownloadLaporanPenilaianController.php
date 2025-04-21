@@ -24,13 +24,27 @@ class DownloadLaporanPenilaianController extends Controller
                 'nomorLaporan' => function ($query) use ($idEvent) {
                     $query->where('event_id', $idEvent);
                 },
-                'hasilInterpersonal',
-                'hasilKesadaranDiri',
-                'hasilBerpikirKritis',
-                'hasilProblemSolving',
-                'hasilPengembanganDiri',
-                'hasilKecerdasanEmosi',
-                'hasilMotivasiKomitmen',
+                'hasilInterpersonal' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilKesadaranDiri' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilBerpikirKritis' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilProblemSolving' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilPengembanganDiri' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilKecerdasanEmosi' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilMotivasiKomitmen' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
             ])
             ->where('id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
