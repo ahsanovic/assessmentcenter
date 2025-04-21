@@ -92,7 +92,7 @@ class DownloadLaporanPenilaianController extends Controller
     public function downloadAll($idEvent)
     {
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
-        $peserta = Peserta::with('event')
+        $all_peserta = Peserta::with('event')
             ->where('event_id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
@@ -117,7 +117,9 @@ class DownloadLaporanPenilaianController extends Controller
             })
             ->get();
 
-        foreach ($peserta as $peserta) {
+        $pdf_paths = [];
+
+        foreach ($all_peserta as $peserta) {
             $data = Event::with([
                 'peserta' => function ($query) use ($peserta) {
                     $query->where('id', $peserta->id);
@@ -125,13 +127,27 @@ class DownloadLaporanPenilaianController extends Controller
                 'nomorLaporan' => function ($query) use ($idEvent) {
                     $query->where('event_id', $idEvent);
                 },
-                'hasilInterpersonal',
-                'hasilKesadaranDiri',
-                'hasilBerpikirKritis',
-                'hasilProblemSolving',
-                'hasilPengembanganDiri',
-                'hasilKecerdasanEmosi',
-                'hasilMotivasiKomitmen',
+                'hasilInterpersonal' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilKesadaranDiri' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilBerpikirKritis' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilProblemSolving' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilPengembanganDiri' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilKecerdasanEmosi' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
+                'hasilMotivasiKomitmen' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                }
             ])
             ->where('id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
@@ -176,7 +192,6 @@ class DownloadLaporanPenilaianController extends Controller
             ])->setPaper('A4', 'portrait');
             
             $temp_folder = storage_path('app/private/laporan_temp');
-            $pdf_paths = [];
             $filename = $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf';
             $pdf_path = $temp_folder . '/' . $filename;
             file_put_contents($pdf_path, $pdf->output());
