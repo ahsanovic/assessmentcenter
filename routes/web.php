@@ -67,7 +67,7 @@ Route::prefix('bkdac')->group(function () {
         Route::get('tes-selesai/{idEvent}/show-peserta-motivasi-komitmen', \App\Livewire\Admin\DataTes\TesSelesai\ShowPesertaMotivasiKomitmen::class)->name('admin.tes-selesai.show-peserta-motivasi-komitmen');
         Route::get('tes-selesai/{idEvent}/{nip}/show-report', \App\Livewire\Admin\DataTes\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
         Route::get('tes-selesai/{idEvent}/{nip}/download', [DownloadLaporanPenilaianController::class, 'createPdf'])->name('admin.tes-selesai.download');
-        Route::get('tes-selesai/{idEvent}/download-all', [DownloadLaporanPenilaianController::class, 'downloadAll'])->name('admin.tes-selesai.download-all-laporan');
+        Route::get('tes-selesai/{idEvent}/{tanggalTes}/download-all', [DownloadLaporanPenilaianController::class, 'downloadAll'])->name('admin.tes-selesai.download-all-laporan');
     
         // kuesioner
         Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');

@@ -99,12 +99,17 @@ class DownloadLaporanPenilaianController extends Controller
         return $pdf->stream('report-' . $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf');
     }
 
-    public function downloadAll($idEvent)
+    public function downloadAll($idEvent, $tanggalTes)
     {
+        $tanggal = $tanggalTes !== 'all' ? \Carbon\Carbon::parse($tanggalTes)->format('Y-m-d') : null;
+
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
         $tte = TtdLaporan::where('is_active', 't')->first();
         $all_peserta = Peserta::with('event')
             ->where('event_id', $idEvent)
+            ->when($tanggal, function ($query) use ($tanggal) {
+                $query->whereDate('test_started_at', $tanggal);
+            })
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
             })

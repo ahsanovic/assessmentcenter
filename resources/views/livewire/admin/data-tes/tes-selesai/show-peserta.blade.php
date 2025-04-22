@@ -44,7 +44,11 @@
                         </div>
                         <div class="col-sm-4 text-end">
                             <div class="mb-3">
-                                <a href="{{ route('admin.tes-selesai.download-all-laporan', ['idEvent' => $event->id]) }}" class="btn btn-sm btn-dark">Download Semua Laporan (.zip)</a>
+                                <a href="{{ route('admin.tes-selesai.download-all-laporan', [
+                                    'idEvent' => $event->id,
+                                    'tanggalTes' => \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d')]) }}"
+                                    class="btn btn-sm btn-dark">Download Semua Laporan (.zip)
+                                </a>
                             </div>
                         </div>
                     </div>
