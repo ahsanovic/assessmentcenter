@@ -188,12 +188,19 @@ class DownloadLaporanPenilaianController extends Controller
             ->first();
 
             if (!$data) continue;
+
+            foreach ($data->nomorLaporan as $nomorLaporan) {
+                if ($nomorLaporan->tanggal == \Carbon\Carbon::parse($peserta->test_started_at)->format('d-m-Y')) {
+                    $nomor_laporan = $nomorLaporan->nomor;
+                }
+            }
     
             $pdf = Pdf::loadView('livewire.admin.data-tes.tes-selesai.download-pdf', [
                 'peserta' => $peserta,
                 'aspek_potensi' => $aspek_potensi,
                 'data' => $data,
                 'tte' => $tte,
+                'nomor_laporan' => $nomor_laporan,
                 'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
                 'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
                 'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
