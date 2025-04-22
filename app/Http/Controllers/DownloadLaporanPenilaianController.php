@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\Settings;
+use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use ZipArchive;
 
@@ -15,6 +16,7 @@ class DownloadLaporanPenilaianController extends Controller
     {
         $peserta = Peserta::where('nip', $nip)->firstOrFail();
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
+        $tte = TtdLaporan::where('is_active', 't')->first();
 
         $data = Event::with([
                 'peserta' => function ($query) use ($peserta) {
@@ -76,6 +78,7 @@ class DownloadLaporanPenilaianController extends Controller
             'peserta' => $peserta,
             'aspek_potensi' => $aspek_potensi,
             'data' => $data,
+            'tte' => $tte,
             'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
             'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
             'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
@@ -92,6 +95,7 @@ class DownloadLaporanPenilaianController extends Controller
     public function downloadAll($idEvent)
     {
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
+        $tte = TtdLaporan::where('is_active', 't')->first();
         $all_peserta = Peserta::with('event')
             ->where('event_id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
@@ -182,6 +186,7 @@ class DownloadLaporanPenilaianController extends Controller
                 'peserta' => $peserta,
                 'aspek_potensi' => $aspek_potensi,
                 'data' => $data,
+                'tte' => $tte,
                 'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
                 'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
                 'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),

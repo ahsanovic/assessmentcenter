@@ -59,6 +59,12 @@
                         <span class="link-title">Waktu Tes</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.ttd-laporan') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Ttd Laporan Penilaian</span>
+                    </a>
+                </li>
 
                 <li class="nav-item nav-category">Event</li>
                 <li class="nav-item">

@@ -39,6 +39,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('nomor-laporan', \App\Livewire\Admin\NomorLaporan\Index::class)->name('admin.nomor-laporan');
         Route::get('nomor-laporan/create', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.create');
         Route::get('nomor-laporan/{id}/edit', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.edit');
+
+        // ttd laporan
+        Route::get('ttd-laporan', \App\Livewire\Admin\TtdLaporan\Index::class)->name('admin.ttd-laporan');
+        Route::get('ttd-laporan/create', \App\Livewire\Admin\TtdLaporan\Form::class)->name('admin.ttd-laporan.create');
+        Route::get('ttd-laporan/{id}/edit', \App\Livewire\Admin\TtdLaporan\Form::class)->name('admin.ttd-laporan.edit');
     
         // data tes berlangsung
         Route::get('tes-berlangsung', \App\Livewire\Admin\DataTes\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');

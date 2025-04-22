@@ -445,10 +445,13 @@
                 Provinsi Jawa Timur
             </div>
             <div class="tte">
-                <img src="{{ public_path('assets/images/tte.png') }}" height="80" width="80" alt="tte">
+                <img src="{{ public_path('storage/' . $tte->ttd) }}" height="80" width="80" alt="tte">
             </div>
-            <div class="ttd-nama">INDAH WAHYUNI, S.H., M.Si.</div>
-            <div class="ttd-nip">NIP. 19670409 199202 2 003</div>
+            <div class="ttd-nama">{{ $tte->nama }}</div>
+            @php
+                $nip = substr($tte->nip, 0, 8) . ' ' . substr($tte->nip, 8, 6) . ' ' . substr($tte->nip, 14, 1) . ' ' . substr($tte->nip, 15, 3);
+            @endphp
+            <div class="ttd-nip">NIP. {{ $nip }}</div>
         </div>
         <div class="clear"></div>
     </div>
