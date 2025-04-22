@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Peserta\TesPotensi;
 
+use App\Models\Peserta;
 use App\Models\Settings;
 use App\Traits\StartTestTrait;
 use Livewire\Attributes\Layout;
@@ -24,6 +25,13 @@ class Dashboard extends Component
         if ($this->first_test) {
             // session(['current_test' => $this->first_test->alat_tes_id]);
             $this->first_test->load('alatTes');
+
+            $test_started = Peserta::where('id', auth()->guard('peserta')->user()->id)->first(['id']);
+
+            if ($test_started) {
+                $test_started->test_started_at = now();
+                $test_started->save();
+            }
 
             $this->startTest($this->first_test->alatTes->alat_tes, $this->first_test->urutan);
         }

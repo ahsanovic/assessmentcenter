@@ -53,9 +53,10 @@ class ShowPeserta extends Component
                 })
                 ->when($this->tanggal_tes, function ($query) {
                     $tanggal_tes = date('Y-m-d', strtotime($this->tanggal_tes));
-                    $query->whereHas('ujianInterpersonal', function ($query) use ($tanggal_tes) {
-                        $query->whereDate('created_at', $tanggal_tes);
-                    });
+                    // $query->whereHas('ujianInterpersonal', function ($query) use ($tanggal_tes) {
+                    //     $query->whereDate('created_at', $tanggal_tes);
+                    // });
+                    $query->whereDate('test_started_at', $tanggal_tes);
                 })
                 ->whereHas('ujianInterpersonal', function($query) {
                     $query->where('is_finished', 'true');
