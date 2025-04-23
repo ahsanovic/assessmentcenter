@@ -4,13 +4,14 @@
         ['url' => null, 'title' => 'Portofolio'],
     ]" />
 
-    @if (!$portofolio_is_open)
-        <x-alert :type="'danger'" :teks="'Event masih / sudah ditutup!'" />
+    @if ($portofolio->is_open == 'false')
+        <x-alert :type="'danger'" :teks="'Pelaksanaan tes masih / sudah ditutup!'" />
     @else
     <x-alert :type="'danger'" :teks="'Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh.
                 Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. 
                 Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!'" />
     <div class="row">
+        @if ($portofolio->metode_tes_id == 1)
         <x-tab-nav :nav="[
             ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null],
             ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null],
@@ -19,6 +20,11 @@
             ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null],
             ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
         ]" />
+        @elseif ($portofolio->metode_tes_id == 2)
+        <x-tab-nav :nav="[
+            ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null],
+        ]" />
+        @endif
         <div class="col-8 col-md-10 ps-0">
             <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
                 <div>
@@ -127,6 +133,7 @@
                             </div>
                         </div>
                     </div>
+                    @if ($portofolio->metode_tes_id == 1) {{-- metode tes assessment center --}}
                     <div class="mt-4">
                         <div class="card">
                             <div class="card-body">
@@ -298,6 +305,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

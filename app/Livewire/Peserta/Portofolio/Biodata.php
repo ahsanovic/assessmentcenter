@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Peserta\Portofolio;
 
+use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefAgama;
 use App\Models\RefGolPangkat;
@@ -49,11 +50,13 @@ class Biodata extends Component
         
         $option_agama = RefAgama::pluck('agama', 'id');
         $option_gol_pangkat = RefGolPangkat::all();
+        $portofolio = Event::where('id', $biodata->event_id)->first(['metode_tes_id']);
 
         return view('livewire..peserta.portofolio._partials.biodata.index', [
             'biodata' => $biodata,
             'option_agama' => $option_agama,
-            'option_gol_pangkat' => $option_gol_pangkat
+            'option_gol_pangkat' => $option_gol_pangkat,
+            'portofolio' => $portofolio
         ]);
     }
 

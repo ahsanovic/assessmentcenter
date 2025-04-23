@@ -9,6 +9,7 @@
         Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!'" />
     <div class="row">
         <div class="row">
+            @if ($portofolio->metode_tes_id == 1)
             <x-tab-nav :nav="[
                 ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => 'active'],
                 ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null],
@@ -17,6 +18,11 @@
                 ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null],
                 ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
             ]" />
+            @elseif ($portofolio->metode_tes_id == 2)
+            <x-tab-nav :nav="[
+                ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => 'active'],
+            ]" />
+            @endif
             <div class="col-8 col-md-10 ps-0">
                 <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
                     <div class="tab-pane fade show active" role="tabpanel">

@@ -59,7 +59,7 @@ class Portofolio extends Component
             ->orderBy('urutan', 'asc')
             ->get();
 
-        $portofolio_is_open = Event::where('is_open', 'true')->where('id', Auth::guard('peserta')->user()->event_id)->first();
+        $portofolio = Event::where('id', $biodata->event_id)->first(['is_open', 'metode_tes_id']);
 
         return view('livewire..peserta.portofolio.index', [
             'biodata' => $biodata,
@@ -68,7 +68,7 @@ class Portofolio extends Component
             'karir' => $karir,
             'pertanyaan' => $pertanyaan,
             'penilaian' => $penilaian,
-            'portofolio_is_open' => $portofolio_is_open
+            'portofolio' => $portofolio
         ]);
     }
 }
