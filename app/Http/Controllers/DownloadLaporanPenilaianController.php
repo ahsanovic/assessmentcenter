@@ -85,7 +85,7 @@ class DownloadLaporanPenilaianController extends Controller
             'aspek_potensi' => $aspek_potensi,
             'data' => $data,
             'tte' => $tte,
-            'nomor_laporan' => $nomor_laporan,
+            'nomor_laporan' => $nomor_laporan ?? '',
             'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
             'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
             'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
@@ -99,9 +99,9 @@ class DownloadLaporanPenilaianController extends Controller
         return $pdf->stream('report-' . $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf');
     }
 
-    public function downloadAll($idEvent, $tanggalTes)
+    public function downloadAll($idEvent)
     {
-        $tanggal = $tanggalTes !== 'all' ? \Carbon\Carbon::parse($tanggalTes)->format('Y-m-d') : null;
+        $tanggal = request()->query('tanggalTes');
 
         $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
         $tte = TtdLaporan::where('is_active', 't')->first();

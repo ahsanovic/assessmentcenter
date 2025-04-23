@@ -2,12 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
+use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
+use App\Models\KesadaranDiri\HasilKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
+use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
+use App\Models\ProblemSolving\HasilProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
@@ -116,5 +123,46 @@ class Peserta extends Model implements AuthenticatableContract
     public function ujianProblemSolving()
     {
         return $this->hasOne(UjianProblemSolving::class, 'peserta_id');
+    }
+
+
+    public function hasilInterpersonal()
+    {
+        return $this->hasOne(HasilInterpersonal::class, 'peserta_id');
+    }
+
+    public function hasilKesadaranDiri()
+    {
+        return $this->hasOne(HasilKesadaranDiri::class, 'peserta_id');
+    }
+
+    public function hasilBerpikirKritis()
+    {
+        return $this->hasOne(HasilBerpikirKritis::class, 'peserta_id');
+    }
+
+    public function hasilProblemSolving()
+    {
+        return $this->hasOne(HasilProblemSolving::class, 'peserta_id');
+    }
+
+    public function hasilPengembanganDiri()
+    {
+        return $this->hasOne(HasilPengembanganDiri::class, 'peserta_id');
+    }
+
+    public function hasilKecerdasanEmosi()
+    {
+        return $this->hasOne(HasilKecerdasanEmosi::class, 'peserta_id');
+    }
+
+    public function hasilMotivasiKomitmen()
+    {
+        return $this->hasOne(HasilMotivasiKomitmen::class, 'peserta_id');
+    }
+
+    public function nilaiJpm()
+    {
+        return $this->hasOne(NilaiJpm::class, 'peserta_id');
     }
 }

@@ -11,7 +11,7 @@
                     <h6 class="card-title">Hasil Tes - {{ $event->nama_event }}</h6>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="mb-3">
                                 <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama / nip / jabatan / instansi" />
                             </div>
@@ -37,17 +37,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-1">
                             <div class="mb-3">
                                 <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
                             </div>
                         </div>
-                        <div class="col-sm-4 text-end">
-                            <div class="mb-3">
-                                <a href="{{ route('admin.tes-selesai.download-all-laporan', [
-                                    'idEvent' => $event->id,
-                                    'tanggalTes' => \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d')]) }}"
-                                    class="btn btn-sm btn-dark">Download Semua Laporan (.zip)
+                        <div class="col-sm-6 mb-3 d-flex justify-content-end">
+                            <div class="me-2">
+                                <a href="{{ route('admin.tes-selesai.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
+                                    class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)
+                                </a>
+                            </div>
+                            <div class="me-2">
+                                <a href="{{ route('admin.tes-selesai.download-all-laporan', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
+                                    class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }}">Download Semua Laporan PDF (.zip)
                                 </a>
                             </div>
                         </div>
@@ -61,7 +64,7 @@
                                     <th>NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi / Unit Kerja</th>
-                                    <th>Mulai Tes</th>
+                                    <th>Tanggal Tes</th>
                                     <th>Report</th>
                                 </tr>
                             </thead>
