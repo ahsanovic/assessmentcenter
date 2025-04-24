@@ -43,6 +43,7 @@ class ShowPeserta extends Component
                 ->when($this->search, function($query) {
                     $query->where('nama', 'like', '%' . $this->search . '%')
                         ->orWhere('nip', 'like', '%' . $this->search . '%')
+                        ->orWhere('nik', 'like', '%' . $this->search . '%')
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                         ->orWhere('instansi', 'like', '%' . $this->search . '%');
                 })
