@@ -47,10 +47,13 @@ class ShowPesertaProblemSolving extends Component
                 ->whereIn('peserta.id', $this->event->pesertaIdTesProblemSolving->pluck('peserta_id'))
                 ->select('peserta.*', 'ujian_problem_solving.is_finished', 'ujian_problem_solving.id as ujian_problem_solving_id', 'ujian_problem_solving.created_at as mulai_tes')
                 ->when($this->search, function($query) {
-                    $query->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    $query->where(function ($q) {
+                        $q->where('nama', 'like', '%' . $this->search . '%')
+                            ->orWhere('nip', 'like', '%' . $this->search . '%')
+                            ->orWhere('nik', 'like', '%' . $this->search . '%')
+                            ->orWhere('jabatan', 'like', '%' . $this->search . '%')
+                            ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    });
                 })
                 ->paginate(10);
 

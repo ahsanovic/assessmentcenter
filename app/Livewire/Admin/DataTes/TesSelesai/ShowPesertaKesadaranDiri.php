@@ -48,10 +48,13 @@ class ShowPesertaKesadaranDiri extends Component
                 ->whereIn('peserta.id', $this->event->pesertaIdTesKesadaranDiri->pluck('peserta_id'))
                 ->select('peserta.*', 'hasil_kesadaran_diri.id as hasil_kesadaran_diri_id', 'hasil_kesadaran_diri.created_at as waktu_selesai', 'is_finished')
                 ->when($this->search, function($query) {
-                    $query->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    $query->where(function ($q) {
+                        $q->where('nama', 'like', '%' . $this->search . '%')
+                            ->orWhere('nip', 'like', '%' . $this->search . '%')
+                            ->orWhere('nik', 'like', '%' . $this->search . '%')
+                            ->orWhere('jabatan', 'like', '%' . $this->search . '%')
+                            ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    });
                 })
                 ->paginate(10);
 

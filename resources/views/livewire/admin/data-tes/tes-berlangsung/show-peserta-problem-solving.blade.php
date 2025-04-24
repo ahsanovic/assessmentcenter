@@ -28,7 +28,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIP - Pangkat/Gol</th>
+                                    <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>
                                     <th>Mulai Tes</th>
@@ -41,7 +41,13 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->nama }}</td>
-                                        <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}</td>
+                                        <td>
+                                            @if ($item->jenis_peserta_id == 1)
+                                                {{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                            @elseif ($item->jenis_peserta_id ==2)
+                                                {{ $item->nik }}
+                                            @endif
+                                        </td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }} <br/> {{ $item->unit_kerja }}</td>
                                         <td class="text-wrap">{{ \Carbon\Carbon::parse($item->mulai_tes)->translatedFormat('d F Y / H:i:s') }}</td>

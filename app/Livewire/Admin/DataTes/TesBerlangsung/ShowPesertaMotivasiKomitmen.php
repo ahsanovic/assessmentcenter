@@ -47,10 +47,13 @@ class ShowPesertaMotivasiKomitmen extends Component
                 ->whereIn('peserta.id', $this->event->pesertaIdTesMotivasiKomitmen->pluck('peserta_id'))
                 ->select('peserta.*', 'ujian_motivasi_komitmen.is_finished', 'ujian_motivasi_komitmen.id as ujian_motivasi_komitmen_id', 'ujian_motivasi_komitmen.created_at as mulai_tes')
                 ->when($this->search, function($query) {
-                    $query->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    $query->where(function ($q) {
+                        $q->where('nama', 'like', '%' . $this->search . '%')
+                            ->orWhere('nip', 'like', '%' . $this->search . '%')
+                            ->orWhere('nik', 'like', '%' . $this->search . '%')
+                            ->orWhere('jabatan', 'like', '%' . $this->search . '%')
+                            ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    });
                 })
                 ->paginate(10);
 

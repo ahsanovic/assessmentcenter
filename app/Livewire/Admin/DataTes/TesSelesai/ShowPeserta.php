@@ -46,10 +46,13 @@ class ShowPeserta extends Component
                     $query->select('id', 'peserta_id', 'created_at');
                 }])
                 ->when($this->search, function($query) {
-                    $query->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    $query->where(function ($q) {
+                        $q->where('nama', 'like', '%' . $this->search . '%')
+                            ->orWhere('nip', 'like', '%' . $this->search . '%')
+                            ->orWhere('nik', 'like', '%' . $this->search . '%')
+                            ->orWhere('jabatan', 'like', '%' . $this->search . '%')
+                            ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    });
                 })
                 ->when($this->tanggal_tes, function ($query) {
                     $tanggal_tes = date('Y-m-d', strtotime($this->tanggal_tes));

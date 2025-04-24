@@ -13,7 +13,7 @@
                     <div class="row mt-2">
                         <div class="col-sm-3">
                             <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama / nip / jabatan / instansi" />
+                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="nama / nip / nik / jabatan / instansi" />
                             </div>
                         </div>
                         <div class="col-sm-2">
@@ -61,7 +61,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIP - Pangkat/Gol</th>
+                                    <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi / Unit Kerja</th>
                                     <th>Tanggal Tes</th>
@@ -73,7 +73,13 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama }}</td>
-                                        <td>{{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }} - {{  $item->golPangkat->golongan ?? '' }}</td>
+                                        <td>
+                                            @if ($item->jenis_peserta_id == 1)
+                                                {{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                            @elseif ($item->jenis_peserta_id == 2)
+                                                {{ $item->nik }}
+                                            @endif
+                                        </td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->instansi }} <br /> {{ $item->unit_kerja }}</td>
                                         <td class="text-wrap">{{ \Carbon\Carbon::parse($item->test_started_at)->format('d F Y / H:i:s') }}</td>
