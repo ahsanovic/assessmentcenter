@@ -98,7 +98,7 @@
                                                 >
                                                     Edit
                                                 </a>
-                                                @if ($item->test_started_at != null)
+                                                @if ($item->test_started_at == null)
                                                 <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
                                                     Hapus
                                                 </button>
