@@ -11,13 +11,22 @@
                     <a href="{{ route('admin.peserta.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="mb-3" wire:ignore>
                                 <select wire:model.live="event" class="form-select form-select-sm" id="event">
                                     <option value="">event</option>
                                     @foreach ($option_event as $key => $item)
                                         <option value="{{ $key }}">{{ $item }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="mb-3">
+                                <select wire:model.live="is_portofolio_completed" class="form-select form-select-sm" id="status">
+                                    <option value="">portofolio</option>
+                                    <option value="true">sudah lengkap</option>
+                                    <option value="false">belum lengkap</option>
                                 </select>
                             </div>
                         </div>
@@ -41,7 +50,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="mb-3">
                                 <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama/nip/nik/jabatan/instansi" />
                             </div>
@@ -62,6 +71,7 @@
                                     <th>Jabatan</th>
                                     <th>Unit Kerja / Instansi</th>
                                     <th>Event</th>
+                                    <th>Portofolio</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -82,6 +92,13 @@
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->unit_kerja }} <br /> {{ $item->instansi }}</td>
                                         <td class="text-wrap">{{ $item->event->nama_event ?? '' }}</td>
+                                        <td>
+                                            @if($item->is_portofolio_lengkap)
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Lengkap" class="text-success">✔</span>
+                                            @else
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Belum Lengkap" class="text-danger">✖</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($item->is_active == 'true')
                                                 <span class="badge bg-success">Aktif</span>    

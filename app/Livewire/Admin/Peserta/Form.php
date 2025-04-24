@@ -141,7 +141,7 @@ class Form extends Component
                     'jenis_peserta_id' => $this->jenis_peserta_id,
                     'nip' => $this->nip,
                     'nik' => $this->nik,
-                    'jabatan' => $this->jabatan,
+                    'jabatan' => $this->jenis_peserta_id == 1 ? $this->jabatan : null,
                     'instansi' => $this->instansi,
                     'unit_kerja' => $this->unit_kerja,
                     'password' => bcrypt($this->password)

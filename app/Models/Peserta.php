@@ -170,4 +170,26 @@ class Peserta extends Model implements AuthenticatableContract
     {
         return $this->belongsTo(RefJenisPeserta::class, 'jenis_peserta_id', 'id');
     }
+
+    public function getIsPortofolioLengkapAttribute()
+    {
+        $asn = $this->jenis_peserta_id == 1;
+        $non_asn = $this->jenis_peserta_id == 2;
+
+        $common_fields = $this->tempat_lahir &&
+                        $this->tgl_lahir &&
+                        $this->jk &&
+                        $this->agama_id &&
+                        $this->alamat &&
+                        $this->no_hp &&
+                        $this->foto;
+        
+        if ($asn) {
+            return $common_fields && $this->nip && $this->gol_pangkat_id;
+        } else if ($non_asn) {
+            return $common_fields && $this->nik;
+        }
+
+        return false;
+    }
 }
