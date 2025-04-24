@@ -42,8 +42,13 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari event" />
+                            <div class="mb-3" wire:ignore>
+                                <select wire:model.live="event" class="form-select form-select-sm" id="event">
+                                    <option value="">event</option>
+                                    @foreach ($option_event as $key => $item)
+                                        <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-sm-2">
@@ -134,3 +139,19 @@
         <x-pagination :items="$data" />
     </div>
 </div>
+@push('js')
+    @script()
+        <script>
+            $(document).ready(function() {
+                $('#event').select2()
+                    .on('change', function(e) {
+                        @this.set('event', $(this).val());
+                    });
+                
+                Livewire.on('reset-select2', () => {
+                    $('#event').val(null).trigger('change');
+                });
+            })
+        </script>
+    @endscript
+@endpush
