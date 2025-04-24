@@ -66,44 +66,50 @@ class Index extends Component
         ->when($this->is_active, function($query) {
             $query->where('is_active', $this->is_active);
         })
-        ->when($this->is_portofolio_completed === 'true', function ($query) { // portofolio sudah lengkap
-            $query->whereNotNull('tempat_lahir')
-                  ->whereNotNull('tgl_lahir')
-                  ->whereNotNull('jk')
-                  ->whereNotNull('agama_id')
-                  ->whereNotNull('alamat')
-                  ->whereNotNull('no_hp')
-                  ->whereNotNull('foto')
-                  ->where(function ($q) {
-                    $q->where(function ($q1) {
-                        $q1->where('jenis_peserta_id', 1)
-                            ->whereNotNull('nip')
-                            ->whereNotNull('gol_pangkat_id');
-                    })->orWhere(function ($q2) {
-                        $q2->where('jenis_peserta_id', 2)
-                            ->whereNotNull('nik');
-                    });
-                  });
-        })
-        ->when($this->is_portofolio_completed === 'false', function ($query) { // portofolio belum lengkap
-            $query->whereNull('tempat_lahir')
-                  ->orWhereNull('tgl_lahir')
-                  ->orWhereNull('jk')
-                  ->orWhereNull('agama_id')
-                  ->orWhereNull('alamat')
-                  ->orWhereNull('no_hp')
-                  ->orWhereNull('foto')
-                  ->orWhere(function ($q) {
-                    $q->where(function ($q1) {
-                        $q1->where('jenis_peserta_id', 1)
-                            ->whereNotNull('nip')
-                            ->whereNull('gol_pangkat_id');
-                    })->orWhere(function ($q2) {
-                        $q2->where('jenis_peserta_id', 2)
-                            ->whereNotNull('nik')
-                            ->whereNull('jabatan');
-                    });
-                  });
+        ->when(!is_null($this->is_portofolio_completed), function ($query) {
+            if ($this->is_portofolio_completed === 'true') {
+                // Peserta lengkap
+                $query->whereNotNull('tempat_lahir')
+                      ->whereNotNull('tgl_lahir')
+                      ->whereNotNull('jk')
+                      ->whereNotNull('agama_id')
+                      ->whereNotNull('alamat')
+                      ->whereNotNull('no_hp')
+                      ->whereNotNull('foto')
+                      ->where(function ($q) {
+                          $q->where(function ($q1) {
+                              $q1->where('jenis_peserta_id', 1)
+                                 ->whereNotNull('nip')
+                                 ->whereNotNull('gol_pangkat_id');
+                          })->orWhere(function ($q2) {
+                              $q2->where('jenis_peserta_id', 2)
+                                 ->whereNotNull('nik');
+                          });
+                      });
+            } elseif ($this->is_portofolio_completed === 'false') {
+                // Peserta belum lengkap (minimal satu field null)
+                $query->where(function ($q) {
+                    $q->whereNull('tempat_lahir')
+                      ->orWhereNull('tgl_lahir')
+                      ->orWhereNull('jk')
+                      ->orWhereNull('agama_id')
+                      ->orWhereNull('alamat')
+                      ->orWhereNull('no_hp')
+                      ->orWhereNull('foto')
+                      ->orWhere(function ($q2) {
+                          $q2->where(function ($q3) {
+                              $q3->where('jenis_peserta_id', 1)
+                                 ->where(function ($qq) {
+                                     $qq->whereNull('nip')
+                                        ->orWhereNull('gol_pangkat_id');
+                                 });
+                          })->orWhere(function ($q4) {
+                              $q4->where('jenis_peserta_id', 2)
+                                 ->whereNull('nik');
+                          });
+                      });
+                });
+            }
         })
         ->orderByDesc('id')
         ->paginate(10);
