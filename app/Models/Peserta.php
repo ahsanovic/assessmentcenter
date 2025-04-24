@@ -165,4 +165,9 @@ class Peserta extends Model implements AuthenticatableContract
     {
         return $this->hasOne(NilaiJpm::class, 'peserta_id');
     }
+
+    public function jenisPeserta()
+    {
+        return $this->belongsTo(RefJenisPeserta::class, 'jenis_peserta_id', 'id');
+    }
 }

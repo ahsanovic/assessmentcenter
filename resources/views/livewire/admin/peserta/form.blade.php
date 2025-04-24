@@ -13,13 +13,31 @@
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label for="event" class="form-label">Event</label>
-                                    <select wire:model="event_id" class="form-select @error('event_id') is-invalid @enderror" id="event">
+                                    <div wire:ignore>
+                                        <select wire:model="event_id" class="form-select @error('event_id') is-invalid @enderror" id="event">
+                                            <option value="">-pilih-</option>
+                                            @foreach ($option_event as $key => $item)
+                                                <option value="{{ $key }}">{{ $item }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    @error('event_id')
+                                    <label class="error invalid-feedback d-block">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label for="jenis-peserta" class="form-label">Jenis Peserta</label>
+                                    <select wire:model.live="jenis_peserta_id" class="form-select @error('jenis_peserta_id') is-invalid @enderror" id="jenis-peserta">
                                         <option value="">-pilih-</option>
-                                        @foreach ($option_event as $key => $item)
+                                        @foreach ($option_jenis_peserta as $key => $item)
                                             <option value="{{ $key }}">{{ $item }}</option>
                                         @endforeach
                                     </select>
-                                    @error('event_id')
+                                    @error('jenis_peserta_id')
                                     <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
                                 </div>
@@ -28,7 +46,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Nama Peserta</label>
+                                    <label class="form-label">Nama Peserta (tanpa gelar)</label>
                                     <input
                                         type="text"
                                         wire:model="nama"
@@ -41,6 +59,7 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @if ($jenis_peserta_id == 1) {{-- ASN --}}
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
@@ -73,6 +92,25 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @endif
+                        @if ($jenis_peserta_id == 2) {{-- Non ASN --}}
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label">NIK</label>
+                                    <input
+                                        type="number"
+                                        wire:model="nik"
+                                        class="form-control @error('nik') is-invalid @enderror"
+                                        placeholder="masukkan nik"
+                                    >
+                                    @error('nik')
+                                    <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        @endif
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -163,12 +201,12 @@
     @script()
         <script>
             $(document).ready(function() {
-                $('#event').select2()
-                $('#event').on('change', function() {
-                    let data = $(this).val()
-                    $wire.set('event_id', data, false)
-                    $wire.assessor = data
-                })
+                let eventSelect = $('#event');
+
+                eventSelect.select2()
+                    .on('change', function(e) {
+                        @this.set('event_id', $(this).val());
+                    });
             })
         </script>
     @endscript

@@ -36,6 +36,7 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -45,6 +46,18 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @elseif ($biodata->jenis_peserta_id === 2) {{-- Non ASN --}}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="mb-3">
+                                    <label class="form-label">NIK</label>
+                                    <input type="text" class="form-control" value="{{ $biodata->nik }}" readonly
+                                        disabled>
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        @endif
+                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -54,6 +67,7 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @endif
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -88,11 +102,12 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
                                     <label for="gol-pangkat" class="form-label">Golongan/Pangkat</label>
-                                    <select wire:model.blur="gol_pangkat_id"
+                                    <select wire:model.live="gol_pangkat_id"
                                         class="form-select @error('gol_pangkat_id') is-invalid @enderror"
                                         id="gol-pangkat">
                                         <option value="">-pilih-</option>
@@ -107,6 +122,8 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
+                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -120,6 +137,7 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @endif
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
@@ -138,7 +156,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Tanggal Lahir</label>
                                     <div class="input-group flatpickr" id="flatpickr-date">
-                                        <input type="text" wire:model.blur="tgl_lahir"
+                                        <input type="text" wire:model.live="tgl_lahir"
                                             class="form-control flatpickr-input @error('tgl_lahir') is-invalid @enderror"
                                             placeholder="Select date" data-input="" readonly="readonly">
                                         <span class="input-group-text input-group-addon" data-toggle="">
@@ -169,14 +187,14 @@
                                     <label class="form-label">Jenis Kelamin</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model.blur="jk"
+                                    <input type="radio" class="form-check-input" wire:model.live="jk"
                                         id="radioInline" value="L" {{ $jk == 'L' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="radioInline">
                                         Laki-Laki
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model.blur="jk"
+                                    <input type="radio" class="form-check-input" wire:model.live="jk"
                                         id="radioInline1" value="P" {{ $jk == 'P' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="radioInline1">
                                         Perempuan
@@ -188,7 +206,7 @@
                             <div class="col-sm-4">
                                 <div class="mb-3">
                                     <label for="gol-pangkat" class="form-label">Agama</label>
-                                    <select wire:model.blur="agama_id"
+                                    <select wire:model.live="agama_id"
                                         class="form-select @error('agama_id') is-invalid @enderror" id="agama-id">
                                         <option value="">-pilih-</option>
                                         @foreach ($option_agama as $id => $item)
@@ -245,6 +263,11 @@
                                 <div wire:loading wire:target="foto">Uploading...</div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        <div class="row">
+                            <div class="col-sm-2 mt-3">
+                                <a href="{{ route('peserta.portofolio') }}" class="btn btn-sm btn-inverse-success" wire:navigate>Preview Portofolio</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

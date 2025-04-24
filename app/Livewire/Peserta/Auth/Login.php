@@ -10,29 +10,58 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.guest', ['title' => 'Login Page'])]
 class Login extends Component
 {
-    public $nip;
+    public $id_number;
     public $password;
 
     public function login()
     {
         $this->validate([
-            'nip' => 'required|digits:18',
+            'id_number' => 'required|numeric',
             'password' => 'required',
         ], [
-            'nip.required' => 'wajib diisi.',
-            'nip.digits' => 'NIP tidak valid.',
+            'id_number.required' => 'wajib diisi.',
+            'id_number.numeric' => 'NIP/NIK harus berupa angka.',
             'password.required' => 'wajib diisi.',
         ]);
 
-        // Cari event yang belum selesai
-        $event = Event::where('is_finished', 'false')->first();
+        $length = strlen($this->id_number);
 
-        if (!$event) {
-            $this->addError('nip', 'Tidak ada event yang sedang berlangsung.');
+        if ($length === 18) {
+            // Cek apakah peserta ASN
+            $peserta = Peserta::where('jenis_peserta_id', 1)->where('nip', $this->id_number)->first(['id']);
+            if (!$peserta) {
+                $this->addError('id_number', 'NIP tidak ditemukan atau bukan peserta ASN.');
+                return;
+            }
+        } elseif ($length === 16) {
+            // Cek apakah peserta Non-ASN
+            $peserta = Peserta::where('jenis_peserta_id', 2)->where('nik', $this->id_number)->first(['id']);
+            if (!$peserta) {
+                $this->addError('id_number', 'NIK tidak ditemukan atau bukan peserta Non-ASN.');
+                return;
+            }
+        } else {
+            $this->addError('id_number', 'NIP atau NIK harus 16 atau 18 digit.');
             return;
         }
 
-        $peserta = Peserta::where('nip', $this->nip)
+        // Cari event yang belum selesai
+        // $event = Event::where('is_finished', 'false')->first();
+
+        // if (!$event) {
+        //     $this->addError('id_number', 'Tidak ada event yang sedang berlangsung.');
+        //     return;
+        // }
+
+        $peserta = Peserta::where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('jenis_peserta_id', 1)
+                        ->where('nip', $this->id_number);
+                })->orWhere(function ($q) {
+                    $q->where('jenis_peserta_id', 2)
+                        ->where('nik', $this->id_number);
+                });
+            })
             ->whereHas('event', function ($query) {
                 $query->where('is_finished', 'false');
             })
@@ -40,15 +69,34 @@ class Login extends Component
             ->first();
         
         if (!$peserta) {
-            $this->addError('nip', 'Tes sudah selesai / akun tidak ditemukan.');
+            $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
         }
 
-        if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'password'))) {
-            request()->session()->regenerate();
-            return $this->redirect(route('peserta.dashboard'), navigate: true);
+        if ($peserta) {
+            $credentials = [
+                'password' => $this->password,
+            ];
+        
+            if ($peserta->jenis_peserta_id == 1) {
+                // ASN
+                $credentials['nip'] = $this->id_number;
+            } elseif ($peserta->jenis_peserta_id == 2) {
+                // Non-ASN
+                $credentials['nik'] = $this->id_number;
+            }
+        
+            if (auth()->guard('peserta')->attempt($credentials)) {
+                request()->session()->regenerate();
+                return $this->redirect(route('peserta.dashboard'), navigate: true);
+            }
         }
 
-        $this->addError('nip', 'NIP atau password salah.');
+        // if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'nik', 'password'))) {
+        //     request()->session()->regenerate();
+        //     return $this->redirect(route('peserta.dashboard'), navigate: true);
+        // }
+
+        $this->addError('id_number', 'NIP/NIK atau password salah.');
     }
 
     public function render()

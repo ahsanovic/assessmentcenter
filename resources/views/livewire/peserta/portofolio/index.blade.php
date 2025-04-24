@@ -45,16 +45,27 @@
                                         <label>Nama</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <label>: {{ $biodata->nama }}</label>
+                                        <label>
+                                            : {{ $biodata->gelar_depan ? $biodata->gelar_depan : '' }} {{ $biodata->nama }}{{ $biodata->gelar_belakang ? ', ' . $biodata->gelar_belakang : '' }}
+                                        </label>
                                     </div>
                                 </div>
+                                @if ($biodata->jenis_peserta_id == 1) {{-- ASN --}}
                                 <div class="row mb-2">
                                     <div class="col-sm-2">
-                                        <label>NIP / NIK</label>
+                                        <label>NIP</label>
                                     </div>
                                     <div class="col-sm-9">
-                                        <label>: {{ $biodata->nip }}
-                                            {{ $biodata->nik ? '/ ' . $biodata->nik : '' }}</label>
+                                        <label>: {{ $biodata->nip }}</label>
+                                    </div>
+                                </div>
+                                @endif
+                                <div class="row mb-2">
+                                    <div class="col-sm-2">
+                                        <label>NIK</label>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <label>: {{ $biodata->nik }}</label>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -81,6 +92,7 @@
                                         <label>: {{ $biodata->jk == 'L' ? 'Laki-Laki' : 'Perempuan' }}</label>
                                     </div>
                                 </div>
+                                @if ($biodata->jenis_peserta_id == 1) {{-- ASN --}}
                                 <div class="row mb-2">
                                     <div class="col-sm-2">
                                         <label>Pangkat / Golongan</label>
@@ -98,6 +110,7 @@
                                         <label>: {{ $biodata->jabatan }}</label>
                                     </div>
                                 </div>
+                                @endif
                                 <div class="row mb-2">
                                     <div class="col-sm-2">
                                         <label>Unit Kerja</label>

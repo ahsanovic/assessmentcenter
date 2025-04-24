@@ -121,13 +121,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data gelar depan'
             ]);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data gelar depan'
             ]);
         }
     }
@@ -141,13 +141,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data gelar belakang'
             ]);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data gelar belakang'
             ]);
         }
     }
@@ -167,13 +167,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data alamat'
             ]);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data alamat'
             ]);
         }
     }
@@ -195,13 +195,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data nomor hp'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data nomor hp'
             ]);
         }
     }
@@ -223,13 +223,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data nik'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data nik'
             ]);
         }
     }
@@ -249,13 +249,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data tempat lahir'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data tempat lahir'
             ]);
         }
     }
@@ -276,13 +276,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data tanggal lahir'
             ]);
         } catch (\Throwable $th) {
             throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data tanggal lahir'
             ]);
         }
     }
@@ -303,13 +303,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data agama'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data agama'
             ]);
         }
     }
@@ -330,13 +330,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data pangkat'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data pangkat'
             ]);
         }
     }
@@ -356,13 +356,13 @@ class Biodata extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'berhasil update data'
+                'message' => 'berhasil update data jenis kelamin'
             ]);
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('toast', [
                 'type' => 'error',
-                'message' => 'gagal update data'
+                'message' => 'gagal update data jenis kelamin'
             ]);
         }
     }

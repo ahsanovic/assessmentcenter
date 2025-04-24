@@ -11,8 +11,8 @@
                     <a href="{{ route('admin.peserta.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <div class="mb-3">
+                        <div class="col-sm-4">
+                            <div class="mb-3" wire:ignore>
                                 <select wire:model.live="event" class="form-select form-select-sm" id="event">
                                     <option value="">event</option>
                                     @foreach ($option_event as $key => $item)
@@ -21,7 +21,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-1">
                             <div class="mb-3">
                                 <select wire:model.live="is_active" class="form-select form-select-sm" id="status">
                                     <option value="">status</option>
@@ -31,12 +31,22 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
                             <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama / nip / jabatan / instansi" />
+                                <select wire:model.live="jenis_peserta_id" class="form-select form-select-sm" id="jenis-peserta">
+                                    <option value="">jenis peserta</option>
+                                    @foreach ($option_jenis_peserta as $key => $item)
+                                        <option value="{{ $key }}">{{  $item }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama/nip/nik/jabatan/instansi" />
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
                             <div class="mb-3">
                                 <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
                             </div>
@@ -48,7 +58,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIP</th>
+                                    <th>Jenis Peserta</th>
                                     <th>Jabatan</th>
                                     <th>Unit Kerja / Instansi</th>
                                     <th>Event</th>
@@ -60,8 +70,15 @@
                                 @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $item->nama }}</td>
-                                        <td>{{ $item->nip }}</td>
+                                        <td class="text-wrap">
+                                            {{ $item->nama }} <br />
+                                            @if ($item->jenis_peserta_id == 1)
+                                                {{ $item->nip }}
+                                            @elseif ($item->jenis_peserta_id == 2)
+                                            {{ $item->nik }}
+                                            @endif
+                                        </td>
+                                        <td class="text-wrap">{{ $item->jenisPeserta->jenis_peserta }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->unit_kerja }} <br /> {{ $item->instansi }}</td>
                                         <td class="text-wrap">{{ $item->event->nama_event ?? '' }}</td>
@@ -81,9 +98,11 @@
                                                 >
                                                     Edit
                                                 </a>
+                                                @if ($item->test_started_at != null)
                                                 <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
                                                     Hapus
                                                 </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -97,3 +116,19 @@
         <x-pagination :items="$data" />
     </div>
 </div>
+@push('js')
+    @script()
+        <script>
+            $(document).ready(function() {
+                $('#event').select2()
+                    .on('change', function(e) {
+                        @this.set('event', $(this).val());
+                    });
+                
+                Livewire.on('reset-select2', () => {
+                    $('#event').val(null).trigger('change');
+                });
+            })
+        </script>
+    @endscript
+@endpush
