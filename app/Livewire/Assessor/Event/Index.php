@@ -17,6 +17,7 @@ class Index extends Component
     public $jabatan_diuji;
     public $tgl_mulai;
     public $selected_id;
+    public $event;
 
     #[Url(as: 'q')]
     public ?string $search =  '';
@@ -36,6 +37,7 @@ class Index extends Component
         $this->reset();
         $this->resetPage();
         $this->render();
+        $this->dispatch('reset-select2');
     }
 
     public function render()
@@ -43,10 +45,10 @@ class Index extends Component
         $assessor_id = auth()->guard('assessor')->user()->id;
 
         $data = Event::whereHas('assessor', function ($query) use ($assessor_id) {
-            $query->where('assessor_id', $assessor_id);
-        })
-            ->when($this->search, function ($query) {
-                $query->where('nama_event', 'like', '%' . $this->search . '%');
+                $query->where('assessor_id', $assessor_id);
+            })
+            ->when($this->event, function ($query) {
+                $query->where('id', $this->event);
             })
             ->when($this->jabatan_diuji, function ($query,) {
                 $query->where('jabatan_diuji_id', $this->jabatan_diuji);
@@ -69,7 +71,13 @@ class Index extends Component
                         ->where('assessor_id', $assessor_id);
                 });
         })->pluck('jenis', 'id');
+
+        $option_event = Event::whereIn('id', function ($query) use ($assessor_id) {
+            $query->select('event_id')
+                ->from('assessor_event')
+                ->where('assessor_id', $assessor_id);
+        })->pluck('nama_event', 'id');
         
-        return view('livewire.assessor.event.index', compact('data', 'option_jabatan_diuji'));
+        return view('livewire.assessor.event.index', compact('data', 'option_jabatan_diuji', 'option_event'));
     }
 }

@@ -18,6 +18,7 @@ class Index extends Component
     public $selected_id;
     public $event;
     public $is_active;
+    public $is_asn;
 
     #[Url(as: 'q')]
     public ?string $search =  '';
@@ -37,6 +38,7 @@ class Index extends Component
         $this->reset();
         $this->resetPage();
         $this->render();
+        $this->dispatch('reset-select2');
     }
 
     public function render()
@@ -44,8 +46,12 @@ class Index extends Component
         $data = Assessor::when($this->search, function($query) {
             $query->where('nama', 'like', '%' . $this->search . '%')
                 ->orWhere('nip', 'like', '%' . $this->search . '%')
+                ->orWhere('nik', 'like', '%' . $this->search . '%')
                 ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                 ->orWhere('instansi', 'like', '%' . $this->search . '%');
+        })
+        ->when($this->is_asn, function ($query) {
+            $query->where('is_asn', $this->is_asn);
         })
         ->when($this->event, function($query) {
             $query->whereHas('event', function($query) {

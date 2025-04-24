@@ -10,6 +10,21 @@
                     <h6 class="card-title">Form Assessor</h6>
                     <form wire:submit="save">
                         <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label for="jenis-assessor" class="form-label">Jenis Assessor</label>
+                                    <select wire:model.live="is_asn" class="form-select @error('is_asn') is-invalid @enderror" id="jenis-assessor">
+                                        <option value="">-pilih-</option>
+                                        <option value="true">ASN</option>
+                                        <option value="false">Non ASN</option>
+                                    </select>
+                                    @error('is_asn')
+                                    <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
                                     <label class="form-label">Nama Assessor</label>
@@ -17,7 +32,7 @@
                                         type="text"
                                         wire:model="nama"
                                         class="form-control @error('nama') is-invalid @enderror"
-                                        placeholder="masukkan nama assessor"
+                                        placeholder="masukkan nama"
                                     >
                                     @error('nama')
                                     <label class="error invalid-feedback">{{ $message }}</label>
@@ -25,15 +40,16 @@
                                 </div>
                             </div><!-- Col -->
                         </div><!-- Row -->
+                        @if ($is_asn == 'true')
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="mb-3">
-                                    <label class="form-label">NIP / NIK</label>
+                                    <label class="form-label">NIP</label>
                                     <input
                                         type="number"
                                         wire:model="nip"
                                         class="form-control @error('nip') is-invalid @enderror"
-                                        placeholder="masukkan nip (jika pns) atau nik (jika bukan pns)"
+                                        placeholder="masukkan nip"
                                     >
                                     @error('nip')
                                     <label class="error invalid-feedback">{{ $message }}</label>
@@ -56,7 +72,25 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div><!-- Row -->
+                        @elseif ($is_asn == 'false')
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Nomor Induk Kependudukan</label>
+                                    <input
+                                        type="number"
+                                        wire:model="nik"
+                                        class="form-control @error('nik') is-invalid @enderror"
+                                        placeholder="masukkan nik"
+                                    >
+                                    @error('nik')
+                                    <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div><!-- Col -->
+                        </div><!-- Row -->
+                        @endif
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">

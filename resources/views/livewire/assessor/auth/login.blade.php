@@ -13,9 +13,9 @@
                         <h5 class="text-secondary fw-normal mb-4">Selamat Datang Assessor!</h5>
                         <form class="forms-sample" wire:submit="login">
                         <div class="mb-3">
-                            <label for="nip" class="form-label">NIP/NIK</label>
-                            <input type="text" wire:model="nip" class="form-control @error('nip') is-invalid @enderror" id="nip" placeholder="Nomor Induk Pegawai / Nomor Induk Kependudukan">
-                            @error('nip') <span class="text-danger">{{ $message }}</span> @enderror
+                            <label for="id-number" class="form-label">NIP/NIK</label>
+                            <input type="text" wire:model="id_number" class="form-control @error('id_number') is-invalid @enderror" id="id-number" placeholder="Nomor Induk Pegawai / Nomor Induk Kependudukan">
+                            @error('id_number') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>

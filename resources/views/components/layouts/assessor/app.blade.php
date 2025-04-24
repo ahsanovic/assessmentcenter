@@ -29,6 +29,7 @@
 
             <!-- Plugin css for this page -->
         <link rel="stylesheet" href="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/vendors/select2/select2.min.css') }}">
         <!-- End plugin css for this page -->
 
         <!-- inject:css -->
@@ -69,6 +70,8 @@
         <script src="{{ asset('assets/vendors/feather-icons/feather.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
         <script src="{{ asset('assets/js/flatpickr.js') }}"></script>
+        <script src="{{ asset('assets/vendors/select2/select2.min.js') }}"></script>
+        <script src="{{ asset('assets/js/select2.js') }}"></script>
 
             <!-- Plugin js for this page -->
         <script src="{{ asset('assets/vendors/ace-builds/src-min/ace.js') }}"></script>
