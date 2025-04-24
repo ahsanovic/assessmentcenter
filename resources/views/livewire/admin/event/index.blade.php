@@ -113,14 +113,19 @@
                                         </td>
                                         <td>
                                             <div class="btn-group dropstart">
+                                                @if ($item->is_finished == 'false')
                                                 <a class="btn btn-xs btn-outline-warning" wire:navigate
                                                     href="{{ route('admin.event.edit', $item->id) }}">
                                                     Edit
                                                 </a>
+                                                @endif
+                                                @if ($item->is_finished == 'false')
                                                 <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                    class="btn btn-xs btn-outline-danger">
+                                                    class="btn btn-xs btn-outline-danger"
+                                                >
                                                     Hapus
                                                 </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

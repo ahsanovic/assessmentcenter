@@ -207,18 +207,18 @@
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input type="radio" class="form-check-input" wire:model="is_finished"
-                                            id="radioInline" value="true"
-                                            {{ $is_finished == 'true' ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="radioInline">
-                                            Selesai
-                                        </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input type="radio" class="form-check-input" wire:model="is_finished"
                                             id="radioInline1" value="false"
                                             {{ $is_finished == 'false' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="radioInline1">
                                             Berlangsung
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input type="radio" class="form-check-input" wire:model="is_finished"
+                                            id="radioInline" value="true"
+                                            {{ $is_finished == 'true' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="radioInline">
+                                            Selesai
                                         </label>
                                     </div>
                                 </div><!-- Col -->
