@@ -27,7 +27,7 @@
                                 $wire.start();
                             }
                         })"
-                        @disabled($finished_all_test)
+                        {{-- @disabled($finished_all_test) --}}
                     >
                         Mulai Tes
                     </button>

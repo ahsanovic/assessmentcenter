@@ -26,6 +26,7 @@ class KesadaranDiri extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
+    public $current_sequence;
 
     public function mount($id)
     {
@@ -53,6 +54,9 @@ class KesadaranDiri extends Component
         $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
         $this->timerTest($first_sequence->alatTes->alat_tes);
 
+        $current_sequence = Settings::with('alatTes')->where('alat_tes_id', 9)->first();
+        $this->current_sequence = $current_sequence->urutan;
+
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
                 $j = $j + 1;
@@ -68,7 +72,7 @@ class KesadaranDiri extends Component
             'jawaban' => $this->jawaban_user,
             'jawaban_kosong' => $this->jawaban_kosong,
             'jml_soal' => $this->jml_soal,
-            'soal' => $this->soal
+            'soal' => $this->soal,
         ]);
     }
 

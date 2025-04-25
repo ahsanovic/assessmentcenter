@@ -38,7 +38,7 @@
                                 }
                             })"
                         >
-                            Selesai
+                            {{ $current_sequence == 7 ? 'Selesai' : 'Lanjut Tes Berikutnya' }}
                         </button>
                     @endif
                 </div>

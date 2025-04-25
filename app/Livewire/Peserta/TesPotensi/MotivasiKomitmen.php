@@ -28,6 +28,7 @@ class MotivasiKomitmen extends Component
     public $jawaban_kosong;
     public $id_ujian;
     public $timer;
+    public $current_sequence;
 
     public function mount($id)
     {
@@ -54,6 +55,9 @@ class MotivasiKomitmen extends Component
 
         $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
         $this->timerTest($first_sequence->alatTes->alat_tes);
+
+        $current_sequence = Settings::with('alatTes')->where('alat_tes_id', 7)->first();
+        $this->current_sequence = $current_sequence->urutan;
 
         for ($i = 0, $j = 0; $i < $this->jml_soal; $i++) {
             if ($this->jawaban_user[$i] == '0') {
