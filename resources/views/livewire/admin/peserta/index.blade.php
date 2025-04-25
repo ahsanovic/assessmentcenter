@@ -115,11 +115,13 @@
                                                 >
                                                     Edit
                                                 </a>
-                                                @if ($item->test_started_at == null)
-                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
+                                                <button
+                                                    wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                    class="btn btn-xs btn-outline-danger"
+                                                    @disabled($item->test_started_at != null)
+                                                >
                                                     Hapus
                                                 </button>
-                                                @endif
                                             </div>
                                         </td>
                                     </tr>
