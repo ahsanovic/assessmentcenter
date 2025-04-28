@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Dashboard;
 
 use App\Models\Assessor;
 use App\Models\Event;
+use App\Models\NilaiJpm;
 use App\Models\Peserta;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
@@ -20,6 +21,8 @@ class Index extends Component
     public $tahun;
     public $event;
     public $avg_skor;
+    public $jpm = [];
+    public $event_name;
 
     public function mount()
     {
@@ -33,6 +36,7 @@ class Index extends Component
 
         $this->updateChartEvent();
         $this->updateRadarChart();
+        $this->updateJpmRank();
     }
 
     public function updatedTahun()
@@ -66,7 +70,23 @@ class Index extends Component
 
     public function updatedEvent()
     {
+        $this->event_name = Event::find($this->event)?->nama_event;
         $this->updateRadarChart();
+        $this->updateJpmRank();
+    }
+
+    public function updateJpmRank()
+    {
+        if (!$this->event) {
+            $this->jpm = [];
+            return;
+        }
+
+        $this->jpm = NilaiJpm::with('peserta')
+            ->where('event_id', $this->event)
+            ->orderByDesc('jpm')
+            ->limit(5)
+            ->get();
     }
 
     public function updateRadarChart()
@@ -108,7 +128,7 @@ class Index extends Component
         ];
 
         $this->avg_skor = $avg_skor;
-        $this->dispatch('update-radar-chart', data: array_values($avg_skor));
+        $this->dispatch('update-radar-chart', data: array_values($avg_skor), eventName: $this->event ? Event::find($this->event)?->nama_event : '');
     }
 
     public function render()

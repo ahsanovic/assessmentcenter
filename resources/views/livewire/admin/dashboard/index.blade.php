@@ -85,7 +85,7 @@
                     <div class="d-flex justify-content-between align-items-baseline mb-0">
                         <h6 class="card-title mb-0">Grafik Event</h6>
                         <select wire:model.live="tahun" id="tahun" class="form-select w-auto">
-                            @foreach($list_tahun as $t)
+                            @foreach ($list_tahun as $t)
                                 <option value="{{ $t }}">{{ $t }}</option>
                             @endforeach
                         </select>
@@ -107,7 +107,7 @@
                         <div wire:ignore class="me-2">
                             <select wire:model.live="event" id="event" class="form-select" style="width: 400px">
                                 <option value="">Pilih Event</option>
-                                @foreach($list_event as $key => $event)
+                                @foreach ($list_event as $key => $event)
                                     <option value="{{ $key }}">{{ $event }}</option>
                                 @endforeach
                             </select>
@@ -115,6 +115,35 @@
                         <button wire:click="resetFilterEvent" class="btn btn-sm btn-inverse-danger">Reset</button>
                     </div>
                     <div id="radar-chart" wire:ignore></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <h6 class="card-title mb-2">Ranking JPM Berdasarkan Event</h6>
+                        <h6 class="text-secondary mb-3">{{ $event_name }}</h6>
+                    </div>
+                    <div class="d-flex flex-column">
+                        @if (count($jpm))
+                            @foreach ($jpm as $index => $item)
+                            <a href="javascript:;" class="d-flex align-items-center border-bottom py-2">
+                                <div class="me-3">
+                                    <img src="{{ asset('storage/' . $item->peserta->foto) }}" class="rounded-circle" width="40" height="40"
+                                        alt="user">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="text-body mb-2">{{ $item->peserta->nama }}</h6>
+                                        <p class="text-secondary fs-12px">#{{ $index + 1 }}</p>
+                                    </div>
+                                    <p class="text-secondary fs-13px">{{ $item->jpm . '% - ' . $item->kategori }}</p>
+                                </div>
+                            </a>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,11 +186,18 @@
                         }
                     },
                     xaxis: {
-                        categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"],
+                        categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov",
+                            "Des"],
                         position: 'top',
-                        axisBorder: { show: false },
-                        axisTicks: { show: false },
-                        tooltip: { enabled: true },
+                        axisBorder: {
+                            show: false
+                        },
+                        axisTicks: {
+                            show: false
+                        },
+                        tooltip: {
+                            enabled: true
+                        },
                         crosshairs: {
                             fill: {
                                 type: 'gradient',
@@ -176,16 +212,24 @@
                         }
                     },
                     yaxis: {
-                        axisBorder: { show: false },
-                        axisTicks: { show: false },
-                        labels: { show: false }
+                        axisBorder: {
+                            show: false
+                        },
+                        axisTicks: {
+                            show: false
+                        },
+                        labels: {
+                            show: false
+                        }
                     },
                     title: {
                         text: 'Jumlah Event Tes Potensi per Bulan',
                         floating: true,
                         offsetY: 330,
                         align: 'center',
-                        style: { color: '#444' }
+                        style: {
+                            color: '#444'
+                        }
                     }
                 });
 
@@ -212,10 +256,19 @@
                     name: 'Series 1',
                     data: {!! json_encode(array_map(fn($v) => round($v ?? 0, 2), array_values($avg_skor))) !!},
                 }],
-                    chart: {
+                chart: {
                     height: 600,
                     width: 900,
                     type: 'radar',
+                },
+                title: {
+                    align: 'center',
+                    margin: 100,
+                    text: '',
+                    style: {
+                        fontSize: '14px',
+                        color: '#666',
+                    }
                 },
                 yaxis: {
                     stepSize: 20
@@ -231,7 +284,18 @@
                         'Belajar Cepat dan Pengembangan Diri',
                     ]
                 },
-                dataLables: {
+                plotOptions: {
+                    radar: {
+                        size: 220,
+                        polygons: {
+                            strokeColors: '#e9e9e9',
+                            fill: {
+                                colors: ['#f8f8f8', '#fff']
+                            }
+                        }
+                    }
+                },
+                dataLabels: {
                     show: true,
                     style: {
                         fontSize: '14px',
@@ -243,15 +307,24 @@
             var radarChart = new ApexCharts(document.querySelector("#radar-chart"), options);
             radarChart.render();
 
-            window.addEventListener('update-radar-chart', event => {
+            window.addEventListener('update-radar-chart', (event) => {
                 const newData = event.detail.data;
+                const eventName = event.detail.eventName;
+
+                radarChart.updateOptions({
+                    title: {
+                        text: eventName || '',
+                    }
+                });
 
                 radarChart.updateSeries([{
-                    name: 'Rata-rata Skor',
-                    data: newData
+                    name: '',
+                    data: newData,
+                    eventName: eventName || '',
                 }]);
             });
         </script>
+
         <script>
             $(document).ready(function() {
                 $('#event').select2()
