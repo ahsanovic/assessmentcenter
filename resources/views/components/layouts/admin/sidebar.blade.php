@@ -20,11 +20,17 @@
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item nav-category">Master Data</li>
+                <li class="nav-item nav-category">Data Referensi</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.alat-tes') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="message-square"></i>
                         <span class="link-title">Alat Tes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.metode-tes') }}" wire:navigate class="nav-link">
+                        <i class="link-icon" data-feather="message-square"></i>
+                        <span class="link-title">Metode Tes</span>
                     </a>
                 </li>
                 <li class="nav-item">

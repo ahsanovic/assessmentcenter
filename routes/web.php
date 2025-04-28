@@ -18,6 +18,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('alat-tes', \App\Livewire\Admin\AlatTes\Index::class)->name('admin.alat-tes');
         Route::get('alat-tes/create', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.create');
         Route::get('alat-tes/{id}/edit', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.edit');
+        
+        // metode tes
+        Route::get('metode-tes', \App\Livewire\Admin\MetodeTes\Index::class)->name('admin.metode-tes');
+        Route::get('metode-tes/create', \App\Livewire\Admin\MetodeTes\Form::class)->name('admin.metode-tes.create');
+        Route::get('metode-tes/{id}/edit', \App\Livewire\Admin\MetodeTes\Form::class)->name('admin.metode-tes.edit');
     
         // urutan tes
         Route::get('settings/urutan-tes', \App\Livewire\Admin\Settings\Urutan\Index::class)->name('admin.settings.urutan');
