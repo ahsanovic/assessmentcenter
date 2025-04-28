@@ -23,6 +23,7 @@ class Index extends Component
     public $avg_skor;
     public $jpm = [];
     public $event_name;
+    public $jumlah_peserta_per_tahun;
 
     public function mount()
     {
@@ -35,6 +36,7 @@ class Index extends Component
             ->count();
 
         $this->updateChartEvent();
+        $this->updateJumlahPesertaPerTahun();
         $this->updateRadarChart();
         $this->updateJpmRank();
     }
@@ -42,6 +44,19 @@ class Index extends Component
     public function updatedTahun()
     {
         $this->updateChartEvent();
+        $this->updateJumlahPesertaPerTahun();
+    }
+
+    public function updateJumlahPesertaPerTahun()
+    {
+        $this->jumlah_peserta_per_tahun = Peserta::whereHas('event', function ($query) {
+            $query->whereYear('tgl_mulai', $this->tahun)
+                ->where('metode_tes_id', 2)
+                ->whereIsActive('true');
+        })
+        ->get()
+        ->unique('id')
+        ->count();
     }
 
     public function resetFilterEvent()

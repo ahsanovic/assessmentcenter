@@ -95,9 +95,22 @@
                 </div>
             </div>
         </div>
+        <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-2 stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <h6 class="card-title mb-2">Jumlah Peserta Tes Potensi</h6>
+                        <p class="text-secondary mb-3">Tahun {{ $tahun }}</p>
+                    </div>
+                    <div class="card-body text-center">
+                        <h1 class="mb-0" style="font-size: 9em">{{ $jumlah_peserta_per_tahun ?? 0 }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-lg-7 col-xl-8 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-baseline mb-0">
@@ -123,7 +136,7 @@
                 <div class="card-body">
                     <div class="mb-2">
                         <h6 class="card-title mb-2">Ranking JPM Berdasarkan Event</h6>
-                        <h6 class="text-secondary mb-3">{{ $event_name }}</h6>
+                        <p class="text-secondary mb-3">{{ $event_name }}</p>
                     </div>
                     <div class="d-flex flex-column">
                         @if (count($jpm))
