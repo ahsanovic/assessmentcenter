@@ -30,7 +30,7 @@ class Login extends Component
         
         if ($active_user && auth()->guard('admin')->attempt($this->only('username', 'password'))) {
             request()->session()->regenerate();
-            return $this->redirect(route('admin.dashboard'), navigate: true);
+            return $this->redirect(route('admin.dashboard'));
         }
         
         $this->addError('username', 'username atau password salah.');

@@ -20,38 +20,42 @@
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item nav-category">Data Referensi</li>
+                <li class="nav-item nav-category">Referensi</li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.alat-tes') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Alat Tes</span>
+                    <a class="nav-link" data-bs-toggle="collapse" href="#referensi" role="button"
+                        aria-expanded="false" aria-controls="referensi">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Data Referensi</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="referensi">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.alat-tes') }}" wire:navigate
+                                    class="nav-link">Alat Tes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.metode-tes') }}" wire:navigate
+                                    class="nav-link">Metode Tes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.pertanyaan-pengalaman') }}" wire:navigate class="nav-link">
+                                    Pertanyaan Pengalaman
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.pertanyaan-penilaian') }}" wire:navigate class="nav-link">
+                                    Pertanyaan Penilaian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.kuesioner') }}" wire:navigate class="nav-link">
+                                    Pertanyaan Kuesioner
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.metode-tes') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Metode Tes</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.pertanyaan-pengalaman') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Pertanyaan Pengalaman</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.pertanyaan-penilaian') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Pertanyaan Penilaian</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('admin.kuesioner') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Pertanyaan Kuesioner</span>
-                    </a>
-                </li>
-
                 <li class="nav-item nav-category">Setting</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.settings.urutan') }}" wire:navigate class="nav-link">
