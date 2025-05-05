@@ -8,7 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kecerdasan Emosi'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kesadaran Diri'])]
 class Edit extends Component
 {   
     public $indikator_nama;
@@ -34,7 +34,7 @@ class Edit extends Component
 
     public function render()
     {
-        return view('livewire.admin.kecerdasan-emosi.referensi.edit');
+        return view('livewire.admin.kesadaran-diri.referensi.edit');
     }
 
     protected function rules()
@@ -84,7 +84,7 @@ class Edit extends Component
                 'message' => 'berhasil ubah data'
             ]);
 
-            $this->redirect(route('admin.ref-kecerdasan-emosi'), true);
+            $this->redirect(route('admin.ref-kesadaran-diri'), true);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);

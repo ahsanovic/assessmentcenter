@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">Data Referensi Instrumen Kesadaran Diri</h6>
-                    <a href="{{ route('admin.ref-kecerdasan-emosi.create') }}" class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
+                    <a href="{{ route('admin.ref-kesadaran-diri.create') }}" class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

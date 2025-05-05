@@ -7,7 +7,7 @@ use App\Models\KesadaranDiri\RefKesadaranDiri;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kecerdasan Emosi'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kesadaran Diri'])]
 class Create extends Component
 {   
     public $indikator_nama;
@@ -26,7 +26,7 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.admin.kecerdasan-emosi.referensi.create');
+        return view('livewire.admin.kesadaran-diri.referensi.create');
     }
 
     protected function rules()
@@ -73,7 +73,7 @@ class Create extends Component
                 'message' => 'berhasil tambah data'
             ]);
 
-            $this->redirect(route('admin.ref-kecerdasan-emosi'), true);
+            $this->redirect(route('admin.ref-kesadaran-diri'), true);
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);

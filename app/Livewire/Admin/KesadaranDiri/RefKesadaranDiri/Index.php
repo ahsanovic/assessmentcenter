@@ -8,7 +8,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kecerdasan Emosi'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Referensi Kesadaran Diri'])]
 class Index extends Component
 {
     use WithPagination;
