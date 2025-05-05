@@ -122,6 +122,38 @@
                 }
             });
         });
+
+        window.addEventListener('change-status-portofolio-confirmation', data => {
+            Swal.fire({
+                title: 'Ubah Status Portofolio?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ubah!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('changeStatusPortofolio');
+                }
+            });
+        });
+
+        window.addEventListener('change-status-event-confirmation', data => {
+            Swal.fire({
+                title: 'Ubah Status Event?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ubah!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('changeStatusEvent');
+                }
+            });
+        });
     </script>
     @stack('js')
 </body>

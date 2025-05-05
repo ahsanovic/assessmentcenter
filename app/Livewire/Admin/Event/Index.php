@@ -66,6 +66,56 @@ class Index extends Component
         $this->dispatch('show-delete-confirmation');
     }
 
+    public function changeStatusPortofolioConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('change-status-portofolio-confirmation');
+    }
+
+    public function changeStatusEventConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('change-status-event-confirmation');
+    }
+
+    #[On('changeStatusPortofolio')]
+    public function changeStatusPortofolio()
+    {
+        try {
+            $data = Event::find($this->selected_id);
+
+            if ($data->is_open === 'true') {
+                $data->update(['is_open' => 'false']);
+            } else {
+                $data->update(['is_open' => 'true']);
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil merubah status']);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal merubah status']);
+        }
+    }
+
+    #[On('changeStatusEvent')]
+    public function changeStatusEvent()
+    {
+        try {
+            $data = Event::find($this->selected_id);
+
+            if ($data->is_finished === 'true') {
+                $data->update(['is_finished' => 'false']);
+            } else {
+                $data->update(['is_finished' => 'true']);
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil merubah status']);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal merubah status']);
+        }
+    }
+
     #[On('delete')]
     public function destroy()
     {

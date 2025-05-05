@@ -68,6 +68,7 @@
                                     <th>Peserta Terinput</th>
                                     {{-- <th>Alat Tes</th> --}}
                                     <th>Assessor</th>
+                                    <th>Portofolio</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -98,17 +99,52 @@
                                                 Lihat
                                             </button>
                                         </td> --}}
+                                        @if ($item->metode_tes_id == 1)
                                         <td>
                                             <a class="btn btn-xs btn-primary" wire:navigate
                                                 href="{{ route('admin.event.show-assessor', ['idEvent' => $item->id]) }}">
                                                 {{ $item->assessor_count }} orang
                                             </a>
                                         </td>
+                                        @else
+                                        <td></td>
+                                        @endif
+                                        <td>
+                                            @if ($item->is_open == 'false')
+                                                <span
+                                                    class="badge bg-danger"
+                                                    wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Tutup
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="badge bg-success"
+                                                    wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Buka
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <span class="badge bg-danger">Selesai</span>
+                                                <span
+                                                    class="badge bg-danger"
+                                                    wire:click="changeStatusEventConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Selesai
+                                                </span>
                                             @else
-                                                <span class="badge bg-success">Berlangsung</span>
+                                                <span
+                                                    class="badge bg-success"
+                                                    wire:click="changeStatusEventConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Berlangsung
+                                                </span>
                                             @endif
                                         </td>
                                         <td>
