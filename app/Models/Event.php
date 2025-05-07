@@ -43,6 +43,11 @@ class Event extends Model
         return date('d-m-Y', strtotime($value));
     }
 
+    public function metodeTes()
+    {
+        return $this->hasOne(RefMetodeTes::class, 'id', 'metode_tes_id');
+    }
+
     public function nomorLaporan()
     {
         return $this->hasMany(NomorLaporan::class, 'event_id', 'id');

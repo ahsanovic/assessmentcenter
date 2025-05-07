@@ -51,7 +51,7 @@ class Index extends Component
             $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
             $query->where('tgl_mulai', $tgl_mulai);
         })
-        ->with(['peserta', 'alatTes'])
+        ->with(['peserta', 'alatTes', 'metodeTes'])
         ->orderByDesc('id')
         ->paginate(10);
 
