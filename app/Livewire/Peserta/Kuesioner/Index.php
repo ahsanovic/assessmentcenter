@@ -18,6 +18,23 @@ class Index extends Component
     public function mount()
     {
         $this->kuesioner = Kuesioner::where('is_active', 't')->get();
+        $jawaban = JawabanResponden::where('event_id', Auth::user()->event_id)
+            ->where('peserta_id', Auth::user()->id)
+            ->first();
+            
+        if ($jawaban) {
+            $kuesioner_id = explode(',', $jawaban->kuesioner_id);
+            $skor = explode(',', $jawaban->skor);
+            foreach ($this->kuesioner as $item) {
+                if (in_array($item->id, $kuesioner_id)) {
+                    $this->jawaban_responden[$item->id]['skor'] = $skor[array_search($item->id, $kuesioner_id)];
+                }
+            }
+
+            if (!empty($jawaban->jawaban_esai)) {
+                $this->jawaban_responden[$item->id]['jawaban_esai'] = $jawaban->jawaban_esai;
+            }
+        }
     }
 
     public function render()
