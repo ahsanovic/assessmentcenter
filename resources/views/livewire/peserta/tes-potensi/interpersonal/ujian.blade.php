@@ -23,24 +23,28 @@
                     </button>
                 </div>
                 <div class="col-2">
-                    @if ($jawaban_kosong == 0)
-                        <button class="btn btn-inverse-dark"
-                            x-data
-                            @click="Swal.fire({
-                                title: 'Apakah Anda yakin mengakhiri tes?',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Akhiri Tes!',
-                                cancelButtonText: 'Batal',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $wire.finish();
-                                }
-                            })"
-                        >
-                            {{ $current_sequence == 7 ? 'Selesai' : 'Lanjut Tes Berikutnya' }}
-                        </button>
-                    @endif
+                    <button type="button" class="btn btn-inverse-primary">
+                        Tes ke- <span class="badge bg-primary text-white">{{ $current_sequence . ' / 7' }}</span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-inverse-dark"
+                        x-data
+                        @click="Swal.fire({
+                            title: '{{ $current_sequence == 7 ? 'Apakah Anda yakin mengakhiri tes?' : 'Apakah Anda yakin melanjutkan tes berikutnya?' }}',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: '{{ $current_sequence == 7 ? 'Akhiri Tes!' : 'Tes Berikutnya' }}',
+                            cancelButtonText: 'Batal',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $wire.finish();
+                            }
+                        })"
+                        @disabled($jawaban_kosong != 0)
+                    >
+                        {{ $current_sequence == 7 ? 'Selesai' : 'Lanjut Tes Berikutnya' }}
+                    </button>
                 </div>
             </div>
         </div>
