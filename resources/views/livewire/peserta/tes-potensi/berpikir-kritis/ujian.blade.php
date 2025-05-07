@@ -120,7 +120,7 @@
                         @if ($nomor_sekarang == 1) disabled @endif>
                         Sebelumnya
                     </button>
-                    <button class="btn btn-success btn-sm" wire:click="saveAndNext({{ $nomor_sekarang }})">
+                    <button class="btn btn-success btn-sm" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
                         Simpan & Lanjutkan
                     </button>
                 </div>
@@ -156,6 +156,12 @@
 </div>
 @push('js')
 <script>
+    $(document).ready(function() {
+        $('.form-check-input').change(function() {
+            $('#btn-simpan').removeAttr('disabled');
+        })
+    })
+
     function timeout(id) {
         Swal.fire({
             title: 'Waktu Habis',
