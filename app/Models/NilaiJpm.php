@@ -8,7 +8,6 @@ class NilaiJpm extends Model
 {
     protected $table = 'nilai_jpm';
     protected $fillable = [
-        'id',
         'event_id',
         'peserta_id',
         'jpm',

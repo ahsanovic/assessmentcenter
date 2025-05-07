@@ -8,7 +8,6 @@ class TtdLaporan extends Model
 {
     protected $table = 'ttd_laporan';
     protected $fillable = [
-        'id',
         'nama',
         'nip',
         'ttd',
