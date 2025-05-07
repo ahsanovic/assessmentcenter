@@ -129,6 +129,31 @@ class Index extends Component
         $this->dispatch('show-delete-confirmation');
     }
 
+    public function changeStatusPesertaConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('change-status-peserta-confirmation');
+    }
+
+    #[On('changeStatusPeserta')]
+    public function changeStatusPeserta()
+    {
+        try {
+            $data = Peserta::find($this->selected_id);
+
+            if ($data->is_active == 'true') {
+                $data->update(['is_active' => 'false']);
+            } else {
+                $data->update(['is_active' => 'true']);
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil merubah status peserta']);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal merubah status peserta']);
+        }
+    }
+
     #[On('delete')]
     public function destroy()
     {

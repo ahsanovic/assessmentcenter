@@ -100,11 +100,23 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($item->is_active == 'true')
-                                                <span class="badge bg-success">Aktif</span>    
+                                            @if ($item->is_active == 'false')
+                                                <span
+                                                    class="badge bg-danger"
+                                                    wire:click="changeStatusPesertaConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Non Aktif
+                                                </span>
                                             @else
-                                                <span class="badge bg-danger">Non Aktif</span>
-                                            @endif 
+                                                <span
+                                                    class="badge bg-success"
+                                                    wire:click="changeStatusPesertaConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Aktif
+                                                </span>
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="btn-group dropstart">
