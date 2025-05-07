@@ -85,35 +85,18 @@ class KesadaranDiri extends Component
             ->first();
 
         $soal_id = explode(',', $data->soal_id);
-
-        // update jawaban
         $jawaban_user = explode(',', $data->jawaban);
+
         $jawaban_user[$index_array] = $this->jawaban_user[$index_array] ?? '0';
-        $jawaban_user = implode(',', $jawaban_user);
+        $jawaban_user_str = implode(',', $jawaban_user);
 
-        UjianKesadaranDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('is_finished', 'false')
-            ->update(['jawaban' => $jawaban_user]);
+        // Simpan jawaban user
+        $data->jawaban = $jawaban_user_str;
+        $data->save();
 
-        // perhitungan ulang soal yang belum dijawab
-        $this->jawaban_user = explode(',', $jawaban_user); // Update state Livewire
-        $this->jawaban_kosong = 0;
-
-        foreach ($this->jawaban_user as $jawaban) {
-            if ($jawaban == '0') {
-                $this->jawaban_kosong++;
-            }
-        }
-
-        if ($this->jawaban_kosong === 0) {
-            $this->jawaban_kosong = 0;
-        }
-
-        $poin = SoalKesadaranDiri::find($soal_id[$index_array]);
-        $poin_a = $poin->poin_opsi_a;
-        $poin_b = $poin->poin_opsi_b;
-        $poin_c = $poin->poin_opsi_c;
+        // Perbarui Livewire state
+        $this->jawaban_user = $jawaban_user;
+        $this->jawaban_kosong = collect($this->jawaban_user)->filter(fn($j) => $j == '0')->count();
 
         $indikator_map = [
             [1, 22, 'nilai_indikator_1'],
@@ -123,15 +106,37 @@ class KesadaranDiri extends Component
 
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
-                $skor = $data->{$indikator};
-                if ($this->jawaban_user[$index_array] === 'A') {
-                    $skor += $poin_a;
-                } elseif ($this->jawaban_user[$index_array] === 'B') {
-                    $skor += $poin_b;
-                } elseif ($this->jawaban_user[$index_array] === 'C') {
-                    $skor += $poin_c;
+                $total_skor = 0;
+        
+                for ($i = $start; $i <= $end; $i++) {
+                    $idx = $i - 1;
+                    $jawaban = $jawaban_user[$idx] ?? null;
+        
+                    // Ambil poin dari soal terkait
+                    if (isset($soal_id[$idx])) {
+                        $poin_soal = SoalKesadaranDiri::find($soal_id[$idx]);
+                        if (!$poin_soal) continue;
+        
+                        switch ($jawaban) {
+                            case 'A':
+                                $total_skor += $poin_soal->poin_opsi_a;
+                                break;
+                            case 'B':
+                                $total_skor += $poin_soal->poin_opsi_b;
+                                break;
+                            case 'C':
+                                $total_skor += $poin_soal->poin_opsi_c;
+                                break;
+                            default:
+                                $total_skor += 0;
+                                break;
+                        }
+                    }
                 }
-                $data->update([$indikator => $skor]);
+        
+                // Update skor indikator
+                $data->{$indikator} = $total_skor;
+                $data->save();
                 break;
             }
         }
@@ -179,13 +184,13 @@ class KesadaranDiri extends Component
                 $kategori_kualifikasi_1 = 'Cukup';
                 $kualifikasi_1 = 'Sedang';
             } else if ($data->nilai_indikator_1 >= 62 && $data->nilai_indikator_1 <= 67) {
-                $kualifikasi_1 = 'B';
+                $kategori_1 = 'B';
                 $kategori_kualifikasi_1 = 'Baik';
-                $kategori_1 = 'Tinggi';
+                $kualifikasi_1 = 'Tinggi';
             } else if ($data->nilai_indikator_1 > 67) {
-                $kualifikasi_1 = 'SB';
+                $kategori_1 = 'SB';
                 $kategori_kualifikasi_1 = 'Sangat Baik';
-                $kategori_1 = 'Tinggi';
+                $kualifikasi_1 = 'Tinggi';
             }
 
             // indikator 2
@@ -210,13 +215,13 @@ class KesadaranDiri extends Component
                 $kategori_kualifikasi_2 = 'Cukup';
                 $kualifikasi_2 = 'Sedang';
             } else if ($data->nilai_indikator_2 >= 67 && $data->nilai_indikator_2 <= 74) {
-                $kualifikasi_2 = 'B';
+                $kategori_2 = 'B';
                 $kategori_kualifikasi_2 = 'Baik';
-                $kategori_2 = 'Tinggi';
+                $kualifikasi_2 = 'Tinggi';
             } else if ($data->nilai_indikator_2 > 74) {
-                $kualifikasi_2 = 'SB';
+                $kategori_2 = 'SB';
                 $kategori_kualifikasi_2 = 'Sangat Baik';
-                $kategori_2 = 'Tinggi';
+                $kualifikasi_2 = 'Tinggi';
             }
 
             // indikator 3
@@ -345,10 +350,12 @@ class KesadaranDiri extends Component
             usort($top_data, function ($a, $b) {
                 return $a['no_indikator'] - $b['no_indikator'];
             });
+            // dd($top_data);
 
             // Ambil nilai indikator nama, indikator nomor, dan kualifikasi dari hasil
-            $indikator_nomor = array_column($top_data, 'no_indikator');
-            $kualifikasi_array = array_column($top_data, 'kategori');
+            $indikator_nomor = array_column($top_data, 'no_indikator'); // 1
+            $kualifikasi_array = array_column($top_data, 'kategori'); // Tinggi
+            // dd($kualifikasi_array);
 
             $data_to_save = [];
 

@@ -7,7 +7,6 @@ use App\Models\MotivasiKomitmen\RefDeskripsiMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
-use App\Models\NilaiJpm;
 use App\Models\Settings;
 use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
@@ -87,34 +86,18 @@ class MotivasiKomitmen extends Component
             ->first();
 
         $soal_id = explode(',', $data->soal_id);
-
-        // update jawaban
         $jawaban_user = explode(',', $data->jawaban);
+
         $jawaban_user[$index_array] = $this->jawaban_user[$index_array] ?? '0';
-        $jawaban_user = implode(',', $jawaban_user);
+        $jawaban_user_str = implode(',', $jawaban_user);
 
-        UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('is_finished', 'false')
-            ->update(['jawaban' => $jawaban_user]);
+        // Simpan jawaban user
+        $data->jawaban = $jawaban_user_str;
+        $data->save();
 
-        // perhitungan ulang soal yang belum dijawab
-        $this->jawaban_user = explode(',', $jawaban_user); // Update state Livewire
-        $this->jawaban_kosong = 0;
-
-        foreach ($this->jawaban_user as $jawaban) {
-            if ($jawaban == '0') {
-                $this->jawaban_kosong++;
-            }
-        }
-
-        if ($this->jawaban_kosong === 0) {
-            $this->jawaban_kosong = 0;
-        }
-
-        $poin = SoalMotivasiKomitmen::find($soal_id[$index_array]);
-        $poin_a = $poin->poin_opsi_a;
-        $poin_b = $poin->poin_opsi_b;
+        // Perbarui Livewire state
+        $this->jawaban_user = $jawaban_user;
+        $this->jawaban_kosong = collect($this->jawaban_user)->filter(fn($j) => $j == '0')->count();
 
         $indikator_map = [
             [1, 15, 'nilai_indikator_1'],
@@ -126,14 +109,34 @@ class MotivasiKomitmen extends Component
 
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
-                $skor = $data->{$indikator};
-                if ($this->jawaban_user[$index_array] === 'A') {
-                    $skor += $poin_a;
-                } elseif ($this->jawaban_user[$index_array] === 'B') {
-                    $skor += $poin_b;
+                $total_skor = 0;
+        
+                for ($i = $start; $i <= $end; $i++) {
+                    $idx = $i - 1;
+                    $jawaban = $jawaban_user[$idx] ?? null;
+        
+                    // Ambil poin dari soal terkait
+                    if (isset($soal_id[$idx])) {
+                        $poin_soal = SoalMotivasiKomitmen::find($soal_id[$idx]);
+                        if (!$poin_soal) continue;
+        
+                        switch ($jawaban) {
+                            case 'A':
+                                $total_skor += $poin_soal->poin_opsi_a;
+                                break;
+                            case 'B':
+                                $total_skor += $poin_soal->poin_opsi_b;
+                                break;
+                            default:
+                                $total_skor += 0;
+                                break;
+                        }
+                    }
                 }
-
-                $data->update([$indikator => $skor]);
+        
+                // Update skor indikator
+                $data->{$indikator} = $total_skor;
+                $data->save();
                 break;
             }
         }
@@ -429,7 +432,7 @@ class MotivasiKomitmen extends Component
     {
         $level_5 = ['5/SB', '5/B', '4/SB', '4/B'];
         $level_4 = ['3/SB', '3/B', '4/C+', '5/C+'];
-        $level_3 = ['1/C+', '2/C+', '2/C', '3/C', '3/C-', '4/C-', '5/C-', '1/SB', '1/B', '4/C', '5/C', '2/SB', '2B', '3/C+'];
+        $level_3 = ['1/C+', '2/C+', '2/C', '3/C', '3/C-', '4/C-', '5/C-', '1/SB', '1/B', '4/C', '5/C', '2/SB', '2/B', '3/C+'];
         $level_2 = ['2/C-', '1/C', '1/C-'];
         $level_1 = ['1/K', '2/K', '3/K', '4/K', '5/K', '1/SK', '2/SK', '3/SK', '4/SK', '5/SK'];
 
