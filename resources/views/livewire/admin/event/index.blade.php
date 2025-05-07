@@ -63,7 +63,7 @@
                                     <th>#</th>
                                     <th>Nama Event</th>
                                     <th>Tgl Pelaksanaan</th>
-                                    <th>Jabatan yg Diujikan</th>
+                                    <th>Jabatan yg Diujikan / Metode Tes</th>
                                     <th>Jumlah Peserta</th>
                                     <th>Peserta Terinput</th>
                                     {{-- <th>Alat Tes</th> --}}
@@ -85,7 +85,10 @@
                                                 {{ $item->tgl_mulai . ' s/d ' . $item->tgl_selesai }}
                                             @endif
                                         </td>
-                                        <td>{{ $item->jabatanDiuji->jenis ?? '' }}</td>
+                                        <td>
+                                            {{ $item->jabatanDiuji->jenis ?? '' }} <br /> 
+                                            <span class="badge bg-dark">{{ $item->metodeTes->metode_tes }}</span>
+                                        </td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-warning" wire:navigate

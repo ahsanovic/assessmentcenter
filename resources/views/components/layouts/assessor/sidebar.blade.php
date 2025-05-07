@@ -2,7 +2,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <p class="sidebar-brand">
-                BKD <span>AC</span>
+                SI-PRIMA
             </p>
             <div class="sidebar-toggler">
                 <span></span>

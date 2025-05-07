@@ -2,8 +2,8 @@
     <!-- partial:partials/_sidebar.html -->
     <nav class="sidebar">
         <div class="sidebar-header">
-            <a href="{{ url('/') }}" class="sidebar-brand">
-                App<span>AC</span>
+            <a href="#" class="sidebar-brand">
+                SI-PRIMA
             </a>
             <div class="sidebar-toggler">
                 <span></span>

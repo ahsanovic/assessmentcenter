@@ -9,8 +9,8 @@
                 </div>
                 <div class="col-md-8 ps-md-0">
                     <div class="auth-form-wrapper px-4 py-5">
-                        <a href="#" class="nobleui-logo d-block mb-2">BKD<span> Asessment Center</span></a>
-                        <h5 class="text-secondary fw-normal mb-4">Selamat Datang Peserta Assessment!</h5>
+                        <a href="#" class="nobleui-logo d-block mb-2">SI-PRIMA</a>
+                        <h5 class="text-secondary fw-normal mb-4">Sistem Penilaian Kompetensi Mandiri dan Adaptif</h5>
                         <form class="forms-sample" wire:submit="login">
                         <div class="mb-3">
                             <label for="id-number" class="form-label">NIP/NIK</label>
