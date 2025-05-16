@@ -4,13 +4,18 @@
             <div class="row">
                 <div class="col-md-4 pe-md-0">
                     <div class="auth-side-wrapper">
-
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <img src="{{ asset('assets/images/logo-upt.png') }}" class="img-fluid" />
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-8 ps-md-0">
                     <div class="auth-form-wrapper px-4 py-5">
-                        <a href="#" class="nobleui-logo d-block mb-2">SI-PRIMA</span></a>
-                        <h5 class="text-secondary fw-normal mb-4">Selamat Datang Admin!</h5>
+                        <a href="#" class="nobleui-logo d-block mb-2">
+                            SIKMA
+                            <span class="ml-3 text-muted"><small class="text-muted">(Sistem Kompetensi Mandiri dan Adaptif)</small></span>
+                        </a>
+                        <h5 class="text-secondary fw-normal mb-4">Welcome Admin!</h5>
                         <form class="forms-sample" wire:submit="login">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>

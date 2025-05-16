@@ -2,7 +2,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <p class="sidebar-brand">
-                SI-PRIMA
+                SIKMA
             </p>
             <div class="sidebar-toggler">
                 <span></span>

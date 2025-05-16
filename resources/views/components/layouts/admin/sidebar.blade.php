@@ -3,7 +3,7 @@
     <nav class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
-                SI-PRIMA
+                SIKMA
             </a>
             <div class="sidebar-toggler">
                 <span></span>
