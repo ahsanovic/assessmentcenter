@@ -14,7 +14,7 @@
                         <h4 class="text-center mt-4 mb-4">LAPORAN PENILAIAN POTENSI INDIVIDU</h4>
                         <div class="d-flex justify-content-between mb-4 mx-3">
                             <div>Tujuan: Pemetaan Potensi</div>
-                            <div>Tanggal Pemeriksaan: {{ now()->format('d F Y') }}</div>
+                            <div>Tanggal Pemeriksaan : {{ \Carbon\Carbon::parse($peserta->test_started_at)->format('d F Y') ?? '-' }}</div>
                         </div>
                         <h6>A. IDENTITAS</h6>
                         <div class="table">
