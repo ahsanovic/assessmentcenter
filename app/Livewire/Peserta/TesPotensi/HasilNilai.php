@@ -49,32 +49,32 @@ class HasilNilai extends Component
                 $query->where('peserta_id', $peserta->id);
             },
         ])
-        ->where('id', $idEvent)
-        ->whereHas('ujianInterpersonal', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianKesadaranDiri', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianBerpikirKritis', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianPengembanganDiri', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianProblemSolving', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianKecerdasanEmosi', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('ujianMotivasiKomitmen', function ($query) {
-            $query->where('is_finished', 'true');
-        })
-        ->whereHas('peserta', function ($query) use ($peserta) {
-            $query->where('id', $peserta->id);
-        })
-        ->firstOrFail();
+            ->where('id', $idEvent)
+            ->whereHas('ujianInterpersonal', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianKesadaranDiri', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianBerpikirKritis', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianPengembanganDiri', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianProblemSolving', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianKecerdasanEmosi', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianMotivasiKomitmen', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('peserta', function ($query) use ($peserta) {
+                $query->where('id', $peserta->id);
+            })
+            ->firstOrFail();
 
         $capaian_level = [
             'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
@@ -87,9 +87,9 @@ class HasilNilai extends Component
         ];
 
         $count_jpm = countJpm($capaian_level);
-        $jpm = number_format($count_jpm * 100, 2);
+        $jpm = round($count_jpm * 100, 2);
         $kategori = getKategori(($count_jpm));
-        
+
         NilaiJpm::updateOrCreate([
             'event_id' => $idEvent,
             'peserta_id' => $peserta->id
