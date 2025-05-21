@@ -82,6 +82,10 @@ Route::prefix('bkdac')->group(function () {
         Route::get('kuesioner/create', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.create');
         Route::get('kuesioner/{id}/edit', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.edit');
 
+        // hasil responden
+        Route::get('hasil-responden', \App\Livewire\Admin\HasilResponden\Index::class)->name('admin.hasil-responden');
+        Route::get('hasil-responden/{idEvent}', \App\Livewire\Admin\HasilResponden\Show::class)->name('admin.hasil-responden.show');
+
         // peserta
         Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
         Route::get('peserta/create', \App\Livewire\Admin\Peserta\Form::class)->name('admin.peserta.create');

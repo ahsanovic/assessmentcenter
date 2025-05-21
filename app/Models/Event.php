@@ -68,6 +68,11 @@ class Event extends Model
         return $this->belongsToMany(RefAlatTes::class, 'event_alat_tes', 'event_id', 'ref_alat_tes_id')->withTimestamps();
     }
 
+    public function jawabanResponden()
+    {
+        return $this->hasMany(JawabanResponden::class, 'event_id', 'id');
+    }
+
     public function assessor()
     {
         return $this->belongsToMany(Assessor::class, 'assessor_event', 'event_id', 'assessor_id')->withTimestamps();

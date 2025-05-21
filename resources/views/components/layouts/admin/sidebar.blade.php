@@ -126,6 +126,10 @@
                                 <a href="{{ route('admin.tes-selesai') }}" wire:navigate
                                     class="nav-link">Tes Selesai</a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.hasil-responden') }}" wire:navigate
+                                    class="nav-link">Hasil Responden</a>
+                            </li>
                         </ul>
                     </div>
                 </li>

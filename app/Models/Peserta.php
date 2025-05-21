@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 class Peserta extends Model implements AuthenticatableContract
 {
     use \Illuminate\Auth\Authenticatable;
-    
+
     protected $table = 'peserta';
     protected $guarded = ['id'];
 
@@ -70,8 +70,8 @@ class Peserta extends Model implements AuthenticatableContract
     public function assessor()
     {
         return $this->belongsToMany(Assessor::class, 'assessor_peserta', 'peserta_id', 'assessor_id')
-                ->withPivot('event_id')
-                ->withTimestamps();
+            ->withPivot('event_id')
+            ->withTimestamps();
     }
 
     public function pendidikan()
@@ -84,10 +84,15 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->belongsTo(RefAgama::class, 'agama_id', 'id');
     }
 
+    public function jawabanResponden()
+    {
+        return $this->hasMany(JawabanResponden::class, 'peserta_id', 'id');
+    }
+
     public function scopeWherePesertaEvent($query, $pesertaId, $eventId)
     {
         return $query->where('id', $pesertaId)
-                    ->where('event_id', $eventId);
+            ->where('event_id', $eventId);
     }
 
     public function ujianInterpersonal()
@@ -177,13 +182,13 @@ class Peserta extends Model implements AuthenticatableContract
         $non_asn = $this->jenis_peserta_id == 2;
 
         $common_fields = $this->tempat_lahir &&
-                        $this->tgl_lahir &&
-                        $this->jk &&
-                        $this->agama_id &&
-                        $this->alamat &&
-                        $this->no_hp &&
-                        $this->foto;
-        
+            $this->tgl_lahir &&
+            $this->jk &&
+            $this->agama_id &&
+            $this->alamat &&
+            $this->no_hp &&
+            $this->foto;
+
         if ($asn) {
             return $common_fields && $this->nip && $this->gol_pangkat_id;
         } else if ($non_asn) {
