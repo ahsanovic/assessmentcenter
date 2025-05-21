@@ -100,6 +100,14 @@
                                             >
                                                 Download
                                             </a>
+                                            <a href="{{ route('admin.tes-selesai.rekomendasi-ai', [
+                                                    'idEvent' => $item->event_id,
+                                                    'nip' => $item->nip
+                                                ]) }}" class="btn btn-sm btn-inverse-warning"
+                                                wire:navigate
+                                            >
+                                                Rekomendasi AI
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
