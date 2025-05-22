@@ -14,11 +14,11 @@ class Index extends Component
     use WithPagination;
 
     public $selected_id;
-    
+
     public function render()
     {
         $data = RefIndikatorBerpikirKritis::paginate(10);
-        
+
         return view('livewire.admin.berpikir-kritis.referensi.indikator.index', compact('data'));
     }
 
@@ -32,7 +32,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefIndikatorBerpikirKritis::find($this->selected_id)->delete();
+            $data = RefIndikatorBerpikirKritis::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'ref-indikator-berpikir-kritis', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

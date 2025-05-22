@@ -41,19 +41,19 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::withCount('assessor', 'peserta')->when($this->search, function($query) {
+        $data = Event::withCount('assessor', 'peserta')->when($this->search, function ($query) {
             $query->where('nama_event', 'like', '%' . $this->search . '%');
         })
-        ->when($this->jabatan_diuji, function($query,) {
-            $query->where('jabatan_diuji_id', $this->jabatan_diuji);
-        })
-        ->when($this->tgl_mulai, function($query) {
-            $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
-            $query->where('tgl_mulai', $tgl_mulai);
-        })
-        ->with(['peserta', 'alatTes', 'metodeTes'])
-        ->orderByDesc('id')
-        ->paginate(10);
+            ->when($this->jabatan_diuji, function ($query,) {
+                $query->where('jabatan_diuji_id', $this->jabatan_diuji);
+            })
+            ->when($this->tgl_mulai, function ($query) {
+                $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
+                $query->where('tgl_mulai', $tgl_mulai);
+            })
+            ->with(['peserta', 'alatTes', 'metodeTes'])
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
 
@@ -120,7 +120,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            Event::find($this->selected_id)->delete();
+            $data = Event::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'event', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

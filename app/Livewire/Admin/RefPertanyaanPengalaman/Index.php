@@ -23,7 +23,7 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
         $option_kode = [
@@ -38,12 +38,12 @@ class Index extends Component
             9 => 'PK',
         ];
 
-        $data = RefPertanyaanPengalaman::when($this->search, function($query) {
-                    $query->where('pertanyaan', 'like', '%' . $this->search . '%');
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
-        
+        $data = RefPertanyaanPengalaman::when($this->search, function ($query) {
+            $query->where('pertanyaan', 'like', '%' . $this->search . '%');
+        })
+            ->orderByDesc('id')
+            ->paginate(10);
+
         return view('livewire.admin.pertanyaan-pengalaman.index', compact('data', 'option_kode'));
     }
 
@@ -64,7 +64,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefPertanyaanPengalaman::find($this->selected_id)->delete();
+            $data = RefPertanyaanPengalaman::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'pertanyaan', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

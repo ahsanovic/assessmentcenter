@@ -30,21 +30,21 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
         $data = SoalKesadaranDiri::with('jenisIndikator')
-                ->when($this->search, function($query) {
-                    $query->where('soal', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->jenis_indikator, function($query, $jenis_indikator) {
-                    $query->where('jenis_indikator_id', $jenis_indikator);
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
+            ->when($this->search, function ($query) {
+                $query->where('soal', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->jenis_indikator, function ($query, $jenis_indikator) {
+                $query->where('jenis_indikator_id', $jenis_indikator);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $indikator = RefKesadaranDiri::pluck('indikator_nama', 'id')->toArray();
-        
+
         return view('livewire.admin.kesadaran-diri.soal.index', compact('data', 'indikator'));
     }
 
@@ -65,7 +65,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            SoalKesadaranDiri::find($this->selected_id)->delete();
+            $data = SoalKesadaranDiri::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'soal-kesadaran-diri', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

@@ -30,7 +30,7 @@ class Index extends Component
     public function render()
     {
         $data = NomorLaporan::with('event')->when($this->search, fn($query) => $query->where('nomor', 'like', '%' . $this->search . '%'))
-            ->when($this->tanggal, function($query) {
+            ->when($this->tanggal, function ($query) {
                 $tanggal = date('Y-m-d', strtotime($this->tanggal));
                 $query->where('tanggal', $tanggal);
             })
@@ -61,7 +61,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            NomorLaporan::find($this->selected_id)->delete();
+            $data = NomorLaporan::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'nomor-laporan', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

@@ -23,14 +23,14 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
-        $data = RefMetodeTes::when($this->search, function($query) {
-                    $query->where('metode_tes', 'like', '%' . $this->search . '%');
-                })
-                ->paginate(5);
-        
+        $data = RefMetodeTes::when($this->search, function ($query) {
+            $query->where('metode_tes', 'like', '%' . $this->search . '%');
+        })
+            ->paginate(5);
+
         return view('livewire.admin.metode-tes.index', compact('data'));
     }
 
@@ -51,7 +51,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefMetodeTes::find($this->selected_id)->delete();
+            $data = RefMetodeTes::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'metode-tes', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

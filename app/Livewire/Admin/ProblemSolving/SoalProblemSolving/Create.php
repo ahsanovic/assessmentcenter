@@ -11,14 +11,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Problem Solving'])]
 class Create extends Component
-{   
+{
     public SoalProblemSolvingForm $form;
-    
+
     public function render()
     {
         $indikator_option = RefIndikatorProblemSolving::pluck('indikator_nama', 'indikator_nomor')->toArray();
         $aspek_option = RefAspekProblemSolving::pluck('aspek', 'id')->toArray();
-        
+
         return view('livewire.admin.problem-solving.soal.create', compact('indikator_option', 'aspek_option'));
     }
 
@@ -27,7 +27,7 @@ class Create extends Component
         $this->validate();
 
         try {
-            SoalProblemSolving::create([
+            $data = SoalProblemSolving::create([
                 'aspek_id' => $this->form->aspek_id,
                 'indikator_nomor' => $this->form->indikator_nomor,
                 'soal' => $this->form->soal,
@@ -42,6 +42,8 @@ class Create extends Component
                 'opsi_e' => $this->form->opsi_e,
                 'poin_opsi_e' => $this->form->poin_opsi_e,
             ]);
+
+            activity_log($data, 'create', 'soal-problem-solving');
 
             session()->flash('toast', [
                 'type' => 'success',

@@ -12,9 +12,9 @@ use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Ttd Laporan Penilaian'])]
 class Form extends Component
-{   
+{
     use WithFileUploads;
-    
+
     public $isUpdate = false;
     public $ttd_url;
     public $ttd;
@@ -24,13 +24,13 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
-    
+
                 $data = TtdLaporan::findOrFail($id);
                 $this->id = $data->id;
                 $this->nama = $data->nama;
@@ -42,7 +42,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $event = Event::pluck('nama_event', 'id');
@@ -88,13 +88,14 @@ class Form extends Component
         try {
             if ($this->isUpdate) {
                 $data = TtdLaporan::findOrFail($this->id);
+                $old_data = $data->getOriginal();
 
                 // Hapus file lama jika ada
                 if ($this->ttd) {
                     if ($data->ttd && Storage::disk('public')->exists($data->ttd)) {
                         Storage::disk('public')->delete($data->ttd);
                     }
-                    
+
                     $path = $this->ttd->storeAs('tte', uniqid() . '.' . $this->ttd->extension(), 'public');
                 }
 
@@ -103,27 +104,31 @@ class Form extends Component
                 $data->is_active = $this->is_active;
                 $data->ttd = $this->ttd ? 'tte/' . basename($path) : $data->ttd;
                 $data->save();
-                
+
+                activity_log($data, 'update', 'ttd-laporan', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.ttd-laporan'), true);
             } else {
                 $path = $this->ttd->storeAs('tte', uniqid() . '.' . $this->ttd->extension(), 'public');
 
-                TtdLaporan::create([
+                $data = TtdLaporan::create([
                     'nama' => $this->nama,
                     'nip' => $this->nip,
                     'ttd' => 'tte/' . basename($path),
                 ]);
-    
+
+                activity_log($data, 'create', 'ttd-laporan');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.ttd-laporan'), true);
             }
         } catch (\Throwable $th) {

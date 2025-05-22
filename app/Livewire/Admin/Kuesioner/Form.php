@@ -10,7 +10,7 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Kuesioner'])]
 class Form extends Component
-{   
+{
     public KuesionerForm $form;
     public $isUpdate = false;
     public $is_active;
@@ -18,13 +18,13 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
-    
+
                 $data = Kuesioner::findOrFail($id);
                 $this->id = $data->id;
                 $this->form->deskripsi = $data->deskripsi;
@@ -36,7 +36,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         return view('livewire.admin.kuesioner.form');
@@ -48,29 +48,35 @@ class Form extends Component
         try {
             if ($this->isUpdate) {
                 $data = Kuesioner::findOrFail($this->id);
+                $old_data = $data->getOriginal();
+
                 $data->deskripsi = $this->form->deskripsi;
                 $data->is_esai = $this->form->is_esai;
                 $data->is_active = $this->form->is_active;
                 $data->save();
-                
+
+                activity_log($data, 'update', 'kuesioner', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.kuesioner'), true);
             } else {
-                Kuesioner::create([
+                $data = Kuesioner::create([
                     'deskripsi' => $this->form->deskripsi,
                     'is_esai' => $this->form->is_esai,
                     'is_active' => $this->form->is_active,
                 ]);
-    
+
+                activity_log($data, 'create', 'kuesioner');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.kuesioner'), true);
             }
         } catch (\Throwable $th) {

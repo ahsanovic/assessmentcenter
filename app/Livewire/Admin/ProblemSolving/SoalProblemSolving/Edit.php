@@ -12,14 +12,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Problem Solving'])]
 class Edit extends Component
-{   
+{
     public SoalProblemSolvingForm $form;
 
     public $previous_url;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
@@ -48,14 +48,18 @@ class Edit extends Component
     {
         $indikator_option = RefIndikatorProblemSolving::pluck('indikator_nama', 'indikator_nomor')->toArray();
         $aspek_option = RefAspekProblemSolving::pluck('aspek', 'id')->toArray();
-        
+
         return view('livewire.admin.problem-solving.soal.edit', compact('indikator_option', 'aspek_option'));
     }
 
     public function save()
     {
         try {
-            SoalProblemSolving::whereId($this->id)->update($this->validate());
+            $data = SoalProblemSolving::find($this->id);
+            $old_data = $data->getOriginal();
+            $data->update($this->validate());
+
+            activity_log($data, 'update', 'soal-problem-solving', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

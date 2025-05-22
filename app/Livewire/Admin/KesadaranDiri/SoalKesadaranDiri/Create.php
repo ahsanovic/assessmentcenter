@@ -10,13 +10,13 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Kesadaran Diri'])]
 class Create extends Component
-{   
+{
     public SoalKesadaranDiriForm $form;
-    
+
     public function render()
     {
         $indikator = RefKesadaranDiri::pluck('indikator_nama', 'id')->toArray();
-        
+
         return view('livewire.admin.kesadaran-diri.soal.create', compact('indikator'));
     }
 
@@ -25,7 +25,7 @@ class Create extends Component
         $this->validate();
 
         try {
-            SoalKesadaranDiri::create([
+            $data = SoalKesadaranDiri::create([
                 'jenis_indikator_id' => $this->form->jenis_indikator_id,
                 'soal' => $this->form->soal,
                 'opsi_a' => $this->form->opsi_a,
@@ -35,6 +35,8 @@ class Create extends Component
                 'opsi_c' => $this->form->opsi_c,
                 'poin_opsi_c' => $this->form->poin_opsi_c,
             ]);
+
+            activity_log($data, 'create', 'soal-kesadaran-diri');
 
             session()->flash('toast', [
                 'type' => 'success',

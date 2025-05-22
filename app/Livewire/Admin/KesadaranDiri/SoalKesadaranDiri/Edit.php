@@ -11,19 +11,19 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Kesadaran Diri'])]
 class Edit extends Component
-{   
+{
     public SoalKesadaranDiriForm $form;
 
     public $previous_url;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
             $this->previous_url = url()->previous();
-    
+
             $data = SoalKesadaranDiri::findOrFail($id);
             $this->id = $data->id;
             $this->form->jenis_indikator_id = $data->jenis_indikator_id;
@@ -43,14 +43,18 @@ class Edit extends Component
     public function render()
     {
         $indikator = RefKesadaranDiri::pluck('indikator_nama', 'id')->toArray();
-        
+
         return view('livewire.admin.kesadaran-diri.soal.edit', compact('indikator'));
     }
 
     public function save()
     {
         try {
-            SoalKesadaranDiri::whereId($this->id)->update($this->validate());
+            $data = SoalKesadaranDiri::find($this->id);
+            $old_data = $data->getOriginal();
+            $data->update($this->validate());
+
+            activity_log($data, 'update', 'soal-kesadaran-diri', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

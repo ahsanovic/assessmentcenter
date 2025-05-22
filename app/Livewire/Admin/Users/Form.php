@@ -19,7 +19,7 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
@@ -37,7 +37,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         return view('livewire.admin.users.form');
@@ -74,6 +74,8 @@ class Form extends Component
         try {
             if ($this->isUpdate) {
                 $data = User::whereId($this->id)->first();
+                $old_data = $data->getOriginal();
+
                 $data->nama = $this->nama;
                 $data->username = $this->username;
                 $data->role = $this->role;
@@ -82,15 +84,17 @@ class Form extends Component
                 $data->save();
 
                 $this->reset('password');
-                
+
+                activity_log($data, 'update', 'users', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.user'), true);
             } else {
-                User::create([
+                $data = User::create([
                     'nama' => $this->nama,
                     'username' => $this->username,
                     'role' => $this->role,
@@ -98,12 +102,14 @@ class Form extends Component
                 ]);
 
                 $this->reset('password');
-    
+
+                activity_log($data, 'create', 'users');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.user'), true);
             }
         } catch (\Throwable $th) {

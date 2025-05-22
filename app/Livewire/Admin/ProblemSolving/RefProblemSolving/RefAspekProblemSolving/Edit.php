@@ -10,14 +10,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Aspek Problem Solving'])]
 class Edit extends Component
-{   
+{
     public $aspek;
     public $aspek_nomor;
     public $indikator_nomor = [];
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
@@ -55,6 +55,7 @@ class Edit extends Component
 
         try {
             $data = RefAspekProblemSolving::find($this->id);
+            $old_data = $data->getOriginal();
 
             $check_duplicate = RefAspekProblemSolving::where('aspek_nomor', '!=', $this->aspek_nomor)->get(['aspek_nomor']);
             foreach ($check_duplicate as $value) {
@@ -68,6 +69,8 @@ class Edit extends Component
             $data->aspek_nomor = $this->aspek_nomor;
             $data->indikator_nomor = implode(',', $this->indikator_nomor);
             $data->save();
+
+            activity_log($data, 'update', 'ref-aspek-problem-solving', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

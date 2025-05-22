@@ -196,6 +196,9 @@ Route::prefix('bkdac')->group(function () {
         Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');
         Route::get('users/{id}/edit', \App\Livewire\Admin\Users\Form::class)->name('admin.user.edit');
 
+        // log
+        Route::get('log-activity', \App\Livewire\Admin\ActivityLog\Index::class)->name('admin.log-activity');
+
         Route::post('logout', LogoutAdminController::class)->name('admin.logout');
     });
 });

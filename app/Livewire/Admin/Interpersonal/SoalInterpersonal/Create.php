@@ -10,13 +10,13 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Interpersonal'])]
 class Create extends Component
-{   
+{
     public SoalInterpersonalForm $form;
-    
+
     public function render()
     {
         $indikator = RefInterpersonal::pluck('indikator_nama', 'id')->toArray();
-        
+
         return view('livewire.admin.interpersonal.soal.create', compact('indikator'));
     }
 
@@ -25,7 +25,7 @@ class Create extends Component
         $this->validate();
 
         try {
-            SoalInterpersonal::create([
+            $data = SoalInterpersonal::create([
                 'jenis_indikator_id' => $this->form->jenis_indikator_id,
                 'soal' => $this->form->soal,
                 'opsi_a' => $this->form->opsi_a,
@@ -35,6 +35,8 @@ class Create extends Component
                 'opsi_c' => $this->form->opsi_c,
                 'poin_opsi_c' => $this->form->poin_opsi_c,
             ]);
+
+            activity_log($data, 'create', 'soal-interpersonal');
 
             session()->flash('toast', [
                 'type' => 'success',

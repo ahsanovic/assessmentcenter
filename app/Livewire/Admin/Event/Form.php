@@ -29,7 +29,7 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
@@ -37,7 +37,7 @@ class Form extends Component
 
             if ($id) {
                 $this->isUpdate = true;
-    
+
                 $data = Event::with(['assessor'])->findOrFail($id);
                 $this->id = $data->id;
                 $this->nama_event = $data->nama_event;
@@ -59,7 +59,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
@@ -126,6 +126,8 @@ class Form extends Component
 
             if ($this->isUpdate) {
                 $data = Event::findOrFail($this->id);
+                $old_data = $data->getOriginal();
+
                 $data->fill([
                     'nama_event' => $this->nama_event,
                     'metode_tes_id' => $this->metode_tes_id,
@@ -142,6 +144,8 @@ class Form extends Component
                 // sync pivot tables
                 $data->assessor()->sync(is_array($this->assessor) ? $this->assessor : []);
                 // $data->alatTes()->sync(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
+
+                activity_log($data, 'update', 'event', $old_data);
 
                 DB::commit();
                 session()->flash('toast', [
@@ -165,17 +169,19 @@ class Form extends Component
                 // Attach assessors
                 // $event->assessor()->attach($this->assessor);
                 // $event->alatTes()->attach($this->alat_tes_id);
-                
+
                 // Menggunakan syncWithoutDetaching() agar tidak duplikasi
                 $event->assessor()->syncWithoutDetaching(is_array($this->assessor) ? $this->assessor : []);
                 // $event->alatTes()->syncWithoutDetaching(is_array($this->alat_tes_id) ? $this->alat_tes_id : []);
-    
+
+                activity_log($event, 'create', 'event');
+
                 DB::commit();
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-                
+
                 $this->redirect(route('admin.event'), true);
             }
         } catch (\Throwable $th) {

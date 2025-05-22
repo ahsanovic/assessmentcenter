@@ -11,19 +11,19 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Urutan Tes'])]
 class Form extends Component
-{   
+{
     public SettingUrutanForm $form;
     public $isUpdate = false;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
-    
+
                 $data = Settings::findOrFail($id);
                 $this->id = $data->id;
                 $this->form->alat_tes_id = $data->alat_tes_id;
@@ -34,7 +34,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
@@ -52,25 +52,32 @@ class Form extends Component
                     return;
                 }
 
-                Settings::whereId($this->id)->update($this->validate());
-                
+                $data = Settings::find($this->id);
+                $old_data = $data->getOriginal();
+
+                $data->update($this->validate());
+
+                activity_log($data, 'update', 'urutan-tes', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.settings.urutan'), true);
             } else {
-                Settings::create([
+                $data = Settings::create([
                     'alat_tes_id' => $this->form->alat_tes_id,
                     'urutan' => $this->form->urutan,
                 ]);
-    
+
+                activity_log($data, 'create', 'urutan-tes');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.settings.urutan'), true);
             }
         } catch (\Throwable $th) {

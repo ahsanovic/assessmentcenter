@@ -11,19 +11,19 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Motivasi dan Komitmen'])]
 class Edit extends Component
-{   
+{
     public SoalMotivasiKomitmenForm $form;
 
     public $previous_url;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
             $this->previous_url = url()->previous();
-    
+
             $data = SoalMotivasiKomitmen::findOrFail($id);
             $this->id = $data->id;
             $this->form->jenis_indikator_id = $data->jenis_indikator_id;
@@ -41,14 +41,18 @@ class Edit extends Component
     public function render()
     {
         $indikator = RefMotivasiKomitmen::pluck('indikator_nama', 'id')->toArray();
-        
+
         return view('livewire.admin.motivasi-komitmen.soal.edit', compact('indikator'));
     }
 
     public function save()
     {
         try {
-            SoalMotivasiKomitmen::whereId($this->id)->update($this->validate());
+            $data = SoalMotivasiKomitmen::find($this->id);
+            $old_data = $data->getOriginal();
+            $data->update($this->validate());
+
+            activity_log($data, 'update', 'soal-motivasi-komitmen', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

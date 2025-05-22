@@ -25,17 +25,17 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
-        $data = Settings::with('alatTes')->when($this->alat_tes, function($query) {
-                    $query->where('alat_tes_id', $this->alat_tes);
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
+        $data = Settings::with('alatTes')->when($this->alat_tes, function ($query) {
+            $query->where('alat_tes_id', $this->alat_tes);
+        })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $option_alat_tes = RefAlatTes::pluck('alat_tes', 'id');
-        
+
         return view('livewire.admin.settings.urutan.index', compact('data', 'option_alat_tes'));
     }
 
@@ -56,7 +56,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            Settings::find($this->selected_id)->delete();
+            $data = Settings::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'urutan-tes', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

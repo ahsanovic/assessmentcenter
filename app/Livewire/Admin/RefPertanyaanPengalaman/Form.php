@@ -9,7 +9,7 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Pertanyaan'])]
 class Form extends Component
-{   
+{
     public $previous_url;
     public $isUpdate = false;
     public $pertanyaan;
@@ -18,14 +18,14 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
                 $this->previous_url = url()->previous();
-    
+
                 $data = RefPertanyaanPengalaman::findOrFail($id);
                 $this->id = $data->id;
                 $this->pertanyaan = $data->pertanyaan;
@@ -37,7 +37,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $option_kode = [
@@ -85,17 +85,21 @@ class Form extends Component
                     return;
                 }
 
-                RefPertanyaanPengalaman::whereId($this->id)->update([
+                $data = RefPertanyaanPengalaman::find($this->id);
+                $old_data = $data->getOriginal();
+                $data->update([
                     'pertanyaan' => $this->pertanyaan,
                     'kode' => json_encode(array_keys(array_filter($this->kode))),
                     'urutan' => $this->urutan
                 ]);
-                
+
+                activity_log($data, 'update', 'pertanyaan', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect($this->previous_url, true);
             } else {
                 $cek_urutan = RefPertanyaanPengalaman::where('urutan', $this->urutan)->first(['urutan']);
@@ -103,18 +107,20 @@ class Form extends Component
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'pertanyaan dengan urutan ke- ' . $cek_urutan->urutan . ' sudah ada']);
                     return;
                 }
-                
-                RefPertanyaanPengalaman::create([
+
+                $data = RefPertanyaanPengalaman::create([
                     'pertanyaan' => $this->pertanyaan,
                     'kode' => json_encode(array_keys(array_filter($this->kode))),
                     'urutan' => $this->urutan
                 ]);
-    
+
+                activity_log($data, 'create', 'pertanyaan');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.pertanyaan-pengalaman'), true);
             }
         } catch (\Throwable $th) {

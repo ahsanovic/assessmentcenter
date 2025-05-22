@@ -19,9 +19,9 @@ class Index extends Component
 
     public function render()
     {
-        $data = TtdLaporan::when($this->is_active, function($query) {
-                $query->where('is_active', $this->is_active);
-            })
+        $data = TtdLaporan::when($this->is_active, function ($query) {
+            $query->where('is_active', $this->is_active);
+        })
             ->orderByDesc('id')
             ->paginate(10);
 
@@ -46,12 +46,16 @@ class Index extends Component
     {
         try {
             $data = TtdLaporan::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
             if ($data) {
                 // Hapus file ttd jika ada
                 if ($data->ttd && Storage::disk('public')->exists($data->ttd)) {
                     Storage::disk('public')->delete($data->ttd);
                 }
-                
+
+                activity_log($data, 'delete', 'ttd-laporan', $old_data);
+
                 $data->delete();
             }
 

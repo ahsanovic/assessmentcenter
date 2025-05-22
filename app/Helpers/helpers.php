@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ActivityLog;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
@@ -7,6 +8,8 @@ use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use Illuminate\Support\Facades\Auth;
+use Ulid\Ulid;
 
 if (!function_exists('countJpm')) {
     function countJpm($capaian_level)
@@ -122,5 +125,43 @@ if (!function_exists('getFinishedTes')) {
                 ->where('is_finished', 'true')
                 ->exists(),
         ];
+    }
+}
+
+if (!function_exists('activity_log')) {
+    function activity_log($model, $action, $modul, $old_data = null)
+    {
+        if (!$model || !method_exists($model, 'getAttributes')) {
+            return;
+        }
+
+        if (!in_array($action, ['create', 'update', 'delete'])) {
+            return;
+        }
+
+        ActivityLog::create([
+            'id' => Ulid::generate(true),
+            'user_id' => Auth::id(),
+            'modul' => $modul,
+            'action' => $action,
+            'model_id' => $model->id,
+            'old_data'  => in_array($action, ['update', 'delete']) ? json_encode($old_data) : null,
+            'new_data'  => in_array($action, ['create', 'update']) ? json_encode($model->getAttributes()) : null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ]);
+    }
+}
+
+if (!function_exists('sanitize_log_data')) {
+    function sanitize_log_data(array $data)
+    {
+        $sensitive = ['password', 'id'];
+        foreach ($sensitive as $key) {
+            if (array_key_exists($key, $data)) {
+                unset($data[$key]);
+            }
+        }
+        return $data;
     }
 }

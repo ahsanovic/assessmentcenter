@@ -12,14 +12,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Berpikir Kritis dan Strategis'])]
 class Edit extends Component
-{   
+{
     public SoalBerpikirKritisForm $form;
 
     public $previous_url;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
@@ -48,14 +48,19 @@ class Edit extends Component
     {
         $indikator_option = RefIndikatorBerpikirKritis::pluck('indikator_nama', 'indikator_nomor')->toArray();
         $aspek_option = RefAspekBerpikirKritis::pluck('aspek', 'id')->toArray();
-        
+
         return view('livewire.admin.berpikir-kritis.soal.edit', compact('indikator_option', 'aspek_option'));
     }
 
     public function save()
     {
         try {
-            SoalBerpikirKritis::whereId($this->id)->update($this->validate());
+            // $data = SoalBerpikirKritis::whereId($this->id)->update($this->validate());
+            $data = SoalBerpikirKritis::find($this->id);
+            $old_data = $data->getOriginal();
+            $data->update($this->validate());
+
+            activity_log($data, 'update', 'soal-berpikir-kritis', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

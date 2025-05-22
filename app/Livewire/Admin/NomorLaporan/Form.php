@@ -11,19 +11,19 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Nomor Laporan Penilaian'])]
 class Form extends Component
-{   
+{
     public NomorLaporanForm $form;
     public $isUpdate = false;
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
-    
+
                 $data = NomorLaporan::findOrFail($id);
                 $this->id = $data->id;
                 $this->form->event_id = $data->event_id;
@@ -35,7 +35,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $event = Event::pluck('nama_event', 'id');
@@ -49,16 +49,20 @@ class Form extends Component
         try {
             if ($this->isUpdate) {
                 $data = NomorLaporan::findOrFail($this->id);
+                $old_data = $data->getOriginal();
+
                 $data->event_id = $this->form->event_id;
                 $data->nomor = $this->form->nomor;
                 $data->tanggal = $this->form->tanggal;
                 $data->save();
-                
+
+                activity_log($data, 'update', 'nomor-laporan', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.nomor-laporan'), true);
             } else {
                 $tanggal = date('Y-m-d', strtotime($this->form->tanggal));
@@ -68,18 +72,20 @@ class Form extends Component
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor ' . $this->form->nomor . ' sudah ada!']);
                     return;
                 }
-    
-                NomorLaporan::create([
+
+                $data = NomorLaporan::create([
                     'event_id' => $this->form->event_id,
                     'nomor' => $this->form->nomor,
                     'tanggal' => $this->form->tanggal,
                 ]);
-    
+
+                activity_log($data, 'create', 'nomor-laporan');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.nomor-laporan'), true);
             }
         } catch (\Throwable $th) {

@@ -14,11 +14,11 @@ class Index extends Component
     use WithPagination;
 
     public $selected_id;
-    
+
     public function render()
     {
         $data = RefKesadaranDiri::paginate(10);
-        
+
         return view('livewire.admin.kesadaran-diri.referensi.index', compact('data'));
     }
 
@@ -32,7 +32,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefKesadaranDiri::find($this->selected_id)->delete();
+            $data = RefKesadaranDiri::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'ref-kesadaran-diri', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

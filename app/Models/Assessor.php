@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Assessor extends Model implements AuthenticatableContract
 {
     use \Illuminate\Auth\Authenticatable;
-    
+
     protected $table = 'assessor';
     protected $guarded = ['id'];
 
@@ -36,7 +36,7 @@ class Assessor extends Model implements AuthenticatableContract
     public function peserta()
     {
         return $this->belongsToMany(Peserta::class, 'assessor_peserta', 'assessor_id', 'peserta_id')
-                ->withPivot('event_id')
-                ->withTimestamps();
+            ->withPivot('event_id')
+            ->withTimestamps();
     }
 }

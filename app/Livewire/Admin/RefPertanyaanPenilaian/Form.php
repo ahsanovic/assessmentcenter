@@ -9,7 +9,7 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Pertanyaan Penilaian Pribadi'])]
 class Form extends Component
-{   
+{
     public $previous_url;
     public $isUpdate = false;
     public $pertanyaan;
@@ -17,14 +17,14 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
             if ($id) {
                 $this->isUpdate = true;
                 $this->previous_url = url()->previous();
-    
+
                 $data = RefPertanyaanPenilaian::findOrFail($id);
                 $this->id = $data->id;
                 $this->pertanyaan = $data->pertanyaan;
@@ -35,7 +35,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         return view('livewire.admin.pertanyaan-penilaian.form');
@@ -68,17 +68,21 @@ class Form extends Component
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'pertanyaan dengan urutan ke- ' . $cek_urutan->urutan . ' sudah ada']);
                     return;
                 }
-                
-                RefPertanyaanPenilaian::whereId($this->id)->update([
+
+                $data = RefPertanyaanPenilaian::find($this->id);
+                $old_data = $data->getOriginal();
+                $data->update([
                     'pertanyaan' => $this->pertanyaan,
                     'urutan' => $this->urutan
                 ]);
-                
+
+                activity_log($data, 'update', 'penilaian', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect($this->previous_url, true);
             } else {
                 $cek_urutan = RefPertanyaanPenilaian::where('urutan', $this->urutan)->first(['urutan']);
@@ -87,16 +91,18 @@ class Form extends Component
                     return;
                 }
 
-                RefPertanyaanPenilaian::create([
+                $data = RefPertanyaanPenilaian::create([
                     'pertanyaan' => $this->pertanyaan,
                     'urutan' => $this->urutan
                 ]);
-    
+
+                activity_log($data, 'create', 'penilaian');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.pertanyaan-penilaian'), true);
             }
         } catch (\Throwable $th) {

@@ -23,15 +23,15 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
-        $data = RefPertanyaanPenilaian::when($this->search, function($query) {
-                    $query->where('pertanyaan', 'like', '%' . $this->search . '%');
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
-        
+        $data = RefPertanyaanPenilaian::when($this->search, function ($query) {
+            $query->where('pertanyaan', 'like', '%' . $this->search . '%');
+        })
+            ->orderByDesc('id')
+            ->paginate(10);
+
         return view('livewire.admin.pertanyaan-penilaian.index', compact('data'));
     }
 
@@ -52,7 +52,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefPertanyaanPenilaian::find($this->selected_id)->delete();
+            $data = RefPertanyaanPenilaian::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'penilaian', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

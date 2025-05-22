@@ -26,7 +26,7 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
@@ -48,7 +48,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         // $option_event = Event::where('is_finished', 'false')->pluck('nama_event', 'id');
@@ -106,6 +106,8 @@ class Form extends Component
                 $data = Assessor::whereId($this->id)->first();
                 $data->nama = $this->nama;
 
+                $old_data = $data->getOriginal();
+
                 if ($this->is_asn == 'true' && ($data->nik != null && $data->is_asn == 'false')) {
                     $data->nip = $this->nip;
                     $data->nik = null;
@@ -122,15 +124,17 @@ class Form extends Component
                 $data->is_asn = $this->is_asn;
                 $data->password = $this->password != '' ? bcrypt($this->password) : $data->password;
                 $data->save();
-                
+
+                activity_log($data, 'update', 'assessor', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect(route('admin.assessor'), true);
             } else {
-                Assessor::create([
+                $data = Assessor::create([
                     'nama' => $this->nama,
                     'is_asn' => $this->is_asn,
                     'nip' => $this->is_asn == 'true' ? $this->nip : null,
@@ -140,12 +144,14 @@ class Form extends Component
                     'gol_pangkat_id' => $this->is_asn == 'true' ? $this->gol_pangkat_id : null,
                     'password' => bcrypt($this->password)
                 ]);
-    
+
+                activity_log($data, 'create', 'assessor');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.assessor'), true);
             }
         } catch (\Throwable $th) {

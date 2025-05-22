@@ -11,14 +11,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Soal Berpikir Kritis dan Strategis'])]
 class Create extends Component
-{   
+{
     public SoalBerpikirKritisForm $form;
-    
+
     public function render()
     {
         $indikator_option = RefIndikatorBerpikirKritis::pluck('indikator_nama', 'indikator_nomor')->toArray();
         $aspek_option = RefAspekBerpikirKritis::pluck('aspek', 'id')->toArray();
-        
+
         return view('livewire.admin.berpikir-kritis.soal.create', compact('indikator_option', 'aspek_option'));
     }
 
@@ -27,7 +27,7 @@ class Create extends Component
         $this->validate();
 
         try {
-            SoalBerpikirKritis::create([
+            $data = SoalBerpikirKritis::create([
                 'aspek_id' => $this->form->aspek_id,
                 'indikator_nomor' => $this->form->indikator_nomor,
                 'soal' => $this->form->soal,
@@ -42,6 +42,8 @@ class Create extends Component
                 'opsi_e' => $this->form->opsi_e,
                 'poin_opsi_e' => $this->form->poin_opsi_e,
             ]);
+
+            activity_log($data, 'create', 'soal-berpikir-kritis');
 
             session()->flash('toast', [
                 'type' => 'success',

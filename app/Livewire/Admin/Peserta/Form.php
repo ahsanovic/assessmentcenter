@@ -28,7 +28,7 @@ class Form extends Component
 
     #[Locked]
     public $id;
-    
+
     public function mount($id = null)
     {
         try {
@@ -52,7 +52,7 @@ class Form extends Component
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
-    
+
     public function render()
     {
         $option_event = Event::where('is_finished', 'false')->pluck('nama_event', 'id');
@@ -109,6 +109,8 @@ class Form extends Component
         try {
             if ($this->isUpdate) {
                 $data = Peserta::whereId($this->id)->first();
+                $old_data = $data->getOriginal();
+
                 $data->nama = $this->nama;
                 $data->event_id = $this->event_id;
 
@@ -127,15 +129,17 @@ class Form extends Component
                 $data->is_active = $this->is_active;
                 $data->password = $this->password != '' ? bcrypt($this->password) : $data->password;
                 $data->save();
-                
+
+                activity_log($data, 'update', 'peserta', $old_data);
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil ubah data'
                 ]);
-                
+
                 $this->redirect($this->previous_url, true);
             } else {
-                Peserta::create([
+                $data = Peserta::create([
                     'nama' => $this->nama,
                     'event_id' => $this->event_id,
                     'jenis_peserta_id' => $this->jenis_peserta_id,
@@ -146,12 +150,14 @@ class Form extends Component
                     'unit_kerja' => $this->unit_kerja,
                     'password' => bcrypt($this->password)
                 ]);
-    
+
+                activity_log($data, 'create', 'peserta');
+
                 session()->flash('toast', [
                     'type' => 'success',
                     'message' => 'berhasil tambah data'
                 ]);
-    
+
                 $this->redirect(route('admin.peserta'), true);
             }
         } catch (\Throwable $th) {

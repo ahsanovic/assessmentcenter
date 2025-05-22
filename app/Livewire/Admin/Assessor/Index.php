@@ -43,7 +43,7 @@ class Index extends Component
 
     public function render()
     {
-        $data = Assessor::when($this->search, function($query) {
+        $data = Assessor::when($this->search, function ($query) {
             $query->where(function ($q) {
                 $q->where('nama', 'like', '%' . $this->search . '%')
                     ->orWhere('nip', 'like', '%' . $this->search . '%')
@@ -52,22 +52,22 @@ class Index extends Component
                     ->orWhere('instansi', 'like', '%' . $this->search . '%');
             });
         })
-        ->when($this->is_asn, function ($query) {
-            $query->where('is_asn', $this->is_asn);
-        })
-        ->when($this->event, function($query) {
-            $query->whereHas('event', function($query) {
-                $query->where('assessor_event.event_id', $this->event);
-            });
-        })
-        ->when($this->is_active, function($query) {
-            $query->where('is_active', $this->is_active);
-        })
-        ->orderByDesc('id')
-        ->paginate(10);
+            ->when($this->is_asn, function ($query) {
+                $query->where('is_asn', $this->is_asn);
+            })
+            ->when($this->event, function ($query) {
+                $query->whereHas('event', function ($query) {
+                    $query->where('assessor_event.event_id', $this->event);
+                });
+            })
+            ->when($this->is_active, function ($query) {
+                $query->where('is_active', $this->is_active);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $option_event = Event::pluck('nama_event', 'id');
-        $option_status = [ 'true' => 'aktif', 'false' => 'tidak aktif'];
+        $option_status = ['true' => 'aktif', 'false' => 'tidak aktif'];
 
         return view('livewire.admin.assessor.index', compact('data', 'option_event', 'option_status'));
     }
@@ -82,7 +82,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            Assessor::find($this->selected_id)->delete();
+            $data = Assessor::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'assessor', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

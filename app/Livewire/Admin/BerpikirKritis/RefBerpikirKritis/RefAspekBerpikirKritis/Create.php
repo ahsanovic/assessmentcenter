@@ -9,7 +9,7 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Aspek Berpikir Kritis'])]
 class Create extends Component
-{   
+{
     public $aspek;
     public $aspek_nomor;
     public $indikator_nomor = [];
@@ -47,6 +47,8 @@ class Create extends Component
             $data->aspek_nomor = $this->aspek_nomor;
             $data->indikator_nomor = implode(',', $this->indikator_nomor);
             $data->save();
+
+            activity_log($data, 'create', 'ref-aspek-berpikir-kritis');
 
             session()->flash('toast', [
                 'type' => 'success',

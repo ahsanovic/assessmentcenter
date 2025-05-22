@@ -10,14 +10,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Pengembangan Diri'])]
 class Edit extends Component
-{   
+{
     public $indikator_nama;
     public $indikator_nomor;
     public $kualifikasi = [];
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
@@ -55,6 +55,7 @@ class Edit extends Component
 
         try {
             $data = RefPengembanganDiri::find($this->id);
+            $old_data = $data->getOriginal();
 
             $check_duplicate = RefPengembanganDiri::where('indikator_nomor', '!=', $this->indikator_nomor)->get(['indikator_nomor']);
             foreach ($check_duplicate as $value) {
@@ -78,6 +79,8 @@ class Edit extends Component
 
             $data->kualifikasi = $array_kualifikasi;
             $data->save();
+
+            activity_log($data, 'update', 'ref-pengembangan-diri', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',

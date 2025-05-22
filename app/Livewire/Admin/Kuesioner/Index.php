@@ -25,21 +25,21 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
-        $data = Kuesioner::when($this->search, function($query) {
-                    $query->where('deskripsi', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->is_esai, function ($query) {
-                    $query->where('is_esai', $this->is_esai);
-                })
-                ->when($this->is_active, function ($query) {
-                    $query->where('is_active', $this->is_active);
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
-        
+        $data = Kuesioner::when($this->search, function ($query) {
+            $query->where('deskripsi', 'like', '%' . $this->search . '%');
+        })
+            ->when($this->is_esai, function ($query) {
+                $query->where('is_esai', $this->is_esai);
+            })
+            ->when($this->is_active, function ($query) {
+                $query->where('is_active', $this->is_active);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
+
         return view('livewire.admin.kuesioner.index', compact('data'));
     }
 
@@ -60,7 +60,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            Kuesioner::find($this->selected_id)->delete();
+            $data = Kuesioner::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'kuesioner', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

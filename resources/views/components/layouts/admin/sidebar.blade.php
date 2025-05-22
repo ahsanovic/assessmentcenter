@@ -127,7 +127,7 @@
                                     class="nav-link">Tes Selesai</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.hasil-responden') }}" wire:navigate
+                            <a href="{{ route('admin.hasil-responden') }}" wire:navigate
                                     class="nav-link">Hasil Responden</a>
                             </li>
                         </ul>
@@ -285,13 +285,21 @@
                 </li>
 
                 @if (auth()->guard('admin')->user()->role === 'admin')
-                <li class="nav-item nav-category">User</li>
+                <li class="nav-item nav-category">Akses dan Jejak</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.user') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="message-square"></i>
                         <span class="link-title">User</span>
                     </a>
                 </li>
+                @if (auth()->user()->role === 'admin')
+                    <li class="nav-item">
+                        <a href="{{ route('admin.log-activity') }}" wire:navigate class="nav-link">
+                            <i class="link-icon" data-feather="message-square"></i>
+                            <span class="link-title">Aktifitas Log</span>
+                        </a>
+                    </li>
+                @endif
                 @endif
 
 

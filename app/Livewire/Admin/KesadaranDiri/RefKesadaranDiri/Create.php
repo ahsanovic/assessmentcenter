@@ -9,11 +9,11 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Kesadaran Diri'])]
 class Create extends Component
-{   
+{
     public $indikator_nama;
     public $indikator_nomor;
     public $kualifikasi = [];
-    
+
     public function mount()
     {
         $this->kualifikasi = [
@@ -67,6 +67,8 @@ class Create extends Component
 
             $data->kualifikasi = $array_kualifikasi;
             $data->save();
+
+            activity_log($data, 'create', 'ref-kesadaran-diri');
 
             session()->flash('toast', [
                 'type' => 'success',

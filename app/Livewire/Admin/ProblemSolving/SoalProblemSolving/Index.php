@@ -31,21 +31,21 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
         $data = SoalProblemSolving::with('aspek')
-                ->when($this->search, function($query) {
-                    $query->where('soal', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->aspek, function($query, $aspek) {
-                    $query->where('aspek_id', $aspek);
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
+            ->when($this->search, function ($query) {
+                $query->where('soal', 'like', '%' . $this->search . '%');
+            })
+            ->when($this->aspek, function ($query, $aspek) {
+                $query->where('aspek_id', $aspek);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $aspek_option = RefAspekProblemSolving::pluck('aspek', 'id')->toArray();
-        
+
         return view('livewire.admin.problem-solving.soal.index', compact('data', 'aspek_option'));
     }
 
@@ -66,7 +66,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            SoalProblemSolving::find($this->selected_id)->delete();
+            $data = SoalProblemSolving::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'soal-problem-solving', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

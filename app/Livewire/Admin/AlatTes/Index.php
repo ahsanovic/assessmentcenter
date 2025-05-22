@@ -23,15 +23,15 @@ class Index extends Component
     {
         $this->resetPage();
     }
-    
+
     public function render()
     {
-        $data = RefAlatTes::when($this->search, function($query) {
-                    $query->where('alat_tes', 'like', '%' . $this->search . '%');
-                })
-                ->orderByDesc('id')
-                ->paginate(10);
-        
+        $data = RefAlatTes::when($this->search, function ($query) {
+            $query->where('alat_tes', 'like', '%' . $this->search . '%');
+        })
+            ->orderByDesc('id')
+            ->paginate(10);
+
         return view('livewire.admin.alat-tes.index', compact('data'));
     }
 
@@ -52,7 +52,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            RefAlatTes::find($this->selected_id)->delete();
+            $data = RefAlatTes::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'alat-tes', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

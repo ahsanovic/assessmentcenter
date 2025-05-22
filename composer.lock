@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9df6324c0b1756c100379af8d1cfc4c1",
+    "content-hash": "746edb35737a6df141562beab08a340c",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -3902,6 +3902,52 @@
                 }
             ],
             "time": "2025-02-18T12:50:31+00:00"
+        },
+        {
+            "name": "robinvdvleuten/ulid",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/robinvdvleuten/php-ulid.git",
+                "reference": "5389c9a2ff020815cc1f2b840334fdcb84ae3f35"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/robinvdvleuten/php-ulid/zipball/5389c9a2ff020815cc1f2b840334fdcb84ae3f35",
+                "reference": "5389c9a2ff020815cc1f2b840334fdcb84ae3f35",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpbench/phpbench": "^1.0.0-alpha3",
+                "phpunit/phpunit": "^8.5",
+                "symfony/phpunit-bridge": "^5.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ulid\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robin van der Vleuten",
+                    "email": "robin@webstronauts.co"
+                }
+            ],
+            "description": "Universally Unique Lexicographically Sortable Identifier (ULID) implementation for PHP.",
+            "homepage": "https://github.com/robinvdvleuten/php-ulid",
+            "support": {
+                "issues": "https://github.com/robinvdvleuten/php-ulid/issues",
+                "source": "https://github.com/robinvdvleuten/php-ulid/tree/v5.0.0"
+            },
+            "time": "2020-12-06T19:13:21+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",

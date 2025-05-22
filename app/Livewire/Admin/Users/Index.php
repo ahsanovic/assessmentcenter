@@ -40,18 +40,18 @@ class Index extends Component
 
     public function render()
     {
-        $data = User::when($this->search, function($query) {
+        $data = User::when($this->search, function ($query) {
             $query->where('nama', 'like', '%' . $this->search . '%')
                 ->orWhere('username', 'like', '%' . $this->search . '%');
         })
-        ->when($this->role, function($query) {
-            $query->where('role', $this->role);
-        })
-        ->when($this->is_active, function($query) {
-            $query->where('is_active', $this->is_active);
-        })
-        ->orderByDesc('id')
-        ->paginate(10);
+            ->when($this->role, function ($query) {
+                $query->where('role', $this->role);
+            })
+            ->when($this->is_active, function ($query) {
+                $query->where('is_active', $this->is_active);
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         return view('livewire.admin.users.index', compact('data'));
     }
@@ -66,7 +66,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            User::find($this->selected_id)->delete();
+            $data = User::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'users', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

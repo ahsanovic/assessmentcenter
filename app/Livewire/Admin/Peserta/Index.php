@@ -50,7 +50,7 @@ class Index extends Component
 
     public function render()
     {
-        $data = Peserta::with(['event', 'jenisPeserta'])->when($this->search, function($query) {
+        $data = Peserta::with(['event', 'jenisPeserta'])->when($this->search, function ($query) {
             $query->where(function ($q) {
                 $q->where('nama', 'like', '%' . $this->search . '%')
                     ->orWhere('nip', 'like', '%' . $this->search . '%')
@@ -59,65 +59,65 @@ class Index extends Component
                     ->orWhere('instansi', 'like', '%' . $this->search . '%');
             });
         })
-        ->when($this->jenis_peserta_id, function ($query) {
-            $query->where('jenis_peserta_id', $this->jenis_peserta_id);
-        })
-        ->when($this->event, function($query) {
-            $query->where('event_id', $this->event);
-        })
-        ->when($this->is_active, function($query) {
-            $query->where('is_active', $this->is_active);
-        })
-        ->when(!is_null($this->is_portofolio_completed), function ($query) {
-            if ($this->is_portofolio_completed === 'true') {
-                // Peserta lengkap
-                $query->whereNotNull('tempat_lahir')
-                      ->whereNotNull('tgl_lahir')
-                      ->whereNotNull('jk')
-                      ->whereNotNull('agama_id')
-                      ->whereNotNull('alamat')
-                      ->whereNotNull('no_hp')
-                      ->whereNotNull('foto')
-                      ->where(function ($q) {
-                          $q->where(function ($q1) {
-                              $q1->where('jenis_peserta_id', 1)
-                                 ->whereNotNull('nip')
-                                 ->whereNotNull('gol_pangkat_id');
-                          })->orWhere(function ($q2) {
-                              $q2->where('jenis_peserta_id', 2)
-                                 ->whereNotNull('nik');
-                          });
-                      });
-            } elseif ($this->is_portofolio_completed === 'false') {
-                // Peserta belum lengkap (minimal satu field null)
-                $query->where(function ($q) {
-                    $q->whereNull('tempat_lahir')
-                      ->orWhereNull('tgl_lahir')
-                      ->orWhereNull('jk')
-                      ->orWhereNull('agama_id')
-                      ->orWhereNull('alamat')
-                      ->orWhereNull('no_hp')
-                      ->orWhereNull('foto')
-                      ->orWhere(function ($q2) {
-                          $q2->where(function ($q3) {
-                              $q3->where('jenis_peserta_id', 1)
-                                 ->where(function ($qq) {
-                                     $qq->whereNull('nip')
-                                        ->orWhereNull('gol_pangkat_id');
-                                 });
-                          })->orWhere(function ($q4) {
-                              $q4->where('jenis_peserta_id', 2)
-                                 ->whereNull('nik');
-                          });
-                      });
-                });
-            }
-        })
-        ->orderByDesc('id')
-        ->paginate(10);
+            ->when($this->jenis_peserta_id, function ($query) {
+                $query->where('jenis_peserta_id', $this->jenis_peserta_id);
+            })
+            ->when($this->event, function ($query) {
+                $query->where('event_id', $this->event);
+            })
+            ->when($this->is_active, function ($query) {
+                $query->where('is_active', $this->is_active);
+            })
+            ->when(!is_null($this->is_portofolio_completed), function ($query) {
+                if ($this->is_portofolio_completed === 'true') {
+                    // Peserta lengkap
+                    $query->whereNotNull('tempat_lahir')
+                        ->whereNotNull('tgl_lahir')
+                        ->whereNotNull('jk')
+                        ->whereNotNull('agama_id')
+                        ->whereNotNull('alamat')
+                        ->whereNotNull('no_hp')
+                        ->whereNotNull('foto')
+                        ->where(function ($q) {
+                            $q->where(function ($q1) {
+                                $q1->where('jenis_peserta_id', 1)
+                                    ->whereNotNull('nip')
+                                    ->whereNotNull('gol_pangkat_id');
+                            })->orWhere(function ($q2) {
+                                $q2->where('jenis_peserta_id', 2)
+                                    ->whereNotNull('nik');
+                            });
+                        });
+                } elseif ($this->is_portofolio_completed === 'false') {
+                    // Peserta belum lengkap (minimal satu field null)
+                    $query->where(function ($q) {
+                        $q->whereNull('tempat_lahir')
+                            ->orWhereNull('tgl_lahir')
+                            ->orWhereNull('jk')
+                            ->orWhereNull('agama_id')
+                            ->orWhereNull('alamat')
+                            ->orWhereNull('no_hp')
+                            ->orWhereNull('foto')
+                            ->orWhere(function ($q2) {
+                                $q2->where(function ($q3) {
+                                    $q3->where('jenis_peserta_id', 1)
+                                        ->where(function ($qq) {
+                                            $qq->whereNull('nip')
+                                                ->orWhereNull('gol_pangkat_id');
+                                        });
+                                })->orWhere(function ($q4) {
+                                    $q4->where('jenis_peserta_id', 2)
+                                        ->whereNull('nik');
+                                });
+                            });
+                    });
+                }
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
 
         $option_event = Event::pluck('nama_event', 'id');
-        $option_status = [ 'true' => 'aktif', 'false' => 'tidak aktif'];
+        $option_status = ['true' => 'aktif', 'false' => 'tidak aktif'];
         $option_jenis_peserta = RefJenisPeserta::pluck('jenis_peserta', 'id');
 
         return view('livewire.admin.peserta.index', compact('data', 'option_event', 'option_status', 'option_jenis_peserta'));
@@ -158,7 +158,12 @@ class Index extends Component
     public function destroy()
     {
         try {
-            Peserta::find($this->selected_id)->delete();
+            $data = Peserta::find($this->selected_id);
+            $old_data = $data->getOriginal();
+
+            activity_log($data, 'delete', 'peserta', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

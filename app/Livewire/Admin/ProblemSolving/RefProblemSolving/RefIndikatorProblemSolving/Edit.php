@@ -10,14 +10,14 @@ use Livewire\Component;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Referensi Indikator Problem Solving'])]
 class Edit extends Component
-{   
+{
     public $indikator_nama;
     public $indikator_nomor;
     public $kualifikasi_deskripsi = [];
 
     #[Locked]
     public $id;
-    
+
     public function mount($id)
     {
         try {
@@ -55,7 +55,8 @@ class Edit extends Component
 
         try {
             $data = RefIndikatorProblemSolving::find($this->id);
-            
+            $old_data = $data->getOriginal();
+
             $check_duplicate = RefIndikatorProblemSolving::where('indikator_nomor', '!=', $this->indikator_nomor)->get(['indikator_nomor']);
             foreach ($check_duplicate as $value) {
                 if ($value->indikator_nomor == $data->indikator_nomor) {
@@ -78,6 +79,8 @@ class Edit extends Component
 
             $data->kualifikasi_deskripsi = $array_kualifikasi;
             $data->save();
+
+            activity_log($data, 'update', 'ref-indikator-problem-solving', $old_data);
 
             session()->flash('toast', [
                 'type' => 'success',
