@@ -111,16 +111,16 @@ class Interpersonal extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalInterpersonal::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -137,7 +137,7 @@ class Interpersonal extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -167,7 +167,7 @@ class Interpersonal extends Component
             $data = UjianInterpersonal::findOrFail($this->id_ujian);
 
             // indikator komunikasi efektif
-            if ($data->nilai_indikator_ke >= 1 && $data->nilai_indikator_ke <= 3) {
+            if ($data->nilai_indikator_ke >= 0 && $data->nilai_indikator_ke <= 3) {
                 $standard_ke = '1';
                 $kualifikasi_ke = 'SK';
             } else if ($data->nilai_indikator_ke >= 4 && $data->nilai_indikator_ke <= 7) {
@@ -185,13 +185,13 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_ke >= 12 && $data->nilai_indikator_ke <= 13) {
                 $standard_ke = '4';
                 $kualifikasi_ke = 'B';
-            } else if ($data->nilai_indikator_ke >= 14) {
+            } else if ($data->nilai_indikator_ke == 14) {
                 $standard_ke = '5';
                 $kualifikasi_ke = 'SB';
             }
 
             // indikator bersikap terbuka
-            if ($data->nilai_indikator_bt >= 1 && $data->nilai_indikator_bt <= 8) {
+            if ($data->nilai_indikator_bt >= 0 && $data->nilai_indikator_bt <= 8) {
                 $standard_bt = '1';
                 $kualifikasi_bt = 'SK';
             } else if ($data->nilai_indikator_bt >= 9 && $data->nilai_indikator_bt <= 13) {
@@ -206,82 +206,82 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_bt == 16) {
                 $standard_bt = '3+';
                 $kualifikasi_bt = 'C+';
-            } else if ($data->nilai_indikator_bt >= 17 && $data->nilai_indikator_bt <= 20) {
+            } else if ($data->nilai_indikator_bt >= 17 && $data->nilai_indikator_bt <= 19) {
                 $standard_bt = '4';
                 $kualifikasi_bt = 'B';
-            } else if ($data->nilai_indikator_bt >= 21) {
+            } else if ($data->nilai_indikator_bt == 20) {
                 $standard_bt = '5';
                 $kualifikasi_bt = 'SB';
             }
 
             // indikator asertif
-            if ($data->nilai_indikator_as >= 1 && $data->nilai_indikator_as <= 12) {
+            if ($data->nilai_indikator_as >= 0 && $data->nilai_indikator_as <= 12) {
                 $standard_as = '1';
                 $kualifikasi_as = 'SK';
-            } else if ($data->nilai_indikator_as >= 13 && $data->nilai_indikator_as <= 16) {
+            } else if ($data->nilai_indikator_as >= 13 && $data->nilai_indikator_as <= 15) {
                 $standard_as = '2';
                 $kualifikasi_as = 'K';
-            } else if ($data->nilai_indikator_as == 17) {
+            } else if ($data->nilai_indikator_as == 16) {
                 $standard_as = '3-';
                 $kualifikasi_as = 'C-';
-            } else if ($data->nilai_indikator_as == 18) {
+            } else if ($data->nilai_indikator_as == 17) {
                 $standard_as = '3';
                 $kualifikasi_as = 'C';
-            } else if ($data->nilai_indikator_as == 19) {
+            } else if ($data->nilai_indikator_as == 18) {
                 $standard_as = '3+';
                 $kualifikasi_as = 'C+';
-            } else if ($data->nilai_indikator_as >= 20 && $data->nilai_indikator_as <= 21) {
+            } else if ($data->nilai_indikator_as == 19) {
                 $standard_as = '4';
                 $kualifikasi_as = 'B';
-            } else if ($data->nilai_indikator_as >= 22) {
+            } else if ($data->nilai_indikator_as == 20) {
                 $standard_as = '5';
                 $kualifikasi_as = 'SB';
             }
 
             // indikator dukungan emosional
-            if ($data->nilai_indikator_de >= 1 && $data->nilai_indikator_de <= 11) {
+            if ($data->nilai_indikator_de >= 0 && $data->nilai_indikator_de <= 11) {
                 $standard_de = '1';
                 $kualifikasi_de = 'SK';
-            } else if ($data->nilai_indikator_de >= 12 && $data->nilai_indikator_de <= 14) {
+            } else if ($data->nilai_indikator_de >= 12 && $data->nilai_indikator_de <= 13) {
                 $standard_de = '2';
                 $kualifikasi_de = 'K';
-            } else if ($data->nilai_indikator_de == 15) {
+            } else if ($data->nilai_indikator_de == 14) {
                 $standard_de = '3-';
                 $kualifikasi_de = 'C-';
-            } else if ($data->nilai_indikator_de == 16) {
+            } else if ($data->nilai_indikator_de == 15) {
                 $standard_de = '3';
                 $kualifikasi_de = 'C';
-            } else if ($data->nilai_indikator_de == 17) {
+            } else if ($data->nilai_indikator_de == 16) {
                 $standard_de = '3+';
                 $kualifikasi_de = 'C+';
-            } else if ($data->nilai_indikator_de >= 18 && $data->nilai_indikator_de <= 19) {
+            } else if ($data->nilai_indikator_de == 17) {
                 $standard_de = '4';
                 $kualifikasi_de = 'B';
-            } else if ($data->nilai_indikator_de >= 20) {
+            } else if ($data->nilai_indikator_de == 18) {
                 $standard_de = '5';
                 $kualifikasi_de = 'SB';
             }
 
             // indikator sikap menghadapi konflik
-            if ($data->nilai_indikator_smk >= 1 && $data->nilai_indikator_smk <= 11) {
+            if ($data->nilai_indikator_smk >= 0 && $data->nilai_indikator_smk <= 11) {
                 $standard_smk = '1';
                 $kualifikasi_smk = 'SK';
-            } else if ($data->nilai_indikator_smk >= 12 && $data->nilai_indikator_smk <= 14) {
+            } else if ($data->nilai_indikator_smk >= 12 && $data->nilai_indikator_smk <= 13) {
                 $standard_smk = '2';
                 $kualifikasi_smk = 'K';
-            } else if ($data->nilai_indikator_smk == 15) {
+            } else if ($data->nilai_indikator_smk == 14) {
                 $standard_smk = '3-';
                 $kualifikasi_smk = 'C-';
-            } else if ($data->nilai_indikator_smk == 16) {
+            } else if ($data->nilai_indikator_smk == 15) {
                 $standard_smk = '3';
                 $kualifikasi_smk = 'C';
-            } else if ($data->nilai_indikator_smk == 17) {
+            } else if ($data->nilai_indikator_smk == 16) {
                 $standard_smk = '3+';
                 $kualifikasi_smk = 'C+';
-            } else if ($data->nilai_indikator_smk >= 18 && $data->nilai_indikator_smk <= 19) {
+            } else if ($data->nilai_indikator_smk == 17) {
                 $standard_smk = '4';
                 $kualifikasi_smk = 'B';
-            } else if ($data->nilai_indikator_smk >= 20) {
+            } else if ($data->nilai_indikator_smk == 18) {
                 $standard_smk = '5';
                 $kualifikasi_smk = 'SB';
             }
@@ -334,7 +334,7 @@ class Interpersonal extends Component
 
             $skor_total = $data->nilai_indikator_ke + $data->nilai_indikator_bt + $data->nilai_indikator_as + $data->nilai_indikator_de + $data->nilai_indikator_smk;
             // $skor->skor_total = $skor_total;
-            if ($skor_total <= 55) {
+            if ($skor_total >= 0 && $skor_total <= 55) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
             } else if ($skor_total >= 56 && $skor_total <= 67) {
@@ -352,7 +352,7 @@ class Interpersonal extends Component
             } else if ($skor_total >= 79 && $skor_total <= 89) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
-            } else if ($skor_total >= 90) {
+            } else if ($skor_total == 90) {
                 $level_total = '5';
                 $kualifikasi_total = 'Sangat Baik';
             }

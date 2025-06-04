@@ -107,16 +107,16 @@ class KecerdasanEmosi extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalKecerdasanEmosi::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -133,7 +133,7 @@ class KecerdasanEmosi extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -163,7 +163,7 @@ class KecerdasanEmosi extends Component
             $data = UjianKecerdasanEmosi::findOrFail($this->id_ujian);
 
             // indikator kesadaran diri
-            if ($data->nilai_indikator_kd >= 1 && $data->nilai_indikator_kd <= 3) {
+            if ($data->nilai_indikator_kd >= 0 && $data->nilai_indikator_kd <= 3) {
                 $standard_kd = '1';
                 $kualifikasi_kd = 'SK';
             } else if ($data->nilai_indikator_kd >= 4 && $data->nilai_indikator_kd <= 5) {
@@ -181,13 +181,13 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_kd == 9) {
                 $standard_kd = '4';
                 $kualifikasi_kd = 'B';
-            } else if ($data->nilai_indikator_kd >= 10) {
+            } else if ($data->nilai_indikator_kd == 10) {
                 $standard_kd = '5';
                 $kualifikasi_kd = 'SB';
             }
 
             // indikator motivasi dan pengaturan diri
-            if ($data->nilai_indikator_mpd >= 1 && $data->nilai_indikator_mpd <= 5) {
+            if ($data->nilai_indikator_mpd >= 0 && $data->nilai_indikator_mpd <= 5) {
                 $standard_mpd = '1';
                 $kualifikasi_mpd = 'SK';
             } else if ($data->nilai_indikator_mpd >= 6 && $data->nilai_indikator_mpd <= 7) {
@@ -202,16 +202,16 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_mpd == 10) {
                 $standard_mpd = '3+';
                 $kualifikasi_mpd = 'C+';
-            } else if ($data->nilai_indikator_mpd >= 11 && $data->nilai_indikator_mpd <= 12) {
+            } else if ($data->nilai_indikator_mpd == 11) {
                 $standard_mpd = '4';
                 $kualifikasi_mpd = 'B';
-            } else if ($data->nilai_indikator_mpd >= 13) {
+            } else if ($data->nilai_indikator_mpd == 12) {
                 $standard_mpd = '5';
                 $kualifikasi_mpd = 'SB';
             }
 
             // indikator kesadaran emosional
-            if ($data->nilai_indikator_ke >= 1 && $data->nilai_indikator_ke <= 3) {
+            if ($data->nilai_indikator_ke >= 0 && $data->nilai_indikator_ke <= 3) {
                 $standard_ke = '1';
                 $kualifikasi_ke = 'SK';
             } else if ($data->nilai_indikator_ke == 4) {
@@ -229,13 +229,13 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_ke >= 8 && $data->nilai_indikator_ke <= 9) {
                 $standard_ke = '4';
                 $kualifikasi_ke = 'B';
-            } else if ($data->nilai_indikator_ke >= 10) {
+            } else if ($data->nilai_indikator_ke >= 10 && $data->nilai_indikator_ke <= 12) {
                 $standard_ke = '5';
                 $kualifikasi_ke = 'SB';
             }
 
             // indikator ketrampilan sosial
-            if ($data->nilai_indikator_ks >= 1 && $data->nilai_indikator_ks <= 3) {
+            if ($data->nilai_indikator_ks >= 0 && $data->nilai_indikator_ks <= 3) {
                 $standard_ks = '1';
                 $kualifikasi_ks = 'SK';
             } else if ($data->nilai_indikator_ks >= 4 && $data->nilai_indikator_ks <= 5) {
@@ -253,7 +253,7 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_ks >= 9 && $data->nilai_indikator_ks <= 10) {
                 $standard_ks = '4';
                 $kualifikasi_ks = 'B';
-            } else if ($data->nilai_indikator_ks >= 11) {
+            } else if ($data->nilai_indikator_ks >= 11 && $data->nilai_indikator_ke <= 12) {
                 $standard_ks = '5';
                 $kualifikasi_ks = 'SB';
             }
@@ -299,7 +299,7 @@ class KecerdasanEmosi extends Component
 
 
             $skor_total = $data->nilai_indikator_kd + $data->nilai_indikator_mpd + $data->nilai_indikator_ke + $data->nilai_indikator_ks;
-            if (($skor_total == 0) || ($skor_total >= 1 && $skor_total <= 21)) {
+            if ($skor_total >= 0 && $skor_total <= 21) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
             } else if ($skor_total >= 22 && $skor_total <= 26) {
@@ -317,7 +317,7 @@ class KecerdasanEmosi extends Component
             } else if ($skor_total >= 31 && $skor_total <= 35) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
-            } else if ($skor_total >= 36) {
+            } else if ($skor_total >= 36 && $skor_total <= 46) {
                 $level_total = '5';
                 $kualifikasi_total = 'Sangat Baik';
             }
@@ -395,7 +395,6 @@ class KecerdasanEmosi extends Component
                 'message' => 'Terjadi kesalahan'
             ]);
         }
-        
     }
 
     private function _getKualifikasi($value)

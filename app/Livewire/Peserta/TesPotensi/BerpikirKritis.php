@@ -112,16 +112,16 @@ class BerpikirKritis extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalBerpikirKritis::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -144,7 +144,7 @@ class BerpikirKritis extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -174,7 +174,7 @@ class BerpikirKritis extends Component
             $data = UjianBerpikirKritis::findOrFail($this->id_ujian);
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
 
-            if (($skor_total == 0) || ($skor_total >= 10 && $skor_total <= 29)) {
+            if ($skor_total >= 10 && $skor_total <= 29) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
                 $kategori_total = 'Rendah';
@@ -218,7 +218,7 @@ class BerpikirKritis extends Component
                     'kategori_total' => $kategori_total,
                 ]
             );
-            
+
             $deskripsi_list = [];
             $nilai = [];
             $indikator = RefIndikatorBerpikirKritis::get(['indikator_nama', 'indikator_nomor']);

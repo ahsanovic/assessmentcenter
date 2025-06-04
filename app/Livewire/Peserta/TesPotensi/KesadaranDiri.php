@@ -107,16 +107,16 @@ class KesadaranDiri extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalKesadaranDiri::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -133,7 +133,7 @@ class KesadaranDiri extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -163,7 +163,7 @@ class KesadaranDiri extends Component
             $data = UjianKesadaranDiri::findOrFail($this->id_ujian);
 
             // indikator 1
-            if ($data->nilai_indikator_1 <= 49) {
+            if ($data->nilai_indikator_1 >= 1 && $data->nilai_indikator_1 <= 49) {
                 $kategori_1 = 'SK';
                 $kategori_kualifikasi_1 = 'Sangat Kurang';
                 $kualifikasi_1 = 'Rendah';
@@ -183,18 +183,18 @@ class KesadaranDiri extends Component
                 $kategori_1 = 'C+';
                 $kategori_kualifikasi_1 = 'Cukup';
                 $kualifikasi_1 = 'Sedang';
-            } else if ($data->nilai_indikator_1 >= 62 && $data->nilai_indikator_1 <= 67) {
+            } else if ($data->nilai_indikator_1 >= 62 && $data->nilai_indikator_1 <= 65) {
                 $kategori_1 = 'B';
                 $kategori_kualifikasi_1 = 'Baik';
                 $kualifikasi_1 = 'Tinggi';
-            } else if ($data->nilai_indikator_1 > 67) {
+            } else if ($data->nilai_indikator_1 == 66) {
                 $kategori_1 = 'SB';
                 $kategori_kualifikasi_1 = 'Sangat Baik';
                 $kualifikasi_1 = 'Tinggi';
             }
 
             // indikator 2
-            if ($data->nilai_indikator_2 <= 50) {
+            if ($data->nilai_indikator_2 >= 1 && $data->nilai_indikator_2 <= 50) {
                 $kategori_2 = 'SK';
                 $kategori_kualifikasi_2 = 'Sangat Kurang';
                 $kualifikasi_2 = 'Rendah';
@@ -214,18 +214,18 @@ class KesadaranDiri extends Component
                 $kategori_2 = 'C+';
                 $kategori_kualifikasi_2 = 'Cukup';
                 $kualifikasi_2 = 'Sedang';
-            } else if ($data->nilai_indikator_2 >= 67 && $data->nilai_indikator_2 <= 74) {
+            } else if ($data->nilai_indikator_2 >= 67 && $data->nilai_indikator_2 <= 71) {
                 $kategori_2 = 'B';
                 $kategori_kualifikasi_2 = 'Baik';
                 $kualifikasi_2 = 'Tinggi';
-            } else if ($data->nilai_indikator_2 > 74) {
+            } else if ($data->nilai_indikator_2 == 72) {
                 $kategori_2 = 'SB';
                 $kategori_kualifikasi_2 = 'Sangat Baik';
                 $kualifikasi_2 = 'Tinggi';
             }
 
             // indikator 3
-            if ($data->nilai_indikator_3 <= 41) {
+            if ($data->nilai_indikator_3 >= 1 && $data->nilai_indikator_3 <= 41) {
                 $kategori_3 = 'SK';
                 $kategori_kualifikasi_3 = 'Sangat Kurang';
                 $kualifikasi_3 = 'Rendah';
@@ -249,7 +249,7 @@ class KesadaranDiri extends Component
                 $kategori_3 = 'B';
                 $kategori_kualifikasi_3 = 'Baik';
                 $kualifikasi_3 = 'Tinggi';
-            } else if ($data->nilai_indikator_3 > 56) {
+            } else if ($data->nilai_indikator_3 == 57) {
                 $kategori_3 = 'SB';
                 $kategori_kualifikasi_3 = 'Sangat Baik';
                 $kualifikasi_3 = 'Tinggi';
@@ -291,7 +291,7 @@ class KesadaranDiri extends Component
 
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3;
 
-            if (($skor_total == 0 || $skor_total <= 143)) {
+            if (($skor_total >= 1 || $skor_total <= 143)) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
                 $kategori_total = 'SK';
@@ -315,7 +315,7 @@ class KesadaranDiri extends Component
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
                 $kategori_total = 'B';
-            } else if ($skor_total > 194) {
+            } else if ($skor_total == 195) {
                 $level_total = '5';
                 $kualifikasi_total = 'Sangat Baik';
                 $kategori_total = 'SB';

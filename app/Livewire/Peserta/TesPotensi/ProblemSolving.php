@@ -102,28 +102,28 @@ class ProblemSolving extends Component
 
         $indikator_map = [
             [1, 2, 'nilai_indikator_1'],
-            [3, 4, 'nilai_indikator_2'],
-            [5, 6, 'nilai_indikator_3'],
-            [7, 7, 'nilai_indikator_4'],
-            [8, 9, 'nilai_indikator_5'],
-            [10, 11, 'nilai_indikator_6'],
-            [12, 13, 'nilai_indikator_7'],
-            [14, 14, 'nilai_indikator_8'],
+            [3, 'nilai_indikator_2'],
+            [4, 5, 'nilai_indikator_3'],
+            [6, 'nilai_indikator_4'],
+            [7, 'nilai_indikator_5'],
+            [8, 'nilai_indikator_6'],
+            [9, 10, 'nilai_indikator_7'],
+            [11, 'nilai_indikator_8'],
         ];
 
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalProblemSolving::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -146,7 +146,7 @@ class ProblemSolving extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -175,32 +175,32 @@ class ProblemSolving extends Component
         try {
             $data = UjianProblemSolving::findOrFail($this->id_ujian);
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
-            
-            if (($skor_total == 0) || ($skor_total >= 14 && $skor_total <= 45)) {
+
+            if ($skor_total >= 11 && $skor_total <= 33) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
                 $kategori_total = 'Rendah';
-            } else if ($skor_total >= 46 && $skor_total <= 51) {
+            } else if ($skor_total >= 34 && $skor_total <= 39) {
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
                 $kategori_total = 'Rendah';
-            } else if ($skor_total >= 52 && $skor_total <= 53) {
+            } else if ($skor_total >= 40 && $skor_total <= 41) {
                 $level_total = '3-';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'Sedang';
-            } else if ($skor_total >= 54 && $skor_total <= 56) {
+            } else if ($skor_total == 42) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'Sedang';
-            } else if ($skor_total == 57) {
+            } else if ($skor_total >= 43 && $skor_total <= 44) {
                 $level_total = '3+';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'Sedang';
-            } else if ($skor_total >= 58 && $skor_total <= 63) {
+            } else if ($skor_total >= 45 && $skor_total <= 49) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
                 $kategori_total = 'Tinggi';
-            } else if ($skor_total == 64) {
+            } else if ($skor_total >= 50 && $skor_total <= 55) {
                 $level_total = '5';
                 $kualifikasi_total = 'Sangat Baik';
                 $kategori_total = 'Tinggi';
@@ -219,13 +219,13 @@ class ProblemSolving extends Component
                     'kategori_total' => $kategori_total,
                 ]
             );
-    
+
             // if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
             //     $level_norma_umum = '3';
             // } else {
             //     $level_norma_umum = $level_total;
             // }
-    
+
             // $aspek = RefAspekProblemSolving::where('aspek_nomor', $level_norma_umum)->first();
             // $indikator_nomor = explode(',', $aspek->indikator_nomor);
             $indikator = RefIndikatorProblemSolving::get(['indikator_nama', 'indikator_nomor']);
@@ -261,11 +261,11 @@ class ProblemSolving extends Component
                         'skor' => $data->nilai_indikator_2,
                     ];
 
-                    if ($nilai_indikator >= 1 && $nilai_indikator <= 6) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
                         $kategori = 'Rendah';
-                    } else if ($nilai_indikator >= 7 && $nilai_indikator <= 8) {
+                    } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
                         $kategori = 'Sedang';
-                    } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
+                    } else if ($nilai_indikator == 5) {
                         $kategori = 'Tinggi';
                     }
                 } else if ($value->indikator_nomor == 3) {
@@ -293,7 +293,7 @@ class ProblemSolving extends Component
                         $kategori = 'Rendah';
                     } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
                         $kategori = 'Sedang';
-                    } else if ($nilai_indikator >= 5) {
+                    } else if ($nilai_indikator == 5) {
                         $kategori = 'Tinggi';
                     }
                 } else if ($value->indikator_nomor == 5) {
@@ -303,11 +303,11 @@ class ProblemSolving extends Component
                         'skor' => $data->nilai_indikator_5,
                     ];
 
-                    if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
                         $kategori = 'Rendah';
-                    } else if ($nilai_indikator >= 4 && $nilai_indikator <= 7) {
+                    } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
                         $kategori = 'Sedang';
-                    } else if ($nilai_indikator >= 8 && $nilai_indikator <= 10) {
+                    } else if ($nilai_indikator == 5) {
                         $kategori = 'Tinggi';
                     }
                 } else if ($value->indikator_nomor == 6) {
@@ -317,11 +317,11 @@ class ProblemSolving extends Component
                         'skor' => $data->nilai_indikator_6,
                     ];
 
-                    if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
+                    if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
                         $kategori = 'Rendah';
-                    } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
+                    } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
                         $kategori = 'Sedang';
-                    } else if ($nilai_indikator == 10) {
+                    } else if ($nilai_indikator == 5) {
                         $kategori = 'Tinggi';
                     }
                 } else if ($value->indikator_nomor == 7) {
@@ -373,7 +373,7 @@ class ProblemSolving extends Component
                 'uraian_potensi_7' => $deskripsi_list[6] ?? null,
                 'uraian_potensi_8' => $deskripsi_list[7] ?? null,
             ]);
-    
+
             // change status ujian to true (finish)
             $data->is_finished = true;
             $data->save();
@@ -387,7 +387,7 @@ class ProblemSolving extends Component
             } else {
                 return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
             }
-    
+
             // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
         } catch (\Throwable $th) {
             //throw $th;

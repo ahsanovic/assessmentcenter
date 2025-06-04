@@ -110,16 +110,16 @@ class MotivasiKomitmen extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalMotivasiKomitmen::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -133,7 +133,7 @@ class MotivasiKomitmen extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -161,9 +161,9 @@ class MotivasiKomitmen extends Component
     {
         try {
             $data = UjianMotivasiKomitmen::findOrFail($this->id_ujian);
-    
+
             // indikator motivasi keterdekatan dengan rekan kerja
-            if ($data->nilai_indikator_1 >= 1 && $data->nilai_indikator_1 <= 6) {
+            if ($data->nilai_indikator_1 >= 0 && $data->nilai_indikator_1 <= 6) {
                 $standard_1 = '1';
                 $kualifikasi_1 = '1/SK';
             } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 9) {
@@ -185,9 +185,9 @@ class MotivasiKomitmen extends Component
                 $standard_1 = '5';
                 $kualifikasi_1 = '1/SB';
             }
-    
+
             // indikator motivasi mengidentifikasi diri
-            if ($data->nilai_indikator_2 >= 1 && $data->nilai_indikator_2 <= 8) {
+            if ($data->nilai_indikator_2 >= 0 && $data->nilai_indikator_2 <= 8) {
                 $standard_2 = '1';
                 $kualifikasi_2 = '2/SK';
             } else if ($data->nilai_indikator_2 >= 9 && $data->nilai_indikator_2 <= 10) {
@@ -205,13 +205,13 @@ class MotivasiKomitmen extends Component
             } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 16) {
                 $standard_2 = '4';
                 $kualifikasi_2 = '2/B';
-            } else if ($data->nilai_indikator_2 >= 17) {
+            } else if ($data->nilai_indikator_2 >= 17 && $data->nilai_indikator_2 <= 18) {
                 $standard_2 = '5';
                 $kualifikasi_2 = '2/SB';
             }
-    
+
             // indikator motivasi mempertimbangkan keuntungan
-            if ($data->nilai_indikator_3 >= 1 && $data->nilai_indikator_3 <= 6) {
+            if ($data->nilai_indikator_3 >= 0 && $data->nilai_indikator_3 <= 6) {
                 $standard_3 = '1';
                 $kualifikasi_3 = '3/SK';
             } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 11) {
@@ -229,13 +229,13 @@ class MotivasiKomitmen extends Component
             } else if ($data->nilai_indikator_3 >= 16 && $data->nilai_indikator_3 <= 19) {
                 $standard_3 = '4';
                 $kualifikasi_3 = '3/B';
-            } else if ($data->nilai_indikator_3 >= 20) {
+            } else if ($data->nilai_indikator_3 >= 20 && $data->nilai_indikator_3 <= 30) {
                 $standard_3 = '5';
                 $kualifikasi_3 = '3/SB';
             }
-    
+
             // indikator motivasi adapatsi dalam tim
-            if ($data->nilai_indikator_4 >= 1 && $data->nilai_indikator_4 <= 12) {
+            if ($data->nilai_indikator_4 >= 0 && $data->nilai_indikator_4 <= 12) {
                 $standard_4 = '1';
                 $kualifikasi_4 = '4/SK';
             } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 19) {
@@ -253,13 +253,13 @@ class MotivasiKomitmen extends Component
             } else if ($data->nilai_indikator_4 >= 27 && $data->nilai_indikator_4 <= 32) {
                 $standard_4 = '4';
                 $kualifikasi_4 = '4/B';
-            } else if ($data->nilai_indikator_4 >= 33) {
+            } else if ($data->nilai_indikator_4 >= 33 && $data->nilai_indikator_4 <= 40) {
                 $standard_4 = '5';
                 $kualifikasi_4 = '4/SB';
             }
-    
+
             // indikator motivasi memiliki loyalitas
-            if ($data->nilai_indikator_5 >= 1 && $data->nilai_indikator_5 <= 18) {
+            if ($data->nilai_indikator_5 >= 0 && $data->nilai_indikator_5 <= 18) {
                 $standard_5 = '1';
                 $kualifikasi_5 = '5/SK';
             } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 26) {
@@ -277,11 +277,11 @@ class MotivasiKomitmen extends Component
             } else if ($data->nilai_indikator_5 >= 33 && $data->nilai_indikator_5 <= 39) {
                 $standard_5 = '4';
                 $kualifikasi_5 = '5/B';
-            } else if ($data->nilai_indikator_5 >= 40) {
+            } else if ($data->nilai_indikator_5 >= 40 && $data->nilai_indikator_5 <= 55) {
                 $standard_5 = '5';
                 $kualifikasi_5 = '5/SB';
             }
-    
+
             $indikator = RefMotivasiKomitmen::get(['indikator_nama', 'indikator_nomor']);
             $nilai = [];
             foreach ($indikator as $value) {
@@ -327,9 +327,9 @@ class MotivasiKomitmen extends Component
                     ];
                 }
             }
-    
+
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5;
-    
+
             $priority = [
                 '5/SB',
                 '4/SB',
@@ -367,7 +367,7 @@ class MotivasiKomitmen extends Component
                 '2/SK',
                 '1/SK'
             ];
-    
+
             // menyortir data berdasarkan urutan kualifikasi
             usort($nilai, function ($a, $b) use ($priority) {
                 $posA = array_search($a['kualifikasi'], $priority);
@@ -375,18 +375,18 @@ class MotivasiKomitmen extends Component
                 // Jika tidak ditemukan, beri nilai besar agar berada di urutan terakhir
                 $posA = $posA === false ? PHP_INT_MAX : $posA;
                 $posB = $posB === false ? PHP_INT_MAX : $posB;
-    
+
                 return $posA <=> $posB;
             });
-    
+
             // Ambil kualifikasi tertinggi pertama
             $top_kualifikasi = $nilai[0]['kualifikasi'];
-    
+
             // Ambil semua data dengan kualifikasi tertinggi
             $top_data = $top_kualifikasi ? array_filter($nilai, function ($item) use ($top_kualifikasi) {
                 return $item['kualifikasi'] === $top_kualifikasi;
             }) : [];
-    
+
             $kualifikasi_tertinggi = $top_data[0]['kualifikasi'];
             $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kualifikasi_tertinggi . '%')->first();
 
@@ -405,7 +405,7 @@ class MotivasiKomitmen extends Component
                     'kualifikasi_total' => $this->_getKualifikasi($deskripsi->level)
                 ]
             );
-    
+
             // change status ujian to true (finish)
             $data->is_finished = true;
             $data->save();

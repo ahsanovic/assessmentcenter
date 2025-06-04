@@ -58,7 +58,7 @@ class PengembanganDiri extends Component
         $this->soal = SoalPengembanganDiri::find($this->nomor_soal[$this->id_soal - 1]);
         $this->jml_soal = SoalPengembanganDiri::count();
         $this->id_ujian = $data->id;
-        
+
         $first_sequence = Settings::with('alatTes')->where('urutan', 1)->first();
         $this->timerTest($first_sequence->alatTes->alat_tes);
 
@@ -117,16 +117,16 @@ class PengembanganDiri extends Component
         foreach ($indikator_map as [$start, $end, $indikator]) {
             if ($nomor_soal >= $start && $nomor_soal <= $end) {
                 $total_skor = 0;
-        
+
                 for ($i = $start; $i <= $end; $i++) {
                     $idx = $i - 1;
                     $jawaban = $jawaban_user[$idx] ?? null;
-        
+
                     // Ambil poin dari soal terkait
                     if (isset($soal_id[$idx])) {
                         $poin_soal = SoalPengembanganDiri::find($soal_id[$idx]);
                         if (!$poin_soal) continue;
-        
+
                         switch ($jawaban) {
                             case 'A':
                                 $total_skor += $poin_soal->poin_opsi_a;
@@ -140,7 +140,7 @@ class PengembanganDiri extends Component
                         }
                     }
                 }
-        
+
                 // Update skor indikator
                 $data->{$indikator} = $total_skor;
                 $data->save();
@@ -170,7 +170,7 @@ class PengembanganDiri extends Component
             $data = UjianPengembanganDiri::findOrFail($this->id_ujian);
 
             // indikator motivasi belajar
-            if ($data->nilai_indikator_mb >= 1 && $data->nilai_indikator_mb <= 4) {
+            if ($data->nilai_indikator_mb >= 0 && $data->nilai_indikator_mb <= 4) {
                 $standard_mb = 1;
                 $kualifikasi_mb = 'SK';
             } else if ($data->nilai_indikator_mb >= 5 && $data->nilai_indikator_mb <= 6) {
@@ -182,11 +182,11 @@ class PengembanganDiri extends Component
             } else if ($data->nilai_indikator_mb >= 9 && $data->nilai_indikator_mb <= 10) {
                 $standard_mb = 4;
                 $kualifikasi_mb = 'B';
-            } else if ($data->nilai_indikator_mb >= 11) {
+            } else if ($data->nilai_indikator_mb >= 11 && $data->nilai_indikator_mb <= 13) {
                 $standard_mb = 5;
                 $kualifikasi_mb = 'SB';
             }
-    
+
             // indikator mencari informasi tepat/akurat
             if ($data->nilai_indikator_mit >= 1 && $data->nilai_indikator_mit <= 14) {
                 $standard_mit = 1;
@@ -200,11 +200,11 @@ class PengembanganDiri extends Component
             } else if ($data->nilai_indikator_mit == 19) {
                 $standard_mit = 4;
                 $kualifikasi_mit = 'B';
-            } else if ($data->nilai_indikator_mit >= 20) {
+            } else if ($data->nilai_indikator_mit >= 20 && $data->nilai_indikator_mit <= 22) {
                 $standard_mit = 5;
                 $kualifikasi_mit = 'SB';
             }
-    
+
             // indikator pengembangan diri efektif
             if ($data->nilai_indikator_pde >= 1 && $data->nilai_indikator_pde <= 17) {
                 $standard_pde = 1;
@@ -218,11 +218,11 @@ class PengembanganDiri extends Component
             } else if ($data->nilai_indikator_pde == 22) {
                 $standard_pde = 4;
                 $kualifikasi_pde = 'B';
-            } else if ($data->nilai_indikator_pde >= 23) {
+            } else if ($data->nilai_indikator_pde >= 23 && $data->nilai_indikator_pde <= 24) {
                 $standard_pde = 5;
                 $kualifikasi_pde = 'SB';
             }
-    
+
             // indikator strategis pengembangan diri
             if ($data->nilai_indikator_spd >= 1 && $data->nilai_indikator_spd <= 29) {
                 $standard_spd = 1;
@@ -236,11 +236,11 @@ class PengembanganDiri extends Component
             } else if ($data->nilai_indikator_spd >= 33 && $data->nilai_indikator_spd <= 34) {
                 $standard_spd = 4;
                 $kualifikasi_spd = 'B';
-            } else if ($data->nilai_indikator_spd >= 35) {
+            } else if ($data->nilai_indikator_spd >= 35 && $data->nilai_indikator_spd <= 36) {
                 $standard_spd = 5;
                 $kualifikasi_spd = 'SB';
             }
-    
+
             // indikator evaluasi diri dan hasil kerja
             if ($data->nilai_indikator_ed >= 1 && $data->nilai_indikator_ed <= 46) {
                 $standard_ed = 1;
@@ -254,13 +254,13 @@ class PengembanganDiri extends Component
             } else if ($data->nilai_indikator_ed >= 51 && $data->nilai_indikator_ed <= 52) {
                 $standard_ed = 4;
                 $kualifikasi_ed = 'B';
-            } else if ($data->nilai_indikator_ed >= 53) {
+            } else if ($data->nilai_indikator_ed >= 53 && $data->nilai_indikator_ed <= 55) {
                 $standard_ed = 5;
                 $kualifikasi_ed = 'SB';
             }
-    
+
             $indikator_list = RefPengembanganDiri::get(['indikator_nama', 'indikator_nomor']);
-    
+
             $nilai = [];
             foreach ($indikator_list as $value) {
                 if ($value->indikator_nomor == 1) {
@@ -305,9 +305,9 @@ class PengembanganDiri extends Component
                     ];
                 }
             }
-    
+
             $skor_total = $data->nilai_indikator_mb + $data->nilai_indikator_mit + $data->nilai_indikator_pde + $data->nilai_indikator_spd + $data->nilai_indikator_ed;
-            if ($skor_total <= 119) {
+            if ($skor_total >= 1 && $skor_total <= 119) {
                 $level_total = 1;
                 $kualifikasi_total = 'Sangat Kurang';
             } else if ($skor_total >= 120 && $skor_total <= 124) {
@@ -319,7 +319,7 @@ class PengembanganDiri extends Component
             } else if ($skor_total >= 128 && $skor_total <= 131) {
                 $level_total = 4;
                 $kualifikasi_total = 'Baik';
-            } else if ($skor_total >= 132) {
+            } else if ($skor_total >= 132 && $skor_total <= 150) {
                 $level_total = 5;
                 $kualifikasi_total = 'Sangat Baik';
             }
@@ -337,7 +337,7 @@ class PengembanganDiri extends Component
                     'kualifikasi_total' => $kualifikasi_total
                 ]
             );
-    
+
             $priority = ['SB', 'B', 'C', 'K', 'SK'];
             usort($nilai, function ($a, $b) use ($priority) {
                 $posA = array_search($a['kualifikasi'], $priority);
