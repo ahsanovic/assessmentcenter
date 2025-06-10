@@ -75,7 +75,12 @@
                                         <td class="text-wrap">{{ $item->nama }}</td>
                                         <td>
                                             @if ($item->jenis_peserta_id == 1)
-                                                {{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                {{ $item->nip }}
+                                                @if (!empty($item->golPangkat?->pangkat) && !empty($item->golPangkat?->golongan))
+                                                    <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                @else
+                                                    <br/> -
+                                                @endif
                                             @elseif ($item->jenis_peserta_id == 2)
                                                 {{ $item->nik }}
                                             @endif
