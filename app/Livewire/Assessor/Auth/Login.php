@@ -37,7 +37,7 @@ class Login extends Component
             }
         } else {
             $this->addError('id_number', 'NIP atau NIK harus 16 atau 18 digit.');
-                return;
+            return;
         }
 
         $assessor = Assessor::where(function ($query) {
@@ -49,9 +49,9 @@ class Login extends Component
                     ->where('nik', $this->id_number);
             });
         })
-        ->where('is_active', 'true')
-        ->first();
-    
+            ->where('is_active', 'true')
+            ->first();
+
         if (!$assessor) {
             $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
         }
@@ -60,22 +60,22 @@ class Login extends Component
             $credentials = [
                 'password' => $this->password,
             ];
-        
+
             if ($assessor->is_asn == 'true') {
                 $credentials['nip'] = $this->id_number;
             } elseif ($assessor->is_asn == 'false') {
                 $credentials['nik'] = $this->id_number;
             }
-        
+
             if (auth()->guard('assessor')->attempt($credentials)) {
                 request()->session()->regenerate();
-                return $this->redirect(route('assessor.dashboard'), navigate: true);
+                return $this->redirect(route('assessor.dashboard'));
             }
         }
-        
+
         $this->addError('id_number', 'NIP/NIK atau password salah.');
     }
-    
+
     public function render()
     {
         return view('livewire.assessor.auth.login');

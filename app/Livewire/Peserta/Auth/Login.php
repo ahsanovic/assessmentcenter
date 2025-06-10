@@ -54,20 +54,20 @@ class Login extends Component
         // }
 
         $peserta = Peserta::where(function ($query) {
-                $query->where(function ($q) {
-                    $q->where('jenis_peserta_id', 1)
-                        ->where('nip', $this->id_number);
-                })->orWhere(function ($q) {
-                    $q->where('jenis_peserta_id', 2)
-                        ->where('nik', $this->id_number);
-                });
-            })
+            $query->where(function ($q) {
+                $q->where('jenis_peserta_id', 1)
+                    ->where('nip', $this->id_number);
+            })->orWhere(function ($q) {
+                $q->where('jenis_peserta_id', 2)
+                    ->where('nik', $this->id_number);
+            });
+        })
             ->whereHas('event', function ($query) {
                 $query->where('is_finished', 'false');
             })
             ->where('is_active', 'true')
             ->first();
-        
+
         if (!$peserta) {
             $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
         }
@@ -76,7 +76,7 @@ class Login extends Component
             $credentials = [
                 'password' => $this->password,
             ];
-        
+
             if ($peserta->jenis_peserta_id == 1) {
                 // ASN
                 $credentials['nip'] = $this->id_number;
@@ -84,10 +84,10 @@ class Login extends Component
                 // Non-ASN
                 $credentials['nik'] = $this->id_number;
             }
-        
+
             if (auth()->guard('peserta')->attempt($credentials)) {
                 request()->session()->regenerate();
-                return $this->redirect(route('peserta.dashboard'), navigate: true);
+                return $this->redirect(route('peserta.dashboard'));
             }
         }
 
