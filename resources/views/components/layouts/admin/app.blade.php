@@ -58,6 +58,8 @@
         </div>
     </div>
 
+    <audio id="alertSound" src="{{ asset('assets/sounds/alert.wav') }}" preload="auto"></audio>
+
     <!-- core:js -->
     <script src="{{ asset('assets/vendors/core/core.js') }}"></script>
     <!-- endinject -->
@@ -181,6 +183,13 @@
                             closeButton: true,
                         };
                         toastr.warning(`${e.user} meninggalkan tab! Peringatan ke-${e.peringatan}`);
+
+                        // 🔊 Mainkan suara
+                        const sound = document.getElementById('alertSound');
+                        if (sound) {
+                            sound.currentTime = 0;
+                            sound.play().catch(err => console.warn('Audio play failed:', err));
+                        }
                     });
             } else {
                 console.error("Echo is not defined.");
