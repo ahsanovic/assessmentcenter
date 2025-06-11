@@ -9,7 +9,7 @@ class LogPelanggaran extends Model
     protected $table = 'log_pelanggaran';
     protected $fillable = [
         'id',
-        'user_id',
+        'peserta_id',
         'event_id',
         'keterangan'
     ];
