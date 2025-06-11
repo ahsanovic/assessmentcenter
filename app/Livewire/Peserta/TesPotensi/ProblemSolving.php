@@ -30,7 +30,6 @@ class ProblemSolving extends Component
     public $durasi_tes;
     public $waktu_tes_berakhir;
     public $current_sequence;
-    public $peringatan = 0;
 
     public function mount($id)
     {

@@ -29,7 +29,6 @@ class MotivasiKomitmen extends Component
     public $id_ujian;
     public $timer;
     public $current_sequence;
-    public $peringatan = 0;
 
     public function mount($id)
     {
