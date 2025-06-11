@@ -1,4 +1,21 @@
-<div>
+<div x-data
+x-init="
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            $wire.laporPelanggaran();
+        }
+    });
+
+    Livewire.on('toast', e => {
+        toastr.options = {
+            positionClass: 'toast-top-center',
+            closeButton: true,
+            timeOut: 0,
+            extendedTimeOut: 0,
+        };
+        toastr[e.type](e.message);
+    });
+">
     <div class="row mb-4">
         <div class="col">
             <h3 class="text-center">Tes Problem Solving</h3>

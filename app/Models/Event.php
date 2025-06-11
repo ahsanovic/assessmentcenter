@@ -73,6 +73,11 @@ class Event extends Model
         return $this->hasMany(JawabanResponden::class, 'event_id', 'id');
     }
 
+    public function logPelanggaran()
+    {
+        return $this->hasMany(LogPelanggaran::class, 'event_id', 'id');
+    }
+
     public function assessor()
     {
         return $this->belongsToMany(Assessor::class, 'assessor_event', 'event_id', 'assessor_id')->withTimestamps();

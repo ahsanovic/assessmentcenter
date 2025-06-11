@@ -7,6 +7,7 @@ use App\Models\Interpersonal\RefInterpersonal;
 use App\Models\Interpersonal\SoalInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\Settings;
+use App\Traits\PelanggaranTrait;
 use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Interpersonal'])]
 class Interpersonal extends Component
 {
-    use StartTestTrait, TimerTrait;
+    use StartTestTrait, TimerTrait, PelanggaranTrait;
 
     public $soal;
     public $jml_soal;
@@ -27,6 +28,7 @@ class Interpersonal extends Component
     public $id_ujian;
     public $timer;
     public $current_sequence;
+    public $peringatan = 0;
 
     public function mount($id)
     {

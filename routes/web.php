@@ -86,6 +86,10 @@ Route::prefix('bkdac')->group(function () {
         Route::get('hasil-responden', \App\Livewire\Admin\HasilResponden\Index::class)->name('admin.hasil-responden');
         Route::get('hasil-responden/{idEvent}', \App\Livewire\Admin\HasilResponden\Show::class)->name('admin.hasil-responden.show');
 
+        // log pelanggaran tes
+        Route::get('pelanggaran-tes', \App\Livewire\Admin\PelanggaranTes\Index::class)->name('admin.pelanggaran-tes');
+        Route::get('pelanggaran-tes/{idEvent}', \App\Livewire\Admin\PelanggaranTes\Show::class)->name('admin.pelanggaran-tes.show');
+
         // peserta
         Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
         Route::get('peserta/create', \App\Livewire\Admin\Peserta\Form::class)->name('admin.peserta.create');

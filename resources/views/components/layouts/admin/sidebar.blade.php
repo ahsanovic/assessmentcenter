@@ -108,7 +108,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item nav-category">Tes</li>
+                <li class="nav-item nav-category">Pelaksanaan Tes</li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
                         aria-expanded="false" aria-controls="data-tes">
@@ -129,6 +129,10 @@
                             <li class="nav-item">
                             <a href="{{ route('admin.hasil-responden') }}" wire:navigate
                                     class="nav-link">Hasil Responden</a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="{{ route('admin.pelanggaran-tes') }}" wire:navigate
+                                    class="nav-link">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>

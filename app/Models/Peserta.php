@@ -89,6 +89,11 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->hasMany(JawabanResponden::class, 'peserta_id', 'id');
     }
 
+    public function logPelanggaran()
+    {
+        return $this->hasMany(LogPelanggaran::class, 'peserta_id', 'id');
+    }
+
     public function scopeWherePesertaEvent($query, $pesertaId, $eventId)
     {
         return $query->where('id', $pesertaId)

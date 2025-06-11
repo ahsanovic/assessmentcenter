@@ -8,6 +8,7 @@ use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\Settings;
+use App\Traits\PelanggaranTrait;
 use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Motivasi dan Komitmen'])]
 class MotivasiKomitmen extends Component
 {
-    use StartTestTrait, TimerTrait;
+    use StartTestTrait, TimerTrait, PelanggaranTrait;
 
     public $soal;
     public $jml_soal;
@@ -28,6 +29,7 @@ class MotivasiKomitmen extends Component
     public $id_ujian;
     public $timer;
     public $current_sequence;
+    public $peringatan = 0;
 
     public function mount($id)
     {

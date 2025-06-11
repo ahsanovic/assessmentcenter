@@ -7,6 +7,7 @@ use App\Models\ProblemSolving\RefIndikatorProblemSolving;
 use App\Models\ProblemSolving\SoalProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use App\Models\Settings;
+use App\Traits\PelanggaranTrait;
 use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ use Livewire\Component;
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Problem Solving'])]
 class ProblemSolving extends Component
 {
-    use StartTestTrait, TimerTrait;
+    use StartTestTrait, TimerTrait, PelanggaranTrait;
 
     public $soal;
     public $jml_soal;
@@ -29,6 +30,7 @@ class ProblemSolving extends Component
     public $durasi_tes;
     public $waktu_tes_berakhir;
     public $current_sequence;
+    public $peringatan = 0;
 
     public function mount($id)
     {

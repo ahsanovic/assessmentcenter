@@ -83,7 +83,6 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <!-- endinject -->
 
-
     <!-- Custom js for this page -->
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <!-- End custom js for this page -->
@@ -169,6 +168,23 @@
                     Livewire.dispatch('changeStatusPeserta');
                 }
             });
+        });
+    </script>
+    @vite(['resources/js/app.js'])
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.Echo) {
+                window.Echo.channel('admin.pelanggaran')
+                .listen('.pelanggaran', (e) => {
+                        toastr.options = {
+                            positionClass: 'toast-top-center',
+                            closeButton: true,
+                        };
+                        toastr.warning(`${e.user} meninggalkan tab! Peringatan ke-${e.peringatan}`);
+                    });
+            } else {
+                console.error("Echo is not defined.");
+            }
         });
     </script>
     @stack('js')
