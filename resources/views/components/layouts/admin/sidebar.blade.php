@@ -140,6 +140,30 @@
 
                 <li class="nav-item nav-category">Instrumen Tes</li>
                 <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#intelektual" role="button"
+                        aria-expanded="false" aria-controls="intelektual">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Intelektual</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="intelektual">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-intelektual') }}" wire:navigate
+                                    class="nav-link">Data Referensi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" wire:navigate
+                                    class="nav-link">Model Soal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#pengembangan-diri" role="button"
                         aria-expanded="false" aria-controls="pengembangan-diri">
                         <i class="link-icon" data-feather="box"></i>
