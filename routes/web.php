@@ -205,6 +205,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('ref-kesadaran-diri/create', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Create::class)->name('admin.ref-kesadaran-diri.create');
         Route::get('ref-kesadaran-diri/{id}/edit', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Edit::class)->name('admin.ref-kesadaran-diri.edit');
 
+        // soal cakap digital
+        Route::get('soal-cakap-digital', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Index::class)->name('admin.soal-cakap-digital');
+        Route::get('soal-cakap-digital/create', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.create');
+        Route::get('soal-cakap-digital/{id}/edit', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.edit');
+
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
         Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');

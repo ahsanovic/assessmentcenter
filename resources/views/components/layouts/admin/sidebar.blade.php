@@ -311,6 +311,22 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#cakap-digital" role="button"
+                        aria-expanded="false" aria-controls="cakap-digital">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Cakap Digital</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="cakap-digital">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-cakap-digital') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
                 @if (auth()->guard('admin')->user()->role === 'admin')
                 <li class="nav-item nav-category">Akses dan Jejak</li>
