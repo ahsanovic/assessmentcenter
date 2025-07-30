@@ -130,7 +130,7 @@ class Form extends Component
                 $this->redirect(route('admin.ref-intelektual'), true);
             }
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }

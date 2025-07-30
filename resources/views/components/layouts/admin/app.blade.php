@@ -171,6 +171,22 @@
                 }
             });
         });
+
+        window.addEventListener('change-status-confirmation', data => {
+            Swal.fire({
+                title: 'Ubah Status?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ubah!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('changeStatus');
+                }
+            });
+        });
     </script>
     @vite(['resources/js/app.js'])
     <script>

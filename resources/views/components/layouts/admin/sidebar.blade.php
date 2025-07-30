@@ -153,7 +153,7 @@
                                     class="nav-link">Data Referensi</a>
                             </li>
                             <li class="nav-item">
-                                <a href="" wire:navigate
+                                <a href="{{ route('admin.model-soal-intelektual') }}" wire:navigate
                                     class="nav-link">Model Soal</a>
                             </li>
                             <li class="nav-item">

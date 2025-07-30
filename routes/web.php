@@ -120,6 +120,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('ref-intelektual/create', \App\Livewire\Admin\Intelektual\RefIntelektual\Form::class)->name('admin.ref-intelektual.create');
         Route::get('ref-intelektual/{id}/edit', \App\Livewire\Admin\Intelektual\RefIntelektual\Form::class)->name('admin.ref-intelektual.edit');
 
+        // model soal intelektual
+        Route::get('model-soal-intelektual', \App\Livewire\Admin\Intelektual\ModelSoal\Index::class)->name('admin.model-soal-intelektual');
+        Route::get('model-soal-intelektual/create', \App\Livewire\Admin\Intelektual\ModelSoal\Form::class)->name('admin.model-soal-intelektual.create');
+        Route::get('model-soal-intelektual/{id}/edit', \App\Livewire\Admin\Intelektual\ModelSoal\Form::class)->name('admin.model-soal-intelektual.edit');
+
         // soal pengembangan diri
         Route::get('soal-pengembangan-diri', \App\Livewire\Admin\PengembanganDiri\SoalPengembanganDiri\Index::class)->name('admin.soal-pengembangan-diri');
         Route::get('soal-pengembangan-diri/create', \App\Livewire\Admin\PengembanganDiri\SoalPengembanganDiri\Create::class)->name('admin.soal-pengembangan-diri.create');
