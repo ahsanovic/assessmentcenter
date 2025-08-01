@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\CakapDigital\HasilCakapDigital;
+use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
@@ -93,6 +95,29 @@ class Event extends Model
             'id',
             'peserta_id'
         );
+    }
+
+    // ujian cakap digital
+    public function ujianCakapDigital()
+    {
+        return $this->hasMany(UjianCakapDigital::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesCakapDigital()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,
+            UjianCakapDigital::class,
+            'event_id',
+            'id',
+            'id',
+            'peserta_id'
+        );
+    }
+
+    public function pesertaIdTesCakapDigital()
+    {
+        return $this->ujianCakapDigital()->select('peserta_id')->distinct();
     }
 
     // ujian interpersonal
@@ -257,6 +282,29 @@ class Event extends Model
     }
 
     /* HASIL TES */
+    // hasil cakap digital
+    public function hasilCakapDigital()
+    {
+        return $this->hasMany(HasilCakapDigital::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilCakapDigital()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilCakapDigital::class,    // Model perantara (UjianInterpersonal)
+            'event_id',                   // Foreign key di UjianInterpersonal
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianInterpersonal
+        );
+    }
+
+    public function pesertaIdHasilCakapDigital()
+    {
+        return $this->hasilCakapDigital()->select('peserta_id')->distinct();
+    }
+
     // hasil interpersonal
     public function hasilInterpersonal()
     {

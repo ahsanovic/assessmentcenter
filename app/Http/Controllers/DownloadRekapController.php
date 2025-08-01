@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Peserta;
-use Illuminate\Support\Facades\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 class DownloadRekapController extends Controller
@@ -14,16 +13,16 @@ class DownloadRekapController extends Controller
         $tanggal = request()->query('tanggalTes');
 
         $all_peserta = Peserta::with([
-                'event',
-                'hasilInterpersonal',
-                'hasilKesadaranDiri',
-                'hasilBerpikirKritis',
-                'hasilPengembanganDiri',
-                'hasilProblemSolving',
-                'hasilKecerdasanEmosi',
-                'hasilMotivasiKomitmen',
-                'nilaiJpm'
-            ])
+            'event',
+            'hasilInterpersonal',
+            'hasilKesadaranDiri',
+            'hasilBerpikirKritis',
+            'hasilPengembanganDiri',
+            'hasilProblemSolving',
+            'hasilKecerdasanEmosi',
+            'hasilMotivasiKomitmen',
+            'nilaiJpm'
+        ])
             ->where('event_id', $idEvent)
             ->when($tanggal, function ($query) use ($tanggal) {
                 $query->whereDate('test_started_at', $tanggal);
@@ -50,7 +49,7 @@ class DownloadRekapController extends Controller
                 $query->where('is_finished', 'true');
             })
             ->get();
-        
+
         $export_data = collect();
 
         foreach ($all_peserta as $peserta) {
@@ -83,7 +82,7 @@ class DownloadRekapController extends Controller
                     (json_decode($peserta->hasilInterpersonal->uraian_potensi_5)->uraian_potensi ?? '-'),
                 'Deskripsi Kesadaran Diri' => (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_1)->uraian_potensi ?? '-') .
                     (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_2)->uraian_potensi ?? '-') .
-                    (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_3)->uraian_potensi ?? '-') ,
+                    (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_3)->uraian_potensi ?? '-'),
                 'Deskripsi Berpikir Kritis dan Strategis' => (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_1)->deskripsi ?? '-') .
                     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_2)->deskripsi ?? '-') .
                     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_3)->deskripsi ?? '-') .
@@ -112,7 +111,38 @@ class DownloadRekapController extends Controller
                 'Deskripsi Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->deskripsi ?? '-'
             ]);
         }
-        
+
         return (new FastExcel($export_data))->download('rekap-laporan.xlsx');
+    }
+
+    public function downloadRekapCakapDigital($idEvent)
+    {
+        $tanggal = request()->query('tanggalTes');
+
+        $all_peserta = Peserta::with(['event', 'hasilCakapDigital'])
+            ->where('event_id', $idEvent)
+            ->when($tanggal, function ($query) use ($tanggal) {
+                $query->whereDate('test_started_at', $tanggal);
+            })
+            ->whereHas('ujianCakapDigital', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->get();
+
+        $export_data = collect();
+
+        foreach ($all_peserta as $peserta) {
+            $export_data->push([
+                'Nama Peserta' => $peserta->nama,
+                'NIP' => $peserta->nip,
+                'Jabatan Saat Ini' => $peserta->jabatan,
+                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
+                'Level Literasi Digital' => $peserta->hasilCakapDigital->kategori_literasi ?? '-',
+                'Level Emerging Skill' => $peserta->hasilCakapDigital->kategori_emerging ?? '-',
+                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
+            ]);
+        }
+
+        return (new FastExcel($export_data))->download('rekap-laporan-cakap-digital.xlsx');
     }
 }

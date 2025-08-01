@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\HasilResponden;
+namespace App\Livewire\Admin\PelanggaranTes\TesPotensi;
 
 use App\Models\Event;
 use Livewire\Attributes\Layout;
@@ -8,7 +8,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Hasil Responden'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Log Pelanggaran Tes'])]
 class Index extends Component
 {
     use WithPagination;
@@ -25,18 +25,15 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::with('jawabanResponden')
-            ->withCount(['jawabanResponden as jawaban_responden_count' => function ($query) {
-                $query->where('is_finished', 'true');
-            }])
-            ->where('metode_tes_id', '!=', 3)
+        $data = Event::with('logPelanggaran')
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%' . $this->search . '%');
             })
+            ->where('metode_tes_id', '!=', 3)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('livewire.admin.hasil-responden.index', compact('data'));
+        return view('livewire.admin.pelanggaran-tes.tes-potensi.index', compact('data'));
     }
 
     public function resetFilters()

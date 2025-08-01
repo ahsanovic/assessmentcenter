@@ -60,7 +60,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.settings.urutan') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="message-square"></i>
-                        <span class="link-title">Urutan Tes</span>
+                        <span class="link-title">Urutan Tes Potensi</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -107,13 +107,13 @@
                         <span class="link-title">Nomor Laporan Penilaian</span>
                     </a>
                 </li>
-
+                
                 <li class="nav-item nav-category">Pelaksanaan Tes</li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
                         aria-expanded="false" aria-controls="data-tes">
                         <i class="link-icon" data-feather="box"></i>
-                        <span class="link-title">Data Tes Potensi</span>
+                        <span class="link-title">Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
                     <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes">
@@ -132,6 +132,30 @@
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes') }}" wire:navigate
+                                    class="nav-link">Pelanggaran Tes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-cakap-digital" role="button"
+                        aria-expanded="false" aria-controls="data-tes-cakap-digital">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Tes Cakap Digital</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-cakap-digital">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-berlangsung.cakap-digital') }}" wire:navigate
+                                    class="nav-link">Tes Berlangsung</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-selesai.cakap-digital') }}" wire:navigate
+                                    class="nav-link">Tes Selesai</a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="{{ route('admin.pelanggaran-tes-cakap-digital') }}" wire:navigate
                                     class="nav-link">Pelanggaran Tes</a>
                             </li>
                         </ul>

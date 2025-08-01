@@ -13,7 +13,6 @@ use Livewire\Component;
 #[Layout('components.layouts.admin.app', ['title' => 'Peserta'])]
 class Form extends Component
 {
-    public $previous_url;
     public $isUpdate = false;
     public $nama;
     public $nip;
@@ -34,7 +33,6 @@ class Form extends Component
         try {
             if ($id) {
                 $this->isUpdate = true;
-                $this->previous_url = url()->previous();
 
                 $data = Peserta::findOrFail($id);
                 $this->nama = $data->nama;
@@ -122,6 +120,14 @@ class Form extends Component
                     $data->nik = null;
                     $data->nip = $this->nip;
                     $data->jabatan = $this->jabatan;
+                } else if ($this->jenis_peserta_id == 1 && $data->nip != null) {
+                    $data->nik = null;
+                    $data->nip = $this->nip;
+                    $data->jabatan = $this->jabatan;
+                } else if ($this->jenis_peserta_id == 2 && $data->nik != null) {
+                    $data->nip = null;
+                    $data->nik = $this->nik;
+                    $data->jabatan = null;
                 }
                 $data->jenis_peserta_id = $this->jenis_peserta_id;
                 $data->instansi = $this->instansi;
@@ -137,7 +143,7 @@ class Form extends Component
                     'message' => 'berhasil ubah data'
                 ]);
 
-                $this->redirect($this->previous_url, true);
+                $this->redirect(route('admin.peserta'), true);
             } else {
                 $data = Peserta::create([
                     'nama' => $this->nama,

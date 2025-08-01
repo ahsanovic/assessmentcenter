@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\CakapDigital\HasilCakapDigital;
+use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
@@ -100,6 +102,11 @@ class Peserta extends Model implements AuthenticatableContract
             ->where('event_id', $eventId);
     }
 
+    public function ujianCakapDigital()
+    {
+        return $this->hasOne(UjianCakapDigital::class, 'peserta_id');
+    }
+
     public function ujianInterpersonal()
     {
         return $this->hasOne(UjianInterpersonal::class, 'peserta_id');
@@ -135,6 +142,10 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->hasOne(UjianProblemSolving::class, 'peserta_id');
     }
 
+    public function hasilCakapDigital()
+    {
+        return $this->hasOne(HasilCakapDigital::class, 'peserta_id');
+    }
 
     public function hasilInterpersonal()
     {

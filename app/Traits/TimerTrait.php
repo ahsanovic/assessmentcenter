@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
@@ -37,7 +38,21 @@ trait TimerTrait
             case 'Kesadaran Diri':
                 $this->_timerKesadaranDiri();
                 break;
+            case 'Cakap Digital':
+                $this->_timerCakapDigital();
+                break;
         }
+    }
+
+    protected function _timerCakapDigital()
+    {
+        $first_test = UjianCakapDigital::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerInterpersonal()
@@ -61,7 +76,7 @@ trait TimerTrait
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
-    
+
     protected function _timerKecerdasanEmosi()
     {
         $first_test = UjianKecerdasanEmosi::where('peserta_id', Auth::guard('peserta')->user()->id)
@@ -83,7 +98,7 @@ trait TimerTrait
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
-    
+
     protected function _timerBerpikirKritis()
     {
         $first_test = UjianBerpikirKritis::where('peserta_id', Auth::guard('peserta')->user()->id)

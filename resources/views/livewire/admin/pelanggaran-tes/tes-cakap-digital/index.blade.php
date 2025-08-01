@@ -1,13 +1,13 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Data Hasil Responden']
+        ['url' => null, 'title' => 'Data Pelanggaran Tes']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Hasil Responden Tes Potensi</h6>
+                    <h6 class="card-title">Data Pelanggaran Tes Literasi Digital & Emerging Skill</h6>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
                         <div class="col-md-6">
@@ -27,7 +27,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Event</th>
-                                    <th>Jumlah dan Detail Responden</th>
+                                    <th>Detail Pelanggaran</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,8 +37,8 @@
                                         <td>{{ $item->nama_event }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-warning" wire:navigate
-                                                href="{{ route('admin.hasil-responden.show', ['idEvent' => $item->id ]) }}">
-                                                    {{ $item->jawaban_responden_count ?? 0 }} orang
+                                                href="{{ route('admin.pelanggaran-tes-cakap-digital.show', ['idEvent' => $item->id ]) }}">
+                                                    Lihat
                                             </a>
                                         </td>
                                     </tr>

@@ -40,6 +40,17 @@
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    @php
+                        $event_id = auth()->guard('peserta')->user()->event_id;
+                        $peserta_id = auth()->guard('peserta')->user()->id;
+                        $test_started = collect($data)->contains(true);
+                    @endphp
+                    <a href="{{ route('peserta.tes-cakap-digital') }}" class="nav-link" wire:navigate style="{{ $test_started ? 'pointer-events: none;' : ''}}">
+                        <i class="link-icon" data-feather="info"></i>
+                        <span class="link-title">Tes Cakap Digital</span>
+                    </a>
+                </li>
                 
                 <li class="nav-item nav-category">Logout</li>
                 <li class="nav-item">
