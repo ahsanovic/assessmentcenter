@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung;
 
+use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Event;
-use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\Peserta;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -72,11 +72,11 @@ class ShowPeserta extends Component
     public function destroy()
     {
         try {
-            UjianInterpersonal::find($this->selected_id)->delete();
+            UjianCakapDigital::find($this->selected_id)->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
         }
     }
