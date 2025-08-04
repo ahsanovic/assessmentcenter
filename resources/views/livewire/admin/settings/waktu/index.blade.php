@@ -14,6 +14,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Jenis Tes</th>
                                     <th>Waktu Tes</th>
                                     <th>Status</th>
                                     <th></th>
@@ -23,8 +24,26 @@
                                 @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
+                                        <td>{{ $item->jenis_tes === 1 ? 'Tes Potensi' : 'Tes Literasi Digital & Emerging Skill' }}</td>
                                         <td>{{ $item->waktu }} menit</td>
-                                        <td>{{ $item->is_active == true ? 'aktif' : 'non aktif' }}</td>
+                                        <td>
+                                            @if ($item->is_active == 'true')
+                                                <span
+                                                    class="badge bg-success"
+                                                    wire:click="changeStatusTimerConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Aktif
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="badge bg-danger"
+                                                    wire:click="changeStatusTimerConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                >
+                                                    Non Aktif
+                                                </span>
+                                            @endif
                                         <td>
                                             <div class="btn-group dropstart">
                                                 <a

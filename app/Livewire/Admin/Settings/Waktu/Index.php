@@ -28,6 +28,30 @@ class Index extends Component
         $this->dispatch('show-delete-confirmation');
     }
 
+    public function changeStatusTimerConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('change-status-timer-confirmation');
+    }
+
+    #[On('changeStatusTimer')]
+    public function changeStatusTimer()
+    {
+        try {
+            $data = SettingWaktuTes::find($this->selected_id);
+            if ($data->is_active === 'true') {
+                $data->update(['is_active' => 'false']);
+            } else {
+                $data->update(['is_active' => 'true']);
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil merubah status']);
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal merubah status']);
+        }
+    }
+
     #[On('delete')]
     public function destroy()
     {

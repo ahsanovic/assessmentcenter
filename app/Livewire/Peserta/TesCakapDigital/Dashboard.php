@@ -54,7 +54,7 @@ class Dashboard extends Component
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
 
-            $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+            $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 2)->first(['waktu']); // 2 = Cakap Digital
             $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
 
             $ujian = new UjianCakapDigital();

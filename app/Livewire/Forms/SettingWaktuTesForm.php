@@ -12,9 +12,14 @@ class SettingWaktuTesForm extends Form
         'waktu.numeric' => 'harus angka'
     ])]
     public $waktu;
-    
+
     #[Validate('required', message: [
         'is_active.required' => 'harus dipilih'
     ])]
     public $is_active;
+
+    #[Validate('required', message: [
+        'jenis_tes.required' => 'harus dipilih'
+    ])]
+    public $jenis_tes;
 }

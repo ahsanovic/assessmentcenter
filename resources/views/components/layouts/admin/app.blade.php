@@ -155,6 +155,22 @@
                 }
             });
         });
+        
+        window.addEventListener('change-status-timer-confirmation', data => {
+            Swal.fire({
+                title: 'Ubah Status?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ubah!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('changeStatusTimer');
+                }
+            });
+        });
 
         window.addEventListener('change-status-peserta-confirmation', data => {
             Swal.fire({

@@ -26,6 +26,7 @@ class Form extends Component
 
                 $data = SettingWaktuTes::findOrFail($id);
                 $this->id = $data->id;
+                $this->form->jenis_tes = $data->jenis_tes;
                 $this->form->waktu = $data->waktu;
                 $this->form->is_active = $data->is_active;
             }
@@ -60,6 +61,7 @@ class Form extends Component
                 $this->redirect(route('admin.settings.waktu'), true);
             } else {
                 $data = SettingWaktuTes::create([
+                    'jenis_tes' => $this->form->jenis_tes,
                     'waktu' => $this->form->waktu,
                     'is_active' => $this->form->is_active,
                 ]);

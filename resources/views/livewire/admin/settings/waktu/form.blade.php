@@ -10,7 +10,24 @@
                     <h6 class="card-title">Form Setting Waktu Tes</h6>
                     <form wire:submit="save">
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <div class="mb-3">
+                                    <label for="jenis-tes" class="form-label">Jenis Tes</label>
+                                    <select wire:model="form.jenis_tes"
+                                        class="form-select @error('jenis_tes') is-invalid @enderror"
+                                        id="metode-tes">
+                                        <option value="">-pilih-</option>
+                                        <option value="1">Tes Potensi</option>
+                                        <option value="2">Tes Literasi Digital & Emerging</option>
+                                    </select>
+                                    @error('form.jenis_tes')
+                                        <label class="error invalid-feedback">{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
                                     <label class="form-label">Waktu tes (menit)</label>
                                     <input type="text" wire:model="form.waktu" class="form-control @error('form.waktu') is-invalid @enderror">

@@ -49,7 +49,7 @@ trait StartTestTrait
     }
 
     protected function _startTesInterpersonal($urutan_tes)
-    {   
+    {
         $ujian_selesai = UjianInterpersonal::where('event_id', Auth::guard('peserta')->user()->event_id)
             ->where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('is_finished', 'true')
@@ -71,14 +71,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']); // 1 = tes potensi
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianInterpersonal();
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
@@ -92,7 +92,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]), navigate: true);
         }
     }
@@ -107,12 +107,12 @@ trait StartTestTrait
         if ($ujian_selesai > 0) {
             return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
         }
-        
+
         $ujian_berlangsung = UjianPengembanganDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
-        ->where('peserta_id', Auth::guard('peserta')->user()->id)
-        ->where('is_finished', 'false')
-        ->count();
-        
+            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('is_finished', 'false')
+            ->count();
+
         if ($ujian_berlangsung > 0) {
             return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
         } else {
@@ -120,14 +120,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianPengembanganDiri();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -141,7 +141,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
         }
     }
@@ -169,14 +169,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianKecerdasanEmosi();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -189,7 +189,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]), navigate: true);
         }
     }
@@ -217,14 +217,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianMotivasiKomitmen();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -238,7 +238,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]), navigate: true);
         }
     }
@@ -266,14 +266,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianBerpikirKritis();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -290,7 +290,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
         }
     }
@@ -318,14 +318,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianProblemSolving();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -342,7 +342,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
         }
     }
@@ -370,14 +370,14 @@ trait StartTestTrait
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
-    
+
             if ($urutan_tes === 1) {
-                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->first(['waktu']);
+                $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 1)->first(['waktu']);
                 $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
             } else {
                 $waktu_tes_berakhir = null;
             }
-    
+
             $ujian = new UjianKesadaranDiri();
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
@@ -389,7 +389,7 @@ trait StartTestTrait
             $ujian->urutan_tes = $urutan_tes;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
-    
+
             return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
         }
     }
