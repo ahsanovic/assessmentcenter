@@ -29,6 +29,7 @@
                                     <th style="width: 5%">#</th>
                                     <th>Nama Peserta</th>
                                     <th>Pelanggaran</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,14 +38,25 @@
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->nama }}</td>
                                         <td class="text-wrap">
-                                            @foreach ($item->logPelanggaran as $log)
-                                                {{ $log->keterangan}} <br />
-                                            @endforeach
+                                            <div style="max-height: 150px; overflow-y: auto;">
+                                                @foreach ($item->logPelanggaran as $log)
+                                                    {{ $log->keterangan}} <br />
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button
+                                                wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                tabindex="0" class="btn btn-xs btn-outline-danger"
+                                                @disabled(auth()->user()->role == 'user')
+                                            >
+                                                Hapus
+                                            </button>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted">- Tidak ada data -</td>
+                                        <td colspan="4" class="text-center text-muted">- Tidak ada data -</td>
                                     </tr>
                                 @endforelse
                             </tbody>
