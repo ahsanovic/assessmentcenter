@@ -1,3 +1,10 @@
+@push('css')
+    <style>
+        .form-check-input[type="radio"] {
+            border: 2px solid #dee2e6;
+        }
+    </style>
+@endpush
 <div x-data
 x-init="
     document.addEventListener('visibilitychange', () => {
@@ -192,6 +199,8 @@ x-init="
                 title: 'Waktu habis!',
                 icon: 'warning',
                 confirmButtonText: 'Akhiri Tes!',
+                allowOutsideClick: false,
+                allowEscapeKey: false
             }).then((result) => {
                 // if (result.isConfirmed) {
                 //     $wire.finish();
