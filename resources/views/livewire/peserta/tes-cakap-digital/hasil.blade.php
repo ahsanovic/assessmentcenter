@@ -8,7 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body d-flex justify-content-center text-center">
-                    <div style="font-family: monospace">
+                    <div style="font-family: 'Helvetica Neue', sans-serif;">
                         <h4 class="text-center mb-3">
                             Terima kasih, <strong>{{ auth()->guard('peserta')->user()->nama }}</strong>!
                         </h4>
