@@ -83,7 +83,7 @@ class Form extends Component
             // 'alat_tes_id.*' => 'exists:ref_alat_tes,id',
             'assessor' => 'array',
             'assessor.*' => 'exists:assessor,id',
-            'pin_ujian' => ['required', 'min:4', 'regex:/^[A-Za-z0-9]+$/'],
+            'pin_ujian' => ['required', 'min:4', 'max:4', 'regex:/^[A-Za-z0-9]+$/'],
             'is_open' => ['required']
         ];
 
@@ -113,6 +113,7 @@ class Form extends Component
             // 'alat_tes_id.required' => 'harus dipilih',
             'pin_ujian.required' => 'harus diisi',
             'pin_ujian.min' => 'minimal 4 digit',
+            'pin_ujian.max' => 'maksimal 4 digit',
             'pin_ujian.regex' => 'pin hanya boleh terdiri dari huruf kecil, huruf besar, dan angka',
             'is_open.required' => 'harus dipilih'
         ];
