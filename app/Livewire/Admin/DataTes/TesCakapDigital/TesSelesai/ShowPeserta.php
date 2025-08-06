@@ -47,6 +47,8 @@ class ShowPeserta extends Component
         $data = Peserta::join('hasil_cakap_digital', 'hasil_cakap_digital.peserta_id', '=', 'peserta.id')
             ->join('ujian_cakap_digital', 'ujian_cakap_digital.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesCakapDigital->pluck('peserta_id'))
+            ->where('hasil_cakap_digital.event_id', $this->id_event)
+            ->where('ujian_cakap_digital.event_id', $this->id_event)
             ->select(
                 'peserta.*',
                 'hasil_cakap_digital.id as hasil_cakap_digital_id',

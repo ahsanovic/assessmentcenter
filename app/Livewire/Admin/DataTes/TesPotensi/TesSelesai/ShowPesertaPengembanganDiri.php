@@ -46,6 +46,8 @@ class ShowPesertaPengembanganDiri extends Component
         $data = Peserta::join('hasil_pengembangan_diri', 'hasil_pengembangan_diri.peserta_id', '=', 'peserta.id')
             ->join('ujian_pengembangan_diri', 'ujian_pengembangan_diri.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesPengembanganDiri->pluck('peserta_id'))
+            ->where('hasil_pengembangan_diri.event_id', $this->id_event)
+            ->where('ujian_pengembangan_diri.event_id', $this->id_event)
             ->select('peserta.*', 'hasil_pengembangan_diri.id as hasil_pengembangan_diri_id', 'hasil_pengembangan_diri.created_at as waktu_selesai', 'is_finished')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

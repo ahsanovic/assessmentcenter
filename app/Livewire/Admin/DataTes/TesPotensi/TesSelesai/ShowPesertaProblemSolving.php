@@ -44,8 +44,10 @@ class ShowPesertaProblemSolving extends Component
     public function render()
     {
         $data = Peserta::join('hasil_problem_solving', 'hasil_problem_solving.peserta_id', '=', 'peserta.id')
-            ->join('ujian_berpikir_kritis', 'ujian_berpikir_kritis.peserta_id', '=', 'peserta.id')
+            ->join('ujian_problem_solving', 'ujian_problem_solving.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesProblemSolving->pluck('peserta_id'))
+            ->where('hasil_problem_solving.event_id', $this->id_event)
+            ->where('ujian_problem_solving.event_id', $this->id_event)
             ->select('peserta.*', 'hasil_problem_solving.id as hasil_problem_solving_id', 'hasil_problem_solving.created_at as waktu_selesai', 'is_finished')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {

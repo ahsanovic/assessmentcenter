@@ -45,6 +45,7 @@ class ShowPesertaBerpikirKritis extends Component
     {
         $data = Peserta::join('ujian_berpikir_kritis', 'ujian_berpikir_kritis.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesBerpikirKritis->pluck('peserta_id'))
+            ->where('ujian_berpikir_kritis.event_id', $this->id_event)
             ->select('peserta.*', 'ujian_berpikir_kritis.is_finished', 'ujian_berpikir_kritis.id as ujian_berpikir_kritis_id', 'ujian_berpikir_kritis.created_at as mulai_tes')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
