@@ -66,7 +66,7 @@ class Index extends Component
             ->orderByDesc('id')
             ->paginate(10);
 
-        $option_event = Event::pluck('nama_event', 'id');
+        $option_event = Event::where('metode_tes_id', 1)->pluck('nama_event', 'id'); // 1 = metode assessment center
         $option_status = ['true' => 'aktif', 'false' => 'tidak aktif'];
 
         return view('livewire.admin.assessor.index', compact('data', 'option_event', 'option_status'));
