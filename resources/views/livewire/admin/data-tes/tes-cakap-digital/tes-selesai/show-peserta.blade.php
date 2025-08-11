@@ -88,7 +88,7 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_interpersonal_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
+                                                <button wire:click="deleteConfirmation('{{ $item->hasil_cakap_digital_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
                                                     Hapus
                                                 </button>
                                             @endif
