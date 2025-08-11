@@ -44,13 +44,13 @@ class Index extends Component
     {
         $data = Event::withCount('assessor', 'peserta')
             ->where('is_finished', 'false')
-            ->when($this->event, function($query) {
+            ->when($this->event, function ($query) {
                 $query->where('id', $this->event);
             })
-            ->when($this->jabatan_diuji, function($query,) {
+            ->when($this->jabatan_diuji, function ($query,) {
                 $query->where('jabatan_diuji_id', $this->jabatan_diuji);
             })
-            ->when($this->tgl_mulai, function($query) {
+            ->when($this->tgl_mulai, function ($query) {
                 $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
                 $query->where('tgl_mulai', $tgl_mulai);
             })
@@ -59,7 +59,7 @@ class Index extends Component
             ->paginate(10);
 
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-        $option_event = Event::pluck('nama_event', 'id');
+        $option_event = Event::where('metode_tes_id', 1)->pluck('nama_event', 'id'); // 1 = metode tes assessment center
 
         return view('livewire.admin.distribusi-peserta.index', compact('data', 'option_jabatan_diuji', 'option_event'));
     }
