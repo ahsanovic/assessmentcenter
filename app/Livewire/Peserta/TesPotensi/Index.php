@@ -13,9 +13,9 @@ class Index extends Component
 {
     public $pin_ujian;
 
-    #[Validate(['pin_ujian' => 'required'], message: [
-        'pin_ujian.required' => 'harus diisi',
-    ])]
+    // #[Validate(['pin_ujian' => 'required'], message: [
+    //     'pin_ujian.required' => 'harus diisi',
+    // ])]
 
     public function render()
     {
@@ -24,11 +24,16 @@ class Index extends Component
 
     public function submit()
     {
-        $this->validate();
+        // $this->validate();
         try {
             $pin = Event::whereId(Auth::user()->event_id)
-                        ->whereIsFinished('false')
-                        ->value('pin_ujian');
+                ->whereIsFinished('false')
+                ->value('pin_ujian');
+
+            if ($this->pin_ujian == null) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'PIN ujian harus diisi']);
+                return;
+            }
 
             if ($this->pin_ujian !== $pin) {
                 $this->dispatch('toast', ['type' => 'error', 'message' => 'PIN ujian salah']);

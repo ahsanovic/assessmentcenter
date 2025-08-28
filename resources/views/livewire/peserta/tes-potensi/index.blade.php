@@ -8,14 +8,22 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mt-3 justify-content-center">
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-md-6 col-lg-4">
                             <div class="mb-3">
-                                <form wire:submit="submit">
-                                    <input wire:model="pin_ujian" class="form-control form-control-lg @error('pin_ujian') is-invalid @enderror"
-                                        placeholder="masukkan PIN ujian" autofocus />
-                                        @error('pin_ujian')
-                                    <label class="error invalid-feedback">{{ $message }}</label>
-                                    @enderror
+                                <form wire:submit="submit" class="d-flex align-items-center gap-2">
+                                    <input
+                                        wire:model.live.debounce="pin_ujian"
+                                        class="form-control"
+                                        placeholder="masukkan PIN ujian"
+                                        autofocus
+                                    />
+                                    <button
+                                        wire.model="submit"
+                                        class="btn btn-success"
+                                        @disabled(strlen($pin_ujian) !== 4)
+                                    >
+                                        Masuk
+                                    </button>
                                 </form>
                             </div>
                         </div>
