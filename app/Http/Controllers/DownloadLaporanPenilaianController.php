@@ -19,34 +19,34 @@ class DownloadLaporanPenilaianController extends Controller
         $tte = TtdLaporan::where('is_active', 't')->first();
 
         $data = Event::with([
-                'peserta' => function ($query) use ($peserta) {
-                    $query->where('id', $peserta->id);
-                },
-                'nomorLaporan' => function ($query) use ($idEvent) {
-                    $query->where('event_id', $idEvent);
-                },
-                'hasilInterpersonal' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilKesadaranDiri' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilBerpikirKritis' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilProblemSolving' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilPengembanganDiri' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilKecerdasanEmosi' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-                'hasilMotivasiKomitmen' => function ($query) use ($peserta) {
-                    $query->where('peserta_id', $peserta->id);
-                },
-            ])
+            'peserta' => function ($query) use ($peserta) {
+                $query->where('id', $peserta->id);
+            },
+            'nomorLaporan' => function ($query) use ($idEvent) {
+                $query->where('event_id', $idEvent);
+            },
+            'hasilInterpersonal' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilKesadaranDiri' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilBerpikirKritis' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilProblemSolving' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilPengembanganDiri' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilKecerdasanEmosi' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+            'hasilMotivasiKomitmen' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
+        ])
             ->where('id', $idEvent)
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
@@ -73,14 +73,14 @@ class DownloadLaporanPenilaianController extends Controller
                 $query->where('id', $peserta->id);
             })
             ->firstOrFail();
-        
+
         foreach ($data->nomorLaporan as $nomorLaporan) {
             if ($nomorLaporan->tanggal == \Carbon\Carbon::parse($peserta->test_started_at)->format('d-m-Y')) {
                 $nomor_laporan = $nomorLaporan->nomor;
             }
         }
 
-        $pdf = Pdf::loadView('livewire.admin.data-tes.tes-selesai.download-pdf', [
+        $pdf = Pdf::loadView('livewire.admin.data-tes.tes-potensi.tes-selesai.download-pdf', [
             'peserta' => $peserta,
             'aspek_potensi' => $aspek_potensi,
             'data' => $data,
@@ -165,32 +165,32 @@ class DownloadLaporanPenilaianController extends Controller
                     $query->where('peserta_id', $peserta->id);
                 }
             ])
-            ->where('id', $idEvent)
-            ->whereHas('ujianInterpersonal', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKesadaranDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianBerpikirKritis', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianPengembanganDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianProblemSolving', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKecerdasanEmosi', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianMotivasiKomitmen', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('peserta', function ($query) use ($peserta) {
-                $query->where('id', $peserta->id);
-            })
-            ->first();
+                ->where('id', $idEvent)
+                ->whereHas('ujianInterpersonal', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianKesadaranDiri', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianBerpikirKritis', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianPengembanganDiri', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianProblemSolving', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianKecerdasanEmosi', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianMotivasiKomitmen', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('peserta', function ($query) use ($peserta) {
+                    $query->where('id', $peserta->id);
+                })
+                ->first();
 
             if (!$data) continue;
 
@@ -199,8 +199,8 @@ class DownloadLaporanPenilaianController extends Controller
                     $nomor_laporan = $nomorLaporan->nomor;
                 }
             }
-    
-            $pdf = Pdf::loadView('livewire.admin.data-tes.tes-selesai.download-pdf', [
+
+            $pdf = Pdf::loadView('livewire.admin.data-tes.tes-potensi.tes-selesai.download-pdf', [
                 'peserta' => $peserta,
                 'aspek_potensi' => $aspek_potensi,
                 'data' => $data,
@@ -214,7 +214,7 @@ class DownloadLaporanPenilaianController extends Controller
                 'capaian_level_berpikir_kritis' => capaianLevel($data->hasilBerpikirKritis[0]->level_total),
                 'capaian_level_kesadaran_diri' => capaianLevel($data->hasilKesadaranDiri[0]->level_total),
             ])->setPaper('A4', 'portrait');
-            
+
             $temp_folder = storage_path('app/private/laporan_temp');
             $filename = $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf';
             $pdf_path = $temp_folder . '/' . $filename;
