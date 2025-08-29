@@ -181,8 +181,16 @@
                                     class="nav-link">Model Soal</a>
                             </li>
                             <li class="nav-item">
-                                <a href="" wire:navigate
-                                    class="nav-link">Soal</a>
+                                <a href="{{ route('admin.soal-intelektual-subtes1') }}" wire:navigate
+                                    class="nav-link">Soal Sub Tes 1</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-intelektual-subtes2') }}" wire:navigate
+                                    class="nav-link">Soal Sub Tes 2</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-intelektual-subtes3') }}" wire:navigate
+                                    class="nav-link">Soal Sub Tes 3</a>
                             </li>
                         </ul>
                     </div>

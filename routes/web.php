@@ -5,8 +5,11 @@ use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadRekapController;
 use App\Http\Controllers\LogoutAdminController;
+use App\Http\Controllers\QuillController;
 use App\Http\Middleware\CheckExamPin;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // admin
 Route::prefix('bkdac')->group(function () {
@@ -223,6 +226,17 @@ Route::prefix('bkdac')->group(function () {
         Route::get('soal-cakap-digital/create', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.create');
         Route::get('soal-cakap-digital/{id}/edit', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.edit');
 
+        // soal intelektual
+        Route::get('soal-intelektual-subtes1', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Index::class)->name('admin.soal-intelektual-subtes1');
+        Route::get('soal-intelektual-subtes1/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Form::class)->name('admin.soal-intelektual-subtes1.create');
+        Route::get('soal-intelektual-subtes1/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Form::class)->name('admin.soal-intelektual-subtes1.edit');
+        Route::get('soal-intelektual-subtes2', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Index::class)->name('admin.soal-intelektual-subtes2');
+        Route::get('soal-intelektual-subtes2/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Form::class)->name('admin.soal-intelektual-subtes2.create');
+        Route::get('soal-intelektual-subtes2/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Form::class)->name('admin.soal-intelektual-subtes2.edit');
+        Route::get('soal-intelektual-subtes3', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Index::class)->name('admin.soal-intelektual-subtes3');
+        Route::get('soal-intelektual-subtes3/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.create');
+        Route::get('soal-intelektual-subtes3/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.edit');
+
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
         Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');
@@ -286,6 +300,16 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('kuesioner', \App\Livewire\Peserta\Kuesioner\Index::class)->name('peserta.kuesioner')->middleware(CheckExamPin::class);
         Route::get('hasil-nilai', \App\Livewire\Peserta\TesPotensi\HasilNilai::class)->name('peserta.tes-potensi.hasil-nilai')->middleware(CheckExamPin::class);
     });
+
+    // tes intelektual
+    // Route::prefix('tes-intelektual')->group(function () {
+    //     Route::get('/', \App\Livewire\Peserta\TesIntelektual\Index::class)->name('peserta.tes-intelektual')->middleware(CheckExamPin::class);
+    //     Route::get('home', \App\Livewire\Peserta\TesIntelektual\Dashboard::class)->name('peserta.tes-intelektual.home')->middleware(CheckExamPin::class);
+    //     Route::get('subtes1/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes1::class)->name('peserta.tes-intelektual.subtes1')->middleware(CheckExamPin::class);
+    //     Route::get('subtes2/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes2::class)->name('peserta.tes-intelektual.subtes2')->middleware(CheckExamPin::class);
+    //     Route::get('subtes3/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes3::class)->name('peserta.tes-intelektual.subtes3')->middleware(CheckExamPin::class);
+    //     Route::get('hasil-nilai', \App\Livewire\Peserta\TesIntelektual\HasilNilai::class)->name('peserta.tes-intelektual.hasil-nilai')->middleware(CheckExamPin::class);
+    // });
 
     // tes cakap digital
     Route::prefix('tes-cakap-digital')->group(function () {

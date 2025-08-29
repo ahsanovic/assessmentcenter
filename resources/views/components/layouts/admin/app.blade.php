@@ -43,6 +43,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    @stack('styles')
 </head>
 
 <body>
