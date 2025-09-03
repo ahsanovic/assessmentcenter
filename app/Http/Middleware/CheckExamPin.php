@@ -26,6 +26,14 @@ class CheckExamPin
             'tes-potensi/kesadaran-diri/*',
             'tes-potensi/kuesioner',
             'tes-potensi/hasil-nilai',
+            'tes-cakap-digital/home',
+            'tes-cakap-digital/ujian/*',
+            'tes-cakap-digital/hasil',
+            'tes-intelektual/home',
+            'tes-intelektual/subtes1/*',
+            'tes-intelektual/subtes2/*',
+            'tes-intelektual/subtes3/*',
+            'tes-intelektual/hasil-nilai',
         ];
 
         if (session()->has('exam_pin')) {
@@ -36,14 +44,15 @@ class CheckExamPin
             }
 
             // Jika mencoba mengakses halaman selain home, redirect ke home
-            return redirect()->route('peserta.tes-potensi.home');
+            $prefix = $request->segment(1);
+            return redirect()->route("peserta.$prefix.home");
         }
 
-        if ($request->is('tes-potensi')) {
+        if ($request->is('tes-potensi') || $request->is('tes-intelektual') || $request->is('tes-cakap-digital')) {
             return $next($request);
         }
 
-        return redirect()->route('peserta.tes-potensi');
+        $prefix = $request->segment(1);
+        return redirect()->route("peserta.$prefix");
     }
-
 }

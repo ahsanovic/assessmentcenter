@@ -24,7 +24,17 @@
                                 @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $item->jenis_tes === 1 ? 'Tes Potensi' : 'Tes Literasi Digital & Emerging Skill' }}</td>
+                                        <td>
+                                            {{ match ($item->jenis_tes) {
+                                                    1 => 'Tes Potensi',
+                                                    2 => 'Tes Literasi Digital & Emerging Skill',
+                                                    3 => 'Tes Intelektual - Sub Tes 1',
+                                                    4 => 'Tes Intelektual - Sub Tes 2',
+                                                    5 => 'Tes Intelektual - Sub Tes 3',
+                                                    default => ''
+                                                }
+                                            }}
+                                        </td>
                                         <td>{{ $item->waktu }} menit</td>
                                         <td>
                                             @if ($item->is_active == 'true')

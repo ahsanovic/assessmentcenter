@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('peserta.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Tes Cakap Digital'],
+        ['url' => null, 'title' => 'Tes Intelektual'],
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">

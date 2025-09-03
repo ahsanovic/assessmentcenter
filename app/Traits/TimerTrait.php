@@ -4,6 +4,9 @@ namespace App\Traits;
 
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\Intelektual\UjianIntelektualSubTes1;
+use App\Models\Intelektual\UjianIntelektualSubTes2;
+use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
@@ -41,7 +44,49 @@ trait TimerTrait
             case 'Cakap Digital':
                 $this->_timerCakapDigital();
                 break;
+            case 'Intelektual Sub Tes 1':
+                $this->_timerIntelektualSubTes1();
+                break;
+            case 'Intelektual Sub Tes 2':
+                $this->_timerIntelektualSubTes2();
+                break;
+            case 'Intelektual Sub Tes 3':
+                $this->_timerIntelektualSubTes3();
+                break;
         }
+    }
+
+    protected function _timerIntelektualSubTes1()
+    {
+        $first_test = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
+    }
+
+    protected function _timerIntelektualSubTes2()
+    {
+        $first_test = UjianIntelektualSubTes2::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
+    }
+
+    protected function _timerIntelektualSubTes3()
+    {
+        $first_test = UjianIntelektualSubTes3::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($first_test) {
+            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerCakapDigital()

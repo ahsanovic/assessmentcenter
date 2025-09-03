@@ -5,11 +5,8 @@ use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadRekapController;
 use App\Http\Controllers\LogoutAdminController;
-use App\Http\Controllers\QuillController;
 use App\Http\Middleware\CheckExamPin;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 // admin
 Route::prefix('bkdac')->group(function () {
@@ -302,14 +299,13 @@ Route::middleware(['auth:peserta'])->group(function () {
     });
 
     // tes intelektual
-    // Route::prefix('tes-intelektual')->group(function () {
-    //     Route::get('/', \App\Livewire\Peserta\TesIntelektual\Index::class)->name('peserta.tes-intelektual')->middleware(CheckExamPin::class);
-    //     Route::get('home', \App\Livewire\Peserta\TesIntelektual\Dashboard::class)->name('peserta.tes-intelektual.home')->middleware(CheckExamPin::class);
-    //     Route::get('subtes1/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes1::class)->name('peserta.tes-intelektual.subtes1')->middleware(CheckExamPin::class);
-    //     Route::get('subtes2/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes2::class)->name('peserta.tes-intelektual.subtes2')->middleware(CheckExamPin::class);
-    //     Route::get('subtes3/{id}', \App\Livewire\Peserta\TesIntelektual\SubTes3::class)->name('peserta.tes-intelektual.subtes3')->middleware(CheckExamPin::class);
-    //     Route::get('hasil-nilai', \App\Livewire\Peserta\TesIntelektual\HasilNilai::class)->name('peserta.tes-intelektual.hasil-nilai')->middleware(CheckExamPin::class);
-    // });
+    Route::prefix('tes-intelektual')->group(function () {
+        Route::get('/', \App\Livewire\Peserta\TesIntelektual\Index::class)->name('peserta.tes-intelektual')->middleware(CheckExamPin::class);
+        Route::get('home', \App\Livewire\Peserta\TesIntelektual\Dashboard::class)->name('peserta.tes-intelektual.home')->middleware(CheckExamPin::class);
+        Route::get('subtes1/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes1::class)->name('peserta.tes-intelektual.subtes1')->middleware(CheckExamPin::class);
+        Route::get('subtes2/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes2::class)->name('peserta.tes-intelektual.subtes2')->middleware(CheckExamPin::class);
+        Route::get('subtes3/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes3::class)->name('peserta.tes-intelektual.subtes3')->middleware(CheckExamPin::class);
+    });
 
     // tes cakap digital
     Route::prefix('tes-cakap-digital')->group(function () {

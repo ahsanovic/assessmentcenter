@@ -2,6 +2,10 @@
 
 use App\Models\ActivityLog;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
+use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\Intelektual\UjianIntelektualSubTes1;
+use App\Models\Intelektual\UjianIntelektualSubTes2;
+use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
@@ -14,7 +18,7 @@ use Ulid\Ulid;
 if (!function_exists('countJpm')) {
     function countJpm($capaian_level)
     {
-        $jpm = array_sum(array_map('floatval', $capaian_level)) / (3 * 7);
+        $jpm = array_sum(array_map('floatval', $capaian_level)) / (3 * 8);
         return $jpm;
     }
 }
@@ -121,6 +125,38 @@ if (!function_exists('getFinishedTes')) {
                 ->where('is_finished', 'true')
                 ->exists(),
             'tes_pengembangan_diri' => UjianPengembanganDiri::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (!function_exists('getFinishedTesCakapDigital')) {
+    function getFinishedTesCakapDigital($event_id, $peserta_id)
+    {
+        return [
+            'tes_cakap_digital' => UjianCakapDigital::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (!function_exists('getFinishedTesIntelektual')) {
+    function getFinishedTesIntelektual($event_id, $peserta_id)
+    {
+        return [
+            'sub_tes_1' => UjianIntelektualSubTes1::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'sub_tes_2' => UjianIntelektualSubTes2::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+            'sub_tes_3' => UjianIntelektualSubTes3::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
                 ->where('is_finished', 'true')
                 ->exists(),

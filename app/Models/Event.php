@@ -6,6 +6,10 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\HasilCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\Intelektual\HasilIntelektual;
+use App\Models\Intelektual\UjianIntelektualSubTes1;
+use App\Models\Intelektual\UjianIntelektualSubTes2;
+use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
@@ -118,6 +122,75 @@ class Event extends Model
     public function pesertaIdTesCakapDigital()
     {
         return $this->ujianCakapDigital()->select('peserta_id')->distinct();
+    }
+
+    // ujian intelektual subtes 1
+    public function ujianIntelektualSubTes1()
+    {
+        return $this->hasMany(UjianIntelektualSubTes1::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesIntelektualSubTes1()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianIntelektualSubTes1::class,    // Model perantara (UjianIntelektualSubTes1)
+            'event_id',                   // Foreign key di UjianIntelektualSubTes1
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianIntelektualSubTes1
+        );
+    }
+
+    public function pesertaIdTesIntelektualSubTes1()
+    {
+        return $this->ujianIntelektualSubTes1()->select('peserta_id')->distinct();
+    }
+
+    // ujian intelektual subtes 2
+    public function ujianIntelektualSubTes2()
+    {
+        return $this->hasMany(UjianIntelektualSubTes2::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesIntelektualSubTes2()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianIntelektualSubTes2::class,    // Model perantara (UjianIntelektualSubTes2)
+            'event_id',                   // Foreign key di UjianIntelektualSubTes2
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianIntelektualSubTes2
+        );
+    }
+
+    public function pesertaIdTesIntelektualSubTes2()
+    {
+        return $this->ujianIntelektualSubTes2()->select('peserta_id')->distinct();
+    }
+
+    // ujian intelektual subtes 3
+    public function ujianIntelektualSubTes3()
+    {
+        return $this->hasMany(UjianIntelektualSubTes3::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesIntelektualSubTes3()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            UjianIntelektualSubTes3::class,    // Model perantara (UjianIntelektualSubTes3)
+            'event_id',                   // Foreign key di UjianIntelektualSubTes3
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianIntelektualSubTes3
+        );
+    }
+
+    public function pesertaIdTesIntelektualSubTes3()
+    {
+        return $this->ujianIntelektualSubTes3()->select('peserta_id')->distinct();
     }
 
     // ujian interpersonal
@@ -303,6 +376,29 @@ class Event extends Model
     public function pesertaIdHasilCakapDigital()
     {
         return $this->hasilCakapDigital()->select('peserta_id')->distinct();
+    }
+
+    // hasil intelektual
+    public function hasilIntelektual()
+    {
+        return $this->hasMany(HasilIntelektual::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilIntelektual()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilIntelektual::class,    // Model perantara (UjianIntelektual)
+            'event_id',                   // Foreign key di UjianIntelektual
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianIntelektual
+        );
+    }
+
+    public function pesertaIdHasilIntelektual()
+    {
+        return $this->hasilIntelektual()->select('peserta_id')->distinct();
     }
 
     // hasil interpersonal

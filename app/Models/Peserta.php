@@ -6,6 +6,10 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\HasilCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\Intelektual\HasilIntelektual;
+use App\Models\Intelektual\UjianIntelektualSubTes1;
+use App\Models\Intelektual\UjianIntelektualSubTes2;
+use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\HasilInterpersonal;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
@@ -107,6 +111,21 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->hasOne(UjianCakapDigital::class, 'peserta_id');
     }
 
+    public function ujianIntelektualSubTes1()
+    {
+        return $this->hasOne(UjianIntelektualSubTes1::class, 'peserta_id');
+    }
+
+    public function ujianIntelektualSubTes2()
+    {
+        return $this->hasOne(UjianIntelektualSubTes2::class, 'peserta_id');
+    }
+
+    public function ujianIntelektualSubTes3()
+    {
+        return $this->hasOne(UjianIntelektualSubTes3::class, 'peserta_id');
+    }
+
     public function ujianInterpersonal()
     {
         return $this->hasOne(UjianInterpersonal::class, 'peserta_id');
@@ -150,6 +169,11 @@ class Peserta extends Model implements AuthenticatableContract
     public function hasilInterpersonal()
     {
         return $this->hasOne(HasilInterpersonal::class, 'peserta_id');
+    }
+
+    public function hasilIntelektual()
+    {
+        return $this->hasOne(HasilIntelektual::class, 'peserta_id');
     }
 
     public function hasilKesadaranDiri()

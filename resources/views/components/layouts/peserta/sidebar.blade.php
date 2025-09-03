@@ -28,25 +28,36 @@
                 </li>
                 @endif
                 <li class="nav-item nav-category">Menu Tes</li>
+                @php
+                    $event_id = auth()->guard('peserta')->user()->event_id;
+                    $peserta_id = auth()->guard('peserta')->user()->id;
+                @endphp
                 <li class="nav-item">
                     @php
-                        $event_id = auth()->guard('peserta')->user()->event_id;
-                        $peserta_id = auth()->guard('peserta')->user()->id;
-                        $data = getFinishedTes($event_id, $peserta_id);
-                        $test_started = collect($data)->contains(true);
+                        $data = getFinishedTesIntelektual($event_id, $peserta_id);
+                        $test_intelektual_started = collect($data)->contains(true);
                     @endphp
-                    <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate style="{{ $test_started ? 'pointer-events: none;' : ''}}">
+                    <a href="{{ route('peserta.tes-intelektual') }}" class="nav-link" wire:navigate style="{{ $test_intelektual_started ? 'pointer-events: none;' : '' }}">
+                        <i class="link-icon" data-feather="info"></i>
+                        <span class="link-title">Tes Intelektual</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    @php
+                        $data = getFinishedTes($event_id, $peserta_id);
+                        $test_potensi_started = collect($data)->contains(true);
+                    @endphp
+                    <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate style="{{ $test_potensi_started ? 'pointer-events: none;' : '' }}">
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     @php
-                        $event_id = auth()->guard('peserta')->user()->event_id;
-                        $peserta_id = auth()->guard('peserta')->user()->id;
-                        $test_started = collect($data)->contains(true);
+                        $data = getFinishedTesCakapDigital($event_id, $peserta_id);
+                        $test_cakap_digital_started = collect($data)->contains(true);
                     @endphp
-                    <a href="{{ route('peserta.tes-cakap-digital') }}" class="nav-link" wire:navigate style="{{ $test_started ? 'pointer-events: none;' : ''}}">
+                    <a href="{{ route('peserta.tes-cakap-digital') }}" class="nav-link" wire:navigate style="{{ $test_cakap_digital_started ? 'pointer-events: none;' : '' }}">
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Cakap Digital</span>
                     </a>

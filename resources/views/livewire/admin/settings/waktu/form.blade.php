@@ -19,6 +19,9 @@
                                         <option value="">-pilih-</option>
                                         <option value="1">Tes Potensi</option>
                                         <option value="2">Tes Literasi Digital & Emerging</option>
+                                        <option value="3">Tes Intelektual - Sub Tes 1</option>
+                                        <option value="4">Tes Intelektual - Sub Tes 2</option>
+                                        <option value="5">Tes Intelektual - Sub Tes 3</option>
                                     </select>
                                     @error('form.jenis_tes')
                                         <label class="error invalid-feedback">{{ $message }}</label>
