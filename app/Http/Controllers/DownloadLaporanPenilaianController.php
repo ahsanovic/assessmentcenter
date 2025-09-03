@@ -25,6 +25,9 @@ class DownloadLaporanPenilaianController extends Controller
             'nomorLaporan' => function ($query) use ($idEvent) {
                 $query->where('event_id', $idEvent);
             },
+            'hasilIntelektual' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
             'hasilInterpersonal' => function ($query) use ($peserta) {
                 $query->where('peserta_id', $peserta->id);
             },
@@ -48,6 +51,15 @@ class DownloadLaporanPenilaianController extends Controller
             },
         ])
             ->where('id', $idEvent)
+            ->whereHas('ujianIntelektualSubTes1', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianIntelektualSubTes2', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianIntelektualSubTes3', function ($query) {
+                $query->where('is_finished', 'true');
+            })
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
             })
@@ -85,14 +97,15 @@ class DownloadLaporanPenilaianController extends Controller
             'aspek_potensi' => $aspek_potensi,
             'data' => $data,
             'tte' => $tte,
-            'nomor_laporan' => $nomor_laporan ?? '',
-            'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
-            'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
-            'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
-            'capaian_level_problem_solving' => capaianLevel($data->hasilProblemSolving[0]->level_total),
-            'capaian_level_motivasi_komitmen' => capaianLevel($data->hasilMotivasiKomitmen[0]->level_total),
-            'capaian_level_berpikir_kritis' => capaianLevel($data->hasilBerpikirKritis[0]->level_total),
-            'capaian_level_kesadaran_diri' => capaianLevel($data->hasilKesadaranDiri[0]->level_total),
+            'nomor_laporan' => $nomor_laporan ?? null,
+            'capaian_level_intelektual' => capaianLevel(optional($data->hasilIntelektual->first())->level ?? null),
+            'capaian_level_interpersonal' => capaianLevel(optional($data->hasilInterpersonal->first())->level_total ?? null),
+            'capaian_level_kecerdasan_emosi' => capaianLevel(optional($data->hasilKecerdasanEmosi->first())->level_total ?? null),
+            'capaian_level_pengembangan_diri' => capaianLevel(optional($data->hasilPengembanganDiri->first())->level_total ?? null),
+            'capaian_level_problem_solving' => capaianLevel(optional($data->hasilProblemSolving->first())->level_total ?? null),
+            'capaian_level_motivasi_komitmen' => capaianLevel(optional($data->hasilMotivasiKomitmen->first())->level_total ?? null),
+            'capaian_level_berpikir_kritis' => capaianLevel(optional($data->hasilBerpikirKritis->first())->level_total ?? null),
+            'capaian_level_kesadaran_diri' => capaianLevel(optional($data->hasilKesadaranDiri->first())->level_total ?? null),
         ])->setPaper('A4', 'portrait');
 
         // return $pdf->download('report-' . $peserta->nip . '-' . $peserta->nama . '.pdf');
@@ -109,6 +122,15 @@ class DownloadLaporanPenilaianController extends Controller
             ->where('event_id', $idEvent)
             ->when($tanggal, function ($query) use ($tanggal) {
                 $query->whereDate('test_started_at', $tanggal);
+            })
+            ->whereHas('ujianIntelektualSubTes1', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianIntelektualSubTes2', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianIntelektualSubTes3', function ($query) {
+                $query->where('is_finished', 'true');
             })
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
@@ -143,6 +165,9 @@ class DownloadLaporanPenilaianController extends Controller
                 'nomorLaporan' => function ($query) use ($idEvent) {
                     $query->where('event_id', $idEvent);
                 },
+                'hasilIntelektual' => function ($query) use ($peserta) {
+                    $query->where('peserta_id', $peserta->id);
+                },
                 'hasilInterpersonal' => function ($query) use ($peserta) {
                     $query->where('peserta_id', $peserta->id);
                 },
@@ -166,6 +191,15 @@ class DownloadLaporanPenilaianController extends Controller
                 }
             ])
                 ->where('id', $idEvent)
+                ->whereHas('ujianIntelektualSubTes1', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianIntelektualSubTes2', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
+                ->whereHas('ujianIntelektualSubTes3', function ($query) {
+                    $query->where('is_finished', 'true');
+                })
                 ->whereHas('ujianInterpersonal', function ($query) {
                     $query->where('is_finished', 'true');
                 })
@@ -205,14 +239,15 @@ class DownloadLaporanPenilaianController extends Controller
                 'aspek_potensi' => $aspek_potensi,
                 'data' => $data,
                 'tte' => $tte,
-                'nomor_laporan' => $nomor_laporan,
-                'capaian_level_interpersonal' => capaianLevel($data->hasilInterpersonal[0]->level_total),
-                'capaian_level_kecerdasan_emosi' => capaianLevel($data->hasilKecerdasanEmosi[0]->level_total),
-                'capaian_level_pengembangan_diri' => capaianLevel($data->hasilPengembanganDiri[0]->level_total),
-                'capaian_level_problem_solving' => capaianLevel($data->hasilProblemSolving[0]->level_total),
-                'capaian_level_motivasi_komitmen' => capaianLevel($data->hasilMotivasiKomitmen[0]->level_total),
-                'capaian_level_berpikir_kritis' => capaianLevel($data->hasilBerpikirKritis[0]->level_total),
-                'capaian_level_kesadaran_diri' => capaianLevel($data->hasilKesadaranDiri[0]->level_total),
+                'nomor_laporan' => $nomor_laporan ?? null,
+                'capaian_level_intelektual' => capaianLevel(optional($data->hasilIntelektual->first())->level ?? null),
+                'capaian_level_interpersonal' => capaianLevel(optional($data->hasilInterpersonal->first())->level_total ?? null),
+                'capaian_level_kecerdasan_emosi' => capaianLevel(optional($data->hasilKecerdasanEmosi->first())->level_total ?? null),
+                'capaian_level_pengembangan_diri' => capaianLevel(optional($data->hasilPengembanganDiri->first())->level_total ?? null),
+                'capaian_level_problem_solving' => capaianLevel(optional($data->hasilProblemSolving->first())->level_total ?? null),
+                'capaian_level_motivasi_komitmen' => capaianLevel(optional($data->hasilMotivasiKomitmen->first())->level_total ?? null),
+                'capaian_level_berpikir_kritis' => capaianLevel(optional($data->hasilBerpikirKritis->first())->level_total ?? null),
+                'capaian_level_kesadaran_diri' => capaianLevel(optional($data->hasilKesadaranDiri->first())->level_total ?? null),
             ])->setPaper('A4', 'portrait');
 
             $temp_folder = storage_path('app/private/laporan_temp');

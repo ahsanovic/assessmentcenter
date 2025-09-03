@@ -308,6 +308,10 @@
                     </i>
                 </td>
                 @switch($item->alatTes->alat_tes)
+                    @case('Intelektual')
+                        <td style="text-align: center">{{ $capaian_level_intelektual ?? '-' }}</td>
+                        <td style="text-align: center">{{ $data->hasilIntelektual[0]->kategori ?? '-' }}</td>
+                        @break
                     @case('Kemampuan Interpersonal')
                         <td style="text-align: center">{{ $capaian_level_interpersonal ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilInterpersonal[0]->kualifikasi_total ?? '-' }}</td>
@@ -344,6 +348,7 @@
             <td style="text-align: center">
                 @php
                     $capaian_level = [
+                        $capaian_level_intelektual,
                         $capaian_level_interpersonal,
                         $capaian_level_kecerdasan_emosi,
                         $capaian_level_pengembangan_diri,
@@ -388,6 +393,13 @@
                 <div class="deskripsi-title">{{ $item->alatTes->alat_tes }}</div>
                 <p>
                     @switch($item->alatTes->alat_tes)
+                        @case('Intelektual')
+                            <ul class="custom-list">
+                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_1 ?? '-' }}</li>
+                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_2 ?? '-' }}</li>
+                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_3 ?? '-' }}</li>
+                            </ul>
+                            @break
                         @case('Kemampuan Interpersonal')
                             <ul class="custom-list">
                                 <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}</li>
@@ -454,6 +466,8 @@
         </tr>
         @endforeach
     </table>
+
+    <div class="page-break"></div>
     
     <!-- Tanda Tangan -->
     <div class="ttd-section">
