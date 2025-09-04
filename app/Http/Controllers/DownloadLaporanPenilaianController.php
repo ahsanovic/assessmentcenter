@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Peserta;
+use App\Models\RefAlatTes;
 use App\Models\Settings;
 use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,7 +16,7 @@ class DownloadLaporanPenilaianController extends Controller
     public function createPdf($idEvent, $nip)
     {
         $peserta = Peserta::where('nip', $nip)->firstOrFail();
-        $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
+        $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
         $tte = TtdLaporan::where('is_active', 't')->first();
 
         $data = Event::with([
@@ -116,7 +117,7 @@ class DownloadLaporanPenilaianController extends Controller
     {
         $tanggal = request()->query('tanggalTes');
 
-        $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
+        $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
         $tte = TtdLaporan::where('is_active', 't')->first();
         $all_peserta = Peserta::with('event')
             ->where('event_id', $idEvent)

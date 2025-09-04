@@ -302,12 +302,12 @@
             <tr>
                 <td>{{  $no++ }}</td>
                 <td>
-                    {{ $item->alatTes->alat_tes }} <br/>
+                    {{ $item->alat_tes }} <br/>
                     <i>
-                    ({{ $item->alatTes->definisi_aspek_potensi }})
+                    ({{ $item->definisi_aspek_potensi }})
                     </i>
                 </td>
-                @switch($item->alatTes->alat_tes)
+                @switch($item->alat_tes)
                     @case('Intelektual')
                         <td style="text-align: center">{{ $capaian_level_intelektual ?? '-' }}</td>
                         <td style="text-align: center">{{ $data->hasilIntelektual[0]->kategori ?? '-' }}</td>
@@ -390,9 +390,9 @@
         <tr>
             <td width="20">{{ $no++ }}</td>
             <td>
-                <div class="deskripsi-title">{{ $item->alatTes->alat_tes }}</div>
+                <div class="deskripsi-title">{{ $item->alat_tes }}</div>
                 <p>
-                    @switch($item->alatTes->alat_tes)
+                    @switch($item->alat_tes)
                         @case('Intelektual')
                             <ul class="custom-list">
                                 <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_1 ?? '-' }}</li>
