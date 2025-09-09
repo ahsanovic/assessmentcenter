@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\DataTes\TesPotensi\TesSelesai;
 
 use App\Models\Event;
 use App\Models\Peserta;
-use App\Models\Settings;
+use App\Models\RefAlatTes;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -30,6 +30,9 @@ class ShowReport extends Component
             },
             'nomorLaporan' => function ($query) use ($id_event) {
                 $query->where('event_id', $id_event);
+            },
+            'hasilIntelektual' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
             },
             'hasilInterpersonal' => function ($query) use ($peserta) {
                 $query->where('peserta_id', $peserta->id);
@@ -83,11 +86,12 @@ class ShowReport extends Component
 
     public function render()
     {
-        $aspek_potensi = Settings::with('alatTes')->orderBy('urutan')->get();
+        $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
 
         return view('livewire.admin.data-tes.tes-potensi.tes-selesai.show-report', [
             'peserta' => $this->peserta,
             'aspek_potensi' => $aspek_potensi,
+            'capaian_level_intelektual' => capaianLevel($this->data->hasilIntelektual[0]->level),
             'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
             'capaian_level_kecerdasan_emosi' => capaianLevel($this->data->hasilKecerdasanEmosi[0]->level_total),
             'capaian_level_pengembangan_diri' => capaianLevel($this->data->hasilPengembanganDiri[0]->level_total),

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefAlatTes;
-use App\Models\Settings;
 use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use ZipArchive;
@@ -52,15 +51,15 @@ class DownloadLaporanPenilaianController extends Controller
             },
         ])
             ->where('id', $idEvent)
-            ->whereHas('ujianIntelektualSubTes1', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianIntelektualSubTes2', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianIntelektualSubTes3', function ($query) {
-                $query->where('is_finished', 'true');
-            })
+            // ->whereHas('ujianIntelektualSubTes1', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
+            // ->whereHas('ujianIntelektualSubTes2', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
+            // ->whereHas('ujianIntelektualSubTes3', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
             })
@@ -85,7 +84,7 @@ class DownloadLaporanPenilaianController extends Controller
             ->whereHas('peserta', function ($query) use ($peserta) {
                 $query->where('id', $peserta->id);
             })
-            ->firstOrFail();
+            ->first();
 
         foreach ($data->nomorLaporan as $nomorLaporan) {
             if ($nomorLaporan->tanggal == \Carbon\Carbon::parse($peserta->test_started_at)->format('d-m-Y')) {
@@ -124,15 +123,15 @@ class DownloadLaporanPenilaianController extends Controller
             ->when($tanggal, function ($query) use ($tanggal) {
                 $query->whereDate('test_started_at', $tanggal);
             })
-            ->whereHas('ujianIntelektualSubTes1', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianIntelektualSubTes2', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianIntelektualSubTes3', function ($query) {
-                $query->where('is_finished', 'true');
-            })
+            // ->whereHas('ujianIntelektualSubTes1', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
+            // ->whereHas('ujianIntelektualSubTes2', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
+            // ->whereHas('ujianIntelektualSubTes3', function ($query) {
+            //     $query->where('is_finished', 'true');
+            // })
             ->whereHas('ujianInterpersonal', function ($query) {
                 $query->where('is_finished', 'true');
             })
@@ -192,15 +191,15 @@ class DownloadLaporanPenilaianController extends Controller
                 }
             ])
                 ->where('id', $idEvent)
-                ->whereHas('ujianIntelektualSubTes1', function ($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianIntelektualSubTes2', function ($query) {
-                    $query->where('is_finished', 'true');
-                })
-                ->whereHas('ujianIntelektualSubTes3', function ($query) {
-                    $query->where('is_finished', 'true');
-                })
+                // ->whereHas('ujianIntelektualSubTes1', function ($query) {
+                //     $query->where('is_finished', 'true');
+                // })
+                // ->whereHas('ujianIntelektualSubTes2', function ($query) {
+                //     $query->where('is_finished', 'true');
+                // })
+                // ->whereHas('ujianIntelektualSubTes3', function ($query) {
+                //     $query->where('is_finished', 'true');
+                // })
                 ->whereHas('ujianInterpersonal', function ($query) {
                     $query->where('is_finished', 'true');
                 })

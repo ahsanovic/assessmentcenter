@@ -59,6 +59,7 @@ class DownloadRekapController extends Controller
                 'Jabatan Saat Ini' => $peserta->jabatan,
                 'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
+                'Intelektual' => $peserta->hasilIntelektual->level ?? '-',
                 'Interpersonal' => $peserta->hasilInterpersonal->level_total ?? '-',
                 'Kesadaran Diri' => $peserta->hasilKesadaranDiri->level_total ?? '-',
                 'Berpikir Kritis dan Strategis' => $peserta->hasilBerpikirKritis->level_total ?? '-',
@@ -66,6 +67,7 @@ class DownloadRekapController extends Controller
                 'EQ' => $peserta->hasilKecerdasanEmosi->level_total ?? '-',
                 'Belajar Cepat dan Pengembangan Diri' => $peserta->hasilPengembanganDiri->level_total ?? '-',
                 'Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->level_total ?? '-',
+                'Intelektual (Capaian Level)' => capaianLevel(optional($peserta->hasilIntelektual)->level) ?? '-',
                 'Interpersonal (Capaian Level)' => capaianLevel($peserta->hasilInterpersonal->level_total) ?? '-',
                 'Kesadaran Diri (Capaian Level)' => capaianLevel($peserta->hasilKesadaranDiri->level_total) ?? '-',
                 'Berpikir Kritis dan Strategis (Capaian Level)' => capaianLevel($peserta->hasilBerpikirKritis->level_total) ?? '-',
@@ -75,6 +77,9 @@ class DownloadRekapController extends Controller
                 'Motivasi Komitmen (Capaian Level)' => capaianLevel($peserta->hasilMotivasiKomitmen->level_total) ?? '-',
                 'JPM Potensi' => $peserta->nilaiJpm->jpm . '%' ?? '-',
                 'Kesimpulan' => $peserta->nilaiJpm->kategori ?? '-',
+                'Deskripsi Intelektual' => ($peserta->hasilIntelektual->uraian_potensi_subtes_1 ?? '-') .
+                    ($peserta->hasilIntelektual->uraian_potensi_subtes_2 ?? '-') .
+                    ($peserta->hasilIntelektual->uraian_potensi_subtes_3 ?? '-'),
                 'Deskripsi Interpersonal' => (json_decode($peserta->hasilInterpersonal->uraian_potensi_1)->uraian_potensi ?? '-') .
                     (json_decode($peserta->hasilInterpersonal->uraian_potensi_2)->uraian_potensi ?? '-') .
                     (json_decode($peserta->hasilInterpersonal->uraian_potensi_3)->uraian_potensi ?? '-') .

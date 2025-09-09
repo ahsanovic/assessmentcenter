@@ -243,8 +243,8 @@
     </div>
     
     <div class="nomor-surat">
-        {{-- NOMOR : {{ $data->nomorLaporan[0]->nomor ?? '' }} --}}
-        NOMOR : {{ $nomor_laporan ?? '-' }}
+        NOMOR : {{ $data->nomorLaporan[0]->nomor ?? '' }}
+        {{-- NOMOR : {{ $nomor_laporan ?? '-' }} --}}
     </div>
     
     <!-- Tujuan -->
@@ -427,6 +427,7 @@
                             </ul>
                             @break
                         @case('Problem Solving')
+                            @if ($data->hasilProblemSolving[0]->uraian_potensi == null)
                             <ul class="custom-list">
                                 <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_1)->deskripsi ?? '-' }}</li>
                                 <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_2)->deskripsi ?? '-' }}</li>
@@ -437,11 +438,15 @@
                                 <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_7)->deskripsi ?? '-' }}</li>
                                 <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_8)->deskripsi ?? '-' }}</li>
                             </ul>
+                            @else
+                            {{ $data->hasilProblemSolving[0]->uraian_potensi ?? '-' }}
+                            @endif
                             @break
                         @case('Motivasi dan Komitmen')
                             {{ $data->hasilMotivasiKomitmen[0]->deskripsi ?? '-' }}
                             @break
                         @case('Berpikir Kritis dan Strategis')
+                            @if ($data->hasilProblemSolving[0]->uraian_potensi == null)
                             <ul class="custom-list">
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_1)->deskripsi ?? '-' }}</li>
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_2)->deskripsi ?? '-' }}</li>
@@ -452,6 +457,9 @@
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_7)->deskripsi ?? '-' }}</li>
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_8)->deskripsi ?? '-' }}</li>
                             </ul>
+                            @else
+                            {{ $data->hasilBerpikirKritis[0]->uraian_potensi ?? '-' }}
+                            @endif
                             @break
                         @case('Kesadaran Diri')
                             <ul class="custom-list">
@@ -467,8 +475,6 @@
         @endforeach
     </table>
 
-    <div class="page-break"></div>
-    
     <!-- Tanda Tangan -->
     <div class="ttd-section">
         <div class="ttd-box">

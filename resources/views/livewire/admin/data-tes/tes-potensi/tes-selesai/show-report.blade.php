@@ -61,12 +61,16 @@
                                     <tr>
                                         <td>{{ $no++ }}</td>
                                         <td class="text-wrap">
-                                            {{ $item->alatTes->alat_tes }} <br/>
+                                            {{ $item->alat_tes }} <br/>
                                             <i>
-                                            ({{ $item->alatTes->definisi_aspek_potensi }})
+                                            ({{ $item->definisi_aspek_potensi }})
                                             </i>
                                         </td>
-                                        @switch($item->alatTes->alat_tes)
+                                        @switch($item->alat_tes)
+                                            @case('Intelektual')
+                                                <td>{{ $capaian_level_intelektual ?? '-' }}</td>
+                                                <td>{{ $data->hasilIntelektual[0]->kategori ?? '-' }}</td>
+                                            @break
                                             @case('Kemampuan Interpersonal')
                                                 <td>{{ $data->hasilInterpersonal[0]->level_total ?? '-' }}</td>
                                                 <td>{{ $data->hasilInterpersonal[0]->kualifikasi_total ?? '-' }}</td>
@@ -104,6 +108,7 @@
                                         <td>
                                             @php
                                                 $capaian_level = [
+                                                    $capaian_level_intelektual,
                                                     $capaian_level_interpersonal,
                                                     $capaian_level_kecerdasan_emosi,
                                                     $capaian_level_pengembangan_diri,
@@ -145,55 +150,82 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td class="text-wrap">
-                                        <strong>{{ $item->alatTes->alat_tes }}</strong> <br/>
-                                        @switch($item->alatTes->alat_tes)
+                                        <strong>{{ $item->alat_tes }}</strong> <br/>
+                                        @switch($item->alat_tes)
+                                            @case('Intelektual')
+                                            <ul>
+                                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_1 ?? '-' }}</li>
+                                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_2 ?? '-' }}</li>
+                                                <li>{{ $data->hasilIntelektual[0]->uraian_potensi_subtes_3 ?? '-' }}</li>
+                                            </ul>
+                                            @break
                                             @case('Kemampuan Interpersonal')
-                                                {{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_5)->uraian_potensi ?? '-' }}
+                                                <ul>
+                                                    <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilInterpersonal[0]->uraian_potensi_5)->uraian_potensi ?? '-' }}</li>
+                                                </ul>
                                                 @break
                                             @case('Kecerdasan Emosi')
-                                                {{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}
+                                                <ul>
+                                                    <li>{{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilKecerdasanEmosi[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}</li>
+                                                </ul>
                                                 @break
                                             @case('Belajar Cepat dan Pengembangan Diri')
-                                                {{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_5)->uraian_potensi ?? '-' }}
+                                                <ul>
+                                                    <li>{{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_4)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilPengembanganDiri[0]->uraian_potensi_5)->uraian_potensi ?? '-' }}</li>
+                                                </ul>
                                                 @break
                                             @case('Problem Solving')
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_1)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_2)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_3)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_4)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_5)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_6)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_7)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_8)->deskripsi ?? '-' }}
+                                                @if ($data->hasilproblemSolving[0]->uraian_potensi == null)
+                                                    <ul>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_1)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_2)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_3)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_4)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_5)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_6)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_7)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilProblemSolving[0]->uraian_potensi_8)->deskripsi ?? '-' }}</li>
+                                                    </ul>
+                                                @else
+                                                    {{ $data->hasilProblemSolving[0]->uraian_potensi ?? '-' }}                                                
+                                                @endif
                                                 @break
                                             @case('Motivasi dan Komitmen')
                                                 {{ $data->hasilMotivasiKomitmen[0]->deskripsi ?? '-' }}
                                                 @break
                                             @case('Berpikir Kritis dan Strategis')
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_1)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_2)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_3)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_4)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_5)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_6)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_7)->deskripsi ?? '-' }}
-                                                {{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_8)->deskripsi ?? '-' }}
+                                                @if ($data->hasilBerpikirKritis[0]->uraian_potensi == null)
+                                                    <ul>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_1)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_2)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_3)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_4)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_5)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_6)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_7)->deskripsi ?? '-' }}</li>
+                                                        <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_8)->deskripsi ?? '-' }}</li>
+                                                    </ul>
+                                                @else
+                                                    {{ $data->hasilBerpikirKritis[0]->uraian_potensi ?? '-' }}                                                
+                                                @endif
                                                 @break
                                             @case('Kesadaran Diri')
-                                                {{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}
-                                                {{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}
+                                                <ul>
+                                                    <li>{{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_1)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_2)->uraian_potensi ?? '-' }}</li>
+                                                    <li>{{ json_decode($data->hasilKesadaranDiri[0]->uraian_potensi_3)->uraian_potensi ?? '-' }}</li>
+                                                </ul>
                                                 @break
                                             @default
                                         @endswitch
