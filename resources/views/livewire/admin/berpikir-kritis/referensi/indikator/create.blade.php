@@ -47,7 +47,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="potensi" class="form-label">Kualifikasi (Rendah)</label>
+                                    <label for="potensi" class="form-label">Kualifikasi (Kurang)</label>
                                     <textarea 
                                         class="form-control @error('kualifikasi_deskripsi.0.deskripsi') is-invalid @enderror"
                                         id="potensi"
@@ -63,7 +63,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="potensi" class="form-label">Kualifikasi (Sedang)</label>
+                                    <label for="potensi" class="form-label">Kualifikasi (Cukup)</label>
                                     <textarea
                                         class="form-control @error('kualifikasi_deskripsi.1.deskripsi') is-invalid @enderror"
                                         id="potensi"
@@ -79,7 +79,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="potensi" class="form-label">Kualifikasi (Tinggi)</label>
+                                    <label for="potensi" class="form-label">Kualifikasi (Baik)</label>
                                     <textarea
                                         class="form-control @error('kualifikasi_deskripsi.2.deskripsi') is-invalid @enderror"
                                         id="potensi"

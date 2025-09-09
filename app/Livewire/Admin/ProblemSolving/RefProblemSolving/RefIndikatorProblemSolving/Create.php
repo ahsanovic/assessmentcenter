@@ -55,7 +55,7 @@ class Create extends Component
             $data->indikator_nama = $this->indikator_nama;
             $data->indikator_nomor = $this->indikator_nomor;
 
-            $kualifikasiLevels = ['Rendah', 'Sedang', 'Tinggi'];
+            $kualifikasiLevels = ['Kurang', 'Cukup', 'Baik'];
             $array_kualifikasi = [];
             foreach ($this->kualifikasi_deskripsi as $index => $item) {
                 $array_kualifikasi[] = [
