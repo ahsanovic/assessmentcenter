@@ -429,6 +429,263 @@ class MotivasiKomitmen extends Component
     //     }
     // }
 
+    // public function finish()
+    // {
+    //     try {
+    //         $data = UjianMotivasiKomitmen::findOrFail($this->id_ujian);
+
+    //         // indikator motivasi keterdekatan dengan rekan kerja
+    //         if ($data->nilai_indikator_1 >= 0 && $data->nilai_indikator_1 <= 6) {
+    //             $standard_1 = '1';
+    //             $kualifikasi_1 = 'SK';
+    //         } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 9) {
+    //             $standard_1 = '2';
+    //             $kualifikasi_1 = 'K';
+    //         } else if ($data->nilai_indikator_1 == 10) {
+    //             $standard_1 = '3-';
+    //             $kualifikasi_1 = 'C-';
+    //         } else if ($data->nilai_indikator_1 == 11) {
+    //             $standard_1 = '3';
+    //             $kualifikasi_1 = 'C';
+    //         } else if ($data->nilai_indikator_1 == 12) {
+    //             $standard_1 = '3+';
+    //             $kualifikasi_1 = 'C+';
+    //         } else if ($data->nilai_indikator_1 >= 13 && $data->nilai_indikator_1 <= 14) {
+    //             $standard_1 = '4';
+    //             $kualifikasi_1 = 'B';
+    //         } else if ($data->nilai_indikator_1 == 15) {
+    //             $standard_1 = '5';
+    //             $kualifikasi_1 = 'SB';
+    //         }
+
+    //         // indikator motivasi mengidentifikasi diri
+    //         if ($data->nilai_indikator_2 >= 0 && $data->nilai_indikator_2 <= 8) {
+    //             $standard_2 = '1';
+    //             $kualifikasi_2 = 'SK';
+    //         } else if ($data->nilai_indikator_2 >= 9 && $data->nilai_indikator_2 <= 10) {
+    //             $standard_2 = '2';
+    //             $kualifikasi_2 = 'K';
+    //         } else if ($data->nilai_indikator_2 == 11) {
+    //             $standard_2 = '3-';
+    //             $kualifikasi_2 = 'C-';
+    //         } else if ($data->nilai_indikator_2 == 12) {
+    //             $standard_2 = '3';
+    //             $kualifikasi_2 = 'C';
+    //         } else if ($data->nilai_indikator_2 == 13) {
+    //             $standard_2 = '3+';
+    //             $kualifikasi_2 = 'C+';
+    //         } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 16) {
+    //             $standard_2 = '4';
+    //             $kualifikasi_2 = 'B';
+    //         } else if ($data->nilai_indikator_2 >= 17 && $data->nilai_indikator_2 <= 18) {
+    //             $standard_2 = '5';
+    //             $kualifikasi_2 = 'SB';
+    //         }
+
+    //         // indikator motivasi mempertimbangkan keuntungan
+    //         if ($data->nilai_indikator_3 >= 0 && $data->nilai_indikator_3 <= 6) {
+    //             $standard_3 = '1';
+    //             $kualifikasi_3 = 'SK';
+    //         } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 11) {
+    //             $standard_3 = '2';
+    //             $kualifikasi_3 = 'K';
+    //         } else if ($data->nilai_indikator_3 == 12) {
+    //             $standard_3 = '3-';
+    //             $kualifikasi_3 = 'C-';
+    //         } else if ($data->nilai_indikator_3 >= 13 && $data->nilai_indikator_3 <= 14) {
+    //             $standard_3 = '3';
+    //             $kualifikasi_3 = 'C';
+    //         } else if ($data->nilai_indikator_3 == 15) {
+    //             $standard_3 = '3+';
+    //             $kualifikasi_3 = 'C+';
+    //         } else if ($data->nilai_indikator_3 >= 16 && $data->nilai_indikator_3 <= 19) {
+    //             $standard_3 = '4';
+    //             $kualifikasi_3 = 'B';
+    //         } else if ($data->nilai_indikator_3 >= 20 && $data->nilai_indikator_3 <= 30) {
+    //             $standard_3 = '5';
+    //             $kualifikasi_3 = 'SB';
+    //         }
+
+    //         // indikator motivasi adaptasi dalam tim
+    //         if ($data->nilai_indikator_4 >= 0 && $data->nilai_indikator_4 <= 12) {
+    //             $standard_4 = '1';
+    //             $kualifikasi_4 = 'SK';
+    //         } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 19) {
+    //             $standard_4 = '2';
+    //             $kualifikasi_4 = 'K';
+    //         } else if ($data->nilai_indikator_4 >= 20 && $data->nilai_indikator_4 <= 21) {
+    //             $standard_4 = '3-';
+    //             $kualifikasi_4 = 'C-';
+    //         } else if ($data->nilai_indikator_4 >= 22 && $data->nilai_indikator_4 <= 24) {
+    //             $standard_4 = '3';
+    //             $kualifikasi_4 = 'C';
+    //         } else if ($data->nilai_indikator_4 >= 25 && $data->nilai_indikator_4 <= 26) {
+    //             $standard_4 = '3+';
+    //             $kualifikasi_4 = 'C+';
+    //         } else if ($data->nilai_indikator_4 >= 27 && $data->nilai_indikator_4 <= 32) {
+    //             $standard_4 = '4';
+    //             $kualifikasi_4 = 'B';
+    //         } else if ($data->nilai_indikator_4 >= 33 && $data->nilai_indikator_4 <= 40) {
+    //             $standard_4 = '5';
+    //             $kualifikasi_4 = 'SB';
+    //         }
+
+    //         // indikator motivasi memiliki loyalitas
+    //         if ($data->nilai_indikator_5 >= 0 && $data->nilai_indikator_5 <= 18) {
+    //             $standard_5 = '1';
+    //             $kualifikasi_5 = 'SK';
+    //         } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 26) {
+    //             $standard_5 = '2';
+    //             $kualifikasi_5 = 'K';
+    //         } else if ($data->nilai_indikator_5 >= 27 && $data->nilai_indikator_5 <= 29) {
+    //             $standard_5 = '3-';
+    //             $kualifikasi_5 = 'C-';
+    //         } else if ($data->nilai_indikator_5 == 30) {
+    //             $standard_5 = '3';
+    //             $kualifikasi_5 = 'C';
+    //         } else if ($data->nilai_indikator_5 >= 31 && $data->nilai_indikator_5 <= 32) {
+    //             $standard_5 = '3+';
+    //             $kualifikasi_5 = 'C+';
+    //         } else if ($data->nilai_indikator_5 >= 33 && $data->nilai_indikator_5 <= 39) {
+    //             $standard_5 = '4';
+    //             $kualifikasi_5 = 'B';
+    //         } else if ($data->nilai_indikator_5 >= 40 && $data->nilai_indikator_5 <= 55) {
+    //             $standard_5 = '5';
+    //             $kualifikasi_5 = 'SB';
+    //         }
+
+    //         $indikator = RefMotivasiKomitmen::get(['indikator_nama', 'indikator_nomor']);
+    //         $nilai = [];
+    //         foreach ($indikator as $value) {
+    //             if ($value->indikator_nomor == 1) {
+    //                 $nilai[] = [
+    //                     'indikator' => $value->indikator_nama,
+    //                     'ranking' => $value->indikator_nomor,
+    //                     'skor' => $data->nilai_indikator_1,
+    //                     'standard' => $standard_1 ?? '',
+    //                     'kualifikasi' => $kualifikasi_1 ?? ''
+    //                 ];
+    //             } else if ($value->indikator_nomor == 2) {
+    //                 $nilai[] = [
+    //                     'indikator' => $value->indikator_nama,
+    //                     'ranking' => $value->indikator_nomor,
+    //                     'skor' => $data->nilai_indikator_2,
+    //                     'standard' => $standard_2 ?? '',
+    //                     'kualifikasi' => $kualifikasi_2 ?? ''
+    //                 ];
+    //             } else if ($value->indikator_nomor == 3) {
+    //                 $nilai[] = [
+    //                     'indikator' => $value->indikator_nama,
+    //                     'ranking' => $value->indikator_nomor,
+    //                     'skor' => $data->nilai_indikator_3,
+    //                     'standard' => $standard_3 ?? '',
+    //                     'kualifikasi' => $kualifikasi_3 ?? ''
+    //                 ];
+    //             } else if ($value->indikator_nomor == 4) {
+    //                 $nilai[] = [
+    //                     'indikator' => $value->indikator_nama,
+    //                     'ranking' => $value->indikator_nomor,
+    //                     'skor' => $data->nilai_indikator_4,
+    //                     'standard' => $standard_4 ?? '',
+    //                     'kualifikasi' => $kualifikasi_4 ?? ''
+    //                 ];
+    //             } else if ($value->indikator_nomor == 5) {
+    //                 $nilai[] = [
+    //                     'indikator' => $value->indikator_nama,
+    //                     'ranking' => $value->indikator_nomor,
+    //                     'skor' => $data->nilai_indikator_5,
+    //                     'standard' => $standard_5 ?? '',
+    //                     'kualifikasi' => $kualifikasi_5 ?? ''
+    //                 ];
+    //             }
+    //         }
+
+    //         $nilai_indikator = [
+    //             $data->nilai_indikator_1,
+    //             $data->nilai_indikator_2,
+    //             $data->nilai_indikator_3,
+    //             $data->nilai_indikator_4,
+    //             $data->nilai_indikator_5
+    //         ];
+
+    //         $skor_total = array_sum($nilai_indikator);
+
+    //         $bobot_kualifikasi = [
+    //             'SK' => 1,
+    //             'K' => 2,
+    //             'C-' => 3,
+    //             'C' => 4,
+    //             'C+' => 5,
+    //             'B' => 6,
+    //             'SB' => 7
+    //         ];
+
+    //         $bobot_level = [
+    //             'SK' => '1',
+    //             'K' => '2',
+    //             'C-' => '3-',
+    //             'C' => '3',
+    //             'C+' => '3+',
+    //             'B' => '4',
+    //             'SB' => '5'
+    //         ];
+
+    //         $bobot_indikator = [
+    //             1 => 1,
+    //             2 => 2,
+    //             3 => 3,
+    //             4 => 4,
+    //             5 => 5,
+    //         ];
+
+    //         // input kualifikasi tiap indikator
+    //         $kualifikasi_list = [$kualifikasi_1, $kualifikasi_2, $kualifikasi_3, $kualifikasi_4, $kualifikasi_5];
+
+    //         // hitung level tertinggi
+    //         $hasil = $this->_getLevelTertinggi($kualifikasi_list, $bobot_kualifikasi, $bobot_indikator, $bobot_level);
+
+    //         // cari deskripsi berdasarkan level dan kualifikasi tertinggi
+    //         $level_kualifikasi = $hasil['level'] . '/' . $hasil['kualifikasi'];
+    //         $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $level_kualifikasi . '%')->first();
+
+    //         HasilMotivasiKomitmen::updateOrCreate(
+    //             [
+    //                 'event_id' => Auth::guard('peserta')->user()->event_id,
+    //                 'peserta_id' => Auth::guard('peserta')->user()->id,
+    //                 'ujian_id' => $data->id,
+    //             ],
+    //             [
+    //                 'nilai' => $nilai,
+    //                 'kategori_penilaian' => $level_kualifikasi,
+    //                 'level_total' => $hasil['level'],
+    //                 'skor_total' => $skor_total,
+    //                 'kualifikasi_total' => $this->_getKualifikasi($hasil['kualifikasi']),
+    //                 'deskripsi' => $deskripsi->deskripsi,
+    //             ]
+    //         );
+
+    //         // change status ujian to true (finish)
+    //         $data->is_finished = true;
+    //         $data->save();
+
+    //         $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
+    //         if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
+    //             $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
+    //             $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
+    //         } else if ($current_sequence_test && $current_sequence_test->urutan == 7) {
+    //             return $this->redirect(route('peserta.kuesioner'), navigate: true);
+    //         } else {
+    //             return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+    //         }
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         session()->flash('toast', [
+    //             'type' => 'error',
+    //             'message' => 'Terjadi kesalahan'
+    //         ]);
+    //     }
+    // }
+
     public function finish()
     {
         try {
@@ -436,168 +693,139 @@ class MotivasiKomitmen extends Component
 
             // indikator motivasi keterdekatan dengan rekan kerja
             if ($data->nilai_indikator_1 >= 0 && $data->nilai_indikator_1 <= 6) {
-                $standard_1 = '1';
+                $level_1 = '1';
                 $kualifikasi_1 = 'SK';
             } else if ($data->nilai_indikator_1 >= 7 && $data->nilai_indikator_1 <= 9) {
-                $standard_1 = '2';
+                $level_1 = '2';
                 $kualifikasi_1 = 'K';
             } else if ($data->nilai_indikator_1 == 10) {
-                $standard_1 = '3-';
+                $level_1 = '3-';
                 $kualifikasi_1 = 'C-';
             } else if ($data->nilai_indikator_1 == 11) {
-                $standard_1 = '3';
+                $level_1 = '3';
                 $kualifikasi_1 = 'C';
             } else if ($data->nilai_indikator_1 == 12) {
-                $standard_1 = '3+';
+                $level_1 = '3+';
                 $kualifikasi_1 = 'C+';
             } else if ($data->nilai_indikator_1 >= 13 && $data->nilai_indikator_1 <= 14) {
-                $standard_1 = '4';
+                $level_1 = '4';
                 $kualifikasi_1 = 'B';
             } else if ($data->nilai_indikator_1 == 15) {
-                $standard_1 = '5';
+                $level_1 = '5';
                 $kualifikasi_1 = 'SB';
             }
 
             // indikator motivasi mengidentifikasi diri
             if ($data->nilai_indikator_2 >= 0 && $data->nilai_indikator_2 <= 8) {
-                $standard_2 = '1';
+                $level_2 = '1';
                 $kualifikasi_2 = 'SK';
             } else if ($data->nilai_indikator_2 >= 9 && $data->nilai_indikator_2 <= 10) {
-                $standard_2 = '2';
+                $level_2 = '2';
                 $kualifikasi_2 = 'K';
             } else if ($data->nilai_indikator_2 == 11) {
-                $standard_2 = '3-';
+                $level_2 = '3-';
                 $kualifikasi_2 = 'C-';
             } else if ($data->nilai_indikator_2 == 12) {
-                $standard_2 = '3';
+                $level_2 = '3';
                 $kualifikasi_2 = 'C';
             } else if ($data->nilai_indikator_2 == 13) {
-                $standard_2 = '3+';
+                $level_2 = '3+';
                 $kualifikasi_2 = 'C+';
             } else if ($data->nilai_indikator_2 >= 14 && $data->nilai_indikator_2 <= 16) {
-                $standard_2 = '4';
+                $level_2 = '4';
                 $kualifikasi_2 = 'B';
             } else if ($data->nilai_indikator_2 >= 17 && $data->nilai_indikator_2 <= 18) {
-                $standard_2 = '5';
+                $level_2 = '5';
                 $kualifikasi_2 = 'SB';
             }
 
             // indikator motivasi mempertimbangkan keuntungan
             if ($data->nilai_indikator_3 >= 0 && $data->nilai_indikator_3 <= 6) {
-                $standard_3 = '1';
+                $level_3 = '1';
                 $kualifikasi_3 = 'SK';
             } else if ($data->nilai_indikator_3 >= 7 && $data->nilai_indikator_3 <= 11) {
-                $standard_3 = '2';
+                $level_3 = '2';
                 $kualifikasi_3 = 'K';
             } else if ($data->nilai_indikator_3 == 12) {
-                $standard_3 = '3-';
+                $level_3 = '3-';
                 $kualifikasi_3 = 'C-';
             } else if ($data->nilai_indikator_3 >= 13 && $data->nilai_indikator_3 <= 14) {
-                $standard_3 = '3';
+                $level_3 = '3';
                 $kualifikasi_3 = 'C';
             } else if ($data->nilai_indikator_3 == 15) {
-                $standard_3 = '3+';
+                $level_3 = '3+';
                 $kualifikasi_3 = 'C+';
             } else if ($data->nilai_indikator_3 >= 16 && $data->nilai_indikator_3 <= 19) {
-                $standard_3 = '4';
+                $level_3 = '4';
                 $kualifikasi_3 = 'B';
             } else if ($data->nilai_indikator_3 >= 20 && $data->nilai_indikator_3 <= 30) {
-                $standard_3 = '5';
+                $level_3 = '5';
                 $kualifikasi_3 = 'SB';
             }
 
             // indikator motivasi adaptasi dalam tim
             if ($data->nilai_indikator_4 >= 0 && $data->nilai_indikator_4 <= 12) {
-                $standard_4 = '1';
+                $level_4 = '1';
                 $kualifikasi_4 = 'SK';
             } else if ($data->nilai_indikator_4 >= 13 && $data->nilai_indikator_4 <= 19) {
-                $standard_4 = '2';
+                $level_4 = '2';
                 $kualifikasi_4 = 'K';
             } else if ($data->nilai_indikator_4 >= 20 && $data->nilai_indikator_4 <= 21) {
-                $standard_4 = '3-';
+                $level_4 = '3-';
                 $kualifikasi_4 = 'C-';
             } else if ($data->nilai_indikator_4 >= 22 && $data->nilai_indikator_4 <= 24) {
-                $standard_4 = '3';
+                $level_4 = '3';
                 $kualifikasi_4 = 'C';
             } else if ($data->nilai_indikator_4 >= 25 && $data->nilai_indikator_4 <= 26) {
-                $standard_4 = '3+';
+                $level_4 = '3+';
                 $kualifikasi_4 = 'C+';
             } else if ($data->nilai_indikator_4 >= 27 && $data->nilai_indikator_4 <= 32) {
-                $standard_4 = '4';
+                $level_4 = '4';
                 $kualifikasi_4 = 'B';
             } else if ($data->nilai_indikator_4 >= 33 && $data->nilai_indikator_4 <= 40) {
-                $standard_4 = '5';
+                $level_4 = '5';
                 $kualifikasi_4 = 'SB';
             }
 
             // indikator motivasi memiliki loyalitas
             if ($data->nilai_indikator_5 >= 0 && $data->nilai_indikator_5 <= 18) {
-                $standard_5 = '1';
+                $level_5 = '1';
                 $kualifikasi_5 = 'SK';
             } else if ($data->nilai_indikator_5 >= 19 && $data->nilai_indikator_5 <= 26) {
-                $standard_5 = '2';
+                $level_5 = '2';
                 $kualifikasi_5 = 'K';
             } else if ($data->nilai_indikator_5 >= 27 && $data->nilai_indikator_5 <= 29) {
-                $standard_5 = '3-';
+                $level_5 = '3-';
                 $kualifikasi_5 = 'C-';
             } else if ($data->nilai_indikator_5 == 30) {
-                $standard_5 = '3';
+                $level_5 = '3';
                 $kualifikasi_5 = 'C';
             } else if ($data->nilai_indikator_5 >= 31 && $data->nilai_indikator_5 <= 32) {
-                $standard_5 = '3+';
+                $level_5 = '3+';
                 $kualifikasi_5 = 'C+';
             } else if ($data->nilai_indikator_5 >= 33 && $data->nilai_indikator_5 <= 39) {
-                $standard_5 = '4';
+                $level_5 = '4';
                 $kualifikasi_5 = 'B';
             } else if ($data->nilai_indikator_5 >= 40 && $data->nilai_indikator_5 <= 55) {
-                $standard_5 = '5';
+                $level_5 = '5';
                 $kualifikasi_5 = 'SB';
             }
 
             $indikator = RefMotivasiKomitmen::get(['indikator_nama', 'indikator_nomor']);
             $nilai = [];
             foreach ($indikator as $value) {
-                if ($value->indikator_nomor == 1) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'ranking' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_1,
-                        'standard' => $standard_1 ?? '',
-                        'kualifikasi' => $kualifikasi_1 ?? ''
-                    ];
-                } else if ($value->indikator_nomor == 2) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'ranking' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_2,
-                        'standard' => $standard_2 ?? '',
-                        'kualifikasi' => $kualifikasi_2 ?? ''
-                    ];
-                } else if ($value->indikator_nomor == 3) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'ranking' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_3,
-                        'standard' => $standard_3 ?? '',
-                        'kualifikasi' => $kualifikasi_3 ?? ''
-                    ];
-                } else if ($value->indikator_nomor == 4) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'ranking' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_4,
-                        'standard' => $standard_4 ?? '',
-                        'kualifikasi' => $kualifikasi_4 ?? ''
-                    ];
-                } else if ($value->indikator_nomor == 5) {
-                    $nilai[] = [
-                        'indikator' => $value->indikator_nama,
-                        'ranking' => $value->indikator_nomor,
-                        'skor' => $data->nilai_indikator_5,
-                        'standard' => $standard_5 ?? '',
-                        'kualifikasi' => $kualifikasi_5 ?? ''
-                    ];
-                }
+                $no = $value->indikator_nomor;
+                $nilai_indikator = $data->{'nilai_indikator_' . $no};
+                $level = ${'level_' . $no} ?? '';
+                $kualifikasi = ${'kualifikasi_' . $no} ?? '';
+
+                $nilai[] = [
+                    'indikator'   => $value->indikator_nama,
+                    'ranking'     => $no,
+                    'skor'        => $nilai_indikator,
+                    'level'    => $level,
+                    'kualifikasi' => $kualifikasi,
+                ];
             }
 
             $nilai_indikator = [
@@ -610,43 +838,21 @@ class MotivasiKomitmen extends Component
 
             $skor_total = array_sum($nilai_indikator);
 
-            $bobot_kualifikasi = [
-                'SK' => 1,
-                'K' => 2,
-                'C-' => 3,
-                'C' => 4,
-                'C+' => 5,
-                'B' => 6,
-                'SB' => 7
-            ];
+            // cari indikator dan kualifikasi tertinggi
+            $maxIndikator = collect($nilai)->sort(function ($a, $b) {
+                $rankA = $this->getKualifikasiRank($a['kualifikasi']);
+                $rankB = $this->getKualifikasiRank($b['kualifikasi']);
 
-            $bobot_level = [
-                'SK' => '1',
-                'K' => '2',
-                'C-' => '3-',
-                'C' => '3',
-                'C+' => '3+',
-                'B' => '4',
-                'SB' => '5'
-            ];
+                if ($rankA === $rankB) {
+                    return $b['ranking'] <=> $a['ranking']; // tie-break indikator lebih besar
+                }
+                return $rankB <=> $rankA; // kualifikasi lebih tinggi
+            })->first();
 
-            $bobot_indikator = [
-                1 => 1,
-                2 => 2,
-                3 => 3,
-                4 => 4,
-                5 => 5,
-            ];
+            $level_kualifikasi = $this->getLevelFromTable($maxIndikator['level'], $maxIndikator['kualifikasi']);
 
-            // input kualifikasi tiap indikator
-            $kualifikasi_list = [$kualifikasi_1, $kualifikasi_2, $kualifikasi_3, $kualifikasi_4, $kualifikasi_5];
-
-            // hitung level tertinggi
-            $hasil = $this->_getLevelTertinggi($kualifikasi_list, $bobot_kualifikasi, $bobot_indikator, $bobot_level);
-
-            // cari deskripsi berdasarkan level dan kualifikasi tertinggi
-            $level_kualifikasi = $hasil['level'] . '/' . $hasil['kualifikasi'];
-            $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $level_kualifikasi . '%')->first();
+            $kategori_penilaian = $maxIndikator['level'] . '/' . $maxIndikator['kualifikasi'];
+            $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kategori_penilaian . '%')->first();
 
             HasilMotivasiKomitmen::updateOrCreate(
                 [
@@ -656,10 +862,10 @@ class MotivasiKomitmen extends Component
                 ],
                 [
                     'nilai' => $nilai,
-                    'kategori_penilaian' => $level_kualifikasi,
-                    'level_total' => $hasil['level'],
+                    'kategori_penilaian' => $kategori_penilaian,
+                    'level_total' => $level_kualifikasi,
                     'skor_total' => $skor_total,
-                    'kualifikasi_total' => $this->_getKualifikasi($hasil['kualifikasi']),
+                    'kualifikasi_total' => $this->_getKualifikasi($maxIndikator['kualifikasi']),
                     'deskripsi' => $deskripsi->deskripsi,
                 ]
             );
@@ -686,45 +892,110 @@ class MotivasiKomitmen extends Component
         }
     }
 
-    private function _getLevelTertinggi(
-        $kualifikasi_list,
-        $bobot_kualifikasi,
-        $bobot_indikator,
-        $bobot_level
-    ) {
-        // hitung bobot tiap indikator
-        foreach ($kualifikasi_list as $i => $kualifikasi) {
-            $indikator = $i + 1;
-            $bobot     = $bobot_kualifikasi[$kualifikasi] * $bobot_indikator[$indikator];
-
-            $hasil[] = [
-                'indikator'   => $indikator,
-                'kualifikasi' => $kualifikasi,
-                'bobot'       => $bobot,
-            ];
-        }
-
-        // cari bobot tertinggi
-        $max_bobot = max(array_column($hasil, 'bobot'));
-
-        // filter semua kandidat dengan bobot tertinggi
-        $kandidat = array_filter($hasil, function ($item) use ($max_bobot) {
-            return $item['bobot'] === $max_bobot;
-        });
-
-        // ambil indikator tertinggi jika ada nilai sama
-        $terpilih = array_reduce($kandidat, function ($carry, $item) {
-            if (!$carry) return $item;
-            return ($item['indikator'] > $carry['indikator']) ? $item : $carry;
-        });
-
-        return [
-            'bobot'       => $terpilih['bobot'],
-            'indikator'   => $terpilih['indikator'],
-            'kualifikasi' => $terpilih['kualifikasi'],
-            'level'       => $bobot_level[$terpilih['kualifikasi']]
+    private function getLevelFromTable($indikator, $kualifikasi)
+    {
+        $mapping = [
+            // Level 5
+            '4B' => 5,
+            '4SB' => 5,
+            '5B' => 5,
+            '5SB' => 5,
+            // Level 4
+            '3B' => 4,
+            '3SB' => 4,
+            '4C+' => 4,
+            '5C+' => 4,
+            // Level 3+
+            '3C+' => 3,
+            '2SB' => 3,
+            '2B' => 3,
+            // Level 3
+            '4C' => 3,
+            '5C' => 3,
+            '1SB' => 3,
+            '1B' => 3,
+            // Level 3-
+            '1C+' => 3,
+            '2C+' => 3,
+            '2C' => 3,
+            '3C' => 3,
+            '3C-' => 3,
+            '4C-' => 3,
+            '5C-' => 3,
+            // Level 2
+            '1C' => 2,
+            '1C-' => 2,
+            '2C-' => 2,
+            // Level 1
+            '1K' => 1,
+            '2K' => 1,
+            '3K' => 1,
+            '4K' => 1,
+            '5K' => 1,
+            '1SK' => 1,
+            '2SK' => 1,
+            '3SK' => 1,
+            '4SK' => 1,
+            '5SK' => 1,
         ];
+
+        $key = $indikator . $kualifikasi;
+        return $mapping[$key] ?? null;
     }
+
+    private function getKualifikasiRank($kualifikasi)
+    {
+        $ranks = [
+            'SK' => 1,
+            'K'  => 2,
+            'C-' => 3,
+            'C'  => 4,
+            'C+' => 5,
+            'B'  => 6,
+            'SB' => 7,
+        ];
+        return $ranks[$kualifikasi] ?? 0;
+    }
+
+    // private function _getLevelTertinggi(
+    //     $kualifikasi_list,
+    //     $bobot_kualifikasi,
+    //     $bobot_indikator,
+    //     $bobot_level
+    // ) {
+    //     // hitung bobot tiap indikator
+    //     foreach ($kualifikasi_list as $i => $kualifikasi) {
+    //         $indikator = $i + 1;
+    //         $bobot     = $bobot_kualifikasi[$kualifikasi] * $bobot_indikator[$indikator];
+
+    //         $hasil[] = [
+    //             'indikator'   => $indikator,
+    //             'kualifikasi' => $kualifikasi,
+    //             'bobot'       => $bobot,
+    //         ];
+    //     }
+
+    //     // cari bobot tertinggi
+    //     $max_bobot = max(array_column($hasil, 'bobot'));
+
+    //     // filter semua kandidat dengan bobot tertinggi
+    //     $kandidat = array_filter($hasil, function ($item) use ($max_bobot) {
+    //         return $item['bobot'] === $max_bobot;
+    //     });
+
+    //     // ambil indikator tertinggi jika ada nilai sama
+    //     $terpilih = array_reduce($kandidat, function ($carry, $item) {
+    //         if (!$carry) return $item;
+    //         return ($item['indikator'] > $carry['indikator']) ? $item : $carry;
+    //     });
+
+    //     return [
+    //         'bobot'       => $terpilih['bobot'],
+    //         'indikator'   => $terpilih['indikator'],
+    //         'kualifikasi' => $terpilih['kualifikasi'],
+    //         'level'       => $bobot_level[$terpilih['kualifikasi']]
+    //     ];
+    // }
 
     // private function _getLevel($kualifikasi)
     // {
