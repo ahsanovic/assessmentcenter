@@ -91,7 +91,7 @@ class ShowReport extends Component
         return view('livewire.admin.data-tes.tes-potensi.tes-selesai.show-report', [
             'peserta' => $this->peserta,
             'aspek_potensi' => $aspek_potensi,
-            'capaian_level_intelektual' => capaianLevel($this->data->hasilIntelektual[0]->level),
+            'capaian_level_intelektual' => capaianLevel(optional($this->data->hasilIntelektual->first())->level ?? null),
             'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
             'capaian_level_kecerdasan_emosi' => capaianLevel($this->data->hasilKecerdasanEmosi[0]->level_total),
             'capaian_level_pengembangan_diri' => capaianLevel($this->data->hasilPengembanganDiri[0]->level_total),
