@@ -177,7 +177,7 @@
         }
 
         .tte {
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
         
         .ttd-nama {
@@ -475,6 +475,8 @@
         @endforeach
     </table>
 
+    <div class="page-break"></div>
+
     <!-- Tanda Tangan -->
     <div class="ttd-section">
         <div class="ttd-box">
@@ -483,7 +485,7 @@
                 Provinsi Jawa Timur
             </div>
             <div class="tte">
-                <img src="{{ public_path('storage/' . $tte->ttd) }}" height="80" width="80" alt="tte">
+                <img src="{{ public_path('storage/' . $tte->ttd) }}" height="50" width="50" alt="tte">
             </div>
             <div class="ttd-nama">{{ $tte->nama }}</div>
             @php
