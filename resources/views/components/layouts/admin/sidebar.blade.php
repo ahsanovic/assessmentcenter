@@ -110,13 +110,13 @@
                 
                 <li class="nav-item nav-category">Pelaksanaan Tes</li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-intelektual" role="button"
                         aria-expanded="false" aria-controls="data-tes">
                         <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Tes Intelektual</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
-                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes">
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-intelektual">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.intelektual') }}" wire:navigate
@@ -130,13 +130,13 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-potensi" role="button"
                         aria-expanded="false" aria-controls="data-tes">
                         <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
-                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes">
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-potensi">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung') }}" wire:navigate
