@@ -25,7 +25,7 @@
                                         <td class="text-wrap">{{ $item->nama_event }}</td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->ujian_cakap_digital_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-berlangsung.cakap-digital.show-peserta', ['idEvent' => $item->id]) }}">
                                                     {{ $item->ujian_cakap_digital_count }} orang
                                             </a>

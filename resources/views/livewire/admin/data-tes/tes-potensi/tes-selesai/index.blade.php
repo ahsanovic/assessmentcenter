@@ -81,49 +81,49 @@
                                         <td class="text-wrap">{{ $item->nama_event }}</td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_interpersonal_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-interpersonal', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_interpersonal_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_kesadaran_diri_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-kesadaran-diri', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_kesadaran_diri_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_berpikir_kritis_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-berpikir-kritis', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_berpikir_kritis_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_problem_solving_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-problem-solving', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_problem_solving_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_kecerdasan_emosi_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-kecerdasan-emosi', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_kecerdasan_emosi_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_pengembangan_diri_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-pengembangan-diri', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_pengembangan_diri_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->hasil_motivasi_komitmen_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-motivasi-komitmen', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_motivasi_komitmen_count ?? 0 }} orang
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-warning" wire:navigate
+                                            <a class="btn btn-xs btn-warning {{ $item->peserta_selesai_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta', ['idEvent' => $item->id]) }}">
                                                     {{ $item->peserta_selesai_count ?? 0 }} orang
                                             </a>

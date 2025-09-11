@@ -9,7 +9,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Event'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Tes Cakap Digital'])]
 class Index extends Component
 {
     use WithPagination;
