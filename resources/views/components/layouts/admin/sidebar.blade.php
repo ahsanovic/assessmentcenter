@@ -113,6 +113,26 @@
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
                         aria-expanded="false" aria-controls="data-tes">
                         <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Tes Intelektual</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-berlangsung.intelektual') }}" wire:navigate
+                                    class="nav-link">Tes Berlangsung</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-selesai.intelektual') }}" wire:navigate
+                                    class="nav-link">Tes Selesai</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes" role="button"
+                        aria-expanded="false" aria-controls="data-tes">
+                        <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>

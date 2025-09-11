@@ -86,6 +86,18 @@ Route::prefix('bkdac')->group(function () {
         Route::get('cakap-digital/finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.cakap-digital.show-peserta');
         Route::get('cakap-digital/finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapCakapDigital'])->name('admin.tes-selesai.cakap-digital.download-rekap');
 
+        // data tes intelektual berlangsung
+        Route::get('intelektual/ongoing', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.intelektual');
+        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes1::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-1');
+        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes2::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-2');
+        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes3::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-3');
+
+        // data tes intelektual selesai
+        Route::get('intelektual/finish', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\Index::class)->name('admin.tes-selesai.intelektual');
+        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes1::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-1');
+        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes2::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-2');
+        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes3::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-3');
+
         // kuesioner
         Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');
         Route::get('kuesioner/create', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.create');
