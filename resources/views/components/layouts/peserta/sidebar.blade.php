@@ -52,6 +52,7 @@
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
+                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 3)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesCakapDigital($event_id, $peserta_id);
@@ -62,6 +63,7 @@
                         <span class="link-title">Tes Cakap Digital</span>
                     </a>
                 </li>
+                @endif
                 
                 <li class="nav-item nav-category">Logout</li>
                 <li class="nav-item">
