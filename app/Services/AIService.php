@@ -34,18 +34,27 @@ class AIService
             Tuliskan dalam bentuk poin-poin singkat.
         ";
 
-        $response = Http::withToken(env('DEEPSEEK_API_KEY'))
-            ->post('https://api.deepseek.com/chat/completions', [
-                'model' => 'deepseek-chat',
+        // $response = Http::withToken(env('DEEPSEEK_API_KEY'))
+        //     ->post('https://api.deepseek.com/chat/completions', [
+        //         'model' => 'deepseek-chat',
+        //         'messages' => [
+        //             ['role' => 'user', 'content' => $prompt]
+        //         ],
+        //         'temperature' => 1.0,
+        //         'stream' => false
+        //     ]);
+        $response = Http::withToken(env('OPENAPI_KEY'))
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                // 'max_tokens' => 100,
                 'messages' => [
-                    ['role' => 'user', 'content' => $prompt]
+                    ['role' => 'system', 'content' => $prompt]
                 ],
-                'temperature' => 1.0,
-                'stream' => false
+                'temperature' => 0.7,
             ]);
 
         if (!$response->successful()) {
-            Log::error('DeepSeek API error', [
+            Log::error('API error', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
