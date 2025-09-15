@@ -111,7 +111,7 @@
                 <li class="nav-item nav-category">Pelaksanaan Tes</li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-intelektual" role="button"
-                        aria-expanded="false" aria-controls="data-tes">
+                        aria-expanded="false" aria-controls="data-tes-intelektual">
                         <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Tes Intelektual</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
@@ -131,7 +131,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-potensi" role="button"
-                        aria-expanded="false" aria-controls="data-tes">
+                        aria-expanded="false" aria-controls="data-tes-potensi">
                         <i class="link-icon" data-feather="box"></i>
                         <span class="link-title">Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
@@ -176,6 +176,30 @@
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-cakap-digital') }}" wire:navigate
+                                    class="nav-link">Pelanggaran Tes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-kompetensi-teknis" role="button"
+                        aria-expanded="false" aria-controls="data-tes-kompetensi-teknis">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Tes Kompetensi Teknis</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-kompetensi-teknis">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-berlangsung.kompetensi-teknis') }}" wire:navigate
+                                    class="nav-link">Tes Berlangsung</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-selesai.kompetensi-teknis') }}" wire:navigate
+                                    class="nav-link">Tes Selesai</a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="{{ route('admin.pelanggaran-tes-kompetensi-teknis') }}" wire:navigate
                                     class="nav-link">Pelanggaran Tes</a>
                             </li>
                         </ul>
@@ -374,6 +398,22 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-cakap-digital') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#kompetensi-teknis" role="button"
+                        aria-expanded="false" aria-controls="kompetensi-teknis">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Kompetensi Teknis</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="kompetensi-teknis">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-kompetensi-teknis') }}" wire:navigate
                                     class="nav-link">Soal</a>
                             </li>
                         </ul>

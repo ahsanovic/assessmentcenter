@@ -16,6 +16,8 @@ use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\HasilKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\KompetensiTeknis\HasilKompetensiTeknis;
+use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\HasilPengembanganDiri;
@@ -106,6 +108,11 @@ class Peserta extends Model implements AuthenticatableContract
             ->where('event_id', $eventId);
     }
 
+    public function ujianKompetensiTeknis()
+    {
+        return $this->hasOne(UjianKompetensiTeknis::class, 'peserta_id');
+    }
+
     public function ujianCakapDigital()
     {
         return $this->hasOne(UjianCakapDigital::class, 'peserta_id');
@@ -159,6 +166,11 @@ class Peserta extends Model implements AuthenticatableContract
     public function ujianProblemSolving()
     {
         return $this->hasOne(UjianProblemSolving::class, 'peserta_id');
+    }
+
+    public function hasilKompetensiTeknis()
+    {
+        return $this->hasOne(HasilKompetensiTeknis::class, 'peserta_id');
     }
 
     public function hasilCakapDigital()

@@ -16,6 +16,8 @@ use App\Models\KecerdasanEmosi\HasilKecerdasanEmosi;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\HasilKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\KompetensiTeknis\HasilKompetensiTeknis;
+use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\HasilPengembanganDiri;
@@ -99,6 +101,29 @@ class Event extends Model
             'id',
             'peserta_id'
         );
+    }
+
+    // ujian kompetensi teknis
+    public function ujianKompetensiTeknis()
+    {
+        return $this->hasMany(UjianKompetensiTeknis::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesKompetensiTeknis()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,
+            UjianKompetensiTeknis::class,
+            'event_id',
+            'id',
+            'id',
+            'peserta_id'
+        );
+    }
+
+    public function pesertaIdTesKompetensiTeknis()
+    {
+        return $this->ujianKompetensiTeknis()->select('peserta_id')->distinct();
     }
 
     // ujian cakap digital
@@ -355,6 +380,29 @@ class Event extends Model
     }
 
     /* HASIL TES */
+    // hasil kompetensi teknis
+    public function hasilKompetensiTeknis()
+    {
+        return $this->hasMany(HasilKompetensiTeknis::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilKompetensiTeknis()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilKompetensiTeknis::class, // Model perantara (UjianKompetensiTeknis)
+            'event_id',                   // Foreign key di UjianKompetensiTeknis
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianKompetensiTeknis
+        );
+    }
+
+    public function pesertaIdHasilKompetensiTeknis()
+    {
+        return $this->hasilKompetensiTeknis()->select('peserta_id')->distinct();
+    }
+
     // hasil cakap digital
     public function hasilCakapDigital()
     {
@@ -365,11 +413,11 @@ class Event extends Model
     {
         return $this->hasManyThrough(
             Peserta::class,               // Model target (Peserta)
-            HasilCakapDigital::class,    // Model perantara (UjianInterpersonal)
-            'event_id',                   // Foreign key di UjianInterpersonal
+            HasilCakapDigital::class,    // Model perantara (UjianCakapDigital)
+            'event_id',                   // Foreign key di UjianCakapDigital
             'id',                         // Foreign key di Peserta
             'id',                         // Local key di Event
-            'peserta_id'                  // Local key di UjianInterpersonal
+            'peserta_id'                  // Local key di UjianCakapDigital
         );
     }
 

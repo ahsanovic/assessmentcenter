@@ -10,6 +10,7 @@ use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
@@ -53,49 +54,63 @@ trait TimerTrait
             case 'Intelektual Sub Tes 3':
                 $this->_timerIntelektualSubTes3();
                 break;
+            case 'Kompetensi Teknis':
+                $this->_timerKompetensiTeknis();
+                break;
         }
     }
 
     protected function _timerIntelektualSubTes1()
     {
-        $first_test = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $test = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerIntelektualSubTes2()
     {
-        $first_test = UjianIntelektualSubTes2::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $test = UjianIntelektualSubTes2::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerIntelektualSubTes3()
     {
-        $first_test = UjianIntelektualSubTes3::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $test = UjianIntelektualSubTes3::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }
 
     protected function _timerCakapDigital()
     {
-        $first_test = UjianCakapDigital::where('peserta_id', Auth::guard('peserta')->user()->id)
+        $test = UjianCakapDigital::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
+    }
+
+    protected function _timerKompetensiTeknis()
+    {
+        $test = UjianKompetensiTeknis::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
         }
         $this->timer = $this->waktu_tes_berakhir->timestamp;
     }

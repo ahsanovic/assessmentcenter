@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung;
+namespace App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesBerlangsung;
 
-use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Event;
+use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\Peserta;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -38,15 +38,15 @@ class ShowPeserta extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with(['pesertaTesCakapDigital'])->findOrFail($this->id_event);
+        $this->event = Event::with(['pesertaTesKompetensiTeknis'])->findOrFail($this->id_event);
     }
 
     public function render()
     {
-        $data = Peserta::join('ujian_cakap_digital', 'ujian_cakap_digital.peserta_id', '=', 'peserta.id')
-            ->whereIn('peserta.id', $this->event->pesertaIdTesCakapDigital->pluck('peserta_id'))
-            ->where('ujian_cakap_digital.event_id', $this->id_event)
-            ->select('peserta.*', 'ujian_cakap_digital.is_finished', 'ujian_cakap_digital.id as ujian_cakap_digital_id', 'ujian_cakap_digital.created_at as mulai_tes')
+        $data = Peserta::join('ujian_kompetensi_teknis', 'ujian_kompetensi_teknis.peserta_id', '=', 'peserta.id')
+            ->whereIn('peserta.id', $this->event->pesertaIdTesKompetensiTeknis->pluck('peserta_id'))
+            ->where('ujian_kompetensi_teknis.event_id', $this->id_event)
+            ->select('peserta.*', 'ujian_kompetensi_teknis.is_finished', 'ujian_kompetensi_teknis.id as ujian_kompetensi_teknis_id', 'ujian_kompetensi_teknis.created_at as mulai_tes')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%')
@@ -58,7 +58,7 @@ class ShowPeserta extends Component
             })
             ->paginate(10);
 
-        return view('livewire.admin.data-tes.tes-cakap-digital.tes-berlangsung.show-peserta', [
+        return view('livewire.admin.data-tes.tes-kompetensi-teknis.tes-berlangsung.show-peserta', [
             'data' => $data
         ]);
     }
@@ -73,7 +73,7 @@ class ShowPeserta extends Component
     public function destroy()
     {
         try {
-            UjianCakapDigital::find($this->selected_id)->delete();
+            UjianKompetensiTeknis::find($this->selected_id)->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {

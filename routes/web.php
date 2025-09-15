@@ -77,26 +77,35 @@ Route::prefix('bkdac')->group(function () {
         Route::get('potensi/tes-selesai/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekap'])->name('admin.tes-selesai.download-rekap');
         Route::get('potensi/tes-selesai/{idEvent}/{nip}/rekomendasi', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\RekomendasiAi::class)->name('admin.tes-selesai.rekomendasi-ai');
 
+        // data tes kompetensi teknis berlangsung
+        Route::get('kompetensi-teknis/kt-ongoing/', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.kompetensi-teknis');
+        Route::get('kompetensi-teknis/kt-ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.kompetensi-teknis.show-peserta');
+
+        // data tes kompetensi teknis selesai
+        Route::get('kompetensi-teknis/kt-finish', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\Index::class)->name('admin.tes-selesai.kompetensi-teknis');
+        Route::get('kompetensi-teknis/kt-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.kompetensi-teknis.show-peserta');
+        Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapKompetensiTeknis'])->name('admin.tes-selesai.kompetensi-teknis.download-rekap');
+
         // data tes cakap digital berlangsung
-        Route::get('cakap-digital/ongoing/', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.cakap-digital');
-        Route::get('cakap-digital/ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.cakap-digital.show-peserta');
+        Route::get('cakap-digital/cd-ongoing/', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.cakap-digital');
+        Route::get('cakap-digital/cd-ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.cakap-digital.show-peserta');
 
         // data tes cakap digital selesai
-        Route::get('cakap-digital/finish', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\Index::class)->name('admin.tes-selesai.cakap-digital');
-        Route::get('cakap-digital/finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.cakap-digital.show-peserta');
-        Route::get('cakap-digital/finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapCakapDigital'])->name('admin.tes-selesai.cakap-digital.download-rekap');
+        Route::get('cakap-digital/cd-finish', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\Index::class)->name('admin.tes-selesai.cakap-digital');
+        Route::get('cakap-digital/cd-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.cakap-digital.show-peserta');
+        Route::get('cakap-digital/cd-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapCakapDigital'])->name('admin.tes-selesai.cakap-digital.download-rekap');
 
         // data tes intelektual berlangsung
-        Route::get('intelektual/ongoing', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.intelektual');
-        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes1::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-1');
-        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes2::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-2');
-        Route::get('intelektual/ongoing/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes3::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-3');
+        Route::get('intelektual/int-ongoing', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.intelektual');
+        Route::get('intelektual/int-ongoing/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes1::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-1');
+        Route::get('intelektual/int-ongoing/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes2::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-2');
+        Route::get('intelektual/int-ongoing/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung\ShowPesertaSubTes3::class)->name('admin.tes-berlangsung.intelektual.show-peserta-subtes-3');
 
         // data tes intelektual selesai
-        Route::get('intelektual/finish', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\Index::class)->name('admin.tes-selesai.intelektual');
-        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes1::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-1');
-        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes2::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-2');
-        Route::get('intelektual/finish/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes3::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-3');
+        Route::get('intelektual/int-finish', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\Index::class)->name('admin.tes-selesai.intelektual');
+        Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes1::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-1');
+        Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes2::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-2');
+        Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes3::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-3');
 
         // kuesioner
         Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');
@@ -114,6 +123,10 @@ Route::prefix('bkdac')->group(function () {
         // log pelanggaran tes cakap digital
         Route::get('pelanggaran/tes-cakap-digital', \App\Livewire\Admin\PelanggaranTes\TesCakapDigital\Index::class)->name('admin.pelanggaran-tes-cakap-digital');
         Route::get('pelanggaran/tes-cakap-digital/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesCakapDigital\Show::class)->name('admin.pelanggaran-tes-cakap-digital.show');
+
+        // log pelanggaran tes kompetensi teknis
+        Route::get('pelanggaran/tes-kompetensi-teknis', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Index::class)->name('admin.pelanggaran-tes-kompetensi-teknis');
+        Route::get('pelanggaran/tes-kompetensi-teknis/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Show::class)->name('admin.pelanggaran-tes-kompetensi-teknis.show');
 
         // peserta
         Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
@@ -235,6 +248,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('soal-cakap-digital/create', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.create');
         Route::get('soal-cakap-digital/{id}/edit', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.edit');
 
+        // soal kompetensi teknis
+        Route::get('soal-kompetensi-teknis', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Index::class)->name('admin.soal-kompetensi-teknis');
+        Route::get('soal-kompetensi-teknis/create', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Form::class)->name('admin.soal-kompetensi-teknis.create');
+        Route::get('soal-kompetensi-teknis/{id}/edit', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Form::class)->name('admin.soal-kompetensi-teknis.edit');
+
         // soal intelektual
         Route::get('soal-intelektual-subtes1', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Index::class)->name('admin.soal-intelektual-subtes1');
         Route::get('soal-intelektual-subtes1/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Form::class)->name('admin.soal-intelektual-subtes1.create');
@@ -321,12 +339,19 @@ Route::middleware(['auth:peserta'])->group(function () {
 
     // tes cakap digital
     Route::prefix('tes-cakap-digital')->group(function () {
-        Route::get('/', \App\Livewire\Peserta\TesCakapDigital\Index::class)->name('peserta.tes-cakap-digital');
-        Route::get('home', \App\Livewire\Peserta\TesCakapDigital\Dashboard::class)->name('peserta.tes-cakap-digital.home');
-        Route::get('ujian/{id}', \App\Livewire\Peserta\TesCakapDigital\Ujian::class)->name('peserta.tes-cakap-digital.ujian');
-        Route::get('hasil', \App\Livewire\Peserta\TesCakapDigital\Hasil::class)->name('peserta.tes-cakap-digital.hasil');
+        Route::get('/', \App\Livewire\Peserta\TesCakapDigital\Index::class)->name('peserta.tes-cakap-digital')->middleware(CheckExamPin::class);;
+        Route::get('home', \App\Livewire\Peserta\TesCakapDigital\Dashboard::class)->name('peserta.tes-cakap-digital.home')->middleware(CheckExamPin::class);;
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesCakapDigital\Ujian::class)->name('peserta.tes-cakap-digital.ujian')->middleware(CheckExamPin::class);;
+        Route::get('hasil', \App\Livewire\Peserta\TesCakapDigital\Hasil::class)->name('peserta.tes-cakap-digital.hasil')->middleware(CheckExamPin::class);;
     });
 
+    // tes kompetensi teknis
+    Route::prefix('tes-kompetensi-teknis')->group(function () {
+        Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
+        Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
+        Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
+    });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
 });

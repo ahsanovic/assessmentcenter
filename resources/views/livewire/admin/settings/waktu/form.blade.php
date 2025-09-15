@@ -22,6 +22,7 @@
                                         <option value="3">Tes Intelektual - Sub Tes 1</option>
                                         <option value="4">Tes Intelektual - Sub Tes 2</option>
                                         <option value="5">Tes Intelektual - Sub Tes 3</option>
+                                        <option value="6">Tes Kompetensi Teknis</option>
                                     </select>
                                     @error('form.jenis_tes')
                                         <label class="error invalid-feedback">{{ $message }}</label>
