@@ -849,9 +849,10 @@ class MotivasiKomitmen extends Component
                 return $rankB <=> $rankA; // kualifikasi lebih tinggi
             })->first();
 
-            $level_kualifikasi = $this->getLevelFromTable($maxIndikator['ranking'], $maxIndikator['kualifikasi']);
+            $level = $this->_getLevel($maxIndikator['level']);
+            $level_kualifikasi = $this->getLevelFromTable($level, $maxIndikator['kualifikasi']);
 
-            $kategori_penilaian = $maxIndikator['ranking'] . '/' . $maxIndikator['kualifikasi'];
+            $kategori_penilaian = $level . '/' . $maxIndikator['kualifikasi'];
             $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kategori_penilaian . '%')->first();
 
             HasilMotivasiKomitmen::updateOrCreate(
@@ -892,6 +893,21 @@ class MotivasiKomitmen extends Component
         }
     }
 
+    private function _getLevel($level)
+    {
+        $map = [
+            '1' => 1,
+            '2' => 2,
+            '3+' => 3,
+            '3' => 3,
+            '3-' => 3,
+            '4' => 4,
+            '5' => 5,
+        ];
+
+        return $map[$level] ?? null;
+    }
+
     private function getLevelFromTable($indikator, $kualifikasi)
     {
         $mapping = [
@@ -906,22 +922,22 @@ class MotivasiKomitmen extends Component
             '4C+' => 4,
             '5C+' => 4,
             // Level 3+
-            '3C+' => '3+',
-            '2SB' => '3+',
-            '2B' => '3+',
+            '3C+' => 3,
+            '2SB' => 3,
+            '2B' => 3,
             // Level 3
             '4C' => 3,
             '5C' => 3,
             '1SB' => 3,
             '1B' => 3,
             // Level 3-
-            '1C+' => '3-',
-            '2C+' => '3-',
-            '2C' => '3-',
-            '3C' => '3-',
-            '3C-' => '3-',
-            '4C-' => '3-',
-            '5C-' => '3-',
+            '1C+' => 3,
+            '2C+' => 3,
+            '2C' => 3,
+            '3C' => 3,
+            '3C-' => 3,
+            '4C-' => 3,
+            '5C-' => 3,
             // Level 2
             '1C' => 2,
             '1C-' => 2,
