@@ -849,9 +849,9 @@ class MotivasiKomitmen extends Component
                 return $rankB <=> $rankA; // kualifikasi lebih tinggi
             })->first();
 
-            $level_kualifikasi = $this->getLevelFromTable($maxIndikator['level'], $maxIndikator['kualifikasi']);
+            $level_kualifikasi = $this->getLevelFromTable($maxIndikator['ranking'], $maxIndikator['kualifikasi']);
 
-            $kategori_penilaian = $maxIndikator['level'] . '/' . $maxIndikator['kualifikasi'];
+            $kategori_penilaian = $maxIndikator['ranking'] . '/' . $maxIndikator['kualifikasi'];
             $deskripsi = RefDeskripsiMotivasiKomitmen::where('kategori_penilaian', 'like', '%' . $kategori_penilaian . '%')->first();
 
             HasilMotivasiKomitmen::updateOrCreate(
