@@ -346,12 +346,12 @@ Route::middleware(['auth:peserta'])->group(function () {
     });
 
     // tes kompetensi teknis
-    Route::prefix('tes-kompetensi-teknis')->group(function () {
-        Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
-        Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
-        Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
-        Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
-    });
+    // Route::prefix('tes-kompetensi-teknis')->group(function () {
+    //     Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
+    //     Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
+    //     Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
+    //     Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
+    // });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
 });
