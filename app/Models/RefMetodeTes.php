@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RefMetodeTes extends Model
 {
     protected $table = 'ref_metode_tes';
+    protected $fillable = ['metode_tes'];
 
     public function event()
     {
