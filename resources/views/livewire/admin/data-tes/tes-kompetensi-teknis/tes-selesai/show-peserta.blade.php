@@ -99,7 +99,7 @@
                                             @endif
                                             <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download', [
                                                     'idEvent' => $item->event_id,
-                                                    'nip' => $item->nip ?: $item->nik
+                                                    'identifier' => $item->nip ?: $item->nik
                                                 ]) }}" class="btn btn-xs btn-inverse-danger"
                                                 target="_blank"
                                             >

@@ -72,11 +72,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('potensi/tes-selesai/{idEvent}/show-peserta-kecerdasan-emosi', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\ShowPesertaKecerdasanEmosi::class)->name('admin.tes-selesai.show-peserta-kecerdasan-emosi');
         Route::get('potensi/tes-selesai/{idEvent}/show-peserta-pengembangan-diri', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\ShowPesertaPengembanganDiri::class)->name('admin.tes-selesai.show-peserta-pengembangan-diri');
         Route::get('potensi/tes-selesai/{idEvent}/show-peserta-motivasi-komitmen', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\ShowPesertaMotivasiKomitmen::class)->name('admin.tes-selesai.show-peserta-motivasi-komitmen');
-        Route::get('potensi/tes-selesai/{idEvent}/{nip}/show-report', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
-        Route::get('potensi/tes-selesai/{idEvent}/{nip}/download', [DownloadLaporanPenilaianController::class, 'createPdf'])->name('admin.tes-selesai.download');
+        Route::get('potensi/tes-selesai/{idEvent}/{identifier}/show-report', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\ShowReport::class)->name('admin.tes-selesai.show-report');
+        Route::get('potensi/tes-selesai/{idEvent}/{identifier}/download', [DownloadLaporanPenilaianController::class, 'createPdf'])->name('admin.tes-selesai.download');
         Route::get('potensi/tes-selesai/{idEvent}/download-all', [DownloadLaporanPenilaianController::class, 'downloadAll'])->name('admin.tes-selesai.download-all-laporan');
         Route::get('potensi/tes-selesai/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekap'])->name('admin.tes-selesai.download-rekap');
-        Route::get('potensi/tes-selesai/{idEvent}/{nip}/rekomendasi', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\RekomendasiAi::class)->name('admin.tes-selesai.rekomendasi-ai');
+        Route::get('potensi/tes-selesai/{idEvent}/{identifier}/rekomendasi', \App\Livewire\Admin\DataTes\TesPotensi\TesSelesai\RekomendasiAi::class)->name('admin.tes-selesai.rekomendasi-ai');
 
         // data tes kompetensi teknis berlangsung
         Route::get('kompetensi-teknis/kt-ongoing/', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.kompetensi-teknis');
@@ -85,7 +85,7 @@ Route::prefix('bkdac')->group(function () {
         // data tes kompetensi teknis selesai
         Route::get('kompetensi-teknis/kt-finish', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\Index::class)->name('admin.tes-selesai.kompetensi-teknis');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.kompetensi-teknis.show-peserta');
-        Route::get('kompetensi-teknis/kt-finish/{idEvent}/{nip}/download', [DownloadLaporanKompetensiTeknisController::class, 'createPdf'])->name('admin.tes-selesai.kompetensi-teknis.download');
+        Route::get('kompetensi-teknis/kt-finish/{idEvent}/{identifier}/download', [DownloadLaporanKompetensiTeknisController::class, 'createPdf'])->name('admin.tes-selesai.kompetensi-teknis.download');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-all', [DownloadLaporanKompetensiTeknisController::class, 'downloadAll'])->name('admin.tes-selesai.kompetensi-teknis.download-all-laporan');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapKompetensiTeknis'])->name('admin.tes-selesai.kompetensi-teknis.download-rekap');
 

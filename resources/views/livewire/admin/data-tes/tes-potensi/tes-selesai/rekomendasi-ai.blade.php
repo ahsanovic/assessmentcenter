@@ -17,7 +17,7 @@
                     </div>
                     <div class="row mb-2">
                         <label class="col-md-2 fw-semibold">NIP</label>
-                        <div class="col-md-7">: {{ $peserta->nip }}</div>
+                        <div class="col-md-7">: {{ $peserta->nip ?: $peserta->nik }}</div>
                     </div>
                     <div class="row mb-2">
                         <label class="col-md-2 fw-semibold">Jabatan Saat Ini</label>

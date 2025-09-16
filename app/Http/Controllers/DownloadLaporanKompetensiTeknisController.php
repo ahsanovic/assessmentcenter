@@ -12,9 +12,13 @@ use ZipArchive;
 
 class DownloadLaporanKompetensiTeknisController extends Controller
 {
-    public function createPdf($idEvent, $nip)
+    public function createPdf($idEvent, $identifier)
     {
-        $peserta = Peserta::with('golPangkat')->where('nip', $nip)->firstOrFail();
+        $peserta = Peserta::with('golPangkat')
+            ->where('nip', $identifier)
+            ->orWhere('nik', $identifier)
+            ->firstOrFail();
+
         $tte = TtdLaporan::where('is_active', 't')->first();
 
         $data = Event::with([

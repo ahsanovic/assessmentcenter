@@ -22,12 +22,16 @@ class RekomendasiAi extends Component
     public $jenis_peserta;
     public $jenis_jabatan;
 
-    public function mount($idEvent, $nip)
+    public function mount($idEvent, $identifier)
     {
         $this->id_event = $idEvent;
 
         // get data peserta
-        $this->peserta = Peserta::with('event')->whereNip($nip)->first();
+        $this->peserta = Peserta::with('event')
+            ->where('nip', $identifier)
+            ->orWhere('nik', $identifier)
+            ->first();
+
         $this->nama = $this->peserta->nama;
 
         // get jpm

@@ -91,7 +91,7 @@
                                         <td>
                                             <a href="{{ route('admin.tes-selesai.show-report', [
                                                     'idEvent' => $item->event_id,
-                                                    'nip' => $item->nip ?: $item->nik
+                                                    'identifier' => $item->nip ?: $item->nik
                                                 ]) }}" class="btn btn-sm btn-inverse-success"
                                                 wire:navigate
                                             >
@@ -99,7 +99,7 @@
                                             </a>
                                             <a href="{{ route('admin.tes-selesai.download', [
                                                     'idEvent' => $item->event_id,
-                                                    'nip' => $item->nip ?: $item->nik
+                                                    'identifier' => $item->nip ?: $item->nik
                                                 ]) }}" class="btn btn-sm btn-inverse-danger"
                                                 target="_blank"
                                             >
@@ -107,7 +107,7 @@
                                             </a>
                                             <a href="{{ route('admin.tes-selesai.rekomendasi-ai', [
                                                     'idEvent' => $item->event_id,
-                                                    'nip' => $item->nip ?: $item->nik
+                                                    'identifier' => $item->nip ?: $item->nik
                                                 ]) }}" class="btn btn-sm btn-inverse-warning"
                                                 wire:navigate
                                             >

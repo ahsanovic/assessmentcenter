@@ -220,7 +220,7 @@
             <td>2</td>
             <td>NIP</td>
             <td><center>:</center></td>
-            <td>{{ $peserta->nip ?? '-' }}</td>
+            <td>{{ $peserta->nip ?: $peserta->nik }}</td>
         </tr>
         <tr>
             <td>3</td>
@@ -238,7 +238,7 @@
             <td>5</td>
             <td>Pangkat</td>
             <td><center>:</center></td>
-            <td>{{ $peserta->golPangkat->pangkat . ' (' . $peserta->golPangkat->golongan . ')' ?? '-' }}</td>
+            <td>{{ $peserta->golPangkat?->pangkat . ' (' . $peserta->golPangkat?->golongan . ')' ?? '-' }}</td>
         </tr>
         <tr>
             <td>6</td>
