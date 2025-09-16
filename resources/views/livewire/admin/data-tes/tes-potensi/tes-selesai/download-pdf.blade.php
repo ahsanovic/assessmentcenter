@@ -475,7 +475,7 @@
         @endforeach
     </table>
 
-    <div class="page-break"></div>
+    {{-- <div class="page-break"></div> --}}
 
     <!-- Tanda Tangan -->
     <div class="ttd-section">
