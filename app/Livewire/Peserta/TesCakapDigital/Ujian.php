@@ -170,7 +170,7 @@ class Ujian extends Component
             $data->is_finished = true;
             $data->save();
 
-            return $this->redirect(route('peserta.tes-cakap-digital.hasil'), navigate: true);
+            return $this->redirect(route('peserta.tes-cakap-digital.hasil'));
         } catch (\Throwable $th) {
             //throw $th;
             session()->flash('toast', [
