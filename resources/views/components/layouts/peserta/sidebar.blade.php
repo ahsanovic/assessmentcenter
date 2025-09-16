@@ -32,6 +32,7 @@
                     $event_id = auth()->guard('peserta')->user()->event_id;
                     $peserta_id = auth()->guard('peserta')->user()->id;
                 @endphp
+                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 2)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesIntelektual($event_id, $peserta_id);
@@ -52,6 +53,7 @@
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
+                @endif
                 @if (auth()->guard('peserta')->user()->event->metode_tes_id === 3)
                 <li class="nav-item">
                     @php
