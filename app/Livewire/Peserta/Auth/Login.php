@@ -6,6 +6,8 @@ use App\Models\Event;
 use App\Models\Peserta;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('components.layouts.peserta.guest', ['title' => 'Login Page'])]
 class Login extends Component
@@ -66,30 +68,44 @@ class Login extends Component
                 $query->where('is_finished', 'false');
             })
             ->where('is_active', 'true')
+            ->orderByDesc('event_id')
             ->first();
 
         if (!$peserta) {
             $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
         }
 
-        if ($peserta) {
-            $credentials = [
-                'password' => $this->password,
-            ];
-
-            if ($peserta->jenis_peserta_id == 1) {
-                // ASN
-                $credentials['nip'] = $this->id_number;
-            } elseif ($peserta->jenis_peserta_id == 2) {
-                // Non-ASN
-                $credentials['nik'] = $this->id_number;
-            }
-
-            if (auth()->guard('peserta')->attempt($credentials)) {
-                request()->session()->regenerate();
-                return $this->redirect(route('peserta.dashboard'));
-            }
+        // cek password manual
+        if (!Hash::check($this->password, $peserta->password)) {
+            $this->addError('id_number', 'Password salah.');
+            return;
         }
+
+        // login pakai peserta hasil query (event terbaru aktif)
+        Auth::guard('peserta')->login($peserta);
+
+        request()->session()->regenerate();
+
+        return $this->redirect(route('peserta.dashboard'));
+
+        // if ($peserta) {
+        //     $credentials = [
+        //         'password' => $this->password,
+        //     ];
+
+        //     if ($peserta->jenis_peserta_id == 1) {
+        //         // ASN
+        //         $credentials['nip'] = $this->id_number;
+        //     } elseif ($peserta->jenis_peserta_id == 2) {
+        //         // Non-ASN
+        //         $credentials['nik'] = $this->id_number;
+        //     }
+
+        //     if (auth()->guard('peserta')->attempt($credentials)) {
+        //         request()->session()->regenerate();
+        //         return $this->redirect(route('peserta.dashboard'));
+        //     }
+        // }
 
         // if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'nik', 'password'))) {
         //     request()->session()->regenerate();

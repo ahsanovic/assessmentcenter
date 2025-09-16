@@ -90,7 +90,7 @@ class Form extends Component
             'nip.digits' => 'nip harus 18 digit',
             'nik.required' => 'harus diisi',
             'nik.numeric' => 'harus angka',
-            'nik.digits' => 'nip harus 16 digit',
+            'nik.digits' => 'nik harus 16 digit',
             'instansi.required' => 'harus diisi',
             'jabatan.required' => 'harus diisi',
             'password.required' => 'harus  diisi',
