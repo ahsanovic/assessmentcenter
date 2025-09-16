@@ -73,6 +73,7 @@ class Login extends Component
 
         if (!$peserta) {
             $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
+            return;
         }
 
         // cek password manual
