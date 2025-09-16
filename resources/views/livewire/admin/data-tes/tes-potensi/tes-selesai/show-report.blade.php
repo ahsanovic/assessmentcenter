@@ -28,7 +28,7 @@
                                     <tr>
                                         <td>NIP</td>
                                         <td>:</td>
-                                        <td>{{ $peserta->nip }}</td>
+                                        <td>{{ $peserta->nip ?: $peserta->nik }}</td>
                                     </tr>
                                     <tr>
                                         <td>Jabatan Saat Ini</td>
