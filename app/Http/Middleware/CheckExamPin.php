@@ -29,6 +29,9 @@ class CheckExamPin
             'tes-cakap-digital/home',
             'tes-cakap-digital/ujian/*',
             'tes-cakap-digital/hasil',
+            'tes-kompetensi-teknis/home',
+            'tes-kompetensi-teknis/ujian/*',
+            'tes-kompetensi-teknis/hasil',
             'tes-intelektual/home',
             'tes-intelektual/subtes1/*',
             'tes-intelektual/subtes2/*',
@@ -48,7 +51,7 @@ class CheckExamPin
             return redirect()->route("peserta.$prefix.home");
         }
 
-        if ($request->is('tes-potensi') || $request->is('tes-intelektual') || $request->is('tes-cakap-digital')) {
+        if ($request->is('tes-potensi') || $request->is('tes-intelektual') || $request->is('tes-cakap-digital') || $request->is('tes-kompetensi-teknis')) {
             return $next($request);
         }
 

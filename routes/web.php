@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\LogoutAssessorController;
 use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
@@ -84,6 +85,8 @@ Route::prefix('bkdac')->group(function () {
         // data tes kompetensi teknis selesai
         Route::get('kompetensi-teknis/kt-finish', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\Index::class)->name('admin.tes-selesai.kompetensi-teknis');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesKompetensiTeknis\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.kompetensi-teknis.show-peserta');
+        Route::get('kompetensi-teknis/kt-finish/{idEvent}/{nip}/download', [DownloadLaporanKompetensiTeknisController::class, 'createPdf'])->name('admin.tes-selesai.kompetensi-teknis.download');
+        Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-all', [DownloadLaporanKompetensiTeknisController::class, 'downloadAll'])->name('admin.tes-selesai.kompetensi-teknis.download-all-laporan');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapKompetensiTeknis'])->name('admin.tes-selesai.kompetensi-teknis.download-rekap');
 
         // data tes cakap digital berlangsung
@@ -346,12 +349,12 @@ Route::middleware(['auth:peserta'])->group(function () {
     });
 
     // tes kompetensi teknis
-    // Route::prefix('tes-kompetensi-teknis')->group(function () {
-    //     Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
-    //     Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
-    //     Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
-    //     Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
-    // });
+    Route::prefix('tes-kompetensi-teknis')->group(function () {
+        Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
+        Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
+        Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
+    });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
 });

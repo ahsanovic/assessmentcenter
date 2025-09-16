@@ -64,6 +64,18 @@
                     </a>
                 </li>
                 @endif
+                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 4)
+                <li class="nav-item">
+                    @php
+                        $data = getFinishedTesKompetensiTeknis($event_id, $peserta_id);
+                        $test_kompetensi_teknis_started = collect($data)->contains(true);
+                    @endphp
+                    <a href="{{ route('peserta.tes-kompetensi-teknis') }}" class="nav-link" wire:navigate style="{{ $test_kompetensi_teknis_started ? 'pointer-events: none;' : '' }}">
+                        <i class="link-icon" data-feather="info"></i>
+                        <span class="link-title">Tes Kompetensi Teknis</span>
+                    </a>
+                </li>
+                @endif
                 
                 <li class="nav-item nav-category">Logout</li>
                 <li class="nav-item">

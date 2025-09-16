@@ -144,6 +144,18 @@ if (!function_exists('getFinishedTesCakapDigital')) {
     }
 }
 
+if (!function_exists('getFinishedTesKompetensiTeknis')) {
+    function getFinishedTesKompetensiTeknis($event_id, $peserta_id)
+    {
+        return [
+            'tes_kompetensi_teknis' => UjianCakapDigital::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
 if (!function_exists('getFinishedTesIntelektual')) {
     function getFinishedTesIntelektual($event_id, $peserta_id)
     {
