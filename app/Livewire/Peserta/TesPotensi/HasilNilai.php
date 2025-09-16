@@ -27,6 +27,9 @@ class HasilNilai extends Component
             'peserta' => function ($query) use ($peserta) {
                 $query->where('id', $peserta->id);
             },
+            'hasilIntelektual' => function ($query) use ($peserta) {
+                $query->where('peserta_id', $peserta->id);
+            },
             'hasilInterpersonal' => function ($query) use ($peserta) {
                 $query->where('peserta_id', $peserta->id);
             },
@@ -77,6 +80,7 @@ class HasilNilai extends Component
             ->firstOrFail();
 
         $capaian_level = [
+            'capaian_level_intelektual' => capaianLevel(optional($this->data->hasilIntelektual->first())->level ?? null),
             'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
             'capaian_level_kecerdasan_emosi' => capaianLevel($this->data->hasilKecerdasanEmosi[0]->level_total),
             'capaian_level_pengembangan_diri' => capaianLevel($this->data->hasilPengembanganDiri[0]->level_total),
