@@ -48,6 +48,11 @@
                                     class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)
                                 </a>
                             </div>
+                            <div class="me-2">
+                                <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download-all-laporan', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
+                                    class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }}">Download Semua Laporan PDF (.zip)
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -88,10 +93,18 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_kompetensi_teknis_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
+                                                <button wire:click="deleteConfirmation('{{ $item->hasil_kompetensi_teknis_id }}')" tabindex="0" class="me-2 btn btn-xs btn-outline-danger">
                                                     Hapus
                                                 </button>
                                             @endif
+                                            <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download', [
+                                                    'idEvent' => $item->event_id,
+                                                    'nip' => $item->nip ?: $item->nik
+                                                ]) }}" class="btn btn-xs btn-inverse-danger"
+                                                target="_blank"
+                                            >
+                                                Download Pdf
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach

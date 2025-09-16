@@ -109,7 +109,7 @@ class DownloadLaporanPenilaianController extends Controller
         ])->setPaper('A4', 'portrait');
 
         // return $pdf->download('report-' . $peserta->nip . '-' . $peserta->nama . '.pdf');
-        return $pdf->stream('report-' . $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf');
+        return $pdf->stream('report-' . $peserta->nip ?: $peserta->nik . '-' . strtoupper($peserta->nama) . '.pdf');
     }
 
     public function downloadAll($idEvent)
@@ -251,7 +251,7 @@ class DownloadLaporanPenilaianController extends Controller
             ])->setPaper('A4', 'portrait');
 
             $temp_folder = storage_path('app/private/laporan_temp');
-            $filename = $peserta->nip . '-' . strtoupper($peserta->nama) . '.pdf';
+            $filename = $peserta->nip ?: $peserta->nik . '-' . strtoupper($peserta->nama) . '.pdf';
             $pdf_path = $temp_folder . '/' . $filename;
             file_put_contents($pdf_path, $pdf->output());
             $pdf_paths[] = $pdf_path;

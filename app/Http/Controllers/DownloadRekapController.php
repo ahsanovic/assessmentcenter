@@ -55,7 +55,7 @@ class DownloadRekapController extends Controller
         foreach ($all_peserta as $peserta) {
             $export_data->push([
                 'Nama Peserta' => $peserta->nama,
-                'NIP' => $peserta->nip,
+                'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan Saat Ini' => $peserta->jabatan,
                 'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
@@ -139,7 +139,7 @@ class DownloadRekapController extends Controller
         foreach ($all_peserta as $peserta) {
             $export_data->push([
                 'Nama Peserta' => $peserta->nama,
-                'NIP' => $peserta->nip,
+                'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan Saat Ini' => $peserta->jabatan,
                 'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
                 'Level Literasi Digital' => $peserta->hasilCakapDigital->kategori_literasi ?? '-',
@@ -149,5 +149,40 @@ class DownloadRekapController extends Controller
         }
 
         return (new FastExcel($export_data))->download('rekap-laporan-cakap-digital.xlsx');
+    }
+
+    public function downloadRekapKompetensiTeknis($idEvent)
+    {
+        $tanggal = request()->query('tanggalTes');
+
+        $all_peserta = Peserta::with([
+            'event',
+            'hasilKompetensiTeknis',
+        ])
+            ->where('event_id', $idEvent)
+            ->when($tanggal, function ($query) use ($tanggal) {
+                $query->whereDate('test_started_at', $tanggal);
+            })
+            ->whereHas('ujianKompetensiTeknis', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->get();
+
+        $export_data = collect();
+
+        foreach ($all_peserta as $peserta) {
+            $export_data->push([
+                'Nama Peserta' => $peserta->nama,
+                'NIP/NIK' => $peserta->nip ?: $peserta->nik,
+                'Jabatan' => $peserta->jabatan,
+                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
+                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
+                'JPM' => $peserta->hasilKompetensiTeknis->jpm . '%' ?? '-',
+                'Kategori' => $peserta->hasilKompetensiTeknis->kategori ?? '-',
+                'Deskripsi' => $peserta->hasilKompetensiTeknis->deskripsi ?? '-'
+            ]);
+        }
+
+        return (new FastExcel($export_data))->download('rekap-laporan-kompetensi-teknis.xlsx');
     }
 }

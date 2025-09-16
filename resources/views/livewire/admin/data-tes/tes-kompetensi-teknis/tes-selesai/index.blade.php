@@ -75,7 +75,7 @@
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-warning {{ $item->hasil_kompetensi_teknis_count == 0 ? 'disabled' : '' }}" wire:navigate
-                                                href="{{ route('admin.tes-selesai.cakap-digital.show-peserta', ['idEvent' => $item->id]) }}">
+                                                href="{{ route('admin.tes-selesai.kompetensi-teknis.show-peserta', ['idEvent' => $item->id]) }}">
                                                     {{ $item->hasil_kompetensi_teknis_count ?? 0 }} orang
                                             </a>
                                         </td>
