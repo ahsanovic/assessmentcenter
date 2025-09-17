@@ -70,7 +70,7 @@
                                     <th>Jenis Peserta</th>
                                     <th>Jabatan</th>
                                     <th>Unit Kerja / Instansi</th>
-                                    <th>Event</th>
+                                    <th>Event / Metode Tes</th>
                                     <th>Portofolio</th>
                                     <th>Status</th>
                                     <th></th>
@@ -91,7 +91,10 @@
                                         <td class="text-wrap">{{ $item->jenisPeserta->jenis_peserta }}</td>
                                         <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">{{ $item->unit_kerja }} <br /> {{ $item->instansi }}</td>
-                                        <td class="text-wrap">{{ $item->event->nama_event ?? '' }}</td>
+                                        <td class="text-wrap">
+                                            {{ $item->event->nama_event ?? '' }} <br />
+                                            <span class="badge bg-dark">{{ $item->event->metodeTes->metode_tes }}</span>
+                                        </td>
                                         <td>
                                             @if($item->is_portofolio_lengkap)
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" title="Lengkap" class="text-success">✔</span>
