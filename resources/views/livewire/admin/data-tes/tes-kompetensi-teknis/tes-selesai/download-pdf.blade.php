@@ -260,7 +260,7 @@
         <tr>
             <td width="135">Job Person Match (JPM)</td>
             <td width="10"><center>:</center></td>
-            <td><strong>{{ $data->hasilKompetensiTeknis[0]->jpm ?? '' . '%' }}</strong></td>
+            <td><strong>{{ $data->hasilKompetensiTeknis[0]->jpm ? $data->hasilKompetensiTeknis[0]->jpm . ' %' : '' }}</strong></td>
         </tr>
         <tr>
             <td width="135">Kategori</td>
