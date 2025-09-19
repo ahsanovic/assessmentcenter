@@ -292,7 +292,7 @@ class KesadaranDiri extends Component
 
             $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3;
 
-            if (($skor_total >= 1 || $skor_total <= 143)) {
+            if ($skor_total >= 1 && $skor_total <= 143) {
                 $level_total = '1';
                 $kualifikasi_total = 'Sangat Kurang';
                 $kategori_total = 'SK';
