@@ -331,6 +331,13 @@ class DownloadLaporanPenilaianController extends Controller
 
         $response = new StreamedResponse(
             function () use ($all_peserta, $aspek_potensi, $tte, $idEvent) {
+                if (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                ini_set('memory_limit', '1024M');
+                ini_set('max_execution_time', '600');
+
                 $zip = new ZipStream(
                     outputName: 'laporan-semua-peserta-tes-potensi.zip',
                     sendHttpHeaders: true
@@ -381,7 +388,8 @@ class DownloadLaporanPenilaianController extends Controller
 
                     // nama file di dalam zip
                     $identifier = $peserta->nip ?: $peserta->nik;
-                    $filename = $identifier . '-' . strtoupper($peserta->nama) . '.pdf';
+                    $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', strtoupper($peserta->nama));
+                    $filename = $identifier . '-' . $safeName . '.pdf';
 
                     // masukkan langsung ke stream
                     $zip->addFile($filename, $pdf->output());
