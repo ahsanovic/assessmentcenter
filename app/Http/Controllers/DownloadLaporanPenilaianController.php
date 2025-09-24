@@ -14,8 +14,31 @@ class DownloadLaporanPenilaianController extends Controller
 {
     public function createPdf($idEvent, $identifier)
     {
-        $peserta = Peserta::where('nip', $identifier)
-            ->orWhere('nik', $identifier)
+        $peserta = Peserta::where(function ($q) use ($identifier) {
+            $q->where('nip', $identifier)
+                ->orWhere('nik', $identifier);
+        })
+            ->whereHas('ujianInterpersonal', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianKesadaranDiri', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianBerpikirKritis', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianPengembanganDiri', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianProblemSolving', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianKecerdasanEmosi', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->whereHas('ujianMotivasiKomitmen', function ($query) {
+                $query->where('is_finished', 'true');
+            })
             ->firstOrFail();
 
         $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
@@ -117,6 +140,7 @@ class DownloadLaporanPenilaianController extends Controller
 
     public function downloadAll($idEvent)
     {
+        ini_set('max_execution_time', 600);
         $tanggal = request()->query('tanggalTes');
 
         $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
@@ -254,7 +278,8 @@ class DownloadLaporanPenilaianController extends Controller
             ])->setPaper('A4', 'portrait');
 
             $temp_folder = storage_path('app/private/laporan_temp');
-            $filename = $peserta->nip ?: $peserta->nik . '-' . strtoupper($peserta->nama) . '.pdf';
+            $identifier = $peserta->nip ?: $peserta->nik;
+            $filename = $identifier . '-' . strtoupper($peserta->nama) . '.pdf';
             $pdf_path = $temp_folder . '/' . $filename;
             file_put_contents($pdf_path, $pdf->output());
             $pdf_paths[] = $pdf_path;

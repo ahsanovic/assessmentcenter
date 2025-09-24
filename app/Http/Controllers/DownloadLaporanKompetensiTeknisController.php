@@ -15,8 +15,13 @@ class DownloadLaporanKompetensiTeknisController extends Controller
     public function createPdf($idEvent, $identifier)
     {
         $peserta = Peserta::with('golPangkat')
-            ->where('nip', $identifier)
-            ->orWhere('nik', $identifier)
+            ->where(function ($q) use ($identifier) {
+                $q->where('nip', $identifier)
+                    ->orWhere('nik', $identifier);
+            })
+            ->whereHas('ujianKompetensiTeknis', function ($q) use ($idEvent) {
+                $q->where('event_id', $idEvent);
+            })
             ->firstOrFail();
 
         $tte = TtdLaporan::where('is_active', 't')->first();
@@ -57,6 +62,7 @@ class DownloadLaporanKompetensiTeknisController extends Controller
 
     public function downloadAll($idEvent)
     {
+        ini_set('max_execution_time', 300);
         $tanggal = request()->query('tanggalTes');
 
         $tte = TtdLaporan::where('is_active', 't')->first();
@@ -106,7 +112,8 @@ class DownloadLaporanKompetensiTeknisController extends Controller
             ])->setPaper('A4', 'portrait');
 
             $temp_folder = storage_path('app/private/laporan_temp');
-            $filename = $peserta->nip ?: $peserta->nik . '-' . strtoupper($peserta->nama) . '.pdf';
+            $identifier = $peserta->nip ?: $peserta->nik;
+            $filename = $identifier . '-' . strtoupper($peserta->nama) . '.pdf';
             $pdf_path = $temp_folder . '/' . $filename;
             file_put_contents($pdf_path, $pdf->output());
             $pdf_paths[] = $pdf_path;
