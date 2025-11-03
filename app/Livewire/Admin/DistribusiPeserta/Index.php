@@ -44,6 +44,7 @@ class Index extends Component
     {
         $data = Event::withCount('assessor', 'peserta')
             ->where('is_finished', 'false')
+            ->where('metode_tes_id', 1) // 1 = metode tes assessment center
             ->when($this->event, function ($query) {
                 $query->where('id', $this->event);
             })
