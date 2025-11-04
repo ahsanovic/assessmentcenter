@@ -9,6 +9,7 @@ use App\Models\Intelektual\UjianIntelektualSubTes3;
 use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
+use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
@@ -148,7 +149,7 @@ if (!function_exists('getFinishedTesKompetensiTeknis')) {
     function getFinishedTesKompetensiTeknis($event_id, $peserta_id)
     {
         return [
-            'tes_kompetensi_teknis' => UjianCakapDigital::where('event_id', $event_id)
+            'tes_kompetensi_teknis' => UjianKompetensiTeknis::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
                 ->where('is_finished', 'true')
                 ->exists(),
