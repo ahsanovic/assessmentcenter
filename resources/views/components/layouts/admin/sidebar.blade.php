@@ -419,6 +419,26 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#pspk-lv1" role="button"
+                        aria-expanded="false" aria-controls="pspk-lv1">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">PSPK</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="pspk-lv1">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-pspk') }}" wire:navigate
+                                    class="nav-link">Soal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-pspk') }}" wire:navigate
+                                    class="nav-link">Referensi Deskripsi</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
                 @if (auth()->guard('admin')->user()->role === 'admin')
                 <li class="nav-item nav-category">Akses dan Jejak</li>

@@ -267,6 +267,16 @@ Route::prefix('bkdac')->group(function () {
         Route::get('soal-intelektual-subtes3/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.create');
         Route::get('soal-intelektual-subtes3/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.edit');
 
+        // soal pspk
+        Route::get('soal-pspk', \App\Livewire\Admin\Pspk\Soal\Index::class)->name('admin.soal-pspk');
+        Route::get('soal-pspk/create', \App\Livewire\Admin\Pspk\Soal\Form::class)->name('admin.soal-pspk.create');
+        Route::get('soal-pspk/{id}/edit', \App\Livewire\Admin\Pspk\Soal\Form::class)->name('admin.soal-pspk.edit');
+
+        // referensi pspk
+        Route::get('ref-pspk', \App\Livewire\Admin\Pspk\Ref\Index::class)->name('admin.ref-pspk');
+        Route::get('ref-pspk/create', \App\Livewire\Admin\Pspk\Ref\Form::class)->name('admin.ref-pspk.create');
+        Route::get('ref-pspk/{id}/edit', \App\Livewire\Admin\Pspk\Ref\Form::class)->name('admin.ref-pspk.edit');
+
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
         Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');
@@ -342,18 +352,26 @@ Route::middleware(['auth:peserta'])->group(function () {
 
     // tes cakap digital
     Route::prefix('tes-cakap-digital')->group(function () {
-        Route::get('/', \App\Livewire\Peserta\TesCakapDigital\Index::class)->name('peserta.tes-cakap-digital')->middleware(CheckExamPin::class);;
-        Route::get('home', \App\Livewire\Peserta\TesCakapDigital\Dashboard::class)->name('peserta.tes-cakap-digital.home')->middleware(CheckExamPin::class);;
-        Route::get('ujian/{id}', \App\Livewire\Peserta\TesCakapDigital\Ujian::class)->name('peserta.tes-cakap-digital.ujian')->middleware(CheckExamPin::class);;
-        Route::get('hasil', \App\Livewire\Peserta\TesCakapDigital\Hasil::class)->name('peserta.tes-cakap-digital.hasil')->middleware(CheckExamPin::class);;
+        Route::get('/', \App\Livewire\Peserta\TesCakapDigital\Index::class)->name('peserta.tes-cakap-digital')->middleware(CheckExamPin::class);
+        Route::get('home', \App\Livewire\Peserta\TesCakapDigital\Dashboard::class)->name('peserta.tes-cakap-digital.home')->middleware(CheckExamPin::class);
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesCakapDigital\Ujian::class)->name('peserta.tes-cakap-digital.ujian')->middleware(CheckExamPin::class);
+        Route::get('hasil', \App\Livewire\Peserta\TesCakapDigital\Hasil::class)->name('peserta.tes-cakap-digital.hasil')->middleware(CheckExamPin::class);
     });
 
     // tes kompetensi teknis
     Route::prefix('tes-kompetensi-teknis')->group(function () {
-        Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);;
-        Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);;
-        Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);;
-        Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);;
+        Route::get('/', \App\Livewire\Peserta\TesKompetensiTeknis\Index::class)->name('peserta.tes-kompetensi-teknis')->middleware(CheckExamPin::class);
+        Route::get('home', \App\Livewire\Peserta\TesKompetensiTeknis\Dashboard::class)->name('peserta.tes-kompetensi-teknis.home')->middleware(CheckExamPin::class);
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesKompetensiTeknis\Ujian::class)->name('peserta.tes-kompetensi-teknis.ujian')->middleware(CheckExamPin::class);
+        Route::get('hasil', \App\Livewire\Peserta\TesKompetensiTeknis\Hasil::class)->name('peserta.tes-kompetensi-teknis.hasil')->middleware(CheckExamPin::class);
+    });
+
+    // tes pspk
+    Route::prefix('tes-pspk')->group(function () {
+        Route::get('/', \App\Livewire\Peserta\TesPspk\Index::class)->name('peserta.tes-pspk')->middleware(CheckExamPin::class);
+        Route::get('home', \App\Livewire\Peserta\TesPspk\Dashboard::class)->name('peserta.tes-pspk.home')->middleware(CheckExamPin::class);
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesPspk\Ujian::class)->name('peserta.tes-pspk.ujian')->middleware(CheckExamPin::class);
+        Route::get('hasil', \App\Livewire\Peserta\TesPspk\Hasil::class)->name('peserta.tes-pspk.hasil')->middleware(CheckExamPin::class);
     });
 
     Route::post('logout', LogoutPesertaController::class)->name('peserta.logout');
