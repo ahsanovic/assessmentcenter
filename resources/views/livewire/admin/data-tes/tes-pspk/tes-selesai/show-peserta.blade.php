@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.tes-selesai.kompetensi-teknis'), 'title' => 'Data Tes Selesai'],
+        ['url' => route('admin.tes-selesai.pspk'), 'title' => 'Data Tes Selesai'],
         ['url' => null, 'title' => 'Peserta']
     ]" />
     <div class="row">
@@ -11,7 +11,7 @@
                     <h6 class="card-title">Hasil Tes PSPK - {{ $event->nama_event }}</h6>
                     <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                     <div class="row mt-2">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="mb-3">
                                 <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="nama / nip / nik / jabatan / instansi" />
                             </div>
@@ -42,7 +42,7 @@
                                 <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
                             </div>
                         </div>
-                        <div class="col-sm-4 mb-3 d-flex justify-content-end">
+                        <div class="col-sm-5 mb-3 d-flex justify-content-end">
                             <div class="me-2">
                                 <a href="{{ route('admin.tes-selesai.pspk.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
                                     class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)

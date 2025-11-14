@@ -14,7 +14,7 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $jabatan_diuji;
+    public $level_pspk;
     public $tgl_mulai;
     public $selected_id;
     public $event;
@@ -34,7 +34,7 @@ class Index extends Component
 
     public function resetFilters()
     {
-        $this->reset(['jabatan_diuji', 'tgl_mulai', 'search']);
+        $this->reset(['level_pspk', 'tgl_mulai', 'search']);
         $this->resetPage();
         $this->render();
         $this->dispatch('reset-select2');
@@ -42,14 +42,25 @@ class Index extends Component
 
     public function render()
     {
+        $levelToMetode = [
+            1 => 5,
+            2 => 6,
+        ];
+
         $data = Event::withCount(['peserta', 'hasilPspk', 'peserta as peserta_selesai_count' => function ($query) {
             $query->whereHas('ujianPspk', function ($query) {
                 $query->where('is_finished', 'true');
             });
         }])
             ->with(['peserta', 'hasilPspk'])
-            ->where('metode_tes_id', 5)
-            ->orWhere('metode_tes_id', 6)
+            ->whereIn('metode_tes_id', [5, 6])
+            ->when($this->level_pspk, function ($query) use ($levelToMetode) {
+                $metode = $levelToMetode[$this->level_pspk] ?? null;
+
+                if ($metode) {
+                    $query->where('metode_tes_id', $metode);
+                }
+            })
             ->when($this->event, function ($query) {
                 $query->where('id', $this->event);
             })

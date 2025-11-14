@@ -111,6 +111,11 @@ Route::prefix('bkdac')->group(function () {
         Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes2::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-2');
         Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes3::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-3');
 
+        // data tes pspk berlangsung
+        // data tes kompetensi teknis berlangsung
+        Route::get('pspk/pspk-ongoing/', \App\Livewire\Admin\DataTes\TesPspk\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.pspk');
+        Route::get('pspk/pspk-ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesPspk\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.pspk.show-peserta');
+
         // data tes pspk selesai
         Route::get('pspk/pspk-finish', \App\Livewire\Admin\DataTes\TesPspk\TesSelesai\Index::class)->name('admin.tes-selesai.pspk');
         Route::get('pspk/pspk-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesPspk\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.pspk.show-peserta');

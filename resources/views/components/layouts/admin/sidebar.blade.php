@@ -214,10 +214,10 @@
                     </a>
                     <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-pspk">
                         <ul class="nav sub-menu">
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.pspk') }}" wire:navigate
                                     class="nav-link">Tes Berlangsung</a>
-                            </li> --}}
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.pspk') }}" wire:navigate
                                     class="nav-link">Tes Selesai</a>

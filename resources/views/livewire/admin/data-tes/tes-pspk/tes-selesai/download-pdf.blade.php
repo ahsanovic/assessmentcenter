@@ -240,7 +240,6 @@
     
     <div class="nomor-surat">
         NOMOR : {{ $data->nomorLaporan[0]->nomor ?? '' }}
-        {{-- NOMOR : {{ $nomor_laporan ?? '-' }} --}}
     </div>
     
     <!-- Tujuan -->
@@ -250,7 +249,6 @@
             <td width="5">:</td>
             <td>Pemetaan Kompetensi Mansoskul dan Teknis</td>
             <td width="200" style="text-align: right">
-                {{-- Tanggal Pemeriksaan : {{ \Carbon\Carbon::parse($data->nomorLaporan[0]->tanggal)->format('d F Y') ?? '-' }} --}}
                 Tanggal : {{ \Carbon\Carbon::parse($peserta->test_started_at)->format('d F Y') ?? '-' }}
             </td>
         </tr>
@@ -287,6 +285,12 @@
             <td>Unit Kerja</td>
             <td><center>:</center></td>
             <td>{{ $peserta->unit_kerja ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Instansi</td>
+            <td><center>:</center></td>
+            <td>{{ $peserta->instansi ?? '-' }}</td>
         </tr>
     </table>
     
@@ -420,11 +424,26 @@
                 {{ in_array($nilai, [1, 1.5]) ? 'Memenuhi Standar Kompetensi' : 'Belum Memenuhi Standar Kompetensi' }}
             </td>
             <td>
-                {{ in_array($nilai, [1, 1.5]) ? 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi' : 'Lihat Katalog Pengembangan Kompetensi Manajerial dan Sosiokultural Level 1' }}
+                @php
+                    $ref = \App\Models\Pspk\RefSaranPengembangan::first();
+                    $saran_pengembangan = $ref->{$item->kode_aspek} ?? '';
+                    $items = preg_split('/-\s+/', trim($saran_pengembangan), -1, PREG_SPLIT_NO_EMPTY);
+                @endphp
+                @if (in_array($nilai, [1, 1.5]))
+                    {{ 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi' }}
+                @else
+                    <div>
+                        @foreach ($items as $text)
+                            - {{ trim($text) }}<br>
+                        @endforeach
+                    </div>
+                @endif
             </td>
         </tr>
         @endforeach
     </table>
+
+    <div class="page-break"></div>
 
     <!-- Tanda Tangan -->
     <div class="ttd-section">
