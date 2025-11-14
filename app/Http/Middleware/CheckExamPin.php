@@ -37,7 +37,12 @@ class CheckExamPin
             'tes-intelektual/subtes2/*',
             'tes-intelektual/subtes3/*',
             'tes-intelektual/hasil-nilai',
+            'tes-pspk/home',
+            'tes-pspk/ujian/*',
+            'tes-pspk/hasil',
         ];
+
+        $prefix = $request->segment(1);
 
         if (session()->has('exam_pin')) {
             foreach ($allowed_urls as $url) {
@@ -47,15 +52,26 @@ class CheckExamPin
             }
 
             // Jika mencoba mengakses halaman selain home, redirect ke home
-            $prefix = $request->segment(1);
             return redirect()->route("peserta.$prefix.home");
         }
 
-        if ($request->is('tes-potensi') || $request->is('tes-intelektual') || $request->is('tes-cakap-digital') || $request->is('tes-kompetensi-teknis')) {
+        $examRoutes = [
+            'tes-potensi',
+            'tes-intelektual',
+            'tes-cakap-digital',
+            'tes-kompetensi-teknis',
+            'tes-pspk',
+        ];
+
+        if (in_array($request->path(), $examRoutes, true)) {
             return $next($request);
         }
 
-        $prefix = $request->segment(1);
+        // if ($request->is('tes-potensi') || $request->is('tes-intelektual') || $request->is('tes-cakap-digital') || $request->is('tes-kompetensi-teknis')) {
+        //     return $next($request);
+        // }
+
+        // $prefix = $request->segment(1);
         return redirect()->route("peserta.$prefix");
     }
 }

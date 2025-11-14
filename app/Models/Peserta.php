@@ -24,6 +24,8 @@ use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\HasilProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use App\Models\Pspk\HasilPspk;
+use App\Models\Pspk\UjianPspk;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -113,6 +115,11 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->hasOne(UjianKompetensiTeknis::class, 'peserta_id');
     }
 
+    public function ujianPspk()
+    {
+        return $this->hasOne(UjianPspk::class, 'peserta_id');
+    }
+
     public function ujianCakapDigital()
     {
         return $this->hasOne(UjianCakapDigital::class, 'peserta_id');
@@ -166,6 +173,11 @@ class Peserta extends Model implements AuthenticatableContract
     public function ujianProblemSolving()
     {
         return $this->hasOne(UjianProblemSolving::class, 'peserta_id');
+    }
+
+    public function hasilPspk()
+    {
+        return $this->hasOne(HasilPspk::class, 'peserta_id');
     }
 
     public function hasilKompetensiTeknis()

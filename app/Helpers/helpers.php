@@ -13,6 +13,7 @@ use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use App\Models\Pspk\UjianPspk;
 use Illuminate\Support\Facades\Auth;
 use Ulid\Ulid;
 
@@ -150,6 +151,18 @@ if (!function_exists('getFinishedTesKompetensiTeknis')) {
     {
         return [
             'tes_kompetensi_teknis' => UjianKompetensiTeknis::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (!function_exists('getFinishedTesPspk')) {
+    function getFinishedTesPspk($event_id, $peserta_id)
+    {
+        return [
+            'tes_pspk' => UjianPspk::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
                 ->where('is_finished', 'true')
                 ->exists(),

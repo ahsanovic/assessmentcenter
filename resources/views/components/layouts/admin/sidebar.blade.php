@@ -205,6 +205,30 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-pspk" role="button"
+                        aria-expanded="false" aria-controls="data-tes-pspk">
+                        <i class="link-icon" data-feather="box"></i>
+                        <span class="link-title">Tes PSPK</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse" data-bs-parent="#sidebarNav" id="data-tes-pspk">
+                        <ul class="nav sub-menu">
+                            {{-- <li class="nav-item">
+                                <a href="{{ route('admin.tes-berlangsung.pspk') }}" wire:navigate
+                                    class="nav-link">Tes Berlangsung</a>
+                            </li> --}}
+                            <li class="nav-item">
+                                <a href="{{ route('admin.tes-selesai.pspk') }}" wire:navigate
+                                    class="nav-link">Tes Selesai</a>
+                            </li>
+                            {{-- <li class="nav-item">
+                            <a href="{{ route('admin.pelanggaran-tes-pspk') }}" wire:navigate
+                                    class="nav-link">Pelanggaran Tes</a>
+                            </li> --}}
+                        </ul>
+                    </div>
+                </li>
 
                 <li class="nav-item nav-category">Instrumen Tes</li>
                 <li class="nav-item">

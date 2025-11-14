@@ -4,6 +4,7 @@ use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\LogoutAssessorController;
 use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
+use App\Http\Controllers\DownloadLaporanPspkController;
 use App\Http\Controllers\DownloadRekapController;
 use App\Http\Controllers\LogoutAdminController;
 use App\Http\Middleware\CheckExamPin;
@@ -109,6 +110,13 @@ Route::prefix('bkdac')->group(function () {
         Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-1', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes1::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-1');
         Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-2', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes2::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-2');
         Route::get('intelektual/int-finish/{idEvent}/show-peserta-subtes-3', \App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai\ShowPesertaSubTes3::class)->name('admin.tes-selesai.intelektual.show-peserta-subtes-3');
+
+        // data tes pspk selesai
+        Route::get('pspk/pspk-finish', \App\Livewire\Admin\DataTes\TesPspk\TesSelesai\Index::class)->name('admin.tes-selesai.pspk');
+        Route::get('pspk/pspk-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesPspk\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.pspk.show-peserta');
+        Route::get('pspk/pspk-finish/{idEvent}/{identifier}/download', [DownloadLaporanPspkController::class, 'createPdf'])->name('admin.tes-selesai.pspk.download');
+        Route::get('pspk/pspk-finish/{idEvent}/download-all', [DownloadLaporanPspkController::class, 'downloadAll'])->name('admin.tes-selesai.pspk.download-all-laporan');
+        Route::get('pspk/pspk-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapPspk'])->name('admin.tes-selesai.pspk.download-rekap');
 
         // kuesioner
         Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');

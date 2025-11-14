@@ -14,6 +14,7 @@ use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use App\Models\Pspk\UjianPspk;
 use Illuminate\Support\Facades\Auth;
 
 trait TimerTrait
@@ -56,6 +57,9 @@ trait TimerTrait
                 break;
             case 'Kompetensi Teknis':
                 $this->_timerKompetensiTeknis();
+                break;
+            case 'Pspk':
+                $this->_timerPspk();
                 break;
         }
     }
@@ -107,6 +111,17 @@ trait TimerTrait
     protected function _timerKompetensiTeknis()
     {
         $test = UjianKompetensiTeknis::where('peserta_id', Auth::guard('peserta')->user()->id)
+            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->first();
+        if ($test) {
+            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
+        }
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
+    }
+
+    protected function _timerPspk()
+    {
+        $test = UjianPspk::where('peserta_id', Auth::guard('peserta')->user()->id)
             ->where('event_id', Auth::guard('peserta')->user()->event_id)
             ->first();
         if ($test) {

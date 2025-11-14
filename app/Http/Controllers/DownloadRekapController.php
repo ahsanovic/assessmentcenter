@@ -262,4 +262,38 @@ class DownloadRekapController extends Controller
 
         return (new FastExcel($export_data))->download('rekap-laporan-kompetensi-teknis.xlsx');
     }
+
+    public function downloadRekapPspk($idEvent)
+    {
+        $tanggal = request()->query('tanggalTes');
+
+        $all_peserta = Peserta::with([
+            'event',
+            'hasilPspk',
+        ])
+            ->where('event_id', $idEvent)
+            ->when($tanggal, function ($query) use ($tanggal) {
+                $query->whereDate('test_started_at', $tanggal);
+            })
+            ->whereHas('ujianPspk', function ($query) {
+                $query->where('is_finished', 'true');
+            })
+            ->get();
+
+        $export_data = collect();
+
+        foreach ($all_peserta as $peserta) {
+            $export_data->push([
+                'Nama Peserta' => $peserta->nama,
+                'NIP/NIK' => $peserta->nip ?: $peserta->nik,
+                'Jabatan' => $peserta->jabatan,
+                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
+                'JPM' => $peserta->hasilPspk->jpm . '%' ?? '-',
+                'Kategori' => $peserta->hasilPspk->kategori ?? '-',
+                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
+            ]);
+        }
+
+        return (new FastExcel($export_data))->download('rekap-laporan-pspk.xlsx');
+    }
 }

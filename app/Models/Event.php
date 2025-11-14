@@ -24,6 +24,8 @@ use App\Models\PengembanganDiri\HasilPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\HasilProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use App\Models\Pspk\HasilPspk;
+use App\Models\Pspk\UjianPspk;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
@@ -101,6 +103,29 @@ class Event extends Model
             'id',
             'peserta_id'
         );
+    }
+
+    // ujian PSPK
+    public function ujianPspk()
+    {
+        return $this->hasMany(UjianPspk::class, 'event_id', 'id');
+    }
+
+    public function pesertaTesPspk()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,
+            UjianPspk::class,
+            'event_id',
+            'id',
+            'id',
+            'peserta_id'
+        );
+    }
+
+    public function pesertaIdTesPspk()
+    {
+        return $this->ujianPspk()->select('peserta_id')->distinct();
     }
 
     // ujian kompetensi teknis
@@ -401,6 +426,29 @@ class Event extends Model
     public function pesertaIdHasilKompetensiTeknis()
     {
         return $this->hasilKompetensiTeknis()->select('peserta_id')->distinct();
+    }
+
+    // hasil PSPK
+    public function hasilPspk()
+    {
+        return $this->hasMany(HasilPspk::class, 'event_id', 'id');
+    }
+
+    public function pesertaHasilPspk()
+    {
+        return $this->hasManyThrough(
+            Peserta::class,               // Model target (Peserta)
+            HasilPspk::class,    // Model perantara (UjianPspk)
+            'event_id',                   // Foreign key di UjianPspk
+            'id',                         // Foreign key di Peserta
+            'id',                         // Local key di Event
+            'peserta_id'                  // Local key di UjianPspk
+        );
+    }
+
+    public function pesertaIdHasilPspk()
+    {
+        return $this->hasilPspk()->select('peserta_id')->distinct();
     }
 
     // hasil cakap digital
