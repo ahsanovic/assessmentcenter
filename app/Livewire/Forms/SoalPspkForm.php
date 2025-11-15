@@ -19,8 +19,7 @@ class SoalPspkForm extends Form
     #[Validate('required', message: 'harus diisi')]
     public $opsi_a;
 
-    #[Validate('required|integer|between:1,3', message: [
-        'poin_opsi_a.required' => 'harus diisi',
+    #[Validate('integer|between:1,3', message: [
         'poin_opsi_a.integer' => 'harus angka',
         'poin_opsi_a.between' => 'harus antara 1 sampai 3'
     ])]
@@ -29,8 +28,7 @@ class SoalPspkForm extends Form
     #[Validate('required', message: 'harus diisi')]
     public $opsi_b;
 
-    #[Validate('required|integer|between:1,3', message: [
-        'poin_opsi_b.required' => 'harus diisi',
+    #[Validate('integer|between:1,3', message: [
         'poin_opsi_b.integer' => 'harus angka',
         'poin_opsi_b.between' => 'harus antara 1 sampai 3'
     ])]
@@ -39,8 +37,7 @@ class SoalPspkForm extends Form
     #[Validate('required', message: 'harus diisi')]
     public $opsi_c;
 
-    #[Validate('required|integer|between:1,3', message: [
-        'poin_opsi_c.required' => 'harus diisi',
+    #[Validate('integer|between:1,3', message: [
         'poin_opsi_c.integer' => 'harus angka',
         'poin_opsi_c.between' => 'harus antara 1 sampai 3'
     ])]
@@ -49,8 +46,7 @@ class SoalPspkForm extends Form
     #[Validate('required', message: 'harus diisi')]
     public $opsi_d;
 
-    #[Validate('required|integer|between:1,3', message: [
-        'poin_opsi_d.required' => 'harus diisi',
+    #[Validate('integer|between:1,3', message: [
         'poin_opsi_d.integer' => 'harus angka',
         'poin_opsi_d.between' => 'harus antara 1 sampai 3'
     ])]
@@ -59,8 +55,7 @@ class SoalPspkForm extends Form
     #[Validate('required', message: 'harus diisi')]
     public $opsi_e;
 
-    #[Validate('required|integer|between:1,3', message: [
-        'poin_opsi_e.required' => 'harus diisi',
+    #[Validate('integer|between:1,3', message: [
         'poin_opsi_e.integer' => 'harus angka',
         'poin_opsi_e.between' => 'harus antara 1 sampai 3'
     ])]
