@@ -33,6 +33,7 @@
                                                     5 => 'Tes Intelektual - Sub Tes 3',
                                                     6 => 'Tes Kompetensi Teknis',
                                                     7 => 'Tes PSPK Level 1',
+                                                    8 => 'Tes PSPK Level 2',
                                                     default => ''
                                                 }
                                             }}

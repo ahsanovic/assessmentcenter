@@ -41,8 +41,11 @@ class Dashboard extends Component
         } else {
             $metode_tes_id = Auth::guard('peserta')->user()->event->metode_tes_id;
             switch ($metode_tes_id) {
-                case '5': // PSPK level 1
+                case 5: // PSPK level 1
                     $level_pspk = 1;
+                    break;
+                case 6: // PSPK level 2
+                    $level_pspk = 2;
                     break;
             }
 

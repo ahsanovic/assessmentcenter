@@ -143,6 +143,10 @@ Route::prefix('bkdac')->group(function () {
         // log pelanggaran tes kompetensi teknis
         Route::get('pelanggaran/tes-kompetensi-teknis', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Index::class)->name('admin.pelanggaran-tes-kompetensi-teknis');
         Route::get('pelanggaran/tes-kompetensi-teknis/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Show::class)->name('admin.pelanggaran-tes-kompetensi-teknis.show');
+        
+        // log pelanggaran tes pspk
+        Route::get('pelanggaran/tes-pspk', \App\Livewire\Admin\PelanggaranTes\TesPspk\Index::class)->name('admin.pelanggaran-tes-pspk');
+        Route::get('pelanggaran/tes-pspk/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesPspk\Show::class)->name('admin.pelanggaran-tes-pspk.show');
 
         // peserta
         Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');

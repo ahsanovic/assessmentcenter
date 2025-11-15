@@ -119,29 +119,46 @@ class Ujian extends Component
         // tapi tetap update ke struktur skor_aspek lama agar tidak hilang
         $updated_skor = array_fill_keys($aspek_list, 0);
 
-        foreach ($soal_id as $i => $sid) {
-            $jawaban = $jawaban_user[$i] ?? null;
-            $soal = SoalPspk::find($sid);
-
-            if ($soal && $jawaban && $jawaban != '0') {
-                $aspek_kode = $soal->aspek->kode_aspek ?? 'Tidak Diketahui';
-
-                if (!isset($updated_skor[$aspek_kode])) {
-                    $updated_skor[$aspek_kode] = 0;
+        if (auth()->guard('peserta')->user()->event->metode_tes_id == 5) { // pspk level 1
+            foreach ($soal_id as $i => $sid) {
+                $jawaban = $jawaban_user[$i] ?? null;
+                $soal = SoalPspk::find($sid);
+    
+                if ($soal && $jawaban && $jawaban != '0') {
+                    $aspek_kode = $soal->aspek->kode_aspek ?? 'Tidak Diketahui';
+    
+                    if (!isset($updated_skor[$aspek_kode])) {
+                        $updated_skor[$aspek_kode] = 0;
+                    }
+    
+                    $skor_opsi = match (strtoupper($jawaban)) {
+                        'A' => $soal->poin_opsi_a ?? 0,
+                        'B' => $soal->poin_opsi_b ?? 0,
+                        'C' => $soal->poin_opsi_c ?? 0,
+                        'D' => $soal->poin_opsi_d ?? 0,
+                        'E' => $soal->poin_opsi_e ?? 0,
+                        default => 0,
+                    };
+    
+                    $updated_skor[$aspek_kode] += $skor_opsi;
                 }
-
-                $skor_opsi = match (strtoupper($jawaban)) {
-                    'A' => $soal->poin_opsi_a ?? 0,
-                    'B' => $soal->poin_opsi_b ?? 0,
-                    'C' => $soal->poin_opsi_c ?? 0,
-                    'D' => $soal->poin_opsi_d ?? 0,
-                    'E' => $soal->poin_opsi_e ?? 0,
-                    default => 0,
-                };
-
-                $updated_skor[$aspek_kode] += $skor_opsi;
+            }
+        } else if (auth()->guard('peserta')->user()->event->metode_tes_id == 6) { // pspk level 2
+            foreach ($soal_id as $i => $sid) {
+                $jawaban = $jawaban_user[$i] ?? null;
+                $soal = SoalPspk::find($sid);
+        
+                if ($soal && $jawaban && $jawaban != '0') {
+                    $aspek_kode = $soal->aspek->kode_aspek ?? 'Tidak Diketahui';
+                    if (!isset($updated_skor[$aspek_kode])) {
+                        $updated_skor[$aspek_kode] = 0;
+                    }
+                    
+                    $updated_skor[$aspek_kode] += ($soal->kunci_jawaban == $jawaban) ? 5 : 1;
+                }
             }
         }
+
 
         // Gabungkan nilai baru ke dalam skor lama agar tidak overwrite
         foreach ($updated_skor as $key => $val) {
@@ -174,35 +191,71 @@ class Ujian extends Component
         try {
             $data = UjianPspk::findOrFail($this->id_ujian);
 
-            // total nilai
-            $total_nilai = [];
-            foreach ($data->skor_aspek as $key => $val) {
-                if (!$val) {
-                    $data->skor_aspek[$key] = 0;
+            if (auth()->guard('peserta')->user()->event->metode_tes_id == 5) { // pspk level 1
+                // total nilai
+                $total_nilai = [];
+                foreach ($data->skor_aspek as $key => $val) {
+                    if (!$val) {
+                        $data->skor_aspek[$key] = 0;
+                    }
+                    $total_nilai[] = $this->_getLevelPerAspek($data->skor_aspek[$key]);
                 }
-                $total_nilai[] = $this->_getLevelPerAspek($data->skor_aspek[$key]);
-            }
 
-            // jpm
-            $jpm = (array_sum($total_nilai)) / (1 * 9) * 100;
+                // jpm
+                $jpm = (array_sum($total_nilai)) / (1 * 9) * 100;
 
-            // kategori
-            $kategori = $this->_getKategori($jpm);
+                // kategori
+                $kategori = $this->_getKategori($jpm);
 
-            // deskripsi
-            $deskripsi = [];
-            foreach ($total_nilai as $key => $val) {
-                $kode_aspek = array_keys($data->skor_aspek)[$key];
-                $desc = RefDescPspk::where('level_pspk', 1)
-                    ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
-                    ->first();
+                // deskripsi
+                $deskripsi = [];
+                foreach ($total_nilai as $key => $val) {
+                    $kode_aspek = array_keys($data->skor_aspek)[$key];
+                    $desc = RefDescPspk::where('level_pspk', 1)
+                        ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
+                        ->first();
 
-                if ($val == 0.5) {
-                    $deskripsi[$kode_aspek] = $desc->deskripsi_min;
-                } else if ($val == 1) {
-                    $deskripsi[$kode_aspek] = $desc->deskripsi;
-                } else if ($val == 1.5) {
-                    $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
+                    if ($val == 0.5) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
+                    } else if ($val == 1) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi;
+                    } else if ($val == 1.5) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
+                    }
+                }
+            } else if (auth()->guard('peserta')->user()->event->metode_tes_id == 6) { // pspk level 2
+                // total nilai
+                $total_nilai = [];
+                foreach ($data->skor_aspek as $key => $val) {
+                    if (!$val) {
+                        $data->skor_aspek[$key] = 0;
+                    }
+                    $total_nilai[] = $this->_getLevelPerAspekLv2($data->skor_aspek[$key]);
+                }
+
+                // jpm
+                $jpm = (array_sum($total_nilai)) / (2 * 9) * 100;
+
+                // kategori
+                $kategori = $this->_getKategori($jpm);
+
+                // deskripsi
+                $deskripsi = [];
+                foreach ($total_nilai as $key => $val) {
+                    $kode_aspek = array_keys($data->skor_aspek)[$key];
+                    $desc = RefDescPspk::where('level_pspk', 2)
+                        ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
+                        ->first();
+
+                    if ($val == 1) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
+                    } else if ($val == 1.5) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
+                    } else if ($val == 2) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi;
+                    } else if ($val == 2.5) {
+                        $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
+                    }
                 }
             }
 
@@ -243,6 +296,21 @@ class Ujian extends Component
             $level = 1;
         } else if ($nilai >= 15 && $nilai <= 18) {
             $level = 1.5;
+        }
+
+        return $level;
+    }
+
+    private function _getLevelPerAspekLv2($nilai)
+    {
+        if ($nilai >= 6 && $nilai <= 11) {
+            $level = 1;
+        } else if ($nilai >= 12 && $nilai <= 17) {
+            $level = 1.5;
+        } else if ($nilai >= 18 && $nilai <= 23) {
+            $level = 2;
+        } else if ($nilai >= 24 && $nilai <= 30) {
+            $level = 2.5;
         }
 
         return $level;

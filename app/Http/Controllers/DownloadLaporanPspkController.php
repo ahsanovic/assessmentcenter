@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Peserta;
-use App\Models\RefAlatTes;
 use App\Models\RefAspekPspk;
 use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;

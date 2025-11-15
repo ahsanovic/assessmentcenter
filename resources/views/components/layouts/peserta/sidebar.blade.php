@@ -89,6 +89,17 @@
                         <span class="link-title">Tes PSPK Level 1</span>
                     </a>
                 </li>
+                @elseif (auth()->guard('peserta')->user()->event->metode_tes_id === 6)
+                <li class="nav-item">
+                    @php
+                        $data = getFinishedTesPspk($event_id, $peserta_id);
+                        $test_pspk_started = collect($data)->contains(true);
+                    @endphp
+                    <a href="{{ route('peserta.tes-pspk') }}" class="nav-link" wire:navigate style="{{ $test_pspk_started ? 'pointer-events: none;' : '' }}">
+                        <i class="link-icon" data-feather="info"></i>
+                        <span class="link-title">Tes PSPK Level 2</span>
+                    </a>
+                </li>
                 @endif
                 
                 <li class="nav-item nav-category">Logout</li>

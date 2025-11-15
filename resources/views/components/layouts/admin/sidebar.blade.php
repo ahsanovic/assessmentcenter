@@ -222,10 +222,10 @@
                                 <a href="{{ route('admin.tes-selesai.pspk') }}" wire:navigate
                                     class="nav-link">Tes Selesai</a>
                             </li>
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-pspk') }}" wire:navigate
                                     class="nav-link">Pelanggaran Tes</a>
-                            </li> --}}
+                            </li>
                         </ul>
                     </div>
                 </li>

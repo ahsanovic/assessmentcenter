@@ -5,7 +5,7 @@
         }
     </style>
 @endpush
-{{-- <div x-data
+<div x-data
 x-init="
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
@@ -22,8 +22,7 @@ x-init="
         };
         toastr[e.type](e.message);
     });
-"> --}}
-<div>
+">
     <div class="row mb-4">
         <div class="col">
             <h3 class="text-center">Tes {{ auth()->guard('peserta')->user()->event->metodeTes->metode_tes }}</h3>
