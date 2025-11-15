@@ -3,6 +3,7 @@
 namespace App\Livewire\Peserta\TesCakapDigital;
 
 use App\Models\CakapDigital\HasilCakapDigital;
+use App\Models\CakapDigital\RefDescCakapDigital;
 use App\Models\CakapDigital\SoalCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
 use App\Traits\PelanggaranTrait;
@@ -152,6 +153,29 @@ class Ujian extends Component
             $kategori_literasi = $this->_getKategori($data->nilai_literasi);
             $kategori_emerging = $this->_getKategori($data->nilai_emerging);
 
+            // jpm
+            $jpm_literasi = ($data->nilai_literasi / 120) * 100;
+            $jpm_emerging = ($data->nilai_emerging / 120) * 100;
+
+            // kesimpulan
+            $kesimpulan_literasi = $this->_getKategoriJpm($jpm_literasi);
+            $kesimpulan_emerging = $this->_getKategoriJpm($jpm_emerging);
+
+            // deskripsi
+            $deskripsi_literasi = RefDescCakapDigital::where('kompetensi', 'Literasi Digital')->first();
+            $deskripsi_emerging = RefDescCakapDigital::where('kompetensi', 'Emerging Skill')->first();
+
+            // Mapping kolom berdasarkan kesimpulan
+            $map = [
+                'Kurang Optimal' => 'kurang_optimal',
+                'Cukup Optimal'  => 'cukup_optimal',
+                'Optimal'        => 'optimal',
+            ];
+
+            // Ambil teks deskripsi
+            $deskripsi_literasi_text = $deskripsi_literasi->{$map[$kesimpulan_literasi] ?? null} ?? null;
+            $deskripsi_emerging_text = $deskripsi_emerging->{$map[$kesimpulan_emerging] ?? null} ?? null;
+
             HasilCakapDigital::updateOrCreate(
                 [
                     'event_id' => Auth::guard('peserta')->user()->event_id,
@@ -163,6 +187,12 @@ class Ujian extends Component
                     'kategori_literasi' => $kategori_literasi,
                     'nilai_emerging' => $data->nilai_emerging,
                     'kategori_emerging' => $kategori_emerging,
+                    'jpm_literasi' => $jpm_literasi,
+                    'jpm_emerging' => $jpm_emerging,
+                    'kesimpulan_literasi' => $kesimpulan_literasi,
+                    'kesimpulan_emerging' => $kesimpulan_emerging,
+                    'deskripsi_literasi' => $deskripsi_literasi_text,
+                    'deskripsi_emerging' => $deskripsi_emerging_text,
                 ]
             );
 
@@ -178,6 +208,19 @@ class Ujian extends Component
                 'message' => 'Terjadi kesalahan'
             ]);
         }
+    }
+
+    private function _getKategoriJpm($nilai_jpm)
+    {
+        if ($nilai_jpm < 78) {
+            $kategori = 'Kurang Optimal';
+        } else if ($nilai_jpm >= 78 && $nilai_jpm < 90) {
+            $kategori = 'Cukup Optimal';
+        } else if ($nilai_jpm >= 90) {
+            $kategori = 'Optimal';
+        }
+
+        return $kategori;
     }
 
     private function _getKategori($nilai)

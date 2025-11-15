@@ -217,10 +217,15 @@ class DownloadRekapController extends Controller
             $export_data->push([
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
-                'Jabatan Saat Ini' => $peserta->jabatan,
-                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
-                'Level Literasi Digital' => $peserta->hasilCakapDigital->kategori_literasi ?? '-',
-                'Level Emerging Skill' => $peserta->hasilCakapDigital->kategori_emerging ?? '-',
+                'Jabatan' => $peserta->jabatan,
+                'Unit Kerja' => $peserta->unit_kerja,
+                'Instansi' => $peserta->instansi,
+                'JPM LD' => $peserta->hasilCakapDigital->jpm_literasi . '%' ?? '',
+                'Kategori LD' => $peserta->hasilCakapDigital->kesimpulan_literasi ?? '',
+                'Deskripsi LD' => $peserta->hasilCakapDigital->deskripsi_literasi ?? '',
+                'JPM ES' => $peserta->hasilCakapDigital->jpm_emerging . '%' ?? '',
+                'Kategori ES' => $peserta->hasilCakapDigital->kesimpulan_emerging ?? '',
+                'Deskripsi ES' => $peserta->hasilCakapDigital->deskripsi_emerging ?? '',
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
             ]);
         }
@@ -252,11 +257,12 @@ class DownloadRekapController extends Controller
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan' => $peserta->jabatan,
-                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
+                'Unit Kerja' => $peserta->unit_kerja,
+                'Instansi' => $peserta->instansi,
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-                'JPM' => $peserta->hasilKompetensiTeknis->jpm . '%' ?? '-',
-                'Kategori' => $peserta->hasilKompetensiTeknis->kategori ?? '-',
-                'Deskripsi' => $peserta->hasilKompetensiTeknis->deskripsi ?? '-'
+                'JPM' => $peserta->hasilKompetensiTeknis->jpm . '%' ?? '',
+                'Kategori' => $peserta->hasilKompetensiTeknis->kategori ?? '',
+                'Deskripsi' => $peserta->hasilKompetensiTeknis->deskripsi ?? ''
             ]);
         }
 
@@ -287,9 +293,10 @@ class DownloadRekapController extends Controller
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan' => $peserta->jabatan,
-                'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
-                'JPM' => $peserta->hasilPspk->jpm . '%' ?? '-',
-                'Kategori' => $peserta->hasilPspk->kategori ?? '-',
+                'Unit Kerja' => $peserta->unit_kerja,
+                'Instansi' => $peserta->instansi,
+                'JPM' => $peserta->hasilPspk->jpm . '%' ?? '',
+                'Kategori' => $peserta->hasilPspk->kategori ?? '',
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
             ]);
         }
