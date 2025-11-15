@@ -29,7 +29,7 @@ class Index extends Component
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%' . $this->search . '%');
             })
-            ->where('metode_tes_id', '!=', 3)
+            ->whereIn('metode_tes_id', [1,2])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
