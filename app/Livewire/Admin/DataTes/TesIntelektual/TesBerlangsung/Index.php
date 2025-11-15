@@ -44,7 +44,7 @@ class Index extends Component
         ])
             ->with(['peserta', 'ujianIntelektualSubTes1', 'ujianIntelektualSubTes2', 'ujianIntelektualSubTes3'])
             ->whereIsFinished('false')
-            ->where('metode_tes_id', '!=', 3)
+            ->whereIn('metode_tes_id', [1,2])
             ->orderByDesc('id')
             ->paginate(10);
 

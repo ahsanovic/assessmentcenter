@@ -67,7 +67,7 @@ class Index extends Component
                 });
             },
         ])
-            ->where('metode_tes_id', '!=', 3)
+            ->whereIn('metode_tes_id', [1,2])
             // ->with(['peserta', 'hasilIntelektual'])
             ->when($this->event, function ($query) {
                 $query->where('id', $this->event);
@@ -83,7 +83,7 @@ class Index extends Component
             ->paginate(10);
 
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-        $option_event = Event::where('metode_tes_id', '!=', 3)->pluck('nama_event', 'id');
+        $option_event = Event::whereIn('metode_tes_id', [1,2])->pluck('nama_event', 'id');
 
         return view('livewire.admin.data-tes.tes-intelektual.tes-selesai.index', compact('data', 'option_jabatan_diuji', 'option_event'));
     }

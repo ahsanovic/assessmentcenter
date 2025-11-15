@@ -21,7 +21,7 @@ class Index extends Component
         $data = Event::withCount(['peserta', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
             ->with(['peserta', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
             ->whereIsFinished('false')
-            ->where('metode_tes_id', '!=', 3)
+            ->whereIn('metode_tes_id', [1,2])
             ->orderByDesc('id')
             ->paginate(10);
 
