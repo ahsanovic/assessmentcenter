@@ -21,7 +21,7 @@ class ShowReport extends Component
         $this->peserta = Peserta::where(function ($q) use ($identifier) {
             $q->where('nip', $identifier)
                 ->orWhere('nik', $identifier);
-        });
+        })->first();
         $this->id_event = $idEvent;
 
         $peserta = $this->peserta;
