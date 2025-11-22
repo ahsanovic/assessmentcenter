@@ -14,4 +14,9 @@ class SettingWaktuTes extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function jenisTes()
+    {
+        return $this->belongsTo(RefJenisTes::class, 'jenis_tes');
+    }
 }

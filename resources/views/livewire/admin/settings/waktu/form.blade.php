@@ -14,17 +14,12 @@
                                 <div class="mb-3">
                                     <label for="jenis-tes" class="form-label">Jenis Tes</label>
                                     <select wire:model="form.jenis_tes"
-                                        class="form-select @error('jenis_tes') is-invalid @enderror"
+                                        class="form-select @error('form.jenis_tes') is-invalid @enderror"
                                         id="metode-tes">
                                         <option value="">-pilih-</option>
-                                        <option value="1">Tes Potensi</option>
-                                        <option value="2">Tes Literasi Digital & Emerging</option>
-                                        <option value="3">Tes Intelektual - Sub Tes 1</option>
-                                        <option value="4">Tes Intelektual - Sub Tes 2</option>
-                                        <option value="5">Tes Intelektual - Sub Tes 3</option>
-                                        <option value="6">Tes Kompetensi Teknis</option>
-                                        <option value="7">Tes PSPK Level 1</option>
-                                        <option value="8">Tes PSPK Level 2</option>
+                                        @foreach ($jenis_tes_options as $key => $item)
+                                            <option value="{{ $key }}">{{ $key }} - {{ $item }}</option>
+                                        @endforeach
                                     </select>
                                     @error('form.jenis_tes')
                                         <label class="error invalid-feedback">{{ $message }}</label>

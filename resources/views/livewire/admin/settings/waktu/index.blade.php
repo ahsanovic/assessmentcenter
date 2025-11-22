@@ -25,18 +25,7 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>
-                                            {{ match ($item->jenis_tes) {
-                                                    1 => 'Tes Potensi',
-                                                    2 => 'Tes Literasi Digital & Emerging Skill',
-                                                    3 => 'Tes Intelektual - Sub Tes 1',
-                                                    4 => 'Tes Intelektual - Sub Tes 2',
-                                                    5 => 'Tes Intelektual - Sub Tes 3',
-                                                    6 => 'Tes Kompetensi Teknis',
-                                                    7 => 'Tes PSPK Level 1',
-                                                    8 => 'Tes PSPK Level 2',
-                                                    default => ''
-                                                }
-                                            }}
+                                            {{  $item->jenisTes->jenis_tes }}
                                         </td>
                                         <td>{{ $item->waktu }} menit</td>
                                         <td>

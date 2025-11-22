@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Settings\Waktu;
 
 use App\Livewire\Forms\SettingWaktuTesForm;
+use App\Models\RefJenisTes;
 use App\Models\SettingWaktuTes;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -38,7 +39,9 @@ class Form extends Component
 
     public function render()
     {
-        return view('livewire.admin.settings.waktu.form');
+        $jenis_tes_options = RefJenisTes::pluck('jenis_tes', 'id')->toArray();
+
+        return view('livewire.admin.settings.waktu.form', compact('jenis_tes_options'));
     }
 
     public function save()

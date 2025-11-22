@@ -43,9 +43,11 @@ class Dashboard extends Component
             switch ($metode_tes_id) {
                 case 5: // PSPK level 1
                     $level_pspk = 1;
+                    $jenis_tes = 7;
                     break;
                 case 6: // PSPK level 2
                     $level_pspk = 2;
+                    $jenis_tes = 8;
                     break;
             }
 
@@ -57,7 +59,7 @@ class Dashboard extends Component
             $soal_id = $soal->implode('id', ',');
             $jawaban_kosong = implode(',', array_fill(0, $jumlah_soal, 0));
 
-            $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', 7)->first(['waktu']); // 7 = PSPK Level 1
+            $durasi_tes = SettingWaktuTes::where('is_active', 'true')->where('jenis_tes', $jenis_tes)->first(['waktu']);
             $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
 
             $aspek_list = RefAspekPspk::pluck('kode_aspek')->toArray();
