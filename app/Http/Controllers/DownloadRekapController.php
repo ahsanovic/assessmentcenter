@@ -141,8 +141,8 @@ class DownloadRekapController extends Controller
                 'EQ (Capaian Level)' => capaianLevel($peserta->hasilKecerdasanEmosi->level_total) ?? '-',
                 'Belajar Cepat dan Pengembangan Diri (Capaian Level)' => capaianLevel($peserta->hasilPengembanganDiri->level_total) ?? '-',
                 'Motivasi Komitmen (Capaian Level)' => capaianLevel($peserta->hasilMotivasiKomitmen->level_total) ?? '-',
-                'JPM Potensi' => $peserta->nilaiJpm->jpm . '%' ?? '-',
-                'Kesimpulan' => $peserta->nilaiJpm->kategori ?? '-',
+                'JPM Potensi' => $peserta->nilaiJpm?->jpm . '%' ?? '-',
+                'Kesimpulan' => $peserta->nilaiJpm?->kategori ?? '-',
                 // 'Deskripsi Intelektual' => ($peserta->hasilIntelektual->uraian_potensi_subtes_1 ?? '-') .
                 //     ($peserta->hasilIntelektual->uraian_potensi_subtes_2 ?? '-') .
                 //     ($peserta->hasilIntelektual->uraian_potensi_subtes_3 ?? '-'),
@@ -220,12 +220,12 @@ class DownloadRekapController extends Controller
                 'Jabatan' => $peserta->jabatan,
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
-                'JPM LD' => $peserta->hasilCakapDigital->jpm_literasi . '%' ?? '',
-                'Kategori LD' => $peserta->hasilCakapDigital->kesimpulan_literasi ?? '',
-                'Deskripsi LD' => $peserta->hasilCakapDigital->deskripsi_literasi ?? '',
-                'JPM ES' => $peserta->hasilCakapDigital->jpm_emerging . '%' ?? '',
-                'Kategori ES' => $peserta->hasilCakapDigital->kesimpulan_emerging ?? '',
-                'Deskripsi ES' => $peserta->hasilCakapDigital->deskripsi_emerging ?? '',
+                'JPM LD' => $peserta->hasilCakapDigital?->jpm_literasi . '%' ?? '',
+                'Kategori LD' => $peserta->hasilCakapDigital?->kesimpulan_literasi ?? '',
+                'Deskripsi LD' => $peserta->hasilCakapDigital?->deskripsi_literasi ?? '',
+                'JPM ES' => $peserta->hasilCakapDigital?->jpm_emerging . '%' ?? '',
+                'Kategori ES' => $peserta->hasilCakapDigital?->kesimpulan_emerging ?? '',
+                'Deskripsi ES' => $peserta->hasilCakapDigital?->deskripsi_emerging ?? '',
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
             ]);
         }
@@ -260,9 +260,9 @@ class DownloadRekapController extends Controller
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-                'JPM' => $peserta->hasilKompetensiTeknis->jpm . '%' ?? '',
-                'Kategori' => $peserta->hasilKompetensiTeknis->kategori ?? '',
-                'Deskripsi' => $peserta->hasilKompetensiTeknis->deskripsi ?? ''
+                'JPM' => $peserta->hasilKompetensiTeknis?->jpm . '%' ?? '',
+                'Kategori' => $peserta->hasilKompetensiTeknis?->kategori ?? '',
+                'Deskripsi' => $peserta->hasilKompetensiTeknis?->deskripsi ?? ''
             ]);
         }
 
@@ -295,8 +295,8 @@ class DownloadRekapController extends Controller
                 'Jabatan' => $peserta->jabatan,
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
-                'JPM' => $peserta->hasilPspk->jpm . '%' ?? '',
-                'Kategori' => $peserta->hasilPspk->kategori ?? '',
+                'JPM' => $peserta->hasilPspk?->jpm . '%' ?? '',
+                'Kategori' => $peserta->hasilPspk?->kategori ?? '',
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
             ]);
         }
