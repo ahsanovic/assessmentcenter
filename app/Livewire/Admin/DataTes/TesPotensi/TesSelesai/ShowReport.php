@@ -16,10 +16,12 @@ class ShowReport extends Component
     public $id_event;
     public $data;
 
-    public function mount($nip, $idEvent)
+    public function mount($identifier, $idEvent)
     {
-        $this->nip = $nip;
-        $this->peserta = Peserta::whereNip($this->nip)->first();
+        $this->peserta = Peserta::where(function ($q) use ($identifier) {
+            $q->where('nip', $identifier)
+                ->orWhere('nik', $identifier);
+        });
         $this->id_event = $idEvent;
 
         $peserta = $this->peserta;
