@@ -14,6 +14,7 @@ use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Problem Solving'])]
@@ -32,9 +33,26 @@ class ProblemSolving extends Component
     public $durasi_tes;
     public $waktu_tes_berakhir;
     public $current_sequence;
+    public $flagged = [];
+
+    #[On('updateFlagsFromBrowser')]
+    public function updateFlagsFromBrowser($flags)
+    {
+        $this->flagged = $flags;
+    }
+
+    public function toggleFlag($nomor)
+    {
+        // Livewire hanya kirim nomor soal, JS akan update localStorage
+        $this->dispatch('toggle-flag-in-browser', nomor: $nomor);
+
+        // setelah JS update → JS akan kirim kembali flags terbaru
+        $this->dispatch('request-flags-sync');
+    }
 
     public function mount($id)
     {
+        $this->dispatch('load-flags-from-browser');
         $this->id_soal = $id;
 
         $data = UjianProblemSolving::select('id', 'soal_id', 'jawaban', 'created_at')
@@ -157,6 +175,14 @@ class ProblemSolving extends Component
             }
         }
 
+        // Hapus flag soal jika ada
+        if (isset($this->flagged[$nomor_soal])) {
+            unset($this->flagged[$nomor_soal]);
+    
+            // Hapus juga dari localStorage (via JS)
+            $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
+        }
+
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => $nomor_soal + 1]), true);
         } else if ($nomor_soal == $this->jml_soal) {
@@ -276,6 +302,9 @@ class ProblemSolving extends Component
             $data->is_finished = true;
             $data->save();
 
+            // Bersihkan localStorage via JS
+            $this->dispatch('clear-flags-browser');
+
             $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
             if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
                 $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
@@ -326,232 +355,4 @@ class ProblemSolving extends Component
 
         return null;
     }
-
-    // public function finish()
-    // {
-    //     try {
-    //         $data = UjianProblemSolving::findOrFail($this->id_ujian);
-    //         $skor_total = $data->nilai_indikator_1 + $data->nilai_indikator_2 + $data->nilai_indikator_3 + $data->nilai_indikator_4 + $data->nilai_indikator_5 + $data->nilai_indikator_6 + $data->nilai_indikator_7 + $data->nilai_indikator_8;
-
-    //         if ($skor_total >= 11 && $skor_total <= 33) {
-    //             $level_total = '1';
-    //             $kualifikasi_total = 'Sangat Kurang';
-    //             $kategori_total = 'Rendah';
-    //         } else if ($skor_total >= 34 && $skor_total <= 39) {
-    //             $level_total = '2';
-    //             $kualifikasi_total = 'Kurang';
-    //             $kategori_total = 'Rendah';
-    //         } else if ($skor_total >= 40 && $skor_total <= 41) {
-    //             $level_total = '3-';
-    //             $kualifikasi_total = 'Cukup';
-    //             $kategori_total = 'Sedang';
-    //         } else if ($skor_total == 42) {
-    //             $level_total = '3';
-    //             $kualifikasi_total = 'Cukup';
-    //             $kategori_total = 'Sedang';
-    //         } else if ($skor_total >= 43 && $skor_total <= 44) {
-    //             $level_total = '3+';
-    //             $kualifikasi_total = 'Cukup';
-    //             $kategori_total = 'Sedang';
-    //         } else if ($skor_total >= 45 && $skor_total <= 49) {
-    //             $level_total = '4';
-    //             $kualifikasi_total = 'Baik';
-    //             $kategori_total = 'Tinggi';
-    //         } else if ($skor_total >= 50 && $skor_total <= 55) {
-    //             $level_total = '5';
-    //             $kualifikasi_total = 'Sangat Baik';
-    //             $kategori_total = 'Tinggi';
-    //         }
-
-    //         $skor = HasilProblemSolving::updateOrCreate(
-    //             [
-    //                 'event_id' => Auth::guard('peserta')->user()->event_id,
-    //                 'peserta_id' => Auth::guard('peserta')->user()->id,
-    //                 'ujian_id' => $data->id,
-    //             ],
-    //             [
-    //                 'skor_total' => $skor_total,
-    //                 'level_total' => $level_total,
-    //                 'kualifikasi_total' => $kualifikasi_total,
-    //                 'kategori_total' => $kategori_total,
-    //             ]
-    //         );
-
-    //         // if ($level_total == '3-' || $level_total == '3' || $level_total == '3+') {
-    //         //     $level_norma_umum = '3';
-    //         // } else {
-    //         //     $level_norma_umum = $level_total;
-    //         // }
-
-    //         // $aspek = RefAspekProblemSolving::where('aspek_nomor', $level_norma_umum)->first();
-    //         // $indikator_nomor = explode(',', $aspek->indikator_nomor);
-    //         $indikator = RefIndikatorProblemSolving::get(['indikator_nama', 'indikator_nomor']);
-    //         $deskripsi_list = [];
-    //         $nilai = [];
-    //         foreach ($indikator as $value) {
-    //             $kualifikasi_deskripsi = RefIndikatorProblemSolving::where('indikator_nomor', $value->indikator_nomor)->value('kualifikasi_deskripsi');
-    //             $deskripsi_data = collect($kualifikasi_deskripsi);
-
-    //             $nilai_indikator = $data->{'nilai_indikator_' . $value->indikator_nomor} ?? null;
-    //             if (is_null($nilai_indikator)) {
-    //                 continue;
-    //             }
-
-    //             if ($value->indikator_nomor == 1) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_1,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 3) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 4 && $nilai_indikator <= 7) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator >= 8 && $nilai_indikator <= 10) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 2) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_2,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 5) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 3) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_3,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 5) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 6 && $nilai_indikator <= 9) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 10) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 4) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_4,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 5) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 5) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_5,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 5) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 6) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_6,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 5) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 7) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_7,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 5 && $nilai_indikator <= 8) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator >= 9 && $nilai_indikator <= 10) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             } else if ($value->indikator_nomor == 8) {
-    //                 $nilai[] = [
-    //                     'indikator' => $value->indikator_nama,
-    //                     'no_indikator' => $value->indikator_nomor,
-    //                     'skor' => $data->nilai_indikator_8,
-    //                 ];
-
-    //                 if ($nilai_indikator >= 1 && $nilai_indikator <= 2) {
-    //                     $kategori = 'Rendah';
-    //                 } else if ($nilai_indikator >= 3 && $nilai_indikator <= 4) {
-    //                     $kategori = 'Sedang';
-    //                 } else if ($nilai_indikator == 5) {
-    //                     $kategori = 'Tinggi';
-    //                 }
-    //             }
-
-    //             if ($kategori) {
-    //                 $deskripsi = $deskripsi_data->firstWhere('kualifikasi', $kategori) ?? null;
-    //                 if ($deskripsi) {
-    //                     $deskripsi_list[] = $deskripsi;
-    //                 }
-    //             }
-    //         }
-
-    //         $skor->update([
-    //             'nilai' => $nilai,
-    //             'uraian_potensi_1' => $deskripsi_list[0] ?? null,
-    //             'uraian_potensi_2' => $deskripsi_list[1] ?? null,
-    //             'uraian_potensi_3' => $deskripsi_list[2] ?? null,
-    //             'uraian_potensi_4' => $deskripsi_list[3] ?? null,
-    //             'uraian_potensi_5' => $deskripsi_list[4] ?? null,
-    //             'uraian_potensi_6' => $deskripsi_list[5] ?? null,
-    //             'uraian_potensi_7' => $deskripsi_list[6] ?? null,
-    //             'uraian_potensi_8' => $deskripsi_list[7] ?? null,
-    //         ]);
-
-    //         // change status ujian to true (finish)
-    //         $data->is_finished = true;
-    //         $data->save();
-
-    //         $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
-    //         if ($current_sequence_test && $current_sequence_test->urutan !== 7) {
-    //             $next_test = Settings::with('alatTes')->where('urutan', $current_sequence_test->urutan + 1)->first();
-    //             $this->startTest($next_test->alatTes->alat_tes, $next_test->urutan);
-    //         } else if ($current_sequence_test && $current_sequence_test->urutan == 7) {
-    //             return $this->redirect(route('peserta.kuesioner'), navigate: true);
-    //         } else {
-    //             return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
-    //         }
-
-    //         // return $this->redirect(route('peserta.tes-potensi'), navigate: true);
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
-    //         session()->flash('toast', [
-    //             'type' => 'error',
-    //             'message' => 'Terjadi kesalahan'
-    //         ]);
-    //     }
-    // }
 }

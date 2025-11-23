@@ -3,6 +3,19 @@
         .form-check-input[type="radio"] {
             border: 2px solid #dee2e6;
         }
+
+        .flagged-btn {
+            background-color: #ffd15c !important;
+            border-color: #e8b200 !important;
+            color: #000 !important;
+        }
+
+        .flag-icon {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 14px;
+        }
     </style>
 @endpush
 <div x-data
@@ -136,8 +149,11 @@ x-init="
                         @if ($nomor_sekarang == 1) disabled @endif>
                         Sebelumnya
                     </button>
-                    <button class="btn btn-success btn-sm" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                    <button class="btn btn-success btn-sm me-2" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
                         Simpan & Lanjutkan
+                    </button>
+                    <button class="btn btn-danger btn-sm" wire:click="toggleFlag({{ $nomor_sekarang }})">
+                        {{ isset($flagged[$nomor_sekarang]) ? '🔖 Batalkan Flag' : '🔖 Tandai Soal' }}
                     </button>
                 </div>
             </div>
@@ -159,9 +175,15 @@ x-init="
                                     } else {
                                         echo 'inverse-success';
                                     }
-                                    ?> me-2 mb-2">
-                                    {{ $nomor_soal++ }}
+                                    ?> me-2 mb-2 @if(isset($flagged[$nomor_soal])) flagged-btn @endif"
+                                    >
+                                    {{ $nomor_soal }}
+
+                                    @if(isset($flagged[$nomor_soal]))
+                                        <span class="flag-icon">🔖</span>
+                                    @endif
                                 </button>
+                                @php $nomor_soal++; @endphp
                             @endfor
                         </div>
                     @endfor
@@ -171,6 +193,41 @@ x-init="
     </div>
 </div>
 @push('js')
+<script>
+    document.addEventListener('livewire:init', () => {
+    
+        // Load awal
+        Livewire.on('load-flags-from-browser', () => {
+            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
+            Livewire.dispatch('updateFlagsFromBrowser', { flags });
+        });
+    
+        // Saat tombol tandai diklik
+        Livewire.on('toggle-flag-in-browser', (data) => {
+            let nomor = data.nomor;
+    
+            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
+    
+            if (flags[nomor]) {
+                delete flags[nomor];
+            } else {
+                flags[nomor] = true;
+            }
+    
+            localStorage.setItem('flags_soal', JSON.stringify(flags));
+        });
+    
+        // Setelah JS update → kirim kembali data terbaru ke Livewire
+        Livewire.on('request-flags-sync', () => {
+            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
+            Livewire.dispatch('updateFlagsFromBrowser', { flags });
+        });
+
+        Livewire.on('clear-flags-browser', () => {
+            localStorage.removeItem('flags_soal');
+        });
+    });
+</script>
 <script>
     $(document).ready(function() {
         $('.form-check-input').change(function() {

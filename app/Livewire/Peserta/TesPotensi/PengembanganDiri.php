@@ -12,6 +12,7 @@ use App\Traits\StartTestTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Belajar Cepat dan Pengembangan Diri'])]
@@ -28,9 +29,26 @@ class PengembanganDiri extends Component
     public $id_ujian;
     public $timer;
     public $current_sequence;
+    public $flagged = [];
+
+    #[On('updateFlagsFromBrowser')]
+    public function updateFlagsFromBrowser($flags)
+    {
+        $this->flagged = $flags;
+    }
+
+    public function toggleFlag($nomor)
+    {
+        // Livewire hanya kirim nomor soal, JS akan update localStorage
+        $this->dispatch('toggle-flag-in-browser', nomor: $nomor);
+
+        // setelah JS update → JS akan kirim kembali flags terbaru
+        $this->dispatch('request-flags-sync');
+    }
 
     public function mount($id)
     {
+        $this->dispatch('load-flags-from-browser');
         $this->id_soal = $id;
         // $count_peserta = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
         //     ->where('event_id', Auth::guard('peserta')->user()->event_id)
@@ -147,6 +165,14 @@ class PengembanganDiri extends Component
                 $data->save();
                 break;
             }
+        }
+
+        // Hapus flag soal jika ada
+        if (isset($this->flagged[$nomor_soal])) {
+            unset($this->flagged[$nomor_soal]);
+    
+            // Hapus juga dari localStorage (via JS)
+            $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
         }
 
         if ($nomor_soal < $this->jml_soal) {
@@ -379,6 +405,9 @@ class PengembanganDiri extends Component
 
             $data->is_finished = true;
             $data->save();
+
+            // Bersihkan localStorage via JS
+            $this->dispatch('clear-flags-browser');
 
             $current_sequence_test = Settings::where('urutan', $data->urutan_tes)->first(['urutan']);
             if ($current_sequence_test && $current_sequence_test->urutan !== 7) {

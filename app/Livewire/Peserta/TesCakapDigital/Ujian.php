@@ -10,6 +10,7 @@ use App\Traits\PelanggaranTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('components.layouts.peserta.app', ['title' => 'Tes Cakap Digital'])]
@@ -26,9 +27,26 @@ class Ujian extends Component
     public $id_ujian;
     public $timer;
     public $current_sequence;
+    public $flagged = [];
+
+    #[On('updateFlagsFromBrowser')]
+    public function updateFlagsFromBrowser($flags)
+    {
+        $this->flagged = $flags;
+    }
+
+    public function toggleFlag($nomor)
+    {
+        // Livewire hanya kirim nomor soal, JS akan update localStorage
+        $this->dispatch('toggle-flag-in-browser', nomor: $nomor);
+
+        // setelah JS update → JS akan kirim kembali flags terbaru
+        $this->dispatch('request-flags-sync');
+    }
 
     public function mount($id)
     {
+        $this->dispatch('load-flags-from-browser');
         $this->id_soal = $id;
 
         $data = UjianCakapDigital::select('id', 'soal_id', 'jawaban', 'created_at')
@@ -128,6 +146,14 @@ class Ujian extends Component
             $data->save();
         }
 
+        // Hapus flag soal jika ada
+        if (isset($this->flagged[$nomor_soal])) {
+            unset($this->flagged[$nomor_soal]);
+    
+            // Hapus juga dari localStorage (via JS)
+            $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
+        }
+
         if ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-cakap-digital.ujian', ['id' => $nomor_soal + 1]), true);
         } else if ($nomor_soal == $this->jml_soal) {
@@ -199,6 +225,9 @@ class Ujian extends Component
             // change status ujian to true (finish)
             $data->is_finished = true;
             $data->save();
+
+            // Bersihkan localStorage via JS
+            $this->dispatch('clear-flags-browser');
 
             return $this->redirect(route('peserta.tes-cakap-digital.hasil'));
         } catch (\Throwable $th) {
