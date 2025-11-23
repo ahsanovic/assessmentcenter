@@ -52,7 +52,7 @@ x-init="
                     </button>
                 </div>
                 <div class="col-2">
-                    <button class="btn btn-inverse-dark"
+                    <button class="btn btn-inverse-warning"
                         x-data
                         @click="Swal.fire({
                             title: '{{ $current_sequence == 7 ? 'Apakah Anda yakin mengakhiri tes?' : 'Apakah Anda yakin melanjutkan tes berikutnya?' }}',
