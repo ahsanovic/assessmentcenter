@@ -29,6 +29,10 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_selesai > 0) {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah melakukan Tes Intelektual.'
+            ]);
             return $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
         }
 

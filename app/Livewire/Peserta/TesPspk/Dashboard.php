@@ -28,7 +28,11 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_selesai > 0) {
-            return $this->redirect(route('peserta.tes-pspk.hasil'), navigate: true);
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah melakukan Tes PSPK.'
+            ]);
+            return $this->redirect(route('peserta.tes-pspk.home'), navigate: true);
         }
 
         $ujian_berlangsung = UjianPspk::where('event_id', Auth::guard('peserta')->user()->event_id)

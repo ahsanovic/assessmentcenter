@@ -27,7 +27,11 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_selesai > 0) {
-            return $this->redirect(route('peserta.tes-kompetensi-teknis.hasil'), navigate: true);
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah melakukan Tes Kompetensi Teknis.'
+            ]);
+            return $this->redirect(route('peserta.tes-kompetensi-teknis.home'), navigate: true);
         }
 
         $ujian_berlangsung = UjianKompetensiTeknis::where('event_id', Auth::guard('peserta')->user()->event_id)

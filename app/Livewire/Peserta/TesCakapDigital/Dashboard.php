@@ -27,7 +27,11 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_selesai > 0) {
-            return $this->redirect(route('peserta.tes-cakap-digital.hasil'), navigate: true);
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Anda sudah melakukan Tes Cakap Digital.'
+            ]);
+            return $this->redirect(route('peserta.tes-cakap-digital.home'), navigate: true);
         }
 
         $ujian_berlangsung = UjianCakapDigital::where('event_id', Auth::guard('peserta')->user()->event_id)
