@@ -41,7 +41,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-pspk.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-pspk.ujian', ['id' => 1]));
         } else {
             $metode_tes_id = Auth::guard('peserta')->user()->event->metode_tes_id;
             switch ($metode_tes_id) {
@@ -79,7 +79,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-pspk.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-pspk.ujian', ['id' => 1]));
         }
     }
 

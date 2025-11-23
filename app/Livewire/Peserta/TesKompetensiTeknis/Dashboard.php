@@ -40,7 +40,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-kompetensi-teknis.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-kompetensi-teknis.ujian', ['id' => 1]));
         } else {
             $soal = SoalKompetensiTeknis::where('jenis_jabatan_id', auth()->guard('peserta')->user()->event->jabatan_diuji_id)
                 ->inRandomOrder()
@@ -64,7 +64,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-kompetensi-teknis.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-kompetensi-teknis.ujian', ['id' => 1]));
         }
     }
 

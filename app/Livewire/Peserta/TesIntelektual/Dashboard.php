@@ -42,7 +42,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => 1]));
         } else {
             $soal = SoalIntelektual::where('sub_tes', 1)->get(['id', 'kunci_jawaban']);
 
@@ -63,7 +63,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => 1]));
         }
     }
 
@@ -90,7 +90,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-intelektual.subtes2', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes2', ['id' => 1]));
         } else {
             $soal = SoalIntelektual::where('sub_tes', 2)->get(['id', 'kunci_jawaban']);
 
@@ -111,7 +111,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-intelektual.subtes2', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes2', ['id' => 1]));
         }
     }
 
@@ -138,7 +138,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-intelektual.subtes3', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes3', ['id' => 1]));
         } else {
             $soal = SoalIntelektual::where('sub_tes', 3)->get(['id', 'kunci_jawaban']);
 
@@ -159,7 +159,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-intelektual.subtes3', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-intelektual.subtes3', ['id' => 1]));
         }
     }
 

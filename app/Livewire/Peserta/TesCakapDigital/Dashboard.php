@@ -40,7 +40,7 @@ class Dashboard extends Component
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-cakap-digital.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-cakap-digital.ujian', ['id' => 1]));
         } else {
             $soal_literasi = SoalCakapDigital::where('jenis_soal', 1)
                 ->inRandomOrder()
@@ -72,7 +72,7 @@ class Dashboard extends Component
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-cakap-digital.ujian', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-cakap-digital.ujian', ['id' => 1]));
         }
     }
 

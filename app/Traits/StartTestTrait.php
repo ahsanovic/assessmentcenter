@@ -65,7 +65,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]));
         } else {
             $soal = SoalInterpersonal::get(['id']);
             $jumlah_soal = $soal->count();
@@ -93,7 +93,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]));
         }
     }
 
@@ -114,7 +114,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]));
         } else {
             $soal = SoalPengembanganDiri::get(['id']);
             $jumlah_soal = $soal->count();
@@ -142,7 +142,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]));
         }
     }
 
@@ -163,7 +163,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]));
         } else {
             $soal = SoalKecerdasanEmosi::get(['id']);
             $jumlah_soal = $soal->count();
@@ -190,7 +190,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]));
         }
     }
 
@@ -211,7 +211,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]));
         } else {
             $soal = SoalMotivasiKomitmen::get(['id']);
             $jumlah_soal = $soal->count();
@@ -239,7 +239,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]));
         }
     }
 
@@ -260,7 +260,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]));
         } else {
             $soal = SoalBerpikirKritis::get(['id']);
             $jumlah_soal = $soal->count();
@@ -291,7 +291,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]));
         }
     }
 
@@ -312,7 +312,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung > 0) {
-            return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]));
         } else {
             $soal = SoalProblemSolving::get(['id']);
             $jumlah_soal = $soal->count();
@@ -343,7 +343,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]));
         }
     }
 
@@ -364,7 +364,7 @@ trait StartTestTrait
             ->count();
 
         if ($ujian_berlangsung) {
-            return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]));
         } else {
             $soal = SoalKesadaranDiri::get(['id']);
             $jumlah_soal = $soal->count();
@@ -390,7 +390,7 @@ trait StartTestTrait
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();
 
-            return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
+            return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]));
         }
     }
 }
