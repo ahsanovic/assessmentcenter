@@ -1,3 +1,10 @@
+@push('css')
+    <style>
+        .form-check-input[type="checkbox"] {
+            border: 2px solid #dee2e6;
+        }
+    </style>
+@endpush
 <div>
     <div class="row mb-4">
         <div class="col">
