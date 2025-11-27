@@ -149,7 +149,7 @@ class Ujian extends Component
         // Hapus flag soal jika ada
         if (isset($this->flagged[$nomor_soal])) {
             unset($this->flagged[$nomor_soal]);
-    
+
             // Hapus juga dari localStorage (via JS)
             $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
         }
@@ -180,8 +180,8 @@ class Ujian extends Component
             $kategori_emerging = $this->_getKategori($data->nilai_emerging);
 
             // jpm
-            $jpm_literasi = ($data->nilai_literasi / 120) * 100;
-            $jpm_emerging = ($data->nilai_emerging / 120) * 100;
+            $jpm_literasi = ($data->nilai_literasi / 60) * 100;
+            $jpm_emerging = ($data->nilai_emerging / 60) * 100;
 
             // kesimpulan
             $kesimpulan_literasi = $this->_getKategoriJpm($jpm_literasi);
