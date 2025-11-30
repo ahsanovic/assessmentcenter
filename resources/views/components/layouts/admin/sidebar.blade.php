@@ -16,7 +16,7 @@
 
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="home"></i>
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
@@ -24,7 +24,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#referensi" role="button"
                         aria-expanded="false" aria-controls="referensi">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="database"></i>
                         <span class="link-title">Data Referensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -59,19 +59,19 @@
                 <li class="nav-item nav-category">Setting</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.settings.urutan') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="layers"></i>
                         <span class="link-title">Urutan Tes Potensi</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.settings.waktu') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="clock"></i>
                         <span class="link-title">Waktu Tes</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.ttd-laporan') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="edit-3"></i>
                         <span class="link-title">Ttd Laporan Penilaian</span>
                     </a>
                 </li>
@@ -79,31 +79,31 @@
                 <li class="nav-item nav-category">Event</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.event') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="calendar"></i>
                         <span class="link-title">Data Event</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.peserta') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="users"></i>
                         <span class="link-title">Data Peserta</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.assessor') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="user-check"></i>
                         <span class="link-title">Data Assessor</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.distribusi-peserta') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="shuffle"></i>
                         <span class="link-title">Distribusi Peserta</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.nomor-laporan') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="file-text"></i>
                         <span class="link-title">Nomor Laporan Penilaian</span>
                     </a>
                 </li>
@@ -112,7 +112,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-intelektual" role="button"
                         aria-expanded="false" aria-controls="data-tes-intelektual">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="cpu"></i>
                         <span class="link-title">Tes Intelektual</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -132,7 +132,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-potensi" role="button"
                         aria-expanded="false" aria-controls="data-tes-potensi">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="bar-chart-2"></i>
                         <span class="link-title">Tes Potensi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -160,7 +160,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-cakap-digital" role="button"
                         aria-expanded="false" aria-controls="data-tes-cakap-digital">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="smartphone"></i>
                         <span class="link-title">Tes Cakap Digital</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -184,7 +184,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-kompetensi-teknis" role="button"
                         aria-expanded="false" aria-controls="data-tes-kompetensi-teknis">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="tool"></i>
                         <span class="link-title">Tes Kompetensi Teknis</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -208,7 +208,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#data-tes-pspk" role="button"
                         aria-expanded="false" aria-controls="data-tes-pspk">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="book-open"></i>
                         <span class="link-title">Tes PSPK</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -234,7 +234,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#intelektual" role="button"
                         aria-expanded="false" aria-controls="intelektual">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="cpu"></i>
                         <span class="link-title">Intelektual</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -266,7 +266,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#pengembangan-diri" role="button"
                         aria-expanded="false" aria-controls="pengembangan-diri">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="user-plus"></i>
                         <span class="link-title">Pengembangan Diri</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -286,7 +286,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#interpersonal" role="button"
                         aria-expanded="false" aria-controls="interpersonal">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="message-circle"></i>
                         <span class="link-title">Interpersonal</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -306,7 +306,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#kecerdasan-emosi" role="button"
                         aria-expanded="false" aria-controls="kecerdasan-emosi">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="heart"></i>
                         <span class="link-title">Kecerdasan Emosi</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -326,7 +326,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#motivasi-komitmen" role="button"
                         aria-expanded="false" aria-controls="motivasi-komitmen">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="target"></i>
                         <span class="link-title">Motivasi dan Komitmen</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -346,7 +346,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#berpikir-kritis" role="button"
                         aria-expanded="false" aria-controls="berpikir-kritis">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="help-circle"></i>
                         <span class="link-title">Berpikir Kritis</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -370,7 +370,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#problem-solving" role="button"
                         aria-expanded="false" aria-controls="problem-solving">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="git-merge"></i>
                         <span class="link-title">Problem Solving</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -394,7 +394,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#kesadaran-diri" role="button"
                         aria-expanded="false" aria-controls="kesadaran-diri">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="eye"></i>
                         <span class="link-title">Kesadaran Diri</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -414,7 +414,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#cakap-digital" role="button"
                         aria-expanded="false" aria-controls="cakap-digital">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="wifi"></i>
                         <span class="link-title">Cakap Digital</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -430,7 +430,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#kompetensi-teknis" role="button"
                         aria-expanded="false" aria-controls="kompetensi-teknis">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="terminal"></i>
                         <span class="link-title">Kompetensi Teknis</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -446,7 +446,7 @@
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#pspk-lv1" role="button"
                         aria-expanded="false" aria-controls="pspk-lv1">
-                        <i class="link-icon" data-feather="box"></i>
+                        <i class="link-icon" data-feather="file-text"></i>
                         <span class="link-title">PSPK</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
@@ -468,14 +468,14 @@
                 <li class="nav-item nav-category">Akses dan Jejak</li>
                 <li class="nav-item">
                     <a href="{{ route('admin.user') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="message-square"></i>
+                        <i class="link-icon" data-feather="users"></i>
                         <span class="link-title">User</span>
                     </a>
                 </li>
                 @if (auth()->user()->role === 'admin')
                     <li class="nav-item">
                         <a href="{{ route('admin.log-activity') }}" wire:navigate class="nav-link">
-                            <i class="link-icon" data-feather="message-square"></i>
+                            <i class="link-icon" data-feather="activity"></i>
                             <span class="link-title">Aktifitas Log</span>
                         </a>
                     </li>
