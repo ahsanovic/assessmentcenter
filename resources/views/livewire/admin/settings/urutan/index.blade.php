@@ -7,24 +7,29 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Setting Urutan Tes</h6>
-                    <a href="{{ route('admin.settings.urutan.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
-                    <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                    <div class="row mt-2">
-                        <div class="col-sm-3">
-                            <div class="mb-3">
-                                <select wire:model.live="alat_tes" class="form-select form-select-sm"
-                                    id="alat-tes">
-                                    <option value="">-pilih-</option>
-                                    @foreach ($option_alat_tes as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                    <a href="{{ route('admin.settings.urutan.create') }}" wire:navigate wire:ignore
+                        class="btn btn-sm btn-outline-primary">
+                        <i class="btn-icon-prepend" data-feather="edit"></i>
+                        Tambah
+                    </a>
+                    <div class="card mt-4 mb-4 bg-light-subtle">
+                        <div class="card-body">
+                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <div class="row mt-2">
+                                <div class="col-sm-3">
+                                    <select wire:model.live="alat_tes" class="form-select form-select-sm"
+                                        id="alat-tes">
+                                        <option value="">-pilih-</option>
+                                        @foreach ($option_alat_tes as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
+                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -45,18 +50,21 @@
                                         <td>{{ $item->alatTes->alat_tes ?? '' }}</td>
                                         <td>{{ $item->urutan }}</td>
                                         <td>
-                                            <div class="btn-group dropstart">
-                                                <a
-                                                    class="btn btn-xs btn-outline-warning"
-                                                    wire:navigate
-                                                    href="{{ route('admin.settings.urutan.edit', $item->id) }}"
-                                                >
-                                                    Edit
-                                                </a>
-                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
-                                                    Hapus
-                                                </button>
-                                            </div>
+                                            <a
+                                                class="btn btn-sm btn-inverse-success btn-icon"
+                                                wire:navigate
+                                                href="{{ route('admin.settings.urutan.edit', $item->id) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
+                                            </a>
+                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                tabindex="0"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
