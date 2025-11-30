@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Event;
 
 use App\Models\Event;
 use App\Models\RefJabatanDiuji;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -36,28 +37,45 @@ class Index extends Component
     {
         $this->reset();
         $this->resetPage();
-        $this->render();
+    }
+
+    #[Computed]
+    public function stats()
+    {
+        return Event::selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN is_finished = 'false' THEN 1 ELSE 0 END) as berlangsung,
+            SUM(CASE WHEN is_finished = 'true' THEN 1 ELSE 0 END) as selesai
+        ")->first();
+    }
+
+    #[Computed]
+    public function events()
+    {
+        return Event::query()
+            ->withCount(['assessor', 'peserta'])
+            ->when($this->search, fn($q) =>
+                $q->where('nama_event', 'like', '%' . $this->search . '%')
+            )
+            ->when($this->jabatan_diuji, fn($q) =>
+                $q->where('jabatan_diuji_id', $this->jabatan_diuji)
+            )
+            ->when($this->tgl_mulai, function ($query) {
+                    $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
+                    $query->where('tgl_mulai', $tgl_mulai);
+                })
+            ->with(['peserta', 'alatTes', 'metodeTes'])
+            ->orderByDesc('id')
+            ->paginate(10);
     }
 
     public function render()
     {
-        $data = Event::withCount('assessor', 'peserta')->when($this->search, function ($query) {
-            $query->where('nama_event', 'like', '%' . $this->search . '%');
-        })
-            ->when($this->jabatan_diuji, function ($query,) {
-                $query->where('jabatan_diuji_id', $this->jabatan_diuji);
-            })
-            ->when($this->tgl_mulai, function ($query) {
-                $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
-                $query->where('tgl_mulai', $tgl_mulai);
-            })
-            ->with(['peserta', 'alatTes', 'metodeTes'])
-            ->orderByDesc('id')
-            ->paginate(10);
-
-        $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-
-        return view('livewire.admin.event.index', compact('data', 'option_jabatan_diuji'));
+        return view('livewire.admin.event.index', [
+            'data'  => $this->events,
+            'stats' => $this->stats,
+            'option_jabatan_diuji' => RefJabatanDiuji::pluck('jenis', 'id'),
+        ]);
     }
 
     public function deleteConfirmation($id)
