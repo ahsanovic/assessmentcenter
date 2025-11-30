@@ -20,12 +20,14 @@
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
-                    <a href="{{ route('peserta.portofolio') }}" class="nav-link" wire:navigate>
-                        <i class="link-icon" data-feather="info"></i>
-                        <span class="link-title">Portofolio</span>
-                    </a>
-                </li>
+                    @if (auth()->guard('peserta')->user()->event->metode_tes_id === 1)
+                    <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
+                        <a href="{{ route('peserta.portofolio') }}" class="nav-link" wire:navigate>
+                            <i class="link-icon" data-feather="info"></i>
+                            <span class="link-title">Portofolio</span>
+                        </a>
+                    </li>
+                    @endif
                 @endif
                 <li class="nav-item nav-category">Menu Tes</li>
                 @php

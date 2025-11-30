@@ -20,10 +20,6 @@
             ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null],
             ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
         ]" />
-        @elseif ($portofolio->metode_tes_id == 2 || $portofolio->metode_tes_id == 4)
-        <x-tab-nav :nav="[
-            ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null],
-        ]" />
         @endif
         <div class="col-8 col-md-10 ps-0">
             <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
