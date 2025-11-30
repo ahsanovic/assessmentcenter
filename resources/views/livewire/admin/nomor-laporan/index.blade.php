@@ -68,7 +68,7 @@
                                 @foreach ($data as $index => $item)
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
-                                        <td class="text-wrap">{{ $item->event->nama_event }}</td>
+                                        <td class="text-wrap">{{ $item->event?->nama_event }}</td>
                                         <td>{{ $item->nomor }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d F Y') }}</td>
                                         <td>
