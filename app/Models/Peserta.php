@@ -37,6 +37,27 @@ class Peserta extends Model implements AuthenticatableContract
     protected $table = 'peserta';
     protected $guarded = ['id'];
 
+    public function getNamaAttribute()
+    {
+        // Jika gelar depan dan belakang ada
+        if ($this->gelar_depan != null && $this->gelar_belakang != null) {
+            return $this->gelar_depan . ' ' . $this->attributes['nama'] . ', ' . $this->gelar_belakang;
+        }
+
+        // Hanya gelar depan
+        if ($this->gelar_depan != null && $this->gelar_belakang == null) {
+            return $this->gelar_depan . ' ' . $this->attributes['nama'];
+        }
+
+        // Hanya gelar belakang
+        if ($this->gelar_depan == null && $this->gelar_belakang != null) {
+            return $this->attributes['nama'] . ', ' . $this->gelar_belakang;
+        }
+
+        // Tanpa gelar
+        return $this->attributes['nama'];
+    }
+
     public function setNamaAttribute($value)
     {
         $this->attributes['nama'] = strtoupper($value);
