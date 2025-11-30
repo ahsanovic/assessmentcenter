@@ -1,13 +1,12 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Data Tes Sedang Berlangsung']
+        ['url' => null, 'title' => 'Tes Potensi Berlangsung']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Tes Potensi (Sedang Berlangsung)</h6>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

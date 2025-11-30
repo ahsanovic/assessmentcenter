@@ -1,23 +1,27 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Data Pelanggaran Tes']
+        ['url' => null, 'title' => 'Pelanggaran Tes Potensi']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Pelanggaran Tes Potensi</h6>
-                    <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari event" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                    <div class="card mt-4 mb-4 bg-light-subtle">
+                        <div class="card-body">
+                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="input-group" wire:ignore>
+                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari event...">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
+                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
