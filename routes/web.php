@@ -329,19 +329,21 @@ Route::middleware(['auth:peserta'])->group(function () {
     Route::get('/dashboard', \App\Livewire\Peserta\Dashboard\Index::class)->name('peserta.dashboard');
 
     // portofolio
-    Route::get('portofolio', \App\Livewire\Peserta\Portofolio\Portofolio::class)->name('peserta.portofolio');
-    Route::get('biodata', \App\Livewire\Peserta\Portofolio\Biodata::class)->name('peserta.biodata');
-    Route::get('pendidikan', \App\Livewire\Peserta\Portofolio\Pendidikan::class)->name('peserta.pendidikan');
-    Route::get('pendidikan/create', \App\Livewire\Peserta\Portofolio\PendidikanForm::class)->name('peserta.pendidikan.create');
-    Route::get('pendidikan/{id}/edit', \App\Livewire\Peserta\Portofolio\PendidikanForm::class)->name('peserta.pendidikan.edit');
-    Route::get('pelatihan', \App\Livewire\Peserta\Portofolio\Pelatihan::class)->name('peserta.pelatihan');
-    Route::get('pelatihan/create', \App\Livewire\Peserta\Portofolio\PelatihanForm::class)->name('peserta.pelatihan.create');
-    Route::get('pelatihan/{id}/edit', \App\Livewire\Peserta\Portofolio\PelatihanForm::class)->name('peserta.pelatihan.edit');
-    Route::get('karir', \App\Livewire\Peserta\Portofolio\Karir::class)->name('peserta.karir');
-    Route::get('karir/create', \App\Livewire\Peserta\Portofolio\KarirForm::class)->name('peserta.karir.create');
-    Route::get('karir/{id}/edit', \App\Livewire\Peserta\Portofolio\KarirForm::class)->name('peserta.karir.edit');
-    Route::get('pengalaman', \App\Livewire\Peserta\Portofolio\Pengalaman::class)->name('peserta.pengalaman');
-    Route::get('penilaian', \App\Livewire\Peserta\Portofolio\Penilaian::class)->name('peserta.penilaian');
+    Route::middleware(['assessment'])->group(function () {
+        Route::get('portofolio', \App\Livewire\Peserta\Portofolio\Portofolio::class)->name('peserta.portofolio');
+        Route::get('biodata', \App\Livewire\Peserta\Portofolio\Biodata::class)->name('peserta.biodata');
+        Route::get('pendidikan', \App\Livewire\Peserta\Portofolio\Pendidikan::class)->name('peserta.pendidikan');
+        Route::get('pendidikan/create', \App\Livewire\Peserta\Portofolio\PendidikanForm::class)->name('peserta.pendidikan.create');
+        Route::get('pendidikan/{id}/edit', \App\Livewire\Peserta\Portofolio\PendidikanForm::class)->name('peserta.pendidikan.edit');
+        Route::get('pelatihan', \App\Livewire\Peserta\Portofolio\Pelatihan::class)->name('peserta.pelatihan');
+        Route::get('pelatihan/create', \App\Livewire\Peserta\Portofolio\PelatihanForm::class)->name('peserta.pelatihan.create');
+        Route::get('pelatihan/{id}/edit', \App\Livewire\Peserta\Portofolio\PelatihanForm::class)->name('peserta.pelatihan.edit');
+        Route::get('karir', \App\Livewire\Peserta\Portofolio\Karir::class)->name('peserta.karir');
+        Route::get('karir/create', \App\Livewire\Peserta\Portofolio\KarirForm::class)->name('peserta.karir.create');
+        Route::get('karir/{id}/edit', \App\Livewire\Peserta\Portofolio\KarirForm::class)->name('peserta.karir.edit');
+        Route::get('pengalaman', \App\Livewire\Peserta\Portofolio\Pengalaman::class)->name('peserta.pengalaman');
+        Route::get('penilaian', \App\Livewire\Peserta\Portofolio\Penilaian::class)->name('peserta.penilaian');
+    });
 
     // tes potensi
     Route::prefix('tes-potensi')->group(function () {
