@@ -286,6 +286,12 @@
             <td><center>:</center></td>
             <td>{{ $peserta->unit_kerja ?? '-' }}</td>
         </tr>
+        <tr>
+            <td>5</td>
+            <td>Instansi</td>
+            <td><center>:</center></td>
+            <td>{{ $peserta->instansi ?? '-' }}</td>
+        </tr>
     </table>
     
     <!-- Aspek Potensi -->

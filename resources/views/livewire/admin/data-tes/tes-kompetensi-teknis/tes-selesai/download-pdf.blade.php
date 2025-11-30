@@ -224,33 +224,21 @@
         </tr>
         <tr>
             <td>3</td>
-            <td>Tempat/Tgl lahir</td>
-            <td><center>:</center></td>
-            <td>{{ $peserta->tempat_lahir . ', ' . $peserta->tgl_lahir ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Jenis Kelamin</td>
-            <td><center>:</center></td>
-            <td>{{ $peserta->jk == 'L' ? 'Laki - Laki' : ($peserta->jk == 'P' ? 'Perempuan' : '-') }}</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>Pangkat</td>
-            <td><center>:</center></td>
-            <td>{{ $peserta->golPangkat?->pangkat . ' (' . $peserta->golPangkat?->golongan . ')' ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td>6</td>
             <td>Jabatan</td>
             <td><center>:</center></td>
             <td>{{ $peserta->jabatan ?? '-' }}</td>
         </tr>
         <tr>
-            <td>7</td>
+            <td>4</td>
             <td>Unit Kerja</td>
             <td><center>:</center></td>
             <td>{{ $peserta->unit_kerja ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Instansi</td>
+            <td><center>:</center></td>
+            <td>{{ $peserta->instansi ?? '-' }}</td>
         </tr>
     </table>
     
