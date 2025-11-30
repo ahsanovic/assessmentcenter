@@ -77,9 +77,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a class="btn btn-sm btn-inverse-success btn-icon {{ 
-                                                    ($item->is_finished == 'true' && auth()->user()->role == 'user') ? 'disabled' : ''
-                                                }}"
+                                            <a class="btn btn-sm btn-inverse-success btn-icon"
                                                 wire:navigate
                                                 href="{{ route('admin.kuesioner.edit', $item->id) }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
