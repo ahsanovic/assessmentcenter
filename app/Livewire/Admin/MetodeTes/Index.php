@@ -29,7 +29,7 @@ class Index extends Component
         $data = RefMetodeTes::when($this->search, function ($query) {
             $query->where('metode_tes', 'like', '%' . $this->search . '%');
         })
-            ->paginate(5);
+            ->paginate(10);
 
         return view('livewire.admin.metode-tes.index', compact('data'));
     }
