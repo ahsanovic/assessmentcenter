@@ -8,28 +8,34 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Soal Problem Solving</h6>
-                    <a href="{{ route('admin.soal-problem-solving.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
-                    <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                    <div class="row mt-2">
-                        <div class="col-sm-4">
-                            <div class="mb-3">
-                                <select wire:model.live="aspek" class="form-select form-select-sm" id="aspek">
-                                    <option value="">pilih jenis aspek</option>
-                                    @foreach ($aspek_option as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari soal" />
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                    <a href="{{ route('admin.soal-problem-solving.create') }}" wire:navigate wire:ignore
+                        class="btn btn-sm btn-outline-primary">
+                        <i class="btn-icon-prepend" data-feather="edit"></i>
+                        Tambah
+                    </a>
+                    <div class="card mt-4 mb-4 bg-light-subtle">
+                        <div class="card-body">
+                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <div class="row mt-2">
+                                <div class="col-sm-4">
+                                    <select wire:model.live="aspek" class="form-select" id="aspek">
+                                        <option value="">pilih jenis aspek</option>
+                                        @foreach ($aspek_option as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-group" wire:ignore>
+                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari soal...">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
+                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -60,18 +66,19 @@
                                         <td>{{ $item->poin_opsi_d }}</td>
                                         <td>{{ $item->poin_opsi_e }}</td>
                                         <td>
-                                            <div class="btn-group dropstart">
-                                                <a
-                                                    class="btn btn-xs btn-outline-warning"
-                                                    wire:navigate
-                                                    href="{{ route('admin.soal-problem-solving.edit', $item->id) }}"
-                                                >
-                                                    Edit
-                                                </a>
-                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
-                                                    Hapus
-                                                </button>
-                                            </div>
+                                            <a class="btn btn-sm btn-inverse-success btn-icon"
+                                                wire:navigate
+                                                href="{{ route('admin.soal-problem-solving.edit', $item->id) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
+                                            </a>
+                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach

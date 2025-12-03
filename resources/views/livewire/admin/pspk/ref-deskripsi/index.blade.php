@@ -8,38 +8,42 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Referensi Deskripsi PSPK</h6>
-                    <a href="{{ route('admin.ref-pspk.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
-                    <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                    <div class="row mt-2">
-                        <div class="col-sm-2">
-                            <div class="mb-3">
-                                <select wire:model.live="level_pspk" class="form-select form-select-sm" id="level-pspk">
-                                    <option value="">pilih level pspk</option>
-                                    @foreach ($level_pspk_options as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="mb-3">
-                                <select wire:model.live="aspek_id" class="form-select form-select-sm" id="aspek">
-                                    <option value="">pilih aspek</option>
-                                    @foreach ($aspek_options as $key => $item)
-                                        <option value="{{ $key }}">{{ $item }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari deskripsi" />
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                    <a href="{{ route('admin.ref-pspk.create') }}" wire:navigate wire:ignore
+                        class="btn btn-sm btn-outline-primary">
+                        <i class="btn-icon-prepend" data-feather="edit"></i>
+                        Tambah
+                    </a>
+                    <div class="card mt-4 mb-4 bg-light-subtle">
+                        <div class="card-body">
+                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <div class="row mt-2">
+                                <div class="col-sm-2">
+                                    <select wire:model.live="level_pspk" class="form-select" id="level-pspk">
+                                        <option value="">pilih level pspk</option>
+                                        @foreach ($level_pspk_options as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <select wire:model.live="aspek_id" class="form-select" id="aspek">
+                                        <option value="">pilih aspek</option>
+                                        @foreach ($aspek_options as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group" wire:ignore>
+                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari deskripsi...">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
+                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,18 +72,19 @@
                                         <td class="text-wrap">{{ $item->deskripsi }}</td>
                                         <td class="text-wrap">{{ $item->deskripsi_plus }}</td>
                                         <td>
-                                            <div class="btn-group">
-                                                <a
-                                                    class="btn btn-xs btn-outline-warning"
-                                                    wire:navigate
-                                                    href="{{ route('admin.ref-pspk.edit', $item->id) }}"
-                                                >
-                                                    Edit
-                                                </a>
-                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
-                                                    Hapus
-                                                </button>
-                                            </div>
+                                            <a class="btn btn-sm btn-inverse-success btn-icon"
+                                                wire:navigate
+                                                href="{{ route('admin.ref-pspk.edit', $item->id) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
+                                            </a>
+                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
