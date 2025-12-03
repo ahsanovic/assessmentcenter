@@ -82,7 +82,6 @@
     <script src="{{ asset('assets/vendors/ace-builds/src-min/theme-chaos.js') }}"></script>
 
     <!-- inject:js -->
-    <script src="{{ asset('assets/vendors/feather-icons/feather.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <!-- endinject -->
 
@@ -227,6 +226,17 @@
             } else {
                 console.error("Echo is not defined.");
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            // Initialize feather icons saat pertama kali load
+            feather.replace();
+            
+            // Re-initialize setiap kali Livewire selesai update
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                feather.replace();
+            });
         });
     </script>
     @stack('js')
