@@ -233,11 +233,33 @@
             // Initialize feather icons saat pertama kali load
             feather.replace();
             
+            // Initialize tooltip saat pertama kali load
+            initTooltips();
+            
             // Re-initialize setiap kali Livewire selesai update
             Livewire.hook('morph.updated', ({ el, component }) => {
                 feather.replace();
+                initTooltips();
             });
         });
+        
+        // Function untuk initialize tooltips
+        function initTooltips() {
+            // Dispose semua tooltip yang sudah ada untuk menghindari duplikasi
+            var existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            existingTooltips.forEach(function(element) {
+                var tooltipInstance = bootstrap.Tooltip.getInstance(element);
+                if (tooltipInstance) {
+                    tooltipInstance.dispose();
+                }
+            });
+            
+            // Initialize tooltip baru
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     </script>
     @stack('js')
 </body>
