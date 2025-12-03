@@ -8,8 +8,11 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Soal Sub Tes 1</h6>
-                    <a href="{{ route('admin.soal-intelektual-subtes1.create') }}" wire:navigate class="btn btn-xs btn-outline-primary mt-3">Tambah</a>
+                    <a href="{{ route('admin.soal-intelektual-subtes1.create') }}" wire:navigate wire:ignore
+                        class="btn btn-sm btn-outline-primary mb-4">
+                        <i class="btn-icon-prepend" data-feather="edit"></i>
+                        Tambah
+                    </a>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
@@ -37,18 +40,20 @@
                                         <td>{{ $item->opsi_d }}</td>
                                         <td>{{ $item->opsi_e }}</td>
                                         <td>
-                                            <div class="btn-group">
-                                                <a
-                                                    class="btn btn-xs btn-outline-warning"
-                                                    wire:navigate
-                                                    href="{{ route('admin.soal-intelektual-subtes1.edit', $item->id) }}"
-                                                >
-                                                    Edit
-                                                </a>
-                                                <button wire:click="deleteConfirmation('{{ $item->id }}')" class="btn btn-xs btn-outline-danger">
-                                                    Hapus
-                                                </button>
-                                            </div>
+                                            <a
+                                                class="btn btn-sm btn-inverse-success btn-icon"
+                                                wire:navigate
+                                                href="{{ route('admin.soal-intelektual-subtes1.edit', $item->id) }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
+                                            </a>
+                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
