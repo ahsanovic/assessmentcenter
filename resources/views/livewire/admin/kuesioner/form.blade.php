@@ -72,15 +72,10 @@
                                 @enderror
                             </div><!-- Col -->
                         </div><!-- Row -->
-                        <div class="mt-4">
-                            <a href="{{ route('admin.kuesioner') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                            <button
-                                type="submit"
-                                class="btn btn-sm btn-inverse-success"
-                            >
-                                {{ $isUpdate == true ? 'Ubah' : 'Simpan' }}
-                            </button>
-                        </div>
+                        <x-form-action 
+                            :cancelUrl="route('admin.kuesioner')" 
+                            :isUpdate="$isUpdate == true" 
+                        />
                     </form>
                 </div>
             </div>

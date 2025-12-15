@@ -64,13 +64,10 @@
                                 @enderror
                             </div><!-- Col -->
                         </div><!-- Row -->
-                        <a href="{{ route('admin.settings.waktu') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                        <button
-                            type="submit"
-                            class="btn btn-sm btn-inverse-success"
-                        >
-                            {{ $isUpdate == true ? 'Ubah' : 'Simpan' }}
-                        </button>
+                        <x-form-action 
+                            :cancelUrl="route('admin.settings.waktu')" 
+                            :isUpdate="$isUpdate == true" 
+                        />
                     </form>
                 </div>
             </div>

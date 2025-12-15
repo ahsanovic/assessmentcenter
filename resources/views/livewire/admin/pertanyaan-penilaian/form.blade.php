@@ -40,15 +40,10 @@
                             </div><!-- Col -->
                         </div><!-- Row -->
 
-                        <div class="mt-3">
-                            <a href="{{ route('admin.pertanyaan-penilaian') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                            <button
-                                type="submit"
-                                class="btn btn-sm btn-inverse-success"
-                            >
-                                {{ $isUpdate == true ? 'Ubah' : 'Simpan' }}
-                            </button>
-                        </div>
+                        <x-form-action 
+                            :cancelUrl="route('admin.pertanyaan-penilaian')" 
+                            :isUpdate="$isUpdate == true" 
+                        />
                     </form>
                 </div>
             </div>

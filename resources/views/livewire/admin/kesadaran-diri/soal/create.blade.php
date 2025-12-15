@@ -140,15 +140,7 @@
                             </div><!-- Col -->
                         </div><!-- Row -->
 
-                        <div class="mt-3">
-                            <a href="{{ route('admin.soal-kesadaran-diri') }}" wire:navigate class="btn btn-sm btn-inverse-danger me-2">Batal</a>
-                            <button
-                                type="submit"
-                                class="btn btn-sm btn-inverse-success"
-                            >
-                                Simpan
-                            </button>
-                        </div>
+                        <x-form-action :cancelUrl="route('admin.soal-kesadaran-diri')" />
                     </form>
                 </div>
             </div>
