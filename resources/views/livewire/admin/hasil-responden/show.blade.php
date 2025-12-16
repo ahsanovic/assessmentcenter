@@ -31,8 +31,8 @@
                             <thead>
                                 <tr>
                                     <th style="width: 5%">#</th>
-                                    <th style="width: 20%">Nama Peserta</th>
-                                    <th>Jawaban Responden</th>
+                                    <th style="width: 30%">Nama Peserta</th>
+                                    <th style="width: 20%">Jawaban Responden</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -40,45 +40,82 @@
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->nama }}</td>
-                                        <td class="text-wrap">
-                                            @php
-                                                $jawaban = $item->jawabanResponden->first();
-                                                $kuesioner_id = explode(',', $jawaban->kuesioner_id ?? '');
-                                                $skor = explode(',', $jawaban->skor ?? '');
-                                            @endphp
-                                            @foreach ($kuesioner_id as $i => $id)
-                                                <p><strong>Pertanyaan:</strong> {{ $pertanyaan[$id] ?? '-' }}</p>
-                                                <p>
-                                                    <strong>Skor:</strong>
-                                                    @switch($skor[$i])
-                                                        @case(1)
-                                                            Sangat Tidak Setuju
-                                                            @break
-                                                        @case(2)
-                                                            Tidak Setuju
-                                                            @break
-                                                        @case(3)
-                                                            Netral
-                                                            @break
-                                                        @case(4)
-                                                            Setuju
-                                                            @break
-                                                        @case(5)
-                                                            Sangat Setuju
-                                                            @break
-                                                        @default
-                                                    @endswitch
-                                                </p>
-                                                <hr>
-                                            @endforeach
-                                            @if (!empty($jawaban->jawaban_esai))
-                                                <p><strong>Kritik & Saran:</strong> {{ $jawaban->jawaban_esai }}</p>
-                                            @endif
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalJawaban{{ $item->id }}">
+                                                <i class="link-icon" data-feather="eye" style="width: 14px; height: 14px;"></i> Lihat Jawaban
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+
+                        {{-- Modal Jawaban Responden --}}
+                        @foreach ($data as $item)
+                            @php
+                                $jawaban = $item->jawabanResponden->first();
+                                $kuesioner_id = explode(',', $jawaban->kuesioner_id ?? '');
+                                $skor = explode(',', $jawaban->skor ?? '');
+                            @endphp
+                            <div class="modal fade" id="modalJawaban{{ $item->id }}" tabindex="-1" aria-labelledby="modalJawabanLabel{{ $item->id }}" aria-hidden="true" wire:ignore.self>
+                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalJawabanLabel{{ $item->id }}">Jawaban: {{ $item->nama }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @foreach ($kuesioner_id as $i => $id)
+                                                <div class="card mb-3">
+                                                    <div class="card-body">
+                                                        <p class="mb-2"><strong>Pertanyaan:</strong></p>
+                                                        <p class="text-muted">{{ $pertanyaan[$id] ?? '-' }}</p>
+                                                        <p class="mb-0">
+                                                            <strong>Skor:</strong>
+                                                            <span class="badge bg-primary">
+                                                                @switch($skor[$i])
+                                                                    @case(1)
+                                                                        Sangat Tidak Setuju
+                                                                        @break
+                                                                    @case(2)
+                                                                        Tidak Setuju
+                                                                        @break
+                                                                    @case(3)
+                                                                        Netral
+                                                                        @break
+                                                                    @case(4)
+                                                                        Setuju
+                                                                        @break
+                                                                    @case(5)
+                                                                        Sangat Setuju
+                                                                        @break
+                                                                    @default
+                                                                        -
+                                                                @endswitch
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            @if (!empty($jawaban->jawaban_esai))
+                                                <div class="card border-warning">
+                                                    <div class="card-body">
+                                                        <p class="mb-2"><strong>Kritik & Saran:</strong></p>
+                                                        <p class="text-muted mb-0">{{ $jawaban->jawaban_esai }}</p>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary btn-icon-text" data-bs-dismiss="modal">
+                                                <i class="btn-icon-prepend" data-feather="x"></i>
+                                                Tutup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>        
