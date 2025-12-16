@@ -43,12 +43,16 @@
                                 <div class="col-sm-6 mb-3 d-flex justify-content-end">
                                     <div class="me-2">
                                         <a href="{{ route('admin.tes-selesai.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)
+                                            class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }} btn-icon-text">
+                                            <i class="btn-icon-prepend" data-feather="download"></i>
+                                            Download Rekap Laporan (Excel)
                                         </a>
                                     </div>
                                     <div class="me-2">
                                         <a href="{{ route('admin.tes-selesai.download-all-laporan', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }}">Download Semua Laporan PDF (.zip)
+                                            class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }} btn-icon-text">
+                                            <i class="btn-icon-prepend" data-feather="download"></i>
+                                            Download Semua Laporan PDF (.zip)
                                         </a>
                                     </div>
                                 </div>

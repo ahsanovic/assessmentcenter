@@ -24,7 +24,7 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                                 <div class="col-md-4 text-end">
-                                    <button wire:click="downloadExcel" wire:loading.attr="disabled" class="btn btn-success btn-icon-text">
+                                    <button wire:click="downloadExcel" wire:loading.attr="disabled" class="btn btn-sm btn-success btn-icon-text">
                                         <i class="btn-icon-prepend" data-feather="download"></i>
                                         <span wire:loading.remove wire:target="downloadExcel">Download Semua Jawaban</span>
                                         <span wire:loading wire:target="downloadExcel">Downloading...</span>
