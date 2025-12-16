@@ -9,11 +9,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
-                            <a href="{{ route('admin.event.create') }}" wire:navigate wire:ignore
-                                class="btn btn-sm btn-outline-primary">
-                                <i class="btn-icon-prepend" data-feather="edit"></i>
-                                Tambah
-                            </a>
+                            <x-btn-add :url="route('admin.event.create')" />
                         </div>
                         <div class="d-flex align-items-center flex-wrap text-nowrap gap-2">
                             <div class="badge bg-info-subtle text-dark">

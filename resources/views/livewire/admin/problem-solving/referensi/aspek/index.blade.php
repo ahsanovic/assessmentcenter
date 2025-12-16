@@ -8,11 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <a href="{{ route('admin.ref-aspek-problem-solving.create') }}" wire:navigate wire:ignore
-                        class="btn btn-sm btn-outline-primary mb-4">
-                        <i class="btn-icon-prepend" data-feather="edit"></i>
-                        Tambah
-                    </a>
+                    <x-btn-add :url="route('admin.ref-aspek-problem-solving.create')" class="mb-4" />
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>

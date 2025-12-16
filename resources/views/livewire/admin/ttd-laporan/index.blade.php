@@ -7,11 +7,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <a href="{{ route('admin.ttd-laporan.create') }}" wire:navigate wire:ignore
-                        class="btn btn-sm btn-outline-primary">
-                        <i class="btn-icon-prepend" data-feather="edit"></i>
-                        Tambah
-                    </a>
+                    <x-btn-add :url="route('admin.ttd-laporan.create')" />
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
