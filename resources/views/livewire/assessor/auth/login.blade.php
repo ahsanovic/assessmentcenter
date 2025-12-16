@@ -29,8 +29,11 @@
                             <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" id="password" autocomplete="current-password" placeholder="Password">
                             @error('password') <span class="text-danger">{{ $message }}</span> @enderror
                         </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white">Login</button>
+                        <div wire:ignore>
+                            <button type="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white btn-icon-text">
+                                <i class="btn-icon-prepend" data-feather="log-in"></i>
+                                Login
+                            </button>
                         </div>
                         </form>
                     </div>
