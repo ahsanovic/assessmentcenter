@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger me-2">Reset</button>
+                                <x-btn-reset :text="'Reset'" />
                                 <a href="{{ route('admin.distribusi-peserta.show-assessor', ['idEvent' => $event_id]) }}" wire:navigate class="btn btn-sm btn-inverse-success">
                                     Kembali ke List Assessor
                                 </a>

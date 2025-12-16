@@ -18,7 +18,7 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                                <x-btn-reset :text="'Reset'" />
                             </div>
                         </div>
                     </div>

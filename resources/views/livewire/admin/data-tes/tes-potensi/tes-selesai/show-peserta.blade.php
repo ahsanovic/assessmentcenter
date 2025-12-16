@@ -38,9 +38,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
-                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
-                                    </button>
+                                    <x-btn-reset :text="'Reset'" />
                                 </div>
                                 <div class="col-sm-6 mb-3 d-flex justify-content-end">
                                     <div class="me-2">
