@@ -118,7 +118,7 @@
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Rekomendasi AI"
                                                 wire:navigate
                                             >
-                                                <span wire:ignore><i class="link-icon" data-feather="brain"></i></span>
+                                                <span wire:ignore><i class="link-icon" data-feather="thumbs-up"></i></span>
                                             </a>
                                         </td>
                                     </tr>
