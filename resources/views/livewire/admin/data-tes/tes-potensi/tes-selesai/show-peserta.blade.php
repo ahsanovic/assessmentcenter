@@ -94,11 +94,11 @@
                                         <td class="text-wrap">{{ \Carbon\Carbon::parse($item->test_started_at)->format('d F Y / H:i:s') }}</td>
                                         <td>
                                             <a href="{{ route('admin.tes-selesai.show-report', [
-                                                wire:navigate
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
                                                 ]) }}" class="btn btn-sm btn-outline-success btn-icon"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Report"
+                                                wire:navigate
                                             >
                                                 <span wire:ignore><i class="link-icon" data-feather="eye"></i></span>
                                             </a>
