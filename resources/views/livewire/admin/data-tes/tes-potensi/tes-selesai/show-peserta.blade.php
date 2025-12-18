@@ -94,28 +94,31 @@
                                         <td class="text-wrap">{{ \Carbon\Carbon::parse($item->test_started_at)->format('d F Y / H:i:s') }}</td>
                                         <td>
                                             <a href="{{ route('admin.tes-selesai.show-report', [
+                                                wire:navigate
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-inverse-success"
-                                                wire:navigate
+                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Report"
                                             >
-                                                Lihat
+                                                <span wire:ignore><i class="link-icon" data-feather="eye"></i></span>
                                             </a>
                                             <a href="{{ route('admin.tes-selesai.download', [
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-inverse-danger"
+                                                ]) }}" class="btn btn-sm btn-outline-danger btn-icon"
                                                 target="_blank"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Download Pdf"
                                             >
-                                                Download
+                                                <span wire:ignore><i class="link-icon" data-feather="download"></i></span>
                                             </a>
                                             <a href="{{ route('admin.tes-selesai.rekomendasi-ai', [
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-inverse-warning"
+                                                ]) }}" class="btn btn-sm btn-outline-warning btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Rekomendasi AI"
                                                 wire:navigate
                                             >
-                                                Rekomendasi AI
+                                                <span wire:ignore><i class="link-icon" data-feather="brain"></i></span>
                                             </a>
                                         </td>
                                     </tr>
