@@ -88,8 +88,11 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_cakap_digital_id }}')" tabindex="0" class="btn btn-xs btn-outline-danger">
-                                                    Hapus
+                                                <button wire:click="deleteConfirmation('{{ $item->hasil_cakap_digital_id }}')"
+                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                                >
+                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
                                                 </button>
                                             @endif
                                         </td>
