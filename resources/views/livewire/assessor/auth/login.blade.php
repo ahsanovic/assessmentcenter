@@ -51,6 +51,7 @@
                         <!-- Header -->
                         <div class="text-center text-lg-start mb-4">
                             <h2 class="fw-bold mb-1" style="color: #01a7f7;">
+                                <img src="{{ asset('assets/images/small-logo.png') }}" class="img-fluid mb-2" style="max-width: 30px;" alt="Logo">
                                 SIKMA
                             </h2>
                             <p class="text-muted mb-0 small">Sistem Kompetensi Mandiri dan Adaptif</p>
