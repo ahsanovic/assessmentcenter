@@ -111,6 +111,9 @@
                                         autocomplete="current-password" 
                                         placeholder=" Masukkan password"
                                         style="font-size: 1rem;">
+                                    <span class="input-group-text bg-light border-start-0" style="cursor: pointer;" id="toggle-password-visibility" wire:ignore>
+                                        <i data-feather="eye" id="password-eye-icon"></i>
+                                    </span>
                                 </div>
                                 @error('password') 
                                     <small class="text-danger mt-1 d-block" wire:ignore>
@@ -119,6 +122,31 @@
                                     </small>
                                 @enderror
                             </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const input = document.getElementById('password');
+                                    const toggle = document.getElementById('toggle-password-visibility');
+                                    const eyeIcon = document.getElementById('password-eye-icon');
+                                    let isShown = false;
+
+                                    function updateIcon() {
+                                        if (isShown) {
+                                            eyeIcon.setAttribute('data-feather', 'eye-off');
+                                        } else {
+                                            eyeIcon.setAttribute('data-feather', 'eye');
+                                        }
+                                        if (window.feather) window.feather.replace();
+                                    }
+
+                                    toggle.addEventListener('click', function() {
+                                        isShown = !isShown;
+                                        input.type = isShown ? 'text' : 'password';
+                                        updateIcon();
+                                    });
+
+                                    updateIcon();
+                                });
+                            </script>
                             
                             <div class="d-grid mt-4" wire:ignore>
                                 <button type="submit" class="btn btn-lg text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; border-radius: 0.75rem; padding: 0.875rem;">
