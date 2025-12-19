@@ -1,32 +1,60 @@
 <div>
-    <div class="row mb-4">
-        <div class="col">
-            <h3 class="text-center">Hasil Nilai Tes Potensi</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body d-flex justify-content-center text-center">
-                    <div style="font-family: 'Helvetica Neue', sans-serif;">
-                        {{-- <div class="mb-2"><strong>Job Person Match (JPM)</strong> : {{ $nilai->jpm }} %</div> --}}
-                        {{-- <div><strong>Kategori</strong> : {{ $nilai->kategori }}</div> --}}
-                        <h4 class="text-center mb-3">
-                            Terima kasih, <strong>{{ auth()->guard('peserta')->user()->nama }}</strong>!
-                        </h4>
-                        <h6>Anda telah menyelesaikan Tes {{ auth()->guard('peserta')->user()->event->metodeTes->metode_tes }} dengan baik dan penuh semangat!</h6>
-                        <div class="row mt-4">
-                            <form action="{{ route('peserta.logout') }}" method="post">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="icon-md" data-feather="log-out"></i>
-                                    <span class="link-title">Logout</span>
-                                </button>
-                            </form>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Success Card -->
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-4 d-inline-flex" wire:ignore>
+                            <i class="text-success" data-feather="check-circle" style="width: 64px; height: 64px;"></i>
                         </div>
+                    </div>
+
+                    <!-- Success Message -->
+                    <h2 class="text-success mb-3">Selamat!</h2>
+                    <h4 class="mb-4">
+                        Terima kasih, <strong>{{ auth()->guard('peserta')->user()->nama }}</strong>!
+                    </h4>
+                    <p class="text-muted mb-4">
+                        Anda telah menyelesaikan <strong>Tes {{ auth()->guard('peserta')->user()->event->metodeTes->metode_tes }}</strong> dengan baik dan penuh semangat!
+                    </p>
+
+                    <!-- Decorative Element -->
+                    <div class="mb-4" wire:ignore>
+                        <span class="display-1">🎉</span>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="bg-light rounded-3 p-4 mb-4">
+                        <div class="d-flex align-items-start text-start">
+                            <div class="me-3" wire:ignore>
+                                <i class="text-info" data-feather="info" style="width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-muted">
+                                    Anda telah menyelesaikan tes ini. Silahkan kembali ke dashboard untuk melanjutkan tes berikutnya atau logout jika sudah selesai semua.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="{{ route('peserta.dashboard') }}" class="btn btn-primary btn-lg px-4" wire:navigate>
+                            <span wire:ignore><i data-feather="home" style="width: 20px; height: 20px;" class="me-2"></i></span>
+                            Kembali ke Dashboard
+                        </a>
+                        <form action="{{ route('peserta.logout') }}" method="post" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-lg px-4">
+                                <span wire:ignore><i data-feather="log-out" style="width: 20px; height: 20px;" class="me-2"></i></span>
+                                Logout
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>     
+    </div>
 </div>

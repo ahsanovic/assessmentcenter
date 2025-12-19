@@ -1,12 +1,52 @@
 <div>
-    <x-breadcrumb :breadcrumbs="[
-        ['url' => route('peserta.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('peserta.portofolio'), 'title' => 'Portofolio'],
-        ['url' => null, 'title' => 'Biodata'],
-    ]" />
-    <x-alert :type="'danger'" :teks="'Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh.
-        Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. 
-        Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!'" />
+    <!-- Breadcrumb -->
+    <div class="d-flex justify-content-end">
+        <x-breadcrumb :breadcrumbs="[
+            ['url' => route('peserta.dashboard'), 'title' => 'Dashboard'],
+            ['url' => route('peserta.portofolio'), 'title' => 'Portofolio'],
+            ['url' => null, 'title' => 'Biodata'],
+        ]" />
+    </div>
+
+    <!-- Header Card -->
+    <div class="card border-0 shadow-sm mb-4" 
+        style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle p-3 me-3"
+                    style="background: rgba(102, 126, 234, 0.13); color: #667eea;" wire:ignore>
+                    <i data-feather="folder" style="width: 32px; height: 32px;"></i>
+                </div>
+                <div>
+                    <h3 class="mb-1" style="color: #3c3264; font-weight: 700;">
+                        Kelengkapan Portofolio
+                    </h3>
+                    <p class="mb-0" style="color: #585e74; opacity: .85; font-weight: 500;">
+                        Lengkapi data diri Anda dengan teliti
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Alert -->
+    <div class="card border-0 shadow-sm mb-4 border-start border-4 border-info">
+        <div class="card-body p-3">
+            <div class="d-flex align-items-start">
+                <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3 flex-shrink-0" wire:ignore>
+                    <i data-feather="info" class="text-info" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                    <strong class="text-info d-block mb-1">Petunjuk Pengisian</strong>
+                    <small class="text-muted">
+                        Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh.
+                        Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="row">
             @if ($portofolio->metode_tes_id == 1)
@@ -24,93 +64,117 @@
             ]" />
             @endif
             <div class="col-8 col-md-10 ps-0">
-                <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
-                    <div class="tab-pane fade show active" role="tabpanel">
-                        <h5 class="mb-4">Biodata</h5>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 border-0">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 me-3" wire:ignore>
+                                <i data-feather="user" class="text-primary" style="width: 20px; height: 20px;"></i>
+                            </div>
+                            <h5 class="mb-0 fw-semibold">Data Biodata</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Nama</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->nama }}" readonly
-                                        disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="user" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Nama
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->nama }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
+                            </div>
+                        </div>
+                        @if ($biodata->jenis_peserta_id === 1)
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">NIP</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->nip }}" readonly
-                                        disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="credit-card" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        NIP
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->nip }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        @elseif ($biodata->jenis_peserta_id === 2) {{-- Non ASN --}}
+                            </div>
+                        </div>
+                        @elseif ($biodata->jenis_peserta_id === 2)
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">NIK</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->nik }}" readonly
-                                        disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="credit-card" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        NIK
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->nik }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
                         @endif
-                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
+                        @if ($biodata->jenis_peserta_id === 1)
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Jabatan</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->jabatan }}" readonly
-                                        disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="briefcase" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Jabatan
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->jabatan }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
                         @endif
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Unit Kerja</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->unit_kerja }}"
-                                        readonly disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="home" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Unit Kerja
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->unit_kerja }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Instansi</label>
-                                    <input type="text" class="form-control" value="{{ $biodata->instansi }}" readonly
-                                        disabled>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="building" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Instansi
+                                    </label>
+                                    <input type="text" class="form-control bg-light" value="{{ $biodata->instansi }}" readonly disabled>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Gelar Depan</label>
-                                    <input type="text" class="form-control" wire:model.blur="gelar_depan">
+                                    <label class="form-label fw-medium">Gelar Depan</label>
+                                    <input type="text" class="form-control" wire:model.blur="gelar_depan" placeholder="Contoh: Dr., Ir., Prof.">
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        <div class="row">
-                            <div class="col-sm-12">
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Gelar Belakang</label>
-                                    <input type="text" class="form-control" wire:model.blur="gelar_belakang">
+                                    <label class="form-label fw-medium">Gelar Belakang</label>
+                                    <input type="text" class="form-control" wire:model.blur="gelar_belakang" placeholder="Contoh: S.Kom., M.M., Ph.D.">
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
+                            </div>
+                        </div>
+
+                        @if ($biodata->jenis_peserta_id === 1)
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="gol-pangkat" class="form-label">Golongan/Pangkat</label>
+                                    <label for="gol-pangkat" class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="award" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Golongan/Pangkat
+                                    </label>
                                     <select wire:model.live="gol_pangkat_id"
                                         class="form-select @error('gol_pangkat_id') is-invalid @enderror"
                                         id="gol-pangkat">
-                                        <option value="">-pilih-</option>
+                                        <option value="">- Pilih Golongan/Pangkat -</option>
                                         @foreach ($option_gol_pangkat as $item)
                                             <option value="{{ $item->id }}">
                                                 {{ $item->pangkat . ' - ' . $item->golongan }}</option>
@@ -123,92 +187,99 @@
                             </div>
                         </div>
                         @endif
-                        @if ($biodata->jenis_peserta_id === 1) {{-- ASN --}}
+
+                        @if ($biodata->jenis_peserta_id === 1)
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">NIK</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="hash" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        NIK
+                                    </label>
                                     <input type="text" wire:model.blur="nik"
                                         class="form-control @error('nik') is-invalid @enderror"
-                                        wire:dirty.class="border-warning">
+                                        wire:dirty.class="border-warning"
+                                        placeholder="Masukkan NIK 16 digit">
                                     @error('nik')
                                         <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
                         @endif
+
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Tempat Lahir</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="map-pin" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Tempat Lahir
+                                    </label>
                                     <input type="text" wire:model.blur="tempat_lahir"
                                         class="form-control @error('tempat_lahir') is-invalid @enderror"
-                                        wire:dirty.class="border-warning">
+                                        wire:dirty.class="border-warning"
+                                        placeholder="Masukkan tempat lahir">
                                     @error('tempat_lahir')
                                         <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        <div class="row">
-                            <div class="col-sm-4">
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Tanggal Lahir</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="calendar" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Tanggal Lahir
+                                    </label>
                                     <div class="input-group flatpickr" id="flatpickr-date">
                                         <input type="text" wire:model.live="tgl_lahir"
                                             class="form-control flatpickr-input @error('tgl_lahir') is-invalid @enderror"
-                                            placeholder="Select date" data-input="" readonly="readonly">
-                                        <span class="input-group-text input-group-addon" data-toggle="">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-calendar">
-                                                <rect x="3" y="4" width="18" height="18" rx="2"
-                                                    ry="2"></rect>
-                                                <line x1="16" y1="2" x2="16" y2="6">
-                                                </line>
-                                                <line x1="8" y1="2" x2="8" y2="6">
-                                                </line>
-                                                <line x1="3" y1="10" x2="21" y2="10">
-                                                </line>
-                                            </svg>
+                                            placeholder="Pilih tanggal lahir" data-input="" readonly="readonly">
+                                        <span class="input-group-text input-group-addon bg-light" data-toggle="">
+                                            <i data-feather="calendar" style="width: 18px; height: 18px;"></i>
                                         </span>
                                         @error('tgl_lahir')
                                             <label class="error invalid-feedback">{{ $message }}</label>
                                         @enderror
                                     </div>
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        <div class="row mb-4">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <div class="col-sm-12">
-                                <div class="mb-1">
-                                    <label class="form-label">Jenis Kelamin</label>
+                                <label class="form-label fw-medium">
+                                    <span wire:ignore><i data-feather="users" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                    Jenis Kelamin
+                                </label>
+                                <div class="d-flex gap-4 mt-2">
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" wire:model.live="jk"
+                                            id="radioInline" value="L" {{ $jk == 'L' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="radioInline">
+                                            Laki-Laki
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" wire:model.live="jk"
+                                            id="radioInline1" value="P" {{ $jk == 'P' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="radioInline1">
+                                            Perempuan
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model.live="jk"
-                                        id="radioInline" value="L" {{ $jk == 'L' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="radioInline">
-                                        Laki-Laki
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" class="form-check-input" wire:model.live="jk"
-                                        id="radioInline1" value="P" {{ $jk == 'P' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="radioInline1">
-                                        Perempuan
-                                    </label>
-                                </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
+
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label for="gol-pangkat" class="form-label">Agama</label>
+                                    <label for="agama-id" class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="heart" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Agama
+                                    </label>
                                     <select wire:model.live="agama_id"
                                         class="form-select @error('agama_id') is-invalid @enderror" id="agama-id">
-                                        <option value="">-pilih-</option>
+                                        <option value="">- Pilih Agama -</option>
                                         @foreach ($option_agama as $id => $item)
                                             <option value="{{ $id }}">{{ $item }}</option>
                                         @endforeach
@@ -219,57 +290,79 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Alamat</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="home" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Alamat
+                                    </label>
                                     <input type="text" wire:model.blur="alamat"
                                         class="form-control @error('alamat') is-invalid @enderror"
-                                        wire:dirty.class="border-warning">
+                                        wire:dirty.class="border-warning"
+                                        placeholder="Masukkan alamat lengkap">
                                     @error('alamat')
                                         <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
+
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
-                                    <label class="form-label">No. HP</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="phone" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        No. HP
+                                    </label>
                                     <input type="text" wire:model.blur="no_hp"
                                         class="form-control @error('no_hp') is-invalid @enderror"
-                                        wire:dirty.class="border-warning">
+                                        wire:dirty.class="border-warning"
+                                        placeholder="Contoh: 08123456789">
                                     @error('no_hp')
                                         <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
                                 </div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Foto (maksimal 200 KB)</label>
+                                    <label class="form-label fw-medium">
+                                        <span wire:ignore><i data-feather="image" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                        Foto <small class="text-muted">(Maksimal 200 KB)</small>
+                                    </label>
                                     @if ($foto_url)
-                                        <br />
-                                        <img src="{{ $foto_url }}" class="img-fluid rounded mb-3"
-                                            width="100">
+                                        <div class="mb-3">
+                                            <img src="{{ $foto_url }}" class="img-fluid rounded shadow-sm" width="120">
+                                        </div>
                                     @endif
                                     <input class="form-control @error('foto') is-invalid @enderror"
                                         wire:model.live="foto" type="file" id="formFile" accept="image/*">
                                     @error('foto')
                                         <label class="error invalid-feedback">{{ $message }}</label>
                                     @enderror
+                                    <div wire:loading wire:target="foto" class="mt-2">
+                                        <span class="spinner-border spinner-border-sm text-primary me-2"></span>
+                                        <small class="text-muted">Mengupload foto...</small>
+                                    </div>
                                 </div>
-                                <div wire:loading wire:target="foto">Uploading...</div>
-                            </div><!-- Col -->
-                        </div><!-- Row -->
-                        <div class="row">
-                            <div class="col-sm-2 mt-3">
-                                <a href="{{ route('peserta.portofolio') }}" class="btn btn-sm btn-inverse-success" wire:navigate>Preview Portofolio</a>
                             </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ route('peserta.portofolio') }}" class="btn btn-outline-primary" wire:navigate>
+                                <span wire:ignore><i data-feather="eye" style="width: 16px; height: 16px;" class="me-1"></i></span>
+                                Preview Portofolio
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>

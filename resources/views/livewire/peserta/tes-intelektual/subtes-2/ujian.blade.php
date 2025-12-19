@@ -1,23 +1,78 @@
 @push('css')
-    <style>
-        .form-check-input[type="radio"] {
-            border: 2px solid #dee2e6;
-        }
-
-        .flagged-btn {
-            background-color: #ffd15c !important;
-            border-color: #e8b200 !important;
-            color: #000 !important;
-        }
-
-        .flag-icon {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            font-size: 14px;
-        }
-    </style>
+<style>
+    .form-check-input[type="radio"] {
+        border: 2px solid #dee2e6;
+        width: 1.25em;
+        height: 1.25em;
+        cursor: pointer;
+    }
+    .form-check-input[type="radio"]:checked {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+    .flagged-btn {
+        background-color: #ffd15c !important;
+        border-color: #e8b200 !important;
+        color: #000 !important;
+    }
+    .flag-icon {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        font-size: 14px;
+    }
+    .option-card {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .option-card:hover {
+        border-color: #ffc107;
+        background-color: rgba(255, 193, 7, 0.05);
+    }
+    .option-card.selected {
+        border-color: #ffc107;
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    .timer-badge {
+        font-size: 1.25rem;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+    }
+    .nav-btn {
+        min-width: 40px;
+        height: 40px;
+        position: relative;
+        font-weight: 600;
+    }
+    .status-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
+    }
+    .option-image-card {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .option-image-card:hover {
+        border-color: #ffc107;
+    }
+    .option-image-card.selected {
+        border-color: #ffc107;
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+</style>
 @endpush
+
 <div x-data
 x-init="
     document.addEventListener('visibilitychange', () => {
@@ -36,31 +91,63 @@ x-init="
         toastr[e.type](e.message);
     });
 ">
-    <div class="row mb-4">
-        <div class="col">
-            <h3 class="text-center">Tes Intelektual - Sub Tes 2</h3>
+    <!-- Header Card -->
+    <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body p-4 text-white">
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+                <div class="d-flex align-items-center mb-3 mb-md-0">
+                    <div class="rounded-circle bg-white bg-opacity-25 p-2 me-3" wire:ignore>
+                        <i data-feather="image" style="width: 28px; height: 28px;"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">Tes Intelektual - Sub Tes 2</h4>
+                        <small class="opacity-75">Analisis pola gambar</small>
+                    </div>
+                </div>
+                <span class="badge bg-white bg-opacity-25 px-3 py-2">Sub Tes 2 dari 3</span>
+            </div>
         </div>
     </div>
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="row d-flex justify-content-center">
-                <div class="col-2">
-                    <button type="button" class="btn btn-inverse-success">
-                        Sudah Dijawab: <span class="badge bg-success text-white">{{ $jml_soal - $jawaban_kosong }}</span>
-                    </button>
+
+    <!-- Status Bar -->
+    <div class="card border-0 shadow-sm mb-4 status-bar">
+        <div class="card-body py-3">
+            <div class="row align-items-center g-3">
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-2 me-2" wire:ignore>
+                            <i class="text-success" data-feather="check-circle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Dijawab</small>
+                            <strong class="text-success">{{ $jml_soal - $jawaban_kosong }}</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-inverse-danger">
-                        Belum Dijawab: <span class="badge bg-danger text-white">{{ $jawaban_kosong ?? 0 }}</span>
-                    </button>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-2" wire:ignore>
+                            <i class="text-danger" data-feather="x-circle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Belum Dijawab</small>
+                            <strong class="text-danger">{{ $jawaban_kosong ?? 0 }}</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-inverse-info">
-                        <strong><span class="time text-dark"></span></strong>
-                    </button>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-2" wire:ignore>
+                            <i class="text-warning" data-feather="clock" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Sisa Waktu</small>
+                            <strong class="timer-badge text-warning time"></strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button class="btn btn-inverse-warning"
+                <div class="col-6 col-md-3 text-md-end">
+                    <button class="btn btn-warning"
                         x-data
                         @click="Swal.fire({
                             title: 'Apakah Anda yakin mengakhiri tes?',
@@ -74,163 +161,180 @@ x-init="
                             }
                         })"
                     >
+                        <span wire:ignore><i data-feather="log-out" style="width: 18px; height: 18px;" class="me-1"></i></span>
                         Selesai
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h5>SOAL NO. {{ $nomor_sekarang }}</h5>
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-12 col-lg-12 mb-3">
-                    {!! $soal->soal !!}
-                    {{-- CEK kalau ada soal gambar --}}
-                    @if(preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_soal))
-                    <div>
-                        <img src="{{ asset('storage/'.$soal->image_soal) }}" 
-                            alt="Soal" 
-                            style="max-width:500px; height:auto;">
-                    </div
+
+    <!-- Question Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-warning text-dark me-3 px-3 py-2" style="font-size: 1rem;">
+                        Soal {{ $nomor_sekarang }}
+                    </span>
+                    @if(isset($flagged[$nomor_sekarang]))
+                        <span class="badge bg-warning text-dark">🔖 Ditandai</span>
                     @endif
                 </div>
+                <small class="text-muted">{{ $nomor_sekarang }} dari {{ $jml_soal }} soal</small>
             </div>
-            <div class="row">
-                <div class="col-md-6 col-lg-12">
-                    {{-- CEK kalau ada opsi gambar --}}
-                    @if(
-                        preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_a) ||
-                        preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_b) ||
-                        preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_c) ||
-                        preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_d) ||
-                        preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_e)
-                    )
-                        {{-- JIKA GAMBAR, TAMPILKAN KE SAMPING --}}
-                        <div class="d-flex flex-wrap gap-3 mb-3">
-                            @foreach(['A','B','C','D','E'] as $opsi)
-                                @php
-                                    $fieldImage = 'image_opsi_'.strtolower($opsi);
-                                    $fieldText  = 'opsi_'.strtolower($opsi);
-                                @endphp
-
-                                <div class="form-check form-check-inline d-flex align-items-center">
-                                    <input class="form-check-input me-2" type="radio"
-                                        wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" 
-                                        value="{{ $opsi }}" id="opsi{{ $opsi }}">
-
-                                    <label class="form-check-label d-flex align-items-center gap-2" for="opsi{{ $opsi }}">
-                                        <span>{{ $opsi }}.</span>
-                                        @if(!empty($soal->$fieldImage) && preg_match('/\.(jpg|jpeg|png)$/i', $soal->$fieldImage))
-                                            <img src="{{ asset('storage/'.$soal->$fieldImage) }}" 
-                                                alt="Opsi {{ $opsi }}" 
-                                                style="max-width:150px; height:auto;">
-                                        @else
-                                            {{ $soal->$fieldText }}
-                                        @endif
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        {{-- JIKA TEKS, TAMPILKAN KE BAWAH --}}
-                        <div class="mb-3">
-                            @foreach(['A','B','C','D','E'] as $opsi)
-                                @php $fieldText  = 'opsi_'.strtolower($opsi); @endphp
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio"
-                                        wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" 
-                                        value="{{ $opsi }}" id="opsi{{ $opsi }}">
-
-                                    <label class="form-check-label" for="opsi{{ $opsi }}">
-                                        {{ $opsi }}. {{ $soal->$fieldText }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
+        </div>
+        <div class="card-body p-4">
+            <!-- Question Text & Image -->
+            <div class="mb-4">
+                <p class="fs-5 mb-3">{!! $soal->soal !!}</p>
+                @if(preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_soal))
+                <div class="text-center">
+                    <img src="{{ asset('storage/'.$soal->image_soal) }}" 
+                        alt="Soal" 
+                        class="img-fluid rounded shadow-sm"
+                        style="max-width:500px; height:auto;">
                 </div>
+                @endif
             </div>
-            <div class="row mt-2">
-                <div class="col md-6 lg-12 d-flex">
-                    <button class="btn btn-warning btn-sm me-2" wire:click="navigate({{ $nomor_sekarang - 1 }})"
-                        @if ($nomor_sekarang == 1) disabled @endif>
-                        Sebelumnya
-                    </button>
-                    <button class="btn btn-success btn-sm me-2" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
-                        Simpan & Lanjutkan
-                    </button>
-                    <button class="btn btn-danger btn-sm" wire:click="toggleFlag({{ $nomor_sekarang }})">
-                        {{ isset($flagged[$nomor_sekarang]) ? '🔖 Batalkan Flag' : '🔖 Tandai Soal' }}
-                    </button>
-                </div>
-            </div>
-            <div class="row mt-5">
-                @php
-                    $nomor_soal = 1;
-                    $kosong = 0;
-                @endphp
-                <h6 class="text-muted small">NAVIGASI SOAL</h6>
-                <div class="col mt-2">
-                    @for ($i = 0; $i < 1; $i++)
-                        <div class="d-flex flex-wrap btn-group btn-group-sm" role="group" aria-label="Basic example">
-                            @for ($j = 1; $j <= 12; $j++)
-                                <button wire:click="navigate({{ $nomor_soal }})"
-                                    class="btn btn-sm btn-<?php
-                                    if ($jawaban[$nomor_soal - 1] === '0') {
-                                        echo 'inverse-danger';
-                                        $kosong++;
-                                    } else {
-                                        echo 'inverse-success';
-                                    }
-                                    ?> me-2 mb-2 @if(isset($flagged[$nomor_soal])) flagged-btn @endif"
-                                    >
-                                    {{ $nomor_soal }}
 
-                                    @if(isset($flagged[$nomor_soal]))
-                                        <span class="flag-icon">🔖</span>
-                                    @endif
-                                </button>
-                                @php $nomor_soal++; @endphp
-                            @endfor
+            <!-- Options -->
+            @if(
+                preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_a) ||
+                preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_b) ||
+                preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_c) ||
+                preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_d) ||
+                preg_match('/\.(jpg|jpeg|png)$/i', $soal->image_opsi_e)
+            )
+                <!-- Image Options - Horizontal Layout -->
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    @foreach(['A','B','C','D','E'] as $opsi)
+                        @php
+                            $fieldImage = 'image_opsi_'.strtolower($opsi);
+                            $fieldText  = 'opsi_'.strtolower($opsi);
+                        @endphp
+                        <label class="option-image-card {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == $opsi ? 'selected' : '' }}">
+                            <input class="form-check-input" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" 
+                                value="{{ $opsi }}" id="opsi{{ $opsi }}">
+                            <span class="fw-bold">{{ $opsi }}.</span>
+                            @if(!empty($soal->$fieldImage) && preg_match('/\.(jpg|jpeg|png)$/i', $soal->$fieldImage))
+                                <img src="{{ asset('storage/'.$soal->$fieldImage) }}" 
+                                    alt="Opsi {{ $opsi }}" 
+                                    class="rounded"
+                                    style="max-width:150px; height:auto;">
+                            @else
+                                {{ $soal->$fieldText }}
+                            @endif
+                        </label>
+                    @endforeach
+                </div>
+            @else
+                <!-- Text Options - Vertical Layout -->
+                <div class="row g-3 mb-4">
+                    @foreach(['A','B','C','D','E'] as $opsi)
+                        @php $fieldText = 'opsi_'.strtolower($opsi); @endphp
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == $opsi ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" 
+                                    value="{{ $opsi }}" id="opsi{{ $opsi }}">
+                                <span><strong class="me-2">{{ $opsi }}.</strong> {{ $soal->$fieldText }}</span>
+                            </label>
                         </div>
+                    @endforeach
+                </div>
+            @endif
+
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-outline-secondary" wire:click="navigate({{ $nomor_sekarang - 1 }})"
+                    @if ($nomor_sekarang == 1) disabled @endif>
+                    <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
+                    Sebelumnya
+                </button>
+                <button class="btn btn-warning" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                    Simpan & Lanjutkan
+                    <span wire:ignore><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
+                </button>
+                <button class="btn {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}" wire:click="toggleFlag({{ $nomor_sekarang }})">
+                    🔖 {{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Grid -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+            <h6 class="mb-0">
+                <span wire:ignore><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
+                Navigasi Soal
+            </h6>
+        </div>
+        <div class="card-body p-4">
+            @php
+                $nomor_soal = 1;
+                $kosong = 0;
+            @endphp
+            <div class="d-flex flex-wrap gap-2">
+                @for ($i = 0; $i < 1; $i++)
+                    @for ($j = 1; $j <= 12; $j++)
+                        @if($nomor_soal <= $jml_soal)
+                        <button wire:click="navigate({{ $nomor_soal }})"
+                            class="btn nav-btn btn-sm {{ $jawaban[$nomor_soal - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$nomor_soal]) ? 'flagged-btn' : '' }}"
+                            style="{{ $nomor_soal == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5);' : '' }}"
+                        >
+                            {{ $nomor_soal }}
+                            @if(isset($flagged[$nomor_soal]))
+                                <span class="flag-icon">🔖</span>
+                            @endif
+                        </button>
+                        @php 
+                            if($jawaban[$nomor_soal - 1] === '0') $kosong++;
+                            $nomor_soal++; 
+                        @endphp
+                        @endif
                     @endfor
+                @endfor
+            </div>
+            <div class="mt-4 d-flex flex-wrap gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm btn-success me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Sudah Dijawab</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm btn-outline-danger me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Belum Dijawab</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm flagged-btn me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Ditandai</small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @push('js')
 <script>
     document.addEventListener('livewire:init', () => {
-    
-        // Load awal
         Livewire.on('load-flags-from-browser', () => {
             let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
             Livewire.dispatch('updateFlagsFromBrowser', { flags });
         });
-    
-        // Saat tombol tandai diklik
+
         Livewire.on('toggle-flag-in-browser', (data) => {
             let nomor = data.nomor;
-    
             let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
-    
             if (flags[nomor]) {
                 delete flags[nomor];
             } else {
                 flags[nomor] = true;
             }
-    
             localStorage.setItem('flags_soal', JSON.stringify(flags));
         });
-    
-        // Setelah JS update → kirim kembali data terbaru ke Livewire
+
         Livewire.on('request-flags-sync', () => {
             let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
             Livewire.dispatch('updateFlagsFromBrowser', { flags });
@@ -251,19 +355,14 @@ x-init="
     var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
     var isShow = false;
     
-    // Update the count down every 1 second
     var x = setInterval(function() {
         var now = new Date().getTime();
-        
-        // Find the distance between now an the count down date
         var distance = waktuBerakhir - now;
 
-        // If the count down is over, write some text
         if (distance <= 0 && !isShow) {
             isShow = true;
             clearInterval(x);
             $('.time').html('Waktu Habis');
-            
             Swal.fire({
                 title: 'Waktu habis!',
                 icon: 'warning',
@@ -271,31 +370,23 @@ x-init="
                 allowOutsideClick: false,
                 allowEscapeKey: false
             }).then((result) => {
-                // if (result.isConfirmed) {
-                //     $wire.finish();
-                // }
                 if (result.isConfirmed) {
-                    // Ambil ulang instance Livewire saat ini
                     let el = document.querySelector('[wire\\:id]');
                     if (el) {
                         let component = Livewire.find(el.getAttribute('wire:id'));
                         if (component) {
-                            component.finish(); // panggil method Livewire
+                            component.finish();
                         }
                     }
                 }
             })
             return;
         } else if (!isShow) {
-            // Time calculations for days, hours, minutes and seconds
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            // Output the result in an element
-            $('.time').html(('0' + hours).slice(-2) + " : " + ('0' + minutes).slice(-2) + " : " + ('0' + seconds).slice(-2) + "");
+            $('.time').html(('0' + hours).slice(-2) + " : " + ('0' + minutes).slice(-2) + " : " + ('0' + seconds).slice(-2));
         }
-        
     }, 1000);
 </script>
 @endpush

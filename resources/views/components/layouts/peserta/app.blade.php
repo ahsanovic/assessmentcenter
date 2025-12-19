@@ -35,7 +35,7 @@
         <link rel="stylesheet" href="{{ asset('assets/fonts/feather-font/css/iconfont.css') }}">
 
         <!-- Layout styles -->  
-        <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/css/demo2/style.css') }}">
         <!-- End layout styles -->
 
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
@@ -46,10 +46,10 @@
     </head>
     <body>
         <div class="main-wrapper">
-            <x-layouts.peserta.sidebar />
-            
+            {{-- <x-layouts.peserta.sidebar /> --}}
+            <x-layouts.peserta.navbar />
 		    <div class="page-wrapper">
-                <x-layouts.peserta.navbar />
+                {{-- <x-layouts.peserta.navbar /> --}}
 
 			    <div class="page-content">
                     {{ $slot }}
@@ -63,13 +63,13 @@
         <script src="{{ asset('assets/vendors/jquery/jquery.min.js') }}"></script>
 
         <!-- Plugin js for this page -->
-        <script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}"></script>
+        {{-- <script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}"></script> --}}
         <!-- End plugin js for this page -->
 
         <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/feather-icons/feather.min.js') }}"></script>
-        <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
-        <script src="{{ asset('assets/js/flatpickr.js') }}"></script>
+        {{-- <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
+        <script src="{{ asset('assets/js/flatpickr.js') }}"></script> --}}
 
             <!-- Plugin js for this page -->
         <script src="{{ asset('assets/vendors/ace-builds/src-min/ace.js') }}"></script>

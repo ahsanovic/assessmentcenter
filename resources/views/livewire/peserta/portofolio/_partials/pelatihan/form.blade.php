@@ -1,12 +1,52 @@
 <div>
-    <x-breadcrumb :breadcrumbs="[
-        ['url' => route('peserta.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('peserta.portofolio'), 'title' => 'Portofolio'],
-        ['url' => null, 'title' => 'Pelatihan'],
-    ]" />
-    <x-alert :type="'danger'" :teks="'Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh.
-        Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. 
-        Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!'" />
+    <!-- Breadcrumb -->
+    <div class="d-flex justify-content-end">
+        <x-breadcrumb :breadcrumbs="[
+            ['url' => route('peserta.dashboard'), 'title' => 'Dashboard'],
+            ['url' => route('peserta.portofolio'), 'title' => 'Portofolio'],
+            ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan'],
+            ['url' => null, 'title' => $isUpdate ? 'Edit' : 'Tambah'],
+        ]" />
+    </div>
+
+    <!-- Header Card -->
+    <div class="card border-0 shadow-sm mb-4" 
+        style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle p-3 me-3"
+                    style="background: rgba(102, 126, 234, 0.13); color: #667eea;" wire:ignore>
+                    <i data-feather="folder" style="width: 32px; height: 32px;"></i>
+                </div>
+                <div>
+                    <h3 class="mb-1" style="color: #3c3264; font-weight: 700;">
+                        Kelengkapan Portofolio
+                    </h3>
+                    <p class="mb-0" style="color: #585e74; opacity: .85; font-weight: 500;">
+                        Lengkapi data diri Anda dengan teliti
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Alert -->
+    <div class="card border-0 shadow-sm mb-4 border-start border-4 border-warning">
+        <div class="card-body p-3">
+            <div class="d-flex align-items-start">
+                <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3 flex-shrink-0" wire:ignore>
+                    <i data-feather="award" class="text-warning" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                    <strong class="text-warning d-block mb-1">Riwayat Pelatihan</strong>
+                    <small class="text-muted">
+                        Masukkan riwayat pelatihan 5 tahun terakhir yang relevan dengan posisi yang dilamar
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="row">
             <x-tab-nav :nav="[
@@ -18,95 +58,93 @@
                 ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
             ]" />
             <div class="col-8 col-md-10 ps-0">
-                <div class="tab-content tab-content-vertical border p-3" id="v-tabContent">
-                    <div class="tab-pane fade show active" role="tabpanel">
-                        <h5 class="mb-4">Pelatihan</h5>
-                        <x-alert :type="'success'" :teks="'Riwayat pelatihan 5 tahun terakhir'" />
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 border-0">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3" wire:ignore>
+                                <i data-feather="{{ $isUpdate ? 'edit' : 'plus-circle' }}" class="text-warning" style="width: 20px; height: 20px;"></i>
+                            </div>
+                            <h5 class="mb-0 fw-semibold">{{ $isUpdate ? 'Edit' : 'Tambah' }} Data Pelatihan</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
                         <form wire:submit="save">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Nama Institusi</label>
+                                        <label class="form-label fw-medium">
+                                            <span wire:ignore><i data-feather="home" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                            Nama Institusi <span class="text-danger">*</span>
+                                        </label>
                                         <input type="text" wire:model="form.nama_institusi"
                                             class="form-control @error('form.nama_institusi') is-invalid @enderror"
-                                            placeholder="masukkan nama institusi pelatihan">
+                                            placeholder="Contoh: Lembaga Administrasi Negara">
                                         @error('form.nama_institusi')
                                             <label class="error invalid-feedback">{{ $message }}</label>
                                         @enderror
                                     </div>
-                                </div><!-- Col -->
-                            </div><!-- Row -->
+                                </div>
+                            </div>
+
                             <div class="row">
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <div class="mb-3">
-                                        <label class="form-label">Tanggal Mulai</label>
+                                        <label class="form-label fw-medium">
+                                            <span wire:ignore><i data-feather="calendar" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                            Tanggal Mulai <span class="text-danger">*</span>
+                                        </label>
                                         <div class="input-group flatpickr" id="flatpickr-date">
                                             <input type="text" wire:model="form.tgl_mulai"
                                                 class="form-control flatpickr-input @error('form.tgl_mulai') is-invalid @enderror"
-                                                placeholder="Select date" data-input="" readonly="readonly">
-                                            <span class="input-group-text input-group-addon" data-toggle="">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="feather feather-calendar">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2"
-                                                        ry="2"></rect>
-                                                    <line x1="16" y1="2" x2="16" y2="6">
-                                                    </line>
-                                                    <line x1="8" y1="2" x2="8" y2="6">
-                                                    </line>
-                                                    <line x1="3" y1="10" x2="21" y2="10">
-                                                    </line>
-                                                </svg>
+                                                placeholder="Pilih tanggal" data-input="" readonly="readonly">
+                                            <span class="input-group-text input-group-addon bg-light" data-toggle="">
+                                                <i data-feather="calendar" style="width: 18px; height: 18px;"></i>
                                             </span>
                                             @error('form.tgl_mulai')
                                                 <label class="error invalid-feedback">{{ $message }}</label>
                                             @enderror
                                         </div>
                                     </div>
-                                </div><!-- Col -->
-                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-4">
                                     <div class="mb-3">
-                                        <label class="form-label">Tanggal Selesai</label>
-                                        <div class="input-group flatpickr" id="flatpickr-date">
+                                        <label class="form-label fw-medium">
+                                            <span wire:ignore><i data-feather="calendar" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                            Tanggal Selesai <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group flatpickr" id="flatpickr-date2">
                                             <input type="text" wire:model="form.tgl_selesai"
                                                 class="form-control flatpickr-input @error('form.tgl_selesai') is-invalid @enderror"
-                                                placeholder="Select date" data-input="" readonly="readonly">
-                                            <span class="input-group-text input-group-addon" data-toggle="">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="feather feather-calendar">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2"
-                                                        ry="2"></rect>
-                                                    <line x1="16" y1="2" x2="16" y2="6">
-                                                    </line>
-                                                    <line x1="8" y1="2" x2="8" y2="6">
-                                                    </line>
-                                                    <line x1="3" y1="10" x2="21" y2="10">
-                                                    </line>
-                                                </svg>
+                                                placeholder="Pilih tanggal" data-input="" readonly="readonly">
+                                            <span class="input-group-text input-group-addon bg-light" data-toggle="">
+                                                <i data-feather="calendar" style="width: 18px; height: 18px;"></i>
                                             </span>
                                             @error('form.tgl_selesai')
                                                 <label class="error invalid-feedback">{{ $message }}</label>
                                             @enderror
                                         </div>
                                     </div>
-                                </div><!-- Col -->
-                            </div><!-- Row -->
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="mb-3">
-                                        <label class="form-label">Subjek Pelatihan</label>
+                                        <label class="form-label fw-medium">
+                                            <span wire:ignore><i data-feather="book" style="width: 14px; height: 14px;" class="me-1"></i></span>
+                                            Subjek Pelatihan <span class="text-danger">*</span>
+                                        </label>
                                         <input type="text" wire:model="form.subjek_pelatihan"
                                             class="form-control @error('form.subjek_pelatihan') is-invalid @enderror"
-                                            placeholder="masukkan subjek pelatihan">
+                                            placeholder="Contoh: Pelatihan Kepemimpinan Administrator">
                                         @error('form.subjek_pelatihan')
                                             <label class="error invalid-feedback">{{ $message }}</label>
                                         @enderror
                                     </div>
-                                </div><!-- Col -->
-                            </div><!-- Row -->
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
 
                             <x-form-action 
                                 :cancelUrl="route('peserta.pelatihan')" 
@@ -118,3 +156,4 @@
             </div>
         </div>
     </div>
+</div>
