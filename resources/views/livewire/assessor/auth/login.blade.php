@@ -88,7 +88,7 @@
                                         style="font-size: 1rem;">
                                 </div>
                                 @error('id_number') 
-                                    <small class="text-danger mt-1 d-block">
+                                    <small class="text-danger mt-1 d-block" wire:ignore>
                                         <i data-feather="alert-circle" style="width: 14px; height: 14px;" class="me-1"></i>
                                         {{ $message }}
                                     </small>
@@ -113,7 +113,7 @@
                                         style="font-size: 1rem;">
                                 </div>
                                 @error('password') 
-                                    <small class="text-danger mt-1 d-block">
+                                    <small class="text-danger mt-1 d-block" wire:ignore>
                                         <i data-feather="alert-circle" style="width: 14px; height: 14px;" class="me-1"></i>
                                         {{ $message }}
                                     </small>
@@ -143,7 +143,7 @@
                         
                         <!-- Footer -->
                         <div class="mt-4 pt-3 border-top">
-                            <p class="text-center text-muted small mb-0">
+                            <p class="text-center text-muted small mb-0" wire:ignore>
                                 <i data-feather="help-circle" style="width: 14px; height: 14px;" class="me-1"></i>
                                 Hubungi administrator jika mengalami kendala
                             </p>
