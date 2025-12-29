@@ -5,14 +5,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="Responsive HTML Admin Dashboard Template based on Bootstrap 5">
-	<meta name="author" content="NobleUI">
-	<meta name="keywords" content="nobleui, bootstrap, bootstrap 5, bootstrap5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+    <meta name="description" content="Sistem Kompetensi Assessment Center Mandiri dan Adaptif">
+	<meta name="author" content="SIKMA">
+	<meta name="keywords" content="assessment center, sikma, assessment center mandiri dan adaptif">
 
 	<title>{{ $title ?? config('app.name') }}</title>
 
   <!-- color-modes:js -->
-  <script src="../../../assets/js/color-modes.js"></script>
+  <script src="{{ asset('assets/js/color-modes.js') }}"></script>
   <!-- endinject -->
 
   <!-- Fonts -->
