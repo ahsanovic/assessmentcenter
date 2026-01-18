@@ -46,9 +46,9 @@ class Form extends Component
         $this->validate();
         try {
             if ($this->isUpdate) {
-                $check_duplicate = Settings::where('urutan', $this->form->urutan)->exists();
+                $check_duplicate = Settings::where('urutan', $this->form->urutan)->where('alat_tes_id', '=', $this->form->alat_tes_id)->exists();
                 if ($check_duplicate) {
-                    $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan urutan tes ' . $this->form->urutan . ' sudah ada!']);
+                    $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan urutan tes ' . $this->form->urutan . ' dan alat tes ' . RefAlatTes::find($this->form->alat_tes_id)->alat_tes . ' sudah ada!']);
                     return;
                 }
 
