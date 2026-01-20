@@ -126,21 +126,21 @@ class DownloadRekapController extends Controller
                 'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
                 'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
                 'Intelektual' => $peserta->hasilIntelektual->level ?? '-',
-                'Interpersonal' => $peserta->hasilInterpersonal->level_total ?? '-',
-                'Kesadaran Diri' => $peserta->hasilKesadaranDiri->level_total ?? '-',
                 'Berpikir Kritis dan Strategis' => $peserta->hasilBerpikirKritis->level_total ?? '-',
                 'Problem Solving' => $peserta->hasilProblemSolving->level_total ?? '-',
-                'EQ' => $peserta->hasilKecerdasanEmosi->level_total ?? '-',
                 'Belajar Cepat dan Pengembangan Diri' => $peserta->hasilPengembanganDiri->level_total ?? '-',
                 'Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->level_total ?? '-',
+                'Interpersonal' => $peserta->hasilInterpersonal->level_total ?? '-',
+                'Kesadaran Diri' => $peserta->hasilKesadaranDiri->level_total ?? '-',
+                'EQ' => $peserta->hasilKecerdasanEmosi->level_total ?? '-',
                 'Intelektual (Capaian Level)' => capaianLevel(optional($peserta->hasilIntelektual)->level) ?? '-',
-                'Interpersonal (Capaian Level)' => capaianLevel($peserta->hasilInterpersonal->level_total) ?? '-',
-                'Kesadaran Diri (Capaian Level)' => capaianLevel($peserta->hasilKesadaranDiri->level_total) ?? '-',
                 'Berpikir Kritis dan Strategis (Capaian Level)' => capaianLevel($peserta->hasilBerpikirKritis->level_total) ?? '-',
                 'Problem Solving (Capaian Level)' => capaianLevel($peserta->hasilProblemSolving->level_total) ?? '-',
-                'EQ (Capaian Level)' => capaianLevel($peserta->hasilKecerdasanEmosi->level_total) ?? '-',
                 'Belajar Cepat dan Pengembangan Diri (Capaian Level)' => capaianLevel($peserta->hasilPengembanganDiri->level_total) ?? '-',
                 'Motivasi Komitmen (Capaian Level)' => capaianLevel($peserta->hasilMotivasiKomitmen->level_total) ?? '-',
+                'Interpersonal (Capaian Level)' => capaianLevel($peserta->hasilInterpersonal->level_total) ?? '-',
+                'Kesadaran Diri (Capaian Level)' => capaianLevel($peserta->hasilKesadaranDiri->level_total) ?? '-',
+                'EQ (Capaian Level)' => capaianLevel($peserta->hasilKecerdasanEmosi->level_total) ?? '-',
                 'JPM Potensi' => $peserta->nilaiJpm?->jpm . '%' ?? '-',
                 'Kesimpulan' => $peserta->nilaiJpm?->kategori ?? '-',
                 // 'Deskripsi Intelektual' => ($peserta->hasilIntelektual->uraian_potensi_subtes_1 ?? '-') .
@@ -184,13 +184,13 @@ class DownloadRekapController extends Controller
                     ($peserta->hasilIntelektual->uraian_potensi_subtes_2 ?? '-') .
                     ($peserta->hasilIntelektual->uraian_potensi_subtes_3 ?? '-'),
 
-                'Deskripsi Interpersonal' => $deskripsiInterpersonal,
-                'Deskripsi Kesadaran Diri' => $deskripsiKesadaran,
                 'Deskripsi Berpikir Kritis dan Strategis' => $deskripsiBerpikir,
                 'Deskripsi Problem Solving' => $deskripsiProblem,
-                'Deskripsi EQ' => $deskripsiEQ,
                 'Deskripsi Belajar Cepat dan Pengembangan Diri' => $deskripsiPengembangan,
-                'Deskripsi Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->deskripsi ?? '-'
+                'Deskripsi Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->deskripsi ?? '-',
+                'Deskripsi Interpersonal' => $deskripsiInterpersonal,
+                'Deskripsi Kesadaran Diri' => $deskripsiKesadaran,
+                'Deskripsi EQ' => $deskripsiEQ,
             ]);
         }
 
