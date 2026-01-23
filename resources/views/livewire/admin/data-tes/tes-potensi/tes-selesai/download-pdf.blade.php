@@ -452,7 +452,7 @@
                             {{ $data->hasilMotivasiKomitmen[0]->deskripsi ?? '-' }}
                             @break
                         @case('Berpikir Kritis dan Strategis')
-                            @if ($data->hasilProblemSolving[0]->uraian_potensi == null)
+                            @if ($data->hasilBerpikirKritis[0]->uraian_potensi == null)
                             <ul class="custom-list">
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_1)->deskripsi ?? '-' }}</li>
                                 <li>{{ json_decode($data->hasilBerpikirKritis[0]->uraian_potensi_2)->deskripsi ?? '-' }}</li>
