@@ -229,16 +229,20 @@ class BerpikirKritis extends Component
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
                 $kategori_total = 'Rendah';
-            } else if ($skor_total >= 36 && $skor_total <= 37) {
-                $level_total = '3-';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'Sedang';
-            } else if ($skor_total == 38) {
+            // } else if ($skor_total >= 36 && $skor_total <= 37) {
+            //     $level_total = '3-';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
+            // } else if ($skor_total == 38) {
+            //     $level_total = '3';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
+            // } else if ($skor_total >= 39 && $skor_total <= 40) {
+            //     $level_total = '3+';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
+            } else if ($skor_total >= 36 && $skor_total <= 40) {
                 $level_total = '3';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'Sedang';
-            } else if ($skor_total >= 39 && $skor_total <= 40) {
-                $level_total = '3+';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'Sedang';
             } else if ($skor_total >= 41 && $skor_total <= 44) {

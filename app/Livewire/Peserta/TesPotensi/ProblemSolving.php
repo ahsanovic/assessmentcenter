@@ -225,18 +225,22 @@ class ProblemSolving extends Component
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
                 $kategori_total = 'Rendah';
-            } else if ($skor_total >= 40 && $skor_total <= 41) {
-                $level_total = '3-';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'Sedang';
-            } else if ($skor_total == 42) {
+            } else if ($skor_total >= 40 && $skor_total <= 44) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'Sedang';
-            } else if ($skor_total >= 43 && $skor_total <= 44) {
-                $level_total = '3+';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'Sedang';
+            // } else if ($skor_total >= 40 && $skor_total <= 41) {
+            //     $level_total = '3-';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
+            // } else if ($skor_total == 42) {
+            //     $level_total = '3';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
+            // } else if ($skor_total >= 43 && $skor_total <= 44) {
+            //     $level_total = '3+';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'Sedang';
             } else if ($skor_total >= 45 && $skor_total <= 49) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';

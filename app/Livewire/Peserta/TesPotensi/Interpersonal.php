@@ -200,15 +200,18 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_ke >= 4 && $data->nilai_indikator_ke <= 7) {
                 $standard_ke = '2';
                 $kualifikasi_ke = 'K';
-            } else if ($data->nilai_indikator_ke == 8) {
-                $standard_ke = '3-';
-                $kualifikasi_ke = 'C-';
-            } else if ($data->nilai_indikator_ke >= 9 && $data->nilai_indikator_ke <= 10) {
+            } else if ($data->nilai_indikator_ke >= 8 && $data->nilai_indikator_ke <= 11) {
                 $standard_ke = '3';
                 $kualifikasi_ke = 'C';
-            } else if ($data->nilai_indikator_ke == 11) {
-                $standard_ke = '3+';
-                $kualifikasi_ke = 'C+';
+            // } else if ($data->nilai_indikator_ke == 8) {
+            //     $standard_ke = '3-';
+            //     $kualifikasi_ke = 'C-';
+            // } else if ($data->nilai_indikator_ke >= 9 && $data->nilai_indikator_ke <= 10) {
+            //     $standard_ke = '3';
+            //     $kualifikasi_ke = 'C';
+            // } else if ($data->nilai_indikator_ke == 11) {
+            //     $standard_ke = '3+';
+            //     $kualifikasi_ke = 'C+';
             } else if ($data->nilai_indikator_ke >= 12 && $data->nilai_indikator_ke <= 13) {
                 $standard_ke = '4';
                 $kualifikasi_ke = 'B';
@@ -224,15 +227,18 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_bt >= 9 && $data->nilai_indikator_bt <= 13) {
                 $standard_bt = '2';
                 $kualifikasi_bt = 'K';
-            } else if ($data->nilai_indikator_bt == 14) {
-                $standard_bt = '3-';
-                $kualifikasi_bt = 'C-';
-            } else if ($data->nilai_indikator_bt == 15) {
+            } else if ($data->nilai_indikator_bt >= 14 && $data->nilai_indikator_bt <= 16) {
                 $standard_bt = '3';
                 $kualifikasi_bt = 'C';
-            } else if ($data->nilai_indikator_bt == 16) {
-                $standard_bt = '3+';
-                $kualifikasi_bt = 'C+';
+            // } else if ($data->nilai_indikator_bt == 14) {
+            //     $standard_bt = '3-';
+            //     $kualifikasi_bt = 'C-';
+            // } else if ($data->nilai_indikator_bt == 15) {
+            //     $standard_bt = '3';
+            //     $kualifikasi_bt = 'C';
+            // } else if ($data->nilai_indikator_bt == 16) {
+            //     $standard_bt = '3+';
+            //     $kualifikasi_bt = 'C+';
             } else if ($data->nilai_indikator_bt >= 17 && $data->nilai_indikator_bt <= 19) {
                 $standard_bt = '4';
                 $kualifikasi_bt = 'B';
@@ -248,15 +254,18 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_as >= 13 && $data->nilai_indikator_as <= 15) {
                 $standard_as = '2';
                 $kualifikasi_as = 'K';
-            } else if ($data->nilai_indikator_as == 16) {
-                $standard_as = '3-';
-                $kualifikasi_as = 'C-';
-            } else if ($data->nilai_indikator_as == 17) {
+            } else if ($data->nilai_indikator_as >= 16 && $data->nilai_indikator_as <= 18) {
                 $standard_as = '3';
                 $kualifikasi_as = 'C';
-            } else if ($data->nilai_indikator_as == 18) {
-                $standard_as = '3+';
-                $kualifikasi_as = 'C+';
+            // } else if ($data->nilai_indikator_as == 16) {
+            //     $standard_as = '3-';
+            //     $kualifikasi_as = 'C-';
+            // } else if ($data->nilai_indikator_as == 17) {
+            //     $standard_as = '3';
+            //     $kualifikasi_as = 'C';
+            // } else if ($data->nilai_indikator_as == 18) {
+            //     $standard_as = '3+';
+            //     $kualifikasi_as = 'C+';
             } else if ($data->nilai_indikator_as == 19) {
                 $standard_as = '4';
                 $kualifikasi_as = 'B';
@@ -272,15 +281,18 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_de >= 12 && $data->nilai_indikator_de <= 13) {
                 $standard_de = '2';
                 $kualifikasi_de = 'K';
-            } else if ($data->nilai_indikator_de == 14) {
-                $standard_de = '3-';
-                $kualifikasi_de = 'C-';
-            } else if ($data->nilai_indikator_de == 15) {
+            } else if ($data->nilai_indikator_de >= 14 && $data->nilai_indikator_de <= 16) {
                 $standard_de = '3';
                 $kualifikasi_de = 'C';
-            } else if ($data->nilai_indikator_de == 16) {
-                $standard_de = '3+';
-                $kualifikasi_de = 'C+';
+            // } else if ($data->nilai_indikator_de == 14) {
+            //     $standard_de = '3-';
+            //     $kualifikasi_de = 'C-';
+            // } else if ($data->nilai_indikator_de == 15) {
+            //     $standard_de = '3';
+            //     $kualifikasi_de = 'C';
+            // } else if ($data->nilai_indikator_de == 16) {
+            //     $standard_de = '3+';
+            //     $kualifikasi_de = 'C+';
             } else if ($data->nilai_indikator_de == 17) {
                 $standard_de = '4';
                 $kualifikasi_de = 'B';
@@ -296,15 +308,18 @@ class Interpersonal extends Component
             } else if ($data->nilai_indikator_smk >= 12 && $data->nilai_indikator_smk <= 13) {
                 $standard_smk = '2';
                 $kualifikasi_smk = 'K';
-            } else if ($data->nilai_indikator_smk == 14) {
-                $standard_smk = '3-';
-                $kualifikasi_smk = 'C-';
-            } else if ($data->nilai_indikator_smk == 15) {
+            } else if ($data->nilai_indikator_smk >= 14 && $data->nilai_indikator_smk <= 16) {
                 $standard_smk = '3';
                 $kualifikasi_smk = 'C';
-            } else if ($data->nilai_indikator_smk == 16) {
-                $standard_smk = '3+';
-                $kualifikasi_smk = 'C+';
+            // } else if ($data->nilai_indikator_smk == 14) {
+            //     $standard_smk = '3-';
+            //     $kualifikasi_smk = 'C-';
+            // } else if ($data->nilai_indikator_smk == 15) {
+            //     $standard_smk = '3';
+            //     $kualifikasi_smk = 'C';
+            // } else if ($data->nilai_indikator_smk == 16) {
+            //     $standard_smk = '3+';
+            //     $kualifikasi_smk = 'C+';
             } else if ($data->nilai_indikator_smk == 17) {
                 $standard_smk = '4';
                 $kualifikasi_smk = 'B';
@@ -367,15 +382,18 @@ class Interpersonal extends Component
             } else if ($skor_total >= 56 && $skor_total <= 67) {
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
-            } else if ($skor_total == 68) {
-                $level_total = '3-';
-                $kualifikasi_total = 'Cukup';
-            } else if ($skor_total >= 69 && $skor_total <= 75) {
+            } else if ($skor_total >= 68 && $skor_total <= 78) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
-            } else if ($skor_total >= 76 && $skor_total <= 78) {
-                $level_total = '3+';
-                $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total == 68) {
+            //     $level_total = '3-';
+            //     $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total >= 69 && $skor_total <= 75) {
+            //     $level_total = '3';
+            //     $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total >= 76 && $skor_total <= 78) {
+            //     $level_total = '3+';
+            //     $kualifikasi_total = 'Cukup';
             } else if ($skor_total >= 79 && $skor_total <= 89) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';

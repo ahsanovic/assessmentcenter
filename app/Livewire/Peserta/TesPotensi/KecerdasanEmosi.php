@@ -196,15 +196,18 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_kd >= 4 && $data->nilai_indikator_kd <= 5) {
                 $standard_kd = '2';
                 $kualifikasi_kd = 'K';
-            } else if ($data->nilai_indikator_kd == 6) {
-                $standard_kd = '3-';
-                $kualifikasi_kd = 'C-';
-            } else if ($data->nilai_indikator_kd == 7) {
+            } else if ($data->nilai_indikator_kd >= 6 && $data->nilai_indikator_kd <= 8) {
                 $standard_kd = '3';
                 $kualifikasi_kd = 'C';
-            } else if ($data->nilai_indikator_kd == 8) {
-                $standard_kd = '3+';
-                $kualifikasi_kd = 'C+';
+            // } else if ($data->nilai_indikator_kd == 6) {
+            //     $standard_kd = '3-';
+            //     $kualifikasi_kd = 'C-';
+            // } else if ($data->nilai_indikator_kd == 7) {
+            //     $standard_kd = '3';
+            //     $kualifikasi_kd = 'C';
+            // } else if ($data->nilai_indikator_kd == 8) {
+            //     $standard_kd = '3+';
+            //     $kualifikasi_kd = 'C+';
             } else if ($data->nilai_indikator_kd == 9) {
                 $standard_kd = '4';
                 $kualifikasi_kd = 'B';
@@ -220,15 +223,18 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_mpd >= 6 && $data->nilai_indikator_mpd <= 7) {
                 $standard_mpd = '2';
                 $kualifikasi_mpd = 'K';
-            } else if ($data->nilai_indikator_mpd == 8) {
-                $standard_mpd = '3-';
-                $kualifikasi_mpd = 'C-';
-            } else if ($data->nilai_indikator_mpd == 9) {
+            } else if ($data->nilai_indikator_mpd >= 8 && $data->nilai_indikator_mpd <= 10) {
                 $standard_mpd = '3';
                 $kualifikasi_mpd = 'C';
-            } else if ($data->nilai_indikator_mpd == 10) {
-                $standard_mpd = '3+';
-                $kualifikasi_mpd = 'C+';
+            // } else if ($data->nilai_indikator_mpd == 8) {
+            //     $standard_mpd = '3-';
+            //     $kualifikasi_mpd = 'C-';
+            // } else if ($data->nilai_indikator_mpd == 9) {
+            //     $standard_mpd = '3';
+            //     $kualifikasi_mpd = 'C';
+            // } else if ($data->nilai_indikator_mpd == 10) {
+            //     $standard_mpd = '3+';
+            //     $kualifikasi_mpd = 'C+';
             } else if ($data->nilai_indikator_mpd == 11) {
                 $standard_mpd = '4';
                 $kualifikasi_mpd = 'B';
@@ -244,15 +250,18 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_ke == 4) {
                 $standard_ke = '2';
                 $kualifikasi_ke = 'K';
-            } else if ($data->nilai_indikator_ke == 5) {
-                $standard_ke = '3-';
-                $kualifikasi_ke = 'C-';
-            } else if ($data->nilai_indikator_ke == 6) {
+            } else if ($data->nilai_indikator_ke >= 5 && $data->nilai_indikator_ke <= 7) {
                 $standard_ke = '3';
                 $kualifikasi_ke = 'C';
-            } else if ($data->nilai_indikator_ke == 7) {
-                $standard_ke = '3+';
-                $kualifikasi_ke = 'C+';
+            // } else if ($data->nilai_indikator_ke == 5) {
+            //     $standard_ke = '3-';
+            //     $kualifikasi_ke = 'C-';
+            // } else if ($data->nilai_indikator_ke == 6) {
+            //     $standard_ke = '3';
+            //     $kualifikasi_ke = 'C';
+            // } else if ($data->nilai_indikator_ke == 7) {
+            //     $standard_ke = '3+';
+            //     $kualifikasi_ke = 'C+';
             } else if ($data->nilai_indikator_ke >= 8 && $data->nilai_indikator_ke <= 9) {
                 $standard_ke = '4';
                 $kualifikasi_ke = 'B';
@@ -268,15 +277,18 @@ class KecerdasanEmosi extends Component
             } else if ($data->nilai_indikator_ks >= 4 && $data->nilai_indikator_ks <= 5) {
                 $standard_ks = '2';
                 $kualifikasi_ks = 'K';
-            } else if ($data->nilai_indikator_ks == 6) {
-                $standard_ks = '3-';
-                $kualifikasi_ks = 'C-';
-            } else if ($data->nilai_indikator_ks == 7) {
+            } else if ($data->nilai_indikator_ks >= 6 && $data->nilai_indikator_ks <= 8) {
                 $standard_ks = '3';
                 $kualifikasi_ks = 'C';
-            } else if ($data->nilai_indikator_ks == 8) {
-                $standard_ks = '3+';
-                $kualifikasi_ks = 'C+';
+            // } else if ($data->nilai_indikator_ks == 6) {
+            //     $standard_ks = '3-';
+            //     $kualifikasi_ks = 'C-';
+            // } else if ($data->nilai_indikator_ks == 7) {
+            //     $standard_ks = '3';
+            //     $kualifikasi_ks = 'C';
+            // } else if ($data->nilai_indikator_ks == 8) {
+            //     $standard_ks = '3+';
+            //     $kualifikasi_ks = 'C+';
             } else if ($data->nilai_indikator_ks >= 9 && $data->nilai_indikator_ks <= 10) {
                 $standard_ks = '4';
                 $kualifikasi_ks = 'B';
@@ -332,15 +344,18 @@ class KecerdasanEmosi extends Component
             } else if ($skor_total >= 22 && $skor_total <= 26) {
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
-            } else if ($skor_total == 27) {
-                $level_total = '3-';
-                $kualifikasi_total = 'Cukup';
-            } else if ($skor_total >= 28 && $skor_total <= 29) {
+            } else if ($skor_total >= 27 && $skor_total <= 30) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
-            } else if ($skor_total == 30) {
-                $level_total = '3+';
-                $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total == 27) {
+            //     $level_total = '3-';
+            //     $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total >= 28 && $skor_total <= 29) {
+            //     $level_total = '3';
+            //     $kualifikasi_total = 'Cukup';
+            // } else if ($skor_total == 30) {
+            //     $level_total = '3+';
+            //     $kualifikasi_total = 'Cukup';
             } else if ($skor_total >= 31 && $skor_total <= 35) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';

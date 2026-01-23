@@ -350,7 +350,7 @@
             </tr>
         @endforeach
         <tr>
-            <td colspan="2"><b>Job Person Match (JPM)</b></td>
+            <td colspan="2"><b>Person Job Fit</b></td>
             <td style="text-align: center">
                 @php
                     $capaian_level = [

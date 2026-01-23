@@ -198,18 +198,22 @@ class KesadaranDiri extends Component
                 $kategori_1 = 'K';
                 $kategori_kualifikasi_1 = 'Kurang';
                 $kualifikasi_1 = 'Rendah';
-            } else if ($data->nilai_indikator_1 == 56) {
-                $kategori_1 = 'C-';
-                $kategori_kualifikasi_1 = 'Cukup';
-                $kualifikasi_1 = 'Sedang';
-            } else if ($data->nilai_indikator_1 >= 57 && $data->nilai_indikator_1 <= 60) {
+            } else if ($data->nilai_indikator_1 >= 56 && $data->nilai_indikator_1 <= 61) {
                 $kategori_1 = 'C';
                 $kategori_kualifikasi_1 = 'Cukup';
                 $kualifikasi_1 = 'Sedang';
-            } else if ($data->nilai_indikator_1 == 61) {
-                $kategori_1 = 'C+';
-                $kategori_kualifikasi_1 = 'Cukup';
-                $kualifikasi_1 = 'Sedang';
+            // } else if ($data->nilai_indikator_1 == 56) {
+            //     $kategori_1 = 'C-';
+            //     $kategori_kualifikasi_1 = 'Cukup';
+            //     $kualifikasi_1 = 'Sedang';
+            // } else if ($data->nilai_indikator_1 >= 57 && $data->nilai_indikator_1 <= 60) {
+            //     $kategori_1 = 'C';
+            //     $kategori_kualifikasi_1 = 'Cukup';
+            //     $kualifikasi_1 = 'Sedang';
+            // } else if ($data->nilai_indikator_1 == 61) {
+            //     $kategori_1 = 'C+';
+            //     $kategori_kualifikasi_1 = 'Cukup';
+            //     $kualifikasi_1 = 'Sedang';
             } else if ($data->nilai_indikator_1 >= 62 && $data->nilai_indikator_1 <= 65) {
                 $kategori_1 = 'B';
                 $kategori_kualifikasi_1 = 'Baik';
@@ -229,18 +233,22 @@ class KesadaranDiri extends Component
                 $kategori_2 = 'K';
                 $kategori_kualifikasi_2 = 'Kurang';
                 $kualifikasi_2 = 'Rendah';
-            } else if ($data->nilai_indikator_2 == 59) {
-                $kategori_2 = 'C-';
-                $kategori_kualifikasi_2 = 'Cukup';
-                $kualifikasi_2 = 'Sedang';
-            } else if ($data->nilai_indikator_2 >= 60 && $data->nilai_indikator_2 <= 65) {
+            } else if ($data->nilai_indikator_2 >= 59 && $data->nilai_indikator_2 <= 66) {
                 $kategori_2 = 'C';
                 $kategori_kualifikasi_2 = 'Cukup';
                 $kualifikasi_2 = 'Sedang';
-            } else if ($data->nilai_indikator_2 == 66) {
-                $kategori_2 = 'C+';
-                $kategori_kualifikasi_2 = 'Cukup';
-                $kualifikasi_2 = 'Sedang';
+            // } else if ($data->nilai_indikator_2 == 59) {
+            //     $kategori_2 = 'C-';
+            //     $kategori_kualifikasi_2 = 'Cukup';
+            //     $kualifikasi_2 = 'Sedang';
+            // } else if ($data->nilai_indikator_2 >= 60 && $data->nilai_indikator_2 <= 65) {
+            //     $kategori_2 = 'C';
+            //     $kategori_kualifikasi_2 = 'Cukup';
+            //     $kualifikasi_2 = 'Sedang';
+            // } else if ($data->nilai_indikator_2 == 66) {
+            //     $kategori_2 = 'C+';
+            //     $kategori_kualifikasi_2 = 'Cukup';
+            //     $kualifikasi_2 = 'Sedang';
             } else if ($data->nilai_indikator_2 >= 67 && $data->nilai_indikator_2 <= 71) {
                 $kategori_2 = 'B';
                 $kategori_kualifikasi_2 = 'Baik';
@@ -260,18 +268,22 @@ class KesadaranDiri extends Component
                 $kategori_3 = 'K';
                 $kategori_kualifikasi_3 = 'Kurang';
                 $kualifikasi_3 = 'Rendah';
-            } else if ($data->nilai_indikator_3 == 47) {
-                $kategori_3 = 'C-';
-                $kategori_kualifikasi_3 = 'Cukup';
-                $kualifikasi_3 = 'Sedang';
-            } else if ($data->nilai_indikator_3 >= 48 && $data->nilai_indikator_3 <= 50) {
+            } else if ($data->nilai_indikator_3 >= 47 && $data->nilai_indikator_3 <= 51) {
                 $kategori_3 = 'C';
                 $kategori_kualifikasi_3 = 'Cukup';
                 $kualifikasi_3 = 'Sedang';
-            } else if ($data->nilai_indikator_3 == 51) {
-                $kategori_3 = 'C+';
-                $kategori_kualifikasi_3 = 'Cukup';
-                $kualifikasi_3 = 'Sedang';
+            // } else if ($data->nilai_indikator_3 == 47) {
+            //     $kategori_3 = 'C-';
+            //     $kategori_kualifikasi_3 = 'Cukup';
+            //     $kualifikasi_3 = 'Sedang';
+            // } else if ($data->nilai_indikator_3 >= 48 && $data->nilai_indikator_3 <= 50) {
+            //     $kategori_3 = 'C';
+            //     $kategori_kualifikasi_3 = 'Cukup';
+            //     $kualifikasi_3 = 'Sedang';
+            // } else if ($data->nilai_indikator_3 == 51) {
+            //     $kategori_3 = 'C+';
+            //     $kategori_kualifikasi_3 = 'Cukup';
+            //     $kualifikasi_3 = 'Sedang';
             } else if ($data->nilai_indikator_3 >= 52 && $data->nilai_indikator_3 <= 56) {
                 $kategori_3 = 'B';
                 $kategori_kualifikasi_3 = 'Baik';
@@ -326,18 +338,22 @@ class KesadaranDiri extends Component
                 $level_total = '2';
                 $kualifikasi_total = 'Kurang';
                 $kategori_total = 'K';
-            } else if ($skor_total >= 161 && $skor_total <= 165) {
-                $level_total = '3-';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'C-';
-            } else if ($skor_total >= 166 && $skor_total <= 171) {
+            } else if ($skor_total >= 161 && $skor_total <= 177) {
                 $level_total = '3';
                 $kualifikasi_total = 'Cukup';
                 $kategori_total = 'C';
-            } else if ($skor_total >= 172 && $skor_total <= 177) {
-                $level_total = '3+';
-                $kualifikasi_total = 'Cukup';
-                $kategori_total = 'C+';
+            // } else if ($skor_total >= 161 && $skor_total <= 165) {
+            //     $level_total = '3-';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'C-';
+            // } else if ($skor_total >= 166 && $skor_total <= 171) {
+            //     $level_total = '3';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'C';
+            // } else if ($skor_total >= 172 && $skor_total <= 177) {
+            //     $level_total = '3+';
+            //     $kualifikasi_total = 'Cukup';
+            //     $kategori_total = 'C+';
             } else if ($skor_total >= 178 && $skor_total <= 194) {
                 $level_total = '4';
                 $kualifikasi_total = 'Baik';
