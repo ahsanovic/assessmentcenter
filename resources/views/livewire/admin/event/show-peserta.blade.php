@@ -8,50 +8,158 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title">Data Peserta Event {{ $event->nama_event }}</h6>
-                    <h6 class="mt-4 text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                    <div class="row mt-2">
-                        <div class="col-sm-4">
-                            <div class="mb-3">
-                                <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama/nip/nik/jabatan/instansi" />
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
+                        <div>
+                            <button wire:click="downloadTemplate" class="btn btn-sm btn-outline-secondary btn-icon-text" wire:loading.attr="disabled" wire:target="downloadTemplate">
+                                <span wire:ignore><i class="btn-icon-prepend" data-feather="download"></i></span> Template
+                            </button>
+                            <button wire:click="openImportModal" class="btn btn-sm btn-outline-success btn-icon-text">
+                                <span wire:ignore><i class="btn-icon-prepend" data-feather="upload"></i></span> Import
+                            </button>
+                            <button wire:click="openCreateModal" class="btn btn-sm btn-outline-primary btn-icon-text">
+                                <span wire:ignore><i class="btn-icon-prepend" data-feather="edit"></i></span> Tambah Peserta
+                            </button>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="mb-3">
-                                <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">Reset</button>
+                    </div>
+
+                    <div class="card mt-3 mb-4 bg-light-subtle">
+                        <div class="card-body">
+                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <div class="row mt-2">
+                                <div class="col-sm-3">
+                                    <select wire:model.live="filter_jenis_peserta" class="form-select form-select-sm">
+                                        <option value="">semua jenis peserta</option>
+                                        @foreach ($option_jenis_peserta as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @if ($event->metode_tes_id == 1)
+                                <div class="col-sm-2">
+                                    <select wire:model.live="is_portofolio_completed" class="form-select form-select-sm">
+                                        <option value="">portofolio</option>
+                                        <option value="true">Sudah Lengkap</option>
+                                        <option value="false">Belum Lengkap</option>
+                                    </select>
+                                </div>
+                                @endif
+                                <div class="col-sm-2">
+                                    <select wire:model.live="is_active" class="form-select" id="status">
+                                        <option value="">semua status</option>
+                                        @foreach ($option_status as $key => $item)
+                                            <option value="{{ $key }}">{{  $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="input-group input-group-sm" wire:ignore>
+                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari nama/nip/nik/jabatan...">
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <x-btn-reset :text="'Reset'" />
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIK / NIP - Pangkat/Gol</th>
+                                    <th>Jenis</th>
+                                    <th>NIK / NIP</th>
                                     <th>Jabatan</th>
-                                    <th>Instansi</th>
-                                    <th>Unit Kerja</th>
+                                    <th>Unit Kerja / Instansi</th>
+                                    @if ($event->metode_tes_id == 1)
+                                        <th>Portofolio</th>
+                                    @endif
+                                    <th>Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data as $index => $item)
+                                @forelse ($data as $index => $item)
                                     <tr>
                                         <td>{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $item->nama }}</td>
+                                        <td class="text-wrap">{{ $item->nama }}</td>
+                                        <td>
+                                            <span class="badge {{ $item->jenis_peserta_id == 1 ? 'bg-primary' : 'bg-info' }}">
+                                                {{ $item->jenisPeserta->jenis_peserta ?? '-' }}
+                                            </span>
+                                        </td>
                                         <td>
                                             @if ($item->jenis_peserta_id == 1)
-                                                {{ $item->nip }} <br/> {{ $item->golPangkat->pangkat ?? '' }}  -  {{  $item->golPangkat->golongan ?? '' }}
+                                                {{ $item->nip }} 
+                                                @if($item->golPangkat)
+                                                    <br/><small class="text-muted">{{ $item->golPangkat->pangkat ?? '' }} - {{ $item->golPangkat->golongan ?? '' }}</small>
+                                                @endif
                                             @elseif ($item->jenis_peserta_id == 2)
                                                 {{ $item->nik }}
                                             @endif
                                         </td>
-                                        <td class="text-wrap">{{ $item->jabatan }}</td>
-                                        <td class="text-wrap">{{ $item->instansi }}</td>
-                                        <td class="text-wrap">{{ $item->unit_kerja }}</td>
+                                        <td class="text-wrap">{{ $item->jabatan ?? '-' }}</td>
+                                        <td class="text-wrap">
+                                            {{ $item->unit_kerja ?? '-' }} 
+                                            <br/><small class="text-muted">{{ $item->instansi ?? '-' }}</small>
+                                        </td>
+                                        @if ($event->metode_tes_id == 1)
+                                        <td>
+                                            @if($item->is_portofolio_lengkap)
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Lengkap" class="text-success">✔</span>
+                                                @else
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Belum Lengkap" class="text-danger">✖</span>
+                                                @endif
+                                            </td>
+                                        @endif
+                                        <td>
+                                            @if ($item->is_active == 'false')
+                                                <span
+                                                    class="badge bg-danger"
+                                                    wire:click="changeStatusPesertaConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Klik untuk aktifkan"
+                                                >
+                                                    Non Aktif
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="badge bg-success"
+                                                    wire:click="changeStatusPesertaConfirmation('{{ $item->id }}')"
+                                                    style="cursor: pointer;"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Klik untuk nonaktifkan"
+                                                >
+                                                    Aktif
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button
+                                                wire:click="openEditModal('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-success btn-icon"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
+                                            </button>
+                                            <button
+                                                wire:click="deleteConfirmation('{{ $item->id }}')"
+                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                @disabled($item->test_started_at != null)
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
+                                            </button>
+                                        </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">Belum ada data peserta</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -60,4 +168,294 @@
         </div>
         <x-pagination :items="$data" />
     </div>
+
+    <!-- Modal Form Peserta -->
+    <div class="modal fade" id="modalFormPeserta" tabindex="-1" aria-labelledby="modalFormPesertaLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormPesertaLabel">{{ $isUpdate ? 'Edit' : 'Tambah' }} Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form wire:submit="save">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Jenis Peserta <span class="text-danger">*</span></label>
+                                    <select wire:model.live="jenis_peserta_id" class="form-select @error('jenis_peserta_id') is-invalid @enderror">
+                                        <option value="">- Pilih -</option>
+                                        @foreach ($option_jenis_peserta as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('jenis_peserta_id')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Nama Peserta (tanpa gelar) <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama peserta">
+                                    @error('nama')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        @if ($jenis_peserta_id == 1)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">NIP <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="nip" class="form-control @error('nip') is-invalid @enderror" placeholder="18 digit">
+                                    @error('nip')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Jabatan <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="jabatan" class="form-control @error('jabatan') is-invalid @enderror" placeholder="Masukkan jabatan">
+                                    @error('jabatan')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if ($jenis_peserta_id == 2)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">NIK <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="nik" class="form-control @error('nik') is-invalid @enderror" placeholder="16 digit">
+                                    @error('nik')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Unit Kerja <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" placeholder="Masukkan unit kerja">
+                                    @error('unit_kerja')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Instansi <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="instansi" class="form-control @error('instansi') is-invalid @enderror" placeholder="Masukkan instansi">
+                                    @error('instansi')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Password {{ $isUpdate ? '' : '*' }}</label>
+                                    <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ $isUpdate ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter' }}">
+                                    @error('password')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        @if ($isUpdate)
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" class="form-check-input" wire:model="is_active" id="statusAktif" value="true">
+                                            <label class="form-check-label" for="statusAktif">Aktif</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" class="form-check-input" wire:model="is_active" id="statusNonAktif" value="false">
+                                            <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-inverse-danger btn-icon-text" data-bs-dismiss="modal">
+                            <i class="btn-icon-prepend" data-feather="x"></i>
+                            Batal
+                        </button>
+                        <button type="submit" class="btn btn-inverse-success btn-icon-text">
+                            <i class="btn-icon-prepend" data-feather="save"></i>
+                            <span wire:loading.remove wire:target="save">Simpan</span>
+                            <span wire:loading wire:target="save">Menyimpan...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Import Peserta -->
+    <div class="modal fade" id="modalImportPeserta" tabindex="-1" aria-labelledby="modalImportPesertaLabel" aria-hidden="true" wire:ignore.self>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalImportPesertaLabel">Import Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form wire:submit="importPeserta">
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <small>
+                                <strong>Petunjuk:</strong>
+                                <ol class="mb-0 ps-3">
+                                    <li>Download template terlebih dahulu</li>
+                                    <li>Isi data sesuai format template</li>
+                                    <li>Upload file yang sudah diisi</li>
+                                </ol>
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">File Excel (.xlsx, .xls)</label>
+                            <input type="file" wire:model="file_import" class="form-control @error('file_import') is-invalid @enderror" accept=".xlsx,.xls">
+                            @error('file_import')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                            <div wire:loading wire:target="file_import" class="text-muted mt-1">
+                                <small>Mengupload file...</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-inverse-danger btn-icon-text" data-bs-dismiss="modal">
+                            <i class="btn-icon-prepend" data-feather="x"></i>
+                            Batal
+                        </button>
+                        <button type="submit" class="btn btn-inverse-success btn-icon-text" wire:loading.attr="disabled" wire:target="importPeserta,file_import">
+                            <i class="btn-icon-prepend" data-feather="upload"></i>
+                            <span wire:loading.remove wire:target="importPeserta">Import</span>
+                            <span wire:loading wire:target="importPeserta">Mengimport...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Import Errors -->
+    <div class="modal fade" id="modalImportErrors" tabindex="-1" aria-labelledby="modalImportErrorsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger" id="modalImportErrorsLabel">Error Import</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="importErrorList"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@push('js')
+    @script()
+        <script>
+            let modalForm = null;
+            let modalImport = null;
+            let modalErrors = null;
+
+            $(document).ready(function() {
+                modalForm = new bootstrap.Modal(document.getElementById('modalFormPeserta'));
+                modalImport = new bootstrap.Modal(document.getElementById('modalImportPeserta'));
+                modalErrors = new bootstrap.Modal(document.getElementById('modalImportErrors'));
+            });
+
+            $wire.on('open-modal-form', () => {
+                modalForm.show();
+            });
+
+            $wire.on('close-modal-form', () => {
+                modalForm.hide();
+            });
+
+            $wire.on('open-modal-import', () => {
+                modalImport.show();
+            });
+
+            $wire.on('close-modal-import', () => {
+                modalImport.hide();
+            });
+
+            $wire.on('show-import-errors', (data) => {
+                const errorList = document.getElementById('importErrorList');
+                errorList.innerHTML = '';
+                data.errors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-danger';
+                    li.textContent = error;
+                    errorList.appendChild(li);
+                });
+                modalErrors.show();
+            });
+
+            $wire.on('show-delete-confirmation', () => {
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data peserta akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $wire.dispatch('delete');
+                    }
+                });
+            });
+
+            $wire.on('change-status-peserta-confirmation', () => {
+                Swal.fire({
+                    title: 'Ubah Status Peserta?',
+                    text: "Status peserta akan diubah",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, ubah!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $wire.dispatch('changeStatusPeserta');
+                    }
+                });
+            });
+        </script>
+    @endscript
+@endpush
