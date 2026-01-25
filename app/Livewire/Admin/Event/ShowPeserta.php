@@ -55,10 +55,30 @@ class ShowPeserta extends Component
         ];
 
         if ($this->jenis_peserta_id == 1) {
-            $rules['nip'] = ['required', 'numeric', 'digits:18'];
+            // Validasi NIP untuk ASN
+            $nipRule = ['required', 'numeric', 'digits:18'];
+            
+            // Cek duplikat NIP dalam event yang sama
+            if ($this->isUpdate) {
+                $nipRule[] = 'unique:peserta,nip,' . $this->selected_id . ',id,event_id,' . $this->id_event;
+            } else {
+                $nipRule[] = 'unique:peserta,nip,NULL,id,event_id,' . $this->id_event;
+            }
+            
+            $rules['nip'] = $nipRule;
             $rules['jabatan'] = ['required'];
         } else if ($this->jenis_peserta_id == 2) {
-            $rules['nik'] = ['required', 'numeric', 'digits:16'];
+            // Validasi NIK untuk Non ASN
+            $nikRule = ['required', 'numeric', 'digits:16'];
+            
+            // Cek duplikat NIK dalam event yang sama
+            if ($this->isUpdate) {
+                $nikRule[] = 'unique:peserta,nik,' . $this->selected_id . ',id,event_id,' . $this->id_event;
+            } else {
+                $nikRule[] = 'unique:peserta,nik,NULL,id,event_id,' . $this->id_event;
+            }
+            
+            $rules['nik'] = $nikRule;
         }
 
         return $rules;
@@ -71,9 +91,11 @@ class ShowPeserta extends Component
             'nip.required' => 'harus diisi',
             'nip.numeric' => 'harus angka',
             'nip.digits' => 'nip harus 18 digit',
+            'nip.unique' => 'nip sudah terdaftar di event ini',
             'nik.required' => 'harus diisi',
             'nik.numeric' => 'harus angka',
             'nik.digits' => 'nik harus 16 digit',
+            'nik.unique' => 'nik sudah terdaftar di event ini',
             'instansi.required' => 'harus diisi',
             'jabatan.required' => 'harus diisi',
             'password.required' => 'harus diisi',
@@ -97,7 +119,7 @@ class ShowPeserta extends Component
     {
         $this->resetPage();
     }
-    
+
     public function updatedIsActive()
     {
         $this->resetPage();
@@ -354,7 +376,7 @@ class ShowPeserta extends Component
 
         // Contoh data
         $exampleData = [
-            [1, 'BUDI SANTOSO', 'ASN', '199001012020011001', '', 'Kepala Bagian', 'Bagian Umum', 'Dinas Pendidikan', 'password123'],
+            [1, 'BUDI SANTOSO', 'ASN', '199001012020011001', '', 'Kepala Bagian', 'BKD Jatim', 'Pemerintah Provinsi Jawa Timur', 'password123'],
             [2, 'SITI RAHAYU', 'Non ASN', '', '3201012345678901', '', 'SDM', 'PT ABC', 'password456'],
         ];
         $sheet->fromArray($exampleData, null, 'A2');
@@ -399,6 +421,8 @@ class ShowPeserta extends Component
 
             $imported = 0;
             $errors = [];
+            $importedNips = []; // Track NIP dalam batch import
+            $importedNiks = []; // Track NIK dalam batch import
 
             foreach ($rows as $index => $row) {
                 $rowNum = $index + 2;
@@ -441,9 +465,49 @@ class ShowPeserta extends Component
                     continue;
                 }
 
+                // Cek duplikat NIP di event ini (database)
+                if ($jenisPesertaId == 1) {
+                    $existingNip = Peserta::where('event_id', $this->id_event)
+                        ->where('nip', $nip)
+                        ->exists();
+                    
+                    if ($existingNip) {
+                        $errors[] = "Baris $rowNum: NIP $nip sudah terdaftar di event ini";
+                        continue;
+                    }
+
+                    // Cek duplikat NIP dalam file import yang sama
+                    if (in_array($nip, $importedNips)) {
+                        $errors[] = "Baris $rowNum: NIP $nip duplikat dalam file import";
+                        continue;
+                    }
+
+                    $importedNips[] = $nip;
+                }
+
                 if ($jenisPesertaId == 2 && (empty($nik) || strlen($nik) != 16)) {
                     $errors[] = "Baris $rowNum: NIK harus 16 digit untuk Non ASN";
                     continue;
+                }
+
+                // Cek duplikat NIK di event ini (database)
+                if ($jenisPesertaId == 2) {
+                    $existingNik = Peserta::where('event_id', $this->id_event)
+                        ->where('nik', $nik)
+                        ->exists();
+                    
+                    if ($existingNik) {
+                        $errors[] = "Baris $rowNum: NIK $nik sudah terdaftar di event ini";
+                        continue;
+                    }
+
+                    // Cek duplikat NIK dalam file import yang sama
+                    if (in_array($nik, $importedNiks)) {
+                        $errors[] = "Baris $rowNum: NIK $nik duplikat dalam file import";
+                        continue;
+                    }
+
+                    $importedNiks[] = $nik;
                 }
 
                 if ($jenisPesertaId == 1 && empty($jabatan)) {
@@ -488,11 +552,21 @@ class ShowPeserta extends Component
             $this->dispatch('close-modal-import');
 
             if (count($errors) > 0) {
+                // Kategorikan error
+                $errorSummary = $this->categorizeImportErrors($errors);
+                
                 $this->dispatch('toast', [
                     'type' => 'warning',
-                    'message' => "Berhasil import $imported peserta. " . count($errors) . " baris gagal.",
+                    'message' => "Import selesai: $imported berhasil, " . count($errors) . " gagal.",
                 ]);
-                $this->dispatch('show-import-errors', ['errors' => $errors]);
+                
+                // Dispatch event dengan data error
+                $this->dispatch('show-import-errors', 
+                    errors: $errors,
+                    summary: $errorSummary,
+                    imported: $imported,
+                    failed: count($errors)
+                );
             } else {
                 $this->dispatch('toast', [
                     'type' => 'success',
@@ -502,5 +576,32 @@ class ShowPeserta extends Component
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal import: ' . $th->getMessage()]);
         }
+    }
+
+    private function categorizeImportErrors($errors)
+    {
+        $categories = [
+            'duplikat_database' => 0,
+            'duplikat_file' => 0,
+            'format_salah' => 0,
+            'data_kosong' => 0,
+            'lainnya' => 0,
+        ];
+
+        foreach ($errors as $error) {
+            if (strpos($error, 'sudah terdaftar di event') !== false) {
+                $categories['duplikat_database']++;
+            } elseif (strpos($error, 'duplikat dalam file') !== false) {
+                $categories['duplikat_file']++;
+            } elseif (strpos($error, 'harus') !== false && (strpos($error, 'digit') !== false || strpos($error, 'karakter') !== false)) {
+                $categories['format_salah']++;
+            } elseif (strpos($error, 'harus diisi') !== false) {
+                $categories['data_kosong']++;
+            } else {
+                $categories['lainnya']++;
+            }
+        }
+
+        return $categories;
     }
 }

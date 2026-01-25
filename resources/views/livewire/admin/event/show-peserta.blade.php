@@ -365,14 +365,64 @@
 
     <!-- Modal Import Errors -->
     <div class="modal fade" id="modalImportErrors" tabindex="-1" aria-labelledby="modalImportErrorsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger" id="modalImportErrorsLabel">Error Import</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalImportErrorsLabel">
+                        <i class="link-icon" data-feather="alert-circle"></i>
+                        Detail Error Import
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="list-group" id="importErrorList"></ul>
+                    <!-- Summary Card -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">Ringkasan Import</h6>
+                            <div class="row" id="importSummary">
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded bg-success-subtle">
+                                        <h4 class="text-success mb-1" id="successCount">0</h4>
+                                        <small class="text-muted">Berhasil</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded bg-danger-subtle">
+                                        <h4 class="text-danger mb-1" id="failedCount">0</h4>
+                                        <small class="text-muted">Gagal</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-2 border rounded bg-light">
+                                        <small><strong>Kategori Error:</strong></small>
+                                        <ul class="list-unstyled mb-0 mt-2" id="errorCategories" style="font-size: 0.875rem;">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Details -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Detail Error per Baris</h6>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 80px;">Baris</th>
+                                            <th>Keterangan Error</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="importErrorList">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -389,10 +439,184 @@
             let modalImport = null;
             let modalErrors = null;
 
+            // Initialize modals when document is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalFormEl = document.getElementById('modalFormPeserta');
+                const modalImportEl = document.getElementById('modalImportPeserta');
+                const modalErrorsEl = document.getElementById('modalImportErrors');
+                
+                console.log('Initializing modals...');
+                console.log('modalFormEl:', modalFormEl);
+                console.log('modalImportEl:', modalImportEl);
+                console.log('modalErrorsEl:', modalErrorsEl);
+                
+                if (modalFormEl) modalForm = new bootstrap.Modal(modalFormEl);
+                if (modalImportEl) modalImport = new bootstrap.Modal(modalImportEl);
+                if (modalErrorsEl) modalErrors = new bootstrap.Modal(modalErrorsEl);
+                
+                console.log('Modals initialized:', { modalForm, modalImport, modalErrors });
+            });
+
+            // Fallback dengan jQuery jika ada
             $(document).ready(function() {
-                modalForm = new bootstrap.Modal(document.getElementById('modalFormPeserta'));
-                modalImport = new bootstrap.Modal(document.getElementById('modalImportPeserta'));
-                modalErrors = new bootstrap.Modal(document.getElementById('modalImportErrors'));
+                if (!modalForm || !modalImport || !modalErrors) {
+                    const modalFormEl = document.getElementById('modalFormPeserta');
+                    const modalImportEl = document.getElementById('modalImportPeserta');
+                    const modalErrorsEl = document.getElementById('modalImportErrors');
+                    
+                    if (modalFormEl && !modalForm) modalForm = new bootstrap.Modal(modalFormEl);
+                    if (modalImportEl && !modalImport) modalImport = new bootstrap.Modal(modalImportEl);
+                    if (modalErrorsEl && !modalErrors) modalErrors = new bootstrap.Modal(modalErrorsEl);
+                    
+                    console.log('Modals initialized via jQuery:', { modalForm, modalImport, modalErrors });
+                }
+            });
+
+            // Function untuk menampilkan error import dengan detail
+            window.showImportErrors = function(data) {
+                console.log('showImportErrors called with data:', data);
+                
+                const { errors, summary, imported, failed } = data;
+                
+                console.log('Extracted values - errors:', errors, 'imported:', imported, 'failed:', failed);
+                
+                // Function untuk update konten modal
+                const updateModalContent = function() {
+                    console.log('Updating modal content...');
+                    
+                    // Update summary counts
+                    const successCountEl = document.getElementById('successCount');
+                    const failedCountEl = document.getElementById('failedCount');
+                    
+                    if (successCountEl) {
+                        successCountEl.textContent = imported || 0;
+                        console.log('Updated success count to:', imported);
+                    }
+                    if (failedCountEl) {
+                        failedCountEl.textContent = failed || 0;
+                        console.log('Updated failed count to:', failed);
+                    }
+                    
+                    // Update error categories
+                    const categoriesEl = document.getElementById('errorCategories');
+                    
+                    if (categoriesEl) {
+                        categoriesEl.innerHTML = '';
+                        
+                        const categoryLabels = {
+                            'duplikat_database': '🔴 Data duplikat (sudah ada di database)',
+                            'duplikat_file': '🟠 Data duplikat (dalam file import)',
+                            'format_salah': '🟡 Format data salah',
+                            'data_kosong': '🔵 Data wajib tidak diisi',
+                            'lainnya': '⚪ Error lainnya'
+                        };
+                        
+                        let hasCategories = false;
+                        Object.keys(summary).forEach(key => {
+                            if (summary[key] > 0) {
+                                hasCategories = true;
+                                const li = document.createElement('li');
+                                li.innerHTML = `${categoryLabels[key]}: <strong>${summary[key]}</strong> baris`;
+                                categoriesEl.appendChild(li);
+                                console.log('Added category:', key, summary[key]);
+                            }
+                        });
+                        
+                        if (!hasCategories) {
+                            categoriesEl.innerHTML = '<li>Tidak ada kategori error</li>';
+                        }
+                        
+                        console.log('Categories updated, innerHTML:', categoriesEl.innerHTML);
+                    }
+                    
+                    // Update error list dengan format table
+                    const errorList = document.getElementById('importErrorList');
+                    console.log('Error list element:', errorList);
+                    
+                    if (errorList && errors && errors.length > 0) {
+                        errorList.innerHTML = '';
+                        
+                        errors.forEach((error, index) => {
+                            console.log('Processing error', index, ':', error);
+                            const tr = document.createElement('tr');
+                            
+                            // Extract baris number dan error message
+                            const match = error.match(/Baris (\d+): (.+)/);
+                            if (match) {
+                                const barisNum = match[1];
+                                const errorMsg = match[2];
+                                
+                                // Determine icon based on error type
+                                let icon = '❌';
+                                let badgeClass = 'badge bg-danger';
+                                
+                                if (errorMsg.includes('sudah terdaftar')) {
+                                    icon = '🔴';
+                                    badgeClass = 'badge bg-danger';
+                                } else if (errorMsg.includes('duplikat dalam file')) {
+                                    icon = '🟠';
+                                    badgeClass = 'badge bg-warning text-dark';
+                                } else if (errorMsg.includes('harus') && (errorMsg.includes('digit') || errorMsg.includes('karakter'))) {
+                                    icon = '🟡';
+                                    badgeClass = 'badge bg-warning text-dark';
+                                } else if (errorMsg.includes('harus diisi')) {
+                                    icon = '🔵';
+                                    badgeClass = 'badge bg-info text-dark';
+                                }
+                                
+                                tr.innerHTML = `
+                                    <td><span class="${badgeClass}">${barisNum}</span></td>
+                                    <td>
+                                        <span style="margin-right: 8px;">${icon}</span>
+                                        ${errorMsg}
+                                    </td>
+                                `;
+                            } else {
+                                tr.innerHTML = `
+                                    <td><span class="badge bg-secondary">-</span></td>
+                                    <td>${error}</td>
+                                `;
+                            }
+                            
+                            errorList.appendChild(tr);
+                        });
+                    }
+                };
+                
+                // Show modal dan update content setelah modal shown
+                if (modalErrors) {
+                    // Get modal element
+                    const modalEl = document.getElementById('modalImportErrors');
+                    
+                    // Update content immediately
+                    updateModalContent();
+                    
+                    // Listen untuk shown.bs.modal event untuk re-update jika perlu
+                    modalEl.addEventListener('shown.bs.modal', function handler() {
+                        console.log('Modal fully shown, updating content again...');
+                        updateModalContent();
+                        // Remove listener setelah digunakan
+                        modalEl.removeEventListener('shown.bs.modal', handler);
+                    });
+                    
+                    // Show modal
+                    modalErrors.show();
+                    console.log('Modal show() called');
+                } else {
+                    console.error('modalErrors is not initialized');
+                }
+            };
+
+            $wire.on('show-import-errors', (event) => {
+                console.log('Event received:', event);
+                // Livewire v3 passes data sebagai object dalam array
+                const data = Array.isArray(event) ? event[0] : event;
+                console.log('Processed data:', data);
+                
+                // Tunggu sebentar untuk memastikan DOM siap
+                setTimeout(() => {
+                    window.showImportErrors(data);
+                }, 100);
             });
 
             $wire.on('open-modal-form', () => {
@@ -409,18 +633,6 @@
 
             $wire.on('close-modal-import', () => {
                 modalImport.hide();
-            });
-
-            $wire.on('show-import-errors', (data) => {
-                const errorList = document.getElementById('importErrorList');
-                errorList.innerHTML = '';
-                data.errors.forEach(error => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item list-group-item-danger';
-                    li.textContent = error;
-                    errorList.appendChild(li);
-                });
-                modalErrors.show();
             });
 
             $wire.on('show-delete-confirmation', () => {
