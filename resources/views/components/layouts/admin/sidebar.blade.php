@@ -84,12 +84,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.peserta') }}" wire:navigate class="nav-link">
-                        <i class="link-icon" data-feather="users"></i>
-                        <span class="link-title">Data Peserta</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{{ route('admin.assessor') }}" wire:navigate class="nav-link">
                         <i class="link-icon" data-feather="user-check"></i>
                         <span class="link-title">Data Assessor</span>

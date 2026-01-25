@@ -148,11 +148,6 @@ Route::prefix('bkdac')->group(function () {
         Route::get('pelanggaran/tes-pspk', \App\Livewire\Admin\PelanggaranTes\TesPspk\Index::class)->name('admin.pelanggaran-tes-pspk');
         Route::get('pelanggaran/tes-pspk/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesPspk\Show::class)->name('admin.pelanggaran-tes-pspk.show');
 
-        // peserta
-        Route::get('peserta', \App\Livewire\Admin\Peserta\Index::class)->name('admin.peserta');
-        Route::get('peserta/create', \App\Livewire\Admin\Peserta\Form::class)->name('admin.peserta.create');
-        Route::get('peserta/{id}/edit', \App\Livewire\Admin\Peserta\Form::class)->name('admin.peserta.edit');
-
         // assessor
         Route::get('assessor', \App\Livewire\Admin\Assessor\Index::class)->name('admin.assessor');
         Route::get('assessor/create', \App\Livewire\Admin\Assessor\Form::class)->name('admin.assessor.create');
