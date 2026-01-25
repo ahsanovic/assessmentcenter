@@ -230,7 +230,33 @@ class ShowPeserta extends Component
         $this->selected_id = $id;
 
         $peserta = Peserta::findOrFail($id);
-        $this->nama = $peserta->getOriginal('nama');
+        
+        // Dapatkan nama raw dari database (tanpa accessor)
+        $namaRaw = $peserta->getOriginal('nama');
+        $gelarDepan = $peserta->gelar_depan;
+        $gelarBelakang = $peserta->gelar_belakang;
+        
+        // Cek apakah nama raw sudah mengandung gelar (data lama/korup)
+        // Jika gelar_depan ada dan nama raw dimulai dengan gelar tersebut, berarti data korup
+        $namaAlreadyHasGelarDepan = $gelarDepan && stripos($namaRaw, trim($gelarDepan)) === 0;
+        $namaAlreadyHasGelarBelakang = $gelarBelakang && stripos($namaRaw, trim($gelarBelakang)) !== false;
+        
+        if ($namaAlreadyHasGelarDepan || $namaAlreadyHasGelarBelakang) {
+            // Data korup: nama raw sudah mengandung gelar, gunakan nama raw saja
+            $this->nama = $namaRaw;
+        } else {
+            // Data normal: susun nama lengkap dari field terpisah
+            $namaLengkap = '';
+            if ($gelarDepan) {
+                $namaLengkap .= $gelarDepan . ' ';
+            }
+            $namaLengkap .= $namaRaw;
+            if ($gelarBelakang) {
+                $namaLengkap .= ', ' . $gelarBelakang;
+            }
+            $this->nama = trim($namaLengkap);
+        }
+        
         $this->nip = $peserta->nip;
         $this->nik = $peserta->nik;
         $this->jabatan = $peserta->getOriginal('jabatan');
@@ -247,11 +273,16 @@ class ShowPeserta extends Component
         $this->validate();
 
         try {
+            // Parse nama dan gelar
+            $parsedNama = parse_nama_gelar($this->nama);
+            
             if ($this->isUpdate) {
                 $data = Peserta::findOrFail($this->selected_id);
                 $old_data = $data->getOriginal();
 
-                $data->nama = $this->nama;
+                $data->nama = $parsedNama['nama'];
+                $data->gelar_depan = $parsedNama['gelar_depan'];
+                $data->gelar_belakang = $parsedNama['gelar_belakang'];
 
                 if ($this->jenis_peserta_id == 2 && ($data->jenis_peserta_id == 1 && $data->nip != null)) {
                     $data->nip = null;
@@ -287,7 +318,9 @@ class ShowPeserta extends Component
                 $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data peserta']);
             } else {
                 $data = Peserta::create([
-                    'nama' => $this->nama,
+                    'nama' => $parsedNama['nama'],
+                    'gelar_depan' => $parsedNama['gelar_depan'],
+                    'gelar_belakang' => $parsedNama['gelar_belakang'],
                     'event_id' => $this->id_event,
                     'jenis_peserta_id' => $this->jenis_peserta_id,
                     'nip' => $this->nip,
@@ -371,13 +404,14 @@ class ShowPeserta extends Component
         $sheet = $spreadsheet->getActiveSheet();
 
         // Header
-        $headers = ['No', 'Nama (tanpa gelar)', 'Jenis Peserta (ASN/Non ASN)', 'NIP (18 digit, kosongkan jika Non ASN)', 'NIK (16 digit, kosongkan jika ASN)', 'Jabatan (kosongkan jika Non ASN)', 'Unit Kerja', 'Instansi', 'Password (min 8 karakter)'];
+        $headers = ['No', 'Nama (bisa dengan gelar)', 'Jenis Peserta (ASN/Non ASN)', 'NIP (18 digit, kosongkan jika Non ASN)', 'NIK (16 digit, kosongkan jika ASN)', 'Jabatan (kosongkan jika Non ASN)', 'Unit Kerja', 'Instansi', 'Password (min 8 karakter)'];
         $sheet->fromArray($headers, null, 'A1');
 
-        // Contoh data
+        // Contoh data - dengan dan tanpa gelar
         $exampleData = [
-            [1, 'BUDI SANTOSO', 'ASN', '199001012020011001', '', 'Kepala Bagian', 'BKD Jatim', 'Pemerintah Provinsi Jawa Timur', 'password123'],
-            [2, 'SITI RAHAYU', 'Non ASN', '', '3201012345678901', '', 'SDM', 'PT ABC', 'password456'],
+            [1, 'Dr. BUDI SANTOSO, S.H., M.H.', 'ASN', '199001012020011001', '', 'Kepala Bagian', 'BKD Jatim', 'Pemerintah Provinsi Jawa Timur', 'password123'],
+            [2, 'SITI RAHAYU, S.E.', 'Non ASN', '', '3201012345678901', '', 'SDM', 'PT ABC', 'password456'],
+            [3, 'AHMAD WIJAYA', 'ASN', '198505152010011002', '', 'Analis Kebijakan', 'Biro Hukum', 'Kementerian Dalam Negeri', 'password789'],
         ];
         $sheet->fromArray($exampleData, null, 'A2');
 
@@ -530,9 +564,14 @@ class ShowPeserta extends Component
                     continue;
                 }
 
+                // Parse nama dan gelar
+                $parsedNama = parse_nama_gelar($nama);
+
                 // Create peserta
                 $data = Peserta::create([
-                    'nama' => $nama,
+                    'nama' => $parsedNama['nama'],
+                    'gelar_depan' => $parsedNama['gelar_depan'],
+                    'gelar_belakang' => $parsedNama['gelar_belakang'],
                     'event_id' => $this->id_event,
                     'jenis_peserta_id' => $jenisPesertaId,
                     'nip' => $jenisPesertaId == 1 ? $nip : null,

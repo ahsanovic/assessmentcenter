@@ -198,8 +198,12 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label class="form-label">Nama Peserta (tanpa gelar) <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Masukkan nama peserta">
+                                    <label class="form-label">Nama Peserta <span class="text-danger">*</span></label>
+                                    <input type="text" wire:model="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Contoh: Dr. BUDI SANTOSO, S.H., M.H.">
+                                    <small class="text-muted">
+                                        <i class="link-icon" data-feather="info" style="width: 12px; height: 12px;"></i>
+                                        Gelar akan terdeteksi otomatis. Contoh: "Dr. BUDI SANTOSO, S.H., M.H." atau "BUDI SANTOSO" (tanpa gelar)
+                                    </small>
                                     @error('nama')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
@@ -332,6 +336,8 @@
                                 <ol class="mb-0 ps-3">
                                     <li>Download template terlebih dahulu</li>
                                     <li>Isi data sesuai format template</li>
+                                    <li>Nama bisa ditulis dengan gelar (contoh: "Dr. BUDI SANTOSO, S.H., M.H.")</li>
+                                    <li>Gelar depan dan belakang akan terdeteksi otomatis</li>
                                     <li>Upload file yang sudah diisi</li>
                                 </ol>
                             </small>
