@@ -24,7 +24,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ route('admin.peserta') }}" wire:navigate style="text-decoration: none; color: inherit;">
+                    <a href="" wire:navigate style="text-decoration: none; color: inherit;">
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-baseline">
