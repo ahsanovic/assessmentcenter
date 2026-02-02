@@ -55,7 +55,7 @@ class ShowPesertaMotivasiKomitmen extends Component
                         ->orWhere('nip', 'like', '%' . $this->search . '%')
                         ->orWhere('nik', 'like', '%' . $this->search . '%')
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                        ->orWhere('unit_kerja', 'like', '%' . $this->search . '%');
                 });
             })
             ->paginate(10);
