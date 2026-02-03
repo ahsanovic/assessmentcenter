@@ -23,14 +23,21 @@ class ShowPesertaBerpikirKritis extends Component
     #[Url(as: 'q')]
     public ?string $search =  '';
 
+    public ?string $filterSoalBelumDijawab = '';
+
     public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterSoalBelumDijawab()
     {
         $this->resetPage();
     }
 
     public function resetFilters()
     {
-        $this->reset(['search']);
+        $this->reset(['search', 'filterSoalBelumDijawab']);
         $this->resetPage();
         $this->render();
     }
@@ -46,7 +53,7 @@ class ShowPesertaBerpikirKritis extends Component
         $data = Peserta::join('ujian_berpikir_kritis', 'ujian_berpikir_kritis.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesBerpikirKritis->pluck('peserta_id'))
             ->where('ujian_berpikir_kritis.event_id', $this->id_event)
-            ->select('peserta.*', 'ujian_berpikir_kritis.is_finished', 'ujian_berpikir_kritis.id as ujian_berpikir_kritis_id', 'ujian_berpikir_kritis.created_at as mulai_tes')
+            ->select('peserta.*', 'soal_id', 'jawaban', 'ujian_berpikir_kritis.is_finished', 'ujian_berpikir_kritis.id as ujian_berpikir_kritis_id', 'ujian_berpikir_kritis.created_at as mulai_tes')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%')
@@ -55,6 +62,25 @@ class ShowPesertaBerpikirKritis extends Component
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                         ->orWhere('unit_kerja', 'like', '%' . $this->search . '%');
                 });
+            })
+            ->when($this->filterSoalBelumDijawab === 'ada', function ($query) {
+                // Filter peserta yang memiliki soal belum dijawab
+                $query->where(function($q) {
+                    $q->whereRaw('ujian_berpikir_kritis.jawaban LIKE \'%,0,%\'')
+                      ->orWhereRaw('ujian_berpikir_kritis.jawaban LIKE \'0,%\'')
+                      ->orWhereRaw('ujian_berpikir_kritis.jawaban LIKE \'%,0\'')
+                      ->orWhereRaw('ujian_berpikir_kritis.jawaban = \'0\'')
+                      ->orWhereRaw('ujian_berpikir_kritis.jawaban LIKE \'%,,\'')
+                      ->orWhereRaw('ujian_berpikir_kritis.jawaban LIKE \'%,,,%\'');
+                });
+            })
+            ->when($this->filterSoalBelumDijawab === 'semua_terjawab', function ($query) {
+                // Filter peserta yang semua soalnya sudah dijawab
+                $query->whereRaw('ujian_berpikir_kritis.jawaban NOT LIKE \'%,0,%\'')
+                      ->whereRaw('ujian_berpikir_kritis.jawaban NOT LIKE \'0,%\'')
+                      ->whereRaw('ujian_berpikir_kritis.jawaban NOT LIKE \'%,0\'')
+                      ->whereRaw('ujian_berpikir_kritis.jawaban != \'0\'')
+                      ->whereRaw('ujian_berpikir_kritis.jawaban NOT LIKE \'%,,%\'');
             })
             ->paginate(10);
 

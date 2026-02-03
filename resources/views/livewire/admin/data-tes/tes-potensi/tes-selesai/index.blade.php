@@ -55,10 +55,10 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Event</th>
                                     <th class="text-wrap">Jumlah Peserta</th>
                                     <th>Interpersonal</th>
@@ -73,8 +73,8 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama_event }}</td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>

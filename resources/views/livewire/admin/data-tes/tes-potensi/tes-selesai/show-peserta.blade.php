@@ -60,43 +60,58 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
-                                    <th>Instansi / Unit Kerja</th>
+                                    <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
                                     <th>Tanggal Tes</th>
                                     <th>Report</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
-                                        <td class="text-wrap">{{ $item->nama }}</td>
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
+                                            <span class="fw-medium">{{ $item->nama }}</span><br>
+                                            <span class="text-muted small">
                                             @if ($item->jenis_peserta_id == 1)
-                                                {{ $item->nip }}
+                                                <div class="fw-medium">{{ $item->nip }}</div>
                                                 @if (!empty($item->golPangkat?->pangkat) && !empty($item->golPangkat?->golongan))
-                                                    <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                    <span class="badge bg-secondary-subtle text-dark mt-1">
+                                                        {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                    </span>
                                                 @else
-                                                    <br/> -
+                                                    <span class="text-muted d-block mt-1"></span>
                                                 @endif
                                             @elseif ($item->jenis_peserta_id == 2)
-                                                {{ $item->nik }}
+                                                <div class="fw-medium">{{ $item->nik }}</div>
                                             @endif
+                                            </span>
                                         </td>
-                                        <td class="text-wrap">{{ $item->jabatan }}</td>
-                                        <td class="text-wrap">{{ $item->instansi }} <br /> {{ $item->unit_kerja }}</td>
-                                        <td class="text-wrap">{{ \Carbon\Carbon::parse($item->test_started_at)->format('d F Y / H:i:s') }}</td>
+                                        <td class="text-wrap">
+                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                        </td>
+                                        <td class="text-wrap">
+                                            <span class="fw-medium text-dark">{{ $item->instansi }}</span>
+                                            <br>
+                                            <span class="text-muted small">{{ $item->unit_kerja }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border-1 border">
+                                                {{ \Carbon\Carbon::parse($item->test_started_at)->translatedFormat('d F Y') }}
+                                                <span class="text-muted px-1">/</span>
+                                                {{ \Carbon\Carbon::parse($item->test_started_at)->translatedFormat('H:i:s') }}
+                                            </span>
+                                        </td>
                                         <td>
                                             <a href="{{ route('admin.tes-selesai.show-report', [
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon"
+                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Report"
                                                 wire:navigate
                                             >
@@ -105,7 +120,7 @@
                                             <a href="{{ route('admin.tes-selesai.download', [
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-danger btn-icon"
+                                                ]) }}" class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 target="_blank"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Download Pdf"
                                             >
@@ -114,7 +129,7 @@
                                             <a href="{{ route('admin.tes-selesai.rekomendasi-ai', [
                                                     'idEvent' => $item->event_id,
                                                     'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-warning btn-icon"
+                                                ]) }}" class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Rekomendasi AI"
                                                 wire:navigate
                                             >

@@ -23,14 +23,21 @@ class ShowPesertaProblemSolving extends Component
     #[Url(as: 'q')]
     public ?string $search =  '';
 
+    public ?string $filterSoalBelumDijawab = '';
+
     public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterSoalBelumDijawab()
     {
         $this->resetPage();
     }
 
     public function resetFilters()
     {
-        $this->reset(['search']);
+        $this->reset(['search', 'filterSoalBelumDijawab']);
         $this->resetPage();
         $this->render();
     }
@@ -46,7 +53,7 @@ class ShowPesertaProblemSolving extends Component
         $data = Peserta::join('ujian_problem_solving', 'ujian_problem_solving.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesProblemSolving->pluck('peserta_id'))
             ->where('ujian_problem_solving.event_id', $this->id_event)
-            ->select('peserta.*', 'ujian_problem_solving.is_finished', 'ujian_problem_solving.id as ujian_problem_solving_id', 'ujian_problem_solving.created_at as mulai_tes')
+            ->select('peserta.*', 'soal_id', 'jawaban', 'ujian_problem_solving.is_finished', 'ujian_problem_solving.id as ujian_problem_solving_id', 'ujian_problem_solving.created_at as mulai_tes')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%')
@@ -55,6 +62,25 @@ class ShowPesertaProblemSolving extends Component
                         ->orWhere('jabatan', 'like', '%' . $this->search . '%')
                         ->orWhere('unit_kerja', 'like', '%' . $this->search . '%');
                 });
+            })
+            ->when($this->filterSoalBelumDijawab === 'ada', function ($query) {
+                // Filter peserta yang memiliki soal belum dijawab
+                $query->where(function($q) {
+                    $q->whereRaw('ujian_problem_solving.jawaban LIKE \'%,0,%\'')
+                      ->orWhereRaw('ujian_problem_solving.jawaban LIKE \'0,%\'')
+                      ->orWhereRaw('ujian_problem_solving.jawaban LIKE \'%,0\'')
+                      ->orWhereRaw('ujian_problem_solving.jawaban = \'0\'')
+                      ->orWhereRaw('ujian_problem_solving.jawaban LIKE \'%,,\'')
+                      ->orWhereRaw('ujian_problem_solving.jawaban LIKE \'%,,,%\'');
+                });
+            })
+            ->when($this->filterSoalBelumDijawab === 'semua_terjawab', function ($query) {
+                // Filter peserta yang semua soalnya sudah dijawab
+                $query->whereRaw('ujian_problem_solving.jawaban NOT LIKE \'%,0,%\'')
+                      ->whereRaw('ujian_problem_solving.jawaban NOT LIKE \'0,%\'')
+                      ->whereRaw('ujian_problem_solving.jawaban NOT LIKE \'%,0\'')
+                      ->whereRaw('ujian_problem_solving.jawaban != \'0\'')
+                      ->whereRaw('ujian_problem_solving.jawaban NOT LIKE \'%,,%\'');
             })
             ->paginate(10);
 
