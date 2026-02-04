@@ -72,31 +72,31 @@
                                                 <td>{{ $data->hasilIntelektual[0]->kategori ?? '-' }}</td>
                                             @break
                                             @case('Kemampuan Interpersonal')
-                                                <td>{{ $data->hasilInterpersonal[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_interpersonal ?? '-' }}</td>
                                                 <td>{{ $data->hasilInterpersonal[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Kecerdasan Emosi')
-                                                <td>{{ $data->hasilKecerdasanEmosi[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_kecerdasan_emosi ?? '-' }}</td>
                                                 <td>{{ $data->hasilKecerdasanEmosi[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Belajar Cepat dan Pengembangan Diri')
-                                                <td>{{ $data->hasilPengembanganDiri[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_pengembangan_diri ?? '-' }}</td>
                                                 <td>{{ $data->hasilPengembanganDiri[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Problem Solving')
-                                                <td>{{ $data->hasilProblemSolving[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_problem_solving ?? '-' }}</td>
                                                 <td>{{ $data->hasilProblemSolving[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Motivasi dan Komitmen')
-                                                <td>{{ $data->hasilMotivasiKomitmen[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_motivasi_komitmen ?? '-' }}</td>
                                                 <td>{{ $data->hasilMotivasiKomitmen[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Berpikir Kritis dan Strategis')
-                                                <td>{{ $data->hasilBerpikirKritis[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_berpikir_kritis ?? '-' }}</td>
                                                 <td>{{ $data->hasilBerpikirKritis[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @case('Kesadaran Diri')
-                                                <td>{{ $data->hasilKesadaranDiri[0]->level_total ?? '-' }}</td>
+                                                <td>{{ $capaian_level_kesadaran_diri ?? '-' }}</td>
                                                 <td>{{ $data->hasilKesadaranDiri[0]->kualifikasi_total ?? '-' }}</td>
                                                 @break
                                             @default
