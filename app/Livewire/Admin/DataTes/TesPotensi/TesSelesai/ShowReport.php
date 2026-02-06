@@ -18,7 +18,8 @@ class ShowReport extends Component
 
     public function mount($identifier, $idEvent)
     {
-        $this->peserta = Peserta::where(function ($q) use ($identifier) {
+        $this->peserta = Peserta::where('event_id', $idEvent)
+        ->where(function ($q) use ($identifier) {
             $q->where('nip', $identifier)
                 ->orWhere('nik', $identifier);
         })->first();
@@ -59,49 +60,26 @@ class ShowReport extends Component
             }
         ])
             ->where('id', $idEvent)
-            ->whereHas('ujianInterpersonal', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKesadaranDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianBerpikirKritis', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianPengembanganDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianProblemSolving', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKecerdasanEmosi', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianMotivasiKomitmen', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('peserta', function ($query) {
-                $query->where('id', $this->peserta->id);
-            })
             ->first();
     }
 
     public function render()
     {
         $aspek_potensi = RefAlatTes::orderBy('urutan')->get();
+        $data = $this->data;
 
         return view('livewire.admin.data-tes.tes-potensi.tes-selesai.show-report', [
             'peserta' => $this->peserta,
             'aspek_potensi' => $aspek_potensi,
-            'capaian_level_intelektual' => capaianLevel(optional($this->data->hasilIntelektual->first())->level ?? null),
-            'capaian_level_interpersonal' => capaianLevel($this->data->hasilInterpersonal[0]->level_total),
-            'capaian_level_kecerdasan_emosi' => capaianLevel($this->data->hasilKecerdasanEmosi[0]->level_total),
-            'capaian_level_pengembangan_diri' => capaianLevel($this->data->hasilPengembanganDiri[0]->level_total),
-            'capaian_level_problem_solving' => capaianLevel($this->data->hasilProblemSolving[0]->level_total),
-            'capaian_level_motivasi_komitmen' => capaianLevel($this->data->hasilMotivasiKomitmen[0]->level_total),
-            'capaian_level_berpikir_kritis' => capaianLevel($this->data->hasilBerpikirKritis[0]->level_total),
-            'capaian_level_kesadaran_diri' => capaianLevel($this->data->hasilKesadaranDiri[0]->level_total),
-            'data' => $this->data,
+            'capaian_level_intelektual' => capaianLevel(optional(optional($data)->hasilIntelektual?->first())->level),
+            'capaian_level_interpersonal' => capaianLevel(optional($data?->hasilInterpersonal->first())->level_total),
+            'capaian_level_kecerdasan_emosi' => capaianLevel(optional($data?->hasilKecerdasanEmosi->first())->level_total),
+            'capaian_level_pengembangan_diri' => capaianLevel(optional($data?->hasilPengembanganDiri->first())->level_total),
+            'capaian_level_problem_solving' => capaianLevel(optional($data?->hasilProblemSolving->first())->level_total),
+            'capaian_level_motivasi_komitmen' => capaianLevel(optional($data?->hasilMotivasiKomitmen->first())->level_total),
+            'capaian_level_berpikir_kritis' => capaianLevel(optional($data?->hasilBerpikirKritis->first())->level_total),
+            'capaian_level_kesadaran_diri' => capaianLevel(optional($data?->hasilKesadaranDiri->first())->level_total),
+            'data' => $data,
         ]);
     }
 }
