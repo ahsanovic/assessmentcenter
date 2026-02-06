@@ -66,15 +66,14 @@
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
-                                    <th>Jenis</th>
-                                    <th>NIK / NIP</th>
+                                    <th>Jenis Peserta</th>
                                     <th>Jabatan</th>
-                                    <th>Unit Kerja / Instansi</th>
+                                    <th>Unit Kerja <br><small class="text-muted">Instansi</small></th>
                                     @if ($event->metode_tes_id == 1)
                                         <th>Portofolio</th>
                                     @endif
@@ -84,28 +83,37 @@
                             </thead>
                             <tbody>
                                 @forelse ($data as $index => $item)
-                                    <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
-                                        <td class="text-wrap">{{ $item->nama }}</td>
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
+                                            <span class="fw-medium">{{ $item->nama }}</span><br>
+                                            <span class="text-muted small">
+                                            @if ($item->jenis_peserta_id == 1)
+                                                <div class="fw-medium">{{ $item->nip }}</div>
+                                                @if (!empty($item->golPangkat?->pangkat) && !empty($item->golPangkat?->golongan))
+                                                    <span class="badge bg-secondary-subtle text-dark mt-1">
+                                                        {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted d-block mt-1"></span>
+                                                @endif
+                                            @elseif ($item->jenis_peserta_id == 2)
+                                                <div class="fw-medium">{{ $item->nik }}</div>
+                                            @endif
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
                                             <span class="badge {{ $item->jenis_peserta_id == 1 ? 'bg-primary' : 'bg-info' }}">
                                                 {{ $item->jenisPeserta->jenis_peserta ?? '-' }}
                                             </span>
                                         </td>
-                                        <td>
-                                            @if ($item->jenis_peserta_id == 1)
-                                                {{ $item->nip }} 
-                                                @if($item->golPangkat)
-                                                    <br/><small class="text-muted">{{ $item->golPangkat->pangkat ?? '' }} - {{ $item->golPangkat->golongan ?? '' }}</small>
-                                                @endif
-                                            @elseif ($item->jenis_peserta_id == 2)
-                                                {{ $item->nik }}
-                                            @endif
-                                        </td>
-                                        <td class="text-wrap">{{ $item->jabatan ?? '-' }}</td>
                                         <td class="text-wrap">
-                                            {{ $item->unit_kerja ?? '-' }} 
-                                            <br/><small class="text-muted">{{ $item->instansi ?? '-' }}</small>
+                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium text-dark">{{ $item->unit_kerja ?? '-' }}</span>
+                                            <br>
+                                            <span class="text-muted small">{{ $item->instansi ?? '-' }}</span>
                                         </td>
                                         @if ($event->metode_tes_id == 1)
                                         <td>
@@ -124,7 +132,7 @@
                                                     style="cursor: pointer;"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Klik untuk aktifkan"
                                                 >
-                                                    Non Aktif
+                                                    ✖ Non Aktif
                                                 </span>
                                             @else
                                                 <span
@@ -133,21 +141,21 @@
                                                     style="cursor: pointer;"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Klik untuk nonaktifkan"
                                                 >
-                                                    Aktif
+                                                    ✔ Aktif
                                                 </span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <button
                                                 wire:click="openEditModal('{{ $item->id }}')"
-                                                class="btn btn-sm btn-inverse-success btn-icon"
+                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
                                             >
                                                 <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
                                             </button>
                                             <button
                                                 wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 @disabled($item->test_started_at != null)
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
                                             >
@@ -157,7 +165,10 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted py-4">Belum ada data peserta</td>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>

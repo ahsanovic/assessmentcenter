@@ -17,7 +17,7 @@ class Index extends Component
 
     public function render()
     {
-        $data = SettingWaktuTes::get();
+        $data = SettingWaktuTes::paginate(10);
 
         return view('livewire.admin.settings.waktu.index', compact('data'));
     }

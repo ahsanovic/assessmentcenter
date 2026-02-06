@@ -138,6 +138,15 @@
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                @if($data->count() === 0)
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>

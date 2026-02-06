@@ -50,12 +50,11 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Assessor</th>
-                                    <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi</th>
                                     <th>Jenis</th>
@@ -65,35 +64,44 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $item->nama }}</td>
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
+                                            <span class="fw-medium">{{ $item->nama }}</span><br>
+                                            <span class="text-muted small">
                                             @if ($item->is_asn == 'true')
-                                                {{ $item->nip }} <br/> {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
-                                            @else
-                                                {{ $item->nik }}
+                                                <div class="fw-medium">{{ $item->nip }}</div>
+                                                @if (!empty($item->golPangkat?->pangkat) && !empty($item->golPangkat?->golongan))
+                                                    <span class="badge bg-secondary-subtle text-dark mt-1">
+                                                        {{ $item->golPangkat->pangkat . ' - ' . $item->golPangkat->golongan }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted d-block mt-1"></span>
+                                                @endif
+                                            @elseif ($item->is_asn == 'false')
+                                                <div class="fw-medium">{{ $item->nik }}</div>
                                             @endif
+                                            </span>
                                         </td>
-                                        <td>{{ $item->jabatan }}</td>
-                                        <td>{{ $item->instansi }}</td>
+                                        <td class="text-wrap">
+                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                        </td>
+                                        <td class="text-wrap fw-medium text-dark">{{ $item->instansi ?? '-' }}</td>
                                         <td>
-                                            @if ($item->is_asn == 'true')
-                                                <span class="badge bg-primary">ASN</span>    
-                                            @else
-                                                <span class="badge bg-dark">Non ASN</span>
-                                            @endif 
+                                            <span class="badge {{ $item->is_asn == 'true' ? 'bg-primary' : 'bg-dark' }}">
+                                                {{ $item->is_asn == 'true' ? 'ASN' : 'Non ASN' }}
+                                            </span>
                                         </td>
                                         <td>
                                             @if ($item->is_active == 'true')
-                                                <span class="badge bg-success">Aktif</span>    
+                                                <span class="badge bg-success">✔ Aktif</span>    
                                             @else
-                                                <span class="badge bg-danger">Non Aktif</span>
+                                                <span class="badge bg-danger">✖ Non Aktif</span>
                                             @endif 
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <a
-                                                class="btn btn-sm btn-inverse-success btn-icon"
+                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 wire:navigate
                                                 href="{{ route('admin.assessor.edit', $item->id) }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
@@ -102,7 +110,7 @@
                                             </a>
                                             <button wire:click="deleteConfirmation('{{ $item->id }}')"
                                                 tabindex="0"
-                                                class="btn btn-sm btn-inverse-danger btn-icon"
+                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
                                             >
                                                 <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
@@ -110,6 +118,15 @@
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                @if($data->count() === 0)
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada data assessor...</div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
