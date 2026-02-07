@@ -83,7 +83,7 @@
                                         <td class="text-center">
                                             <button 
                                                 type="button"
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#logModal-{{ $item->id }}">
                                                 Lihat Data
@@ -91,36 +91,57 @@
 
                                             <!-- Modal -->
                                             <div class="modal fade" id="logModal-{{ $item->id }}" tabindex="-1" aria-labelledby="logModalLabel-{{ $item->id }}" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="logModalLabel-{{ $item->id }}">Detail Data Log</h5>
+                                                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal-content" style="border-radius: 1rem;">
+                                                        <div class="modal-header bg-light" style="border-radius: 1rem 1rem 0 0;">
+                                                            <h5 class="modal-title fw-bold" id="logModalLabel-{{ $item->id }}">
+                                                                <i class="link-icon text-primary" data-feather="list"></i>
+                                                                Detail Perubahan Data
+                                                            </h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            <div class="mb-3">
-                                                                <strong>Data Lama:</strong>
-                                                                @php
-                                                                    $decoded = json_decode($item->old_data, true);
-                                                                    $json_old_data = is_array($decoded)
-                                                                        ? json_encode(sanitize_log_data($decoded), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                                                                        : '-';
-                                                                @endphp
-                                                                <pre style="white-space: pre-wrap;">{{ $json_old_data }}</pre>
-                                                            </div>
-                                                            <div>
-                                                                <strong>Data Baru:</strong>
-                                                                @php
-                                                                    $decoded = json_decode($item->new_data, true);
-                                                                    $json_new_data = is_array($decoded)
-                                                                        ? json_encode(sanitize_log_data($decoded), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
-                                                                        : '-';
-                                                                @endphp
-                                                                <pre style="white-space: pre-wrap;">{{ $json_new_data }}</pre>
+                                                        <div class="modal-body py-4" style="background-color: #f8f9fb;">
+                                                            <div class="row g-3 align-items-start">
+                                                                <div class="col-md-6">
+                                                                    <div class="border rounded bg-white shadow-sm p-3 h-100">
+                                                                        <div class="d-flex align-items-center mb-2">
+                                                                            <span class="badge bg-danger me-2" style="font-size:0.95em;">
+                                                                                <i class="link-icon" data-feather="arrow-left-circle"></i>
+                                                                            </span>
+                                                                            <strong class="text-danger-emphasis">Data Lama</strong>
+                                                                        </div>
+                                                                        @php
+                                                                            $decoded = json_decode($item->old_data, true);
+                                                                            $json_old_data = is_array($decoded)
+                                                                                ? json_encode(sanitize_log_data($decoded), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                                                                                : '-';
+                                                                        @endphp
+                                                                        <pre class="bg-light rounded small p-2 mb-0" style="min-height:120px;max-height:320px;overflow:auto;width:100%;">{{ $json_old_data }}</pre>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="border rounded bg-white shadow-sm p-3 h-100">
+                                                                        <div class="d-flex align-items-center mb-2">
+                                                                            <span class="badge bg-success me-2" style="font-size:0.95em;">
+                                                                                <i class="link-icon" data-feather="arrow-right-circle"></i>
+                                                                            </span>
+                                                                            <strong class="text-success-emphasis">Data Baru</strong>
+                                                                        </div>
+                                                                        @php
+                                                                            $decoded = json_decode($item->new_data, true);
+                                                                            $json_new_data = is_array($decoded)
+                                                                                ? json_encode(sanitize_log_data($decoded), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                                                                                : '-';
+                                                                        @endphp
+                                                                        <pre class="bg-light rounded small p-2 mb-0" style="min-height:120px;max-height:320px;overflow:auto;width:100%;">{{ $json_new_data }}</pre>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                        <div class="modal-footer bg-light" style="border-radius: 0 0 1rem 1rem;">
+                                                            <button type="button" class="btn btn-sm btn-secondary btn-icon-text" data-bs-dismiss="modal">
+                                                                <i class="btn-icon-prepend" data-feather="x"></i> Tutup
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>

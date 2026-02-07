@@ -8,6 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
+                    <h6 class="card-title mb-0">Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
@@ -34,26 +35,35 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th style="width: 5%">#</th>
-                                    <th style="width: 30%">Nama Peserta</th>
-                                    <th style="width: 20%">Jawaban Responden</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
+                                    <th>Nama Peserta</th>
+                                    <th>Jawaban Responden</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>{{ $item->nama }}</td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalJawaban{{ $item->id }}">
-                                                <i class="link-icon" data-feather="eye" style="width: 14px; height: 14px;"></i> Lihat Jawaban
+                                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalJawaban{{ $item->id }}">
+                                                Lihat Jawaban
                                             </button>
                                         </td>
-                                    </tr>
+                                    </tr>   
                                 @endforeach
+
+                                @if($data->count() === 0)
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
 
