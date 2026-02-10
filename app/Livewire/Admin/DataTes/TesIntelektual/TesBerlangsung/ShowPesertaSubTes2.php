@@ -46,7 +46,7 @@ class ShowPesertaSubTes2 extends Component
         $data = Peserta::join('ujian_intelektual_subtes_2', 'ujian_intelektual_subtes_2.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesIntelektualSubTes2->pluck('peserta_id'))
             ->where('ujian_intelektual_subtes_2.event_id', $this->id_event)
-            ->select('peserta.*', 'ujian_intelektual_subtes_2.is_finished', 'ujian_intelektual_subtes_2.id as ujian_intelektual_subtes_2_id', 'ujian_intelektual_subtes_2.created_at as mulai_tes')
+            ->select('peserta.*', 'soal_id', 'jawaban', 'ujian_intelektual_subtes_2.is_finished', 'ujian_intelektual_subtes_2.id as ujian_intelektual_subtes_2_id', 'ujian_intelektual_subtes_2.created_at as mulai_tes')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%')

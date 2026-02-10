@@ -95,7 +95,7 @@ class ShowPesertaSubTes1 extends Component
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
         }
     }
