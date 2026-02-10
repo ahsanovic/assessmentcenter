@@ -261,6 +261,44 @@
             });
         }
     </script>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+        
+            const initFlatpickr = (input) => {
+        
+                input._flatpickr?.destroy();
+        
+                const model = input.dataset.model;
+        
+                // tunggu Livewire hydrate value
+                requestAnimationFrame(() => {
+        
+                    const hiddenInput = input
+                        .closest('.mb-4')
+                        .querySelector(`input[type="hidden"][wire\\:model="${model}"]`);
+        
+                    const value = hiddenInput?.value || null;
+        
+                    input._flatpickr = flatpickr(input, {
+                        dateFormat: "d-m-Y",
+                        allowInput: false,
+                        defaultDate: value,
+        
+                        onChange: (_, dateStr) => {
+                            hiddenInput.value = dateStr;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    });
+                });
+            };
+        
+            // SAAT MODAL / DOM DITAMBAHKAN
+            Livewire.hook('morph.added', ({ el }) => {
+                el.querySelectorAll('[data-flatpickr]').forEach(initFlatpickr);
+            });
+        
+        });
+    </script>  
     @stack('js')
 </body>
 

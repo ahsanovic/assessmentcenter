@@ -7,7 +7,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <x-btn-add :url="route('admin.user.create')" />
+                    <x-modal.btn-add text="Tambah User" icon="plus-circle" />
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
@@ -65,19 +65,8 @@
                                             @endif 
                                         </td>
                                         <td>
-                                            <a class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;""
-                                                wire:navigate
-                                                href="{{ route('admin.user.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;""
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-edit :id="$item->id" />
+                                            <x-table.btn-delete :id="$item->id" />
                                         </td>
                                     </tr>
                                 @endforeach
@@ -98,4 +87,160 @@
         </div>
         <x-pagination :items="$data" />
     </div>
+
+    <!-- Modal Form dengan style modern -->
+    @if($showModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-{{ $isUpdate ? 'edit-'.$editId : 'create' }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            @if($isUpdate)
+                                <i class="link-icon text-white" data-feather="edit-3" style="width: 24px; height: 24px;"></i>
+                            @else
+                                <i class="link-icon text-white" data-feather="plus-circle" style="width: 24px; height: 24px;"></i>
+                            @endif
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                {{ $isUpdate ? 'Edit User' : 'Tambah User Baru' }}
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                {{ $isUpdate ? 'Perbarui data user' : 'Isi form untuk menambahkan user' }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeModal" class="btn-close btn-close-white" 
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                    <form wire:submit="save">
+                        <x-form.input
+                            label="Nama"
+                            icon="credit-card"
+                            model="nama"
+                            placeholder="Masukkan nama"
+                            :required="true"
+                        />
+
+                        <x-form.input
+                            label="Username"
+                            icon="user"
+                            model="username"
+                            placeholder="Masukkan username"
+                            :required="true"
+                        />
+
+                        <x-form.input
+                            label="Password"
+                            type="password"
+                            icon="lock"
+                            model="password"
+                            placeholder="Masukkan password"
+                        />
+
+                        <x-form.radio-group
+                            label="Role"
+                            icon="user-check"
+                            model="role"
+                            :required="true"
+                        >
+                            <div class="form-check">
+                                <input 
+                                    type="radio" 
+                                    class="form-check-input @error('role') is-invalid @enderror" 
+                                    wire:model="role"
+                                    id="admin" 
+                                    value="admin"
+                                    style="cursor: pointer;"
+                                >
+                                <label class="form-check-label" for="admin" style="cursor: pointer;">
+                                    <span class="badge bg-success">Admin</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input 
+                                    type="radio" 
+                                    class="form-check-input @error('role') is-invalid @enderror" 
+                                    wire:model="role"
+                                    id="user" 
+                                    value="user"
+                                    style="cursor: pointer;"
+                                >
+                                <label class="form-check-label" for="user" style="cursor: pointer;">
+                                    <span class="badge bg-danger">User</span>
+                                </label>
+                            </div>
+                        </x-form.radio-group>
+
+                        @if($isUpdate)
+                        <x-form.radio-group
+                            label="Status"
+                            icon="power"
+                            model="status"
+                            :required="true"
+                        >
+                            <div class="form-check">
+                                <input 
+                                    type="radio" 
+                                    class="form-check-input @error('status') is-invalid @enderror" 
+                                    wire:model="status"
+                                    id="aktif" 
+                                    value="t"
+                                    style="cursor: pointer;"
+                                >
+                                <label class="form-check-label" for="aktif" style="cursor: pointer;">
+                                    <span class="badge bg-success">Aktif</span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input 
+                                    type="radio" 
+                                    class="form-check-input @error('status') is-invalid @enderror" 
+                                    wire:model="status"
+                                    id="nonAktif" 
+                                    value="f"
+                                    style="cursor: pointer;"
+                                >
+                                <label class="form-check-label" for="nonAktif" style="cursor: pointer;">
+                                    <span class="badge bg-danger">Non Aktif</span>
+                                </label>
+                            </div>
+                        </x-form.radio-group>
+                        @endif
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel />
+                    <x-modal.btn-save :isUpdate="$isUpdate" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    @endif
 </div>

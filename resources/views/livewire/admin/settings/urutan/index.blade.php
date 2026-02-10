@@ -7,10 +7,12 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <x-btn-add :url="route('admin.settings.urutan.create')" />
+                    <!-- Button Tambah dengan style modern -->
+                    <x-modal.btn-add text="Tambah Urutan Tes" icon="plus-circle" />
+                    
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                             <div class="row mt-2">
                                 <div class="col-sm-3">
                                     <select wire:model.live="alat_tes" class="form-select form-select-sm"
@@ -44,21 +46,8 @@
                                         <td>{{ $item->alatTes->alat_tes ?? '' }}</td>
                                         <td><span class="badge bg-warning text-dark">{{ $item->urutan }}</span></td>
                                         <td>
-                                            <a
-                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;""
-                                                wire:navigate
-                                                href="{{ route('admin.settings.urutan.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;""
-                                                tabindex="0"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-edit :id="$item->id" />
+                                            <x-table.btn-delete :id="$item->id" />
                                         </td>
                                     </tr>
                                 @endforeach
@@ -79,4 +68,160 @@
         </div>
         <x-pagination :items="$data" />
     </div>
+
+    <!-- Modal Form dengan style modern -->
+    @if($showModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-{{ $isUpdate ? 'edit-'.$editId : 'create' }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            @if($isUpdate)
+                                <i class="link-icon text-white" data-feather="edit-3" style="width: 24px; height: 24px;"></i>
+                            @else
+                                <i class="link-icon text-white" data-feather="plus-circle" style="width: 24px; height: 24px;"></i>
+                            @endif
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                {{ $isUpdate ? 'Edit Urutan Tes' : 'Tambah Urutan Tes Baru' }}
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                {{ $isUpdate ? 'Perbarui urutan tes' : 'Isi form untuk menambahkan urutan tes' }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeModal" class="btn-close btn-close-white" 
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                    <form wire:submit="save">
+                        <x-form.select
+                            label="Alat Tes"
+                            icon="package"
+                            model="form.alat_tes_id"
+                            :required="true"
+                        >
+                            @foreach ($option_alat_tes as $key => $item)
+                                <option value="{{ $key }}">{{ $item }}</option>
+                            @endforeach
+                        </x-form.select>
+
+                        <x-form.input
+                            label="Urutan Tes"
+                            icon="hash"
+                            model="form.urutan"
+                            type="number"
+                            placeholder="Urutan tes"
+                            :required="true"
+                            width="150px"
+                        />
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel />
+                    <x-modal.btn-save :isUpdate="$isUpdate" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    @endif
 </div>
+
+@push('scripts')
+<script>
+    // Fungsi untuk initialize Feather icons
+    function initFeatherIcons() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+
+    // Initialize saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', initFeatherIcons);
+
+    // Initialize setelah Livewire initialized
+    document.addEventListener('livewire:initialized', () => {
+        initFeatherIcons();
+
+        // Hook untuk setiap morph update
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        });
+
+        // Hook untuk setiap commit
+        Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+            succeed(({ snapshot, effect }) => {
+                requestAnimationFrame(() => {
+                    initFeatherIcons();
+                });
+            });
+        });
+    });
+
+    // Listen untuk event custom 'modalOpened'
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('modalOpened', () => {
+            setTimeout(() => {
+                initFeatherIcons();
+            }, 100);
+        });
+    });
+
+    // MutationObserver untuk mendeteksi perubahan DOM
+    const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1 && (
+                        node.classList?.contains('modal') || 
+                        node.querySelector?.('[data-feather]')
+                    )) {
+                        shouldUpdate = true;
+                    }
+                });
+            }
+        });
+        if (shouldUpdate) {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        }
+    });
+
+    // Mulai observe setelah DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+@endpush

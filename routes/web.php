@@ -18,23 +18,15 @@ Route::prefix('bkdac')->group(function () {
 
         // alat tes
         Route::get('alat-tes', \App\Livewire\Admin\AlatTes\Index::class)->name('admin.alat-tes');
-        Route::get('alat-tes/create', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.create');
-        Route::get('alat-tes/{id}/edit', \App\Livewire\Admin\AlatTes\Form::class)->name('admin.alat-tes.edit');
 
         // metode tes
         Route::get('metode-tes', \App\Livewire\Admin\MetodeTes\Index::class)->name('admin.metode-tes');
-        Route::get('metode-tes/create', \App\Livewire\Admin\MetodeTes\Form::class)->name('admin.metode-tes.create');
-        Route::get('metode-tes/{id}/edit', \App\Livewire\Admin\MetodeTes\Form::class)->name('admin.metode-tes.edit');
 
         // urutan tes
         Route::get('settings/urutan-tes', \App\Livewire\Admin\Settings\Urutan\Index::class)->name('admin.settings.urutan');
-        Route::get('settings/urutan-tes/create', \App\Livewire\Admin\Settings\Urutan\Form::class)->name('admin.settings.urutan.create');
-        Route::get('settings/urutan-tes/{id}/edit', \App\Livewire\Admin\Settings\Urutan\Form::class)->name('admin.settings.urutan.edit');
 
         // waktu tes
         Route::get('settings/waktu-tes', \App\Livewire\Admin\Settings\Waktu\Index::class)->name('admin.settings.waktu');
-        Route::get('settings/waktu-tes/create', \App\Livewire\Admin\Settings\Waktu\Form::class)->name('admin.settings.waktu.create');
-        Route::get('settings/waktu-tes/{id}/edit', \App\Livewire\Admin\Settings\Waktu\Form::class)->name('admin.settings.waktu.edit');
 
         // event
         Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');
@@ -45,13 +37,9 @@ Route::prefix('bkdac')->group(function () {
 
         // nomor laporan
         Route::get('nomor-laporan', \App\Livewire\Admin\NomorLaporan\Index::class)->name('admin.nomor-laporan');
-        Route::get('nomor-laporan/create', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.create');
-        Route::get('nomor-laporan/{id}/edit', \App\Livewire\Admin\NomorLaporan\Form::class)->name('admin.nomor-laporan.edit');
 
         // ttd laporan
         Route::get('ttd-laporan', \App\Livewire\Admin\TtdLaporan\Index::class)->name('admin.ttd-laporan');
-        Route::get('ttd-laporan/create', \App\Livewire\Admin\TtdLaporan\Form::class)->name('admin.ttd-laporan.create');
-        Route::get('ttd-laporan/{id}/edit', \App\Livewire\Admin\TtdLaporan\Form::class)->name('admin.ttd-laporan.edit');
 
         // data tes berlangsung
         Route::get('potensi/tes-berlangsung', \App\Livewire\Admin\DataTes\TesPotensi\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');
@@ -125,8 +113,6 @@ Route::prefix('bkdac')->group(function () {
 
         // kuesioner
         Route::get('kuesioner', \App\Livewire\Admin\Kuesioner\Index::class)->name('admin.kuesioner');
-        Route::get('kuesioner/create', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.create');
-        Route::get('kuesioner/{id}/edit', \App\Livewire\Admin\Kuesioner\Form::class)->name('admin.kuesioner.edit');
 
         // hasil responden
         Route::get('hasil-responden', \App\Livewire\Admin\HasilResponden\Index::class)->name('admin.hasil-responden');
@@ -160,13 +146,9 @@ Route::prefix('bkdac')->group(function () {
 
         // pertanyaan pengalaman spesifik
         Route::get('pertanyaan', \App\Livewire\Admin\RefPertanyaanPengalaman\Index::class)->name('admin.pertanyaan-pengalaman');
-        Route::get('pertanyaan/create', \App\Livewire\Admin\RefPertanyaanPengalaman\Form::class)->name('admin.pertanyaan-pengalaman.create');
-        Route::get('pertanyaan/{id}/edit', \App\Livewire\Admin\RefPertanyaanPengalaman\Form::class)->name('admin.pertanyaan-pengalaman.edit');
 
         // pertanyaan penilaian pribadi
         Route::get('penilaian', \App\Livewire\Admin\RefPertanyaanPenilaian\Index::class)->name('admin.pertanyaan-penilaian');
-        Route::get('penilaian/create', \App\Livewire\Admin\RefPertanyaanPenilaian\Form::class)->name('admin.pertanyaan-penilaian.create');
-        Route::get('penilaian/{id}/edit', \App\Livewire\Admin\RefPertanyaanPenilaian\Form::class)->name('admin.pertanyaan-penilaian.edit');
 
         // referensi intelektual
         Route::get('ref-intelektual', \App\Livewire\Admin\Intelektual\RefIntelektual\Index::class)->name('admin.ref-intelektual');
@@ -291,8 +273,6 @@ Route::prefix('bkdac')->group(function () {
 
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
-        Route::get('users/create', \App\Livewire\Admin\Users\Form::class)->name('admin.user.create');
-        Route::get('users/{id}/edit', \App\Livewire\Admin\Users\Form::class)->name('admin.user.edit');
 
         // log
         Route::get('log-activity', \App\Livewire\Admin\ActivityLog\Index::class)->name('admin.log-activity');

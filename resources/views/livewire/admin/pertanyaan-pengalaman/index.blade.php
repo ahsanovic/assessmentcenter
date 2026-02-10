@@ -7,10 +7,12 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <x-btn-add :url="route('admin.pertanyaan-pengalaman.create')" />
+                    <!-- Button Tambah dengan style modern -->
+                    <x-modal.btn-add text="Tambah Pertanyaan" icon="plus-circle" />
+                    
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
                             <div class="row mt-2">
                                 <div class="col-sm-6">
                                     <div class="input-group" wire:ignore>
@@ -52,23 +54,8 @@
                                         </td>
                                         <td>{{ $item->urutan }}</td>
                                         <td>
-                                            <a
-                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm"
-                                                wire:navigate
-                                                href="{{ route('admin.pertanyaan-pengalaman.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                                style="transition: background 0.2s;"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                style="transition: background 0.2s;"
-                                                @disabled(auth()->user()->role == 'user')
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-edit :id="$item->id" />
+                                            <x-table.btn-delete :id="$item->id" :disabled="auth()->user()->role == 'user'" />
                                         </td>
                                     </tr>
                                 @endforeach
@@ -89,4 +76,184 @@
         </div>
         <x-pagination :items="$data" />
     </div>
+
+    <!-- Modal Form dengan style modern -->
+    @if($showModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-{{ $isUpdate ? 'edit-'.$editId : 'create' }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            @if($isUpdate)
+                                <i class="link-icon text-white" data-feather="edit-3" style="width: 24px; height: 24px;"></i>
+                            @else
+                                <i class="link-icon text-white" data-feather="plus-circle" style="width: 24px; height: 24px;"></i>
+                            @endif
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                {{ $isUpdate ? 'Edit Pertanyaan Pengalaman' : 'Tambah Pertanyaan Pengalaman Baru' }}
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                {{ $isUpdate ? 'Perbarui pertanyaan pengalaman' : 'Isi form untuk menambahkan pertanyaan' }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeModal" class="btn-close btn-close-white" 
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                    <form wire:submit="save">
+                        <x-form.textarea
+                            label="Pertanyaan"
+                            icon="help-circle"
+                            model="pertanyaan"
+                            placeholder="Masukkan pertanyaan"
+                            :required="true"
+                            :rows="4"
+                        />
+
+                        <!-- Kode Field -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem; letter-spacing: 0.01em;">
+                                <span class="d-flex align-items-center gap-2">
+                                    <i class="link-icon" data-feather="tag" style="width: 16px; height: 16px;"></i>
+                                    Kode
+                                </span>
+                            </label>
+                            <div class="d-flex flex-wrap gap-3">
+                                @foreach ($option_kode as $key => $item)
+                                    <div class="form-check">
+                                        <input
+                                            type="checkbox"
+                                            wire:model="kode.{{ $key }}"
+                                            class="form-check-input"
+                                            id="kode{{ $key }}"
+                                            style="cursor: pointer;"
+                                        >
+                                        <label class="form-check-label" for="kode{{ $key }}" style="cursor: pointer;">
+                                            <span class="badge bg-warning text-dark">{{ $item }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <x-form.input
+                            label="Urutan ke-"
+                            icon="hash"
+                            model="urutan"
+                            type="number"
+                            placeholder="urutan ke-..."
+                            :required="true"
+                            width="150px"
+                        />
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel />
+                    <x-modal.btn-save :isUpdate="$isUpdate" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    @endif
 </div>
+
+@push('scripts')
+<script>
+    // Fungsi untuk initialize Feather icons
+    function initFeatherIcons() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+
+    // Initialize saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', initFeatherIcons);
+
+    // Initialize setelah Livewire initialized
+    document.addEventListener('livewire:initialized', () => {
+        initFeatherIcons();
+
+        // Hook untuk setiap morph update
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        });
+
+        // Hook untuk setiap commit
+        Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+            succeed(({ snapshot, effect }) => {
+                requestAnimationFrame(() => {
+                    initFeatherIcons();
+                });
+            });
+        });
+    });
+
+    // Listen untuk event custom 'modalOpened'
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('modalOpened', () => {
+            setTimeout(() => {
+                initFeatherIcons();
+            }, 100);
+        });
+    });
+
+    // MutationObserver untuk mendeteksi perubahan DOM
+    const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1 && (
+                        node.classList?.contains('modal') || 
+                        node.querySelector?.('[data-feather]')
+                    )) {
+                        shouldUpdate = true;
+                    }
+                });
+            }
+        });
+        if (shouldUpdate) {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        }
+    });
+
+    // Mulai observe setelah DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+@endpush

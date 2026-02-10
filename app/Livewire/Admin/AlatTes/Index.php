@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Admin\AlatTes;
 
+use App\Livewire\Forms\AlatTesForm;
 use App\Models\RefAlatTes;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -15,6 +17,12 @@ class Index extends Component
     use WithPagination;
 
     public $selected_id;
+    public $showModal = false;
+    public $isUpdate = false;
+    public AlatTesForm $form;
+
+    #[Locked]
+    public $editId;
 
     #[Url(as: 'q')]
     public ?string $search = '';
@@ -40,6 +48,81 @@ class Index extends Component
         $this->reset();
         $this->resetPage();
         $this->render();
+    }
+
+    public function openModal()
+    {
+        $this->resetValidation();
+        $this->form->reset();
+        $this->isUpdate = false;
+        $this->editId = null;
+        $this->showModal = true;
+        $this->dispatch('modalOpened');
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetValidation();
+        $this->form->reset();
+        $this->isUpdate = false;
+        $this->editId = null;
+    }
+
+    public function edit($id)
+    {
+        try {
+            $data = RefAlatTes::findOrFail($id);
+            $this->editId = $data->id;
+            $this->form->alat_tes = $data->alat_tes;
+            $this->form->definisi_aspek_potensi = $data->definisi_aspek_potensi;
+            $this->isUpdate = true;
+            $this->showModal = true;
+            $this->resetValidation();
+            $this->dispatch('modalOpened');
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
+        }
+    }
+
+    public function save()
+    {
+        $this->validate();
+        try {
+            if ($this->isUpdate) {
+                $data = RefAlatTes::findOrFail($this->editId);
+                $old_data = $data->getOriginal();
+
+                $data->alat_tes = $this->form->alat_tes;
+                $data->definisi_aspek_potensi = $this->form->definisi_aspek_potensi;
+                $data->save();
+
+                activity_log($data, 'update', 'alat-tes', $old_data);
+
+                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data']);
+            } else {
+                $check_duplicate = RefAlatTes::where('alat_tes', $this->form->alat_tes)->exists();
+                if ($check_duplicate) {
+                    $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nama alat tes ' . $this->form->alat_tes . ' sudah ada!']);
+                    return;
+                }
+
+                $model = RefAlatTes::create([
+                    'alat_tes' => $this->form->alat_tes,
+                    'definisi_aspek_potensi' => $this->form->definisi_aspek_potensi,
+                ]);
+
+                activity_log($model, 'create', 'alat-tes');
+
+                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil tambah data']);
+            }
+
+            $this->closeModal();
+            $this->resetPage();
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
+        }
     }
 
     public function deleteConfirmation($id)
