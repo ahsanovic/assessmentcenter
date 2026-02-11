@@ -152,43 +152,27 @@ Route::prefix('bkdac')->group(function () {
 
         // referensi intelektual
         Route::get('ref-intelektual', \App\Livewire\Admin\Intelektual\RefIntelektual\Index::class)->name('admin.ref-intelektual');
-        Route::get('ref-intelektual/create', \App\Livewire\Admin\Intelektual\RefIntelektual\Form::class)->name('admin.ref-intelektual.create');
-        Route::get('ref-intelektual/{id}/edit', \App\Livewire\Admin\Intelektual\RefIntelektual\Form::class)->name('admin.ref-intelektual.edit');
 
         // model soal intelektual
         Route::get('model-soal-intelektual', \App\Livewire\Admin\Intelektual\ModelSoal\Index::class)->name('admin.model-soal-intelektual');
-        Route::get('model-soal-intelektual/create', \App\Livewire\Admin\Intelektual\ModelSoal\Form::class)->name('admin.model-soal-intelektual.create');
-        Route::get('model-soal-intelektual/{id}/edit', \App\Livewire\Admin\Intelektual\ModelSoal\Form::class)->name('admin.model-soal-intelektual.edit');
 
         // soal pengembangan diri
         Route::get('soal-pengembangan-diri', \App\Livewire\Admin\PengembanganDiri\SoalPengembanganDiri\Index::class)->name('admin.soal-pengembangan-diri');
-        Route::get('soal-pengembangan-diri/create', \App\Livewire\Admin\PengembanganDiri\SoalPengembanganDiri\Create::class)->name('admin.soal-pengembangan-diri.create');
-        Route::get('soal-pengembangan-diri/{id}/edit', \App\Livewire\Admin\PengembanganDiri\SoalPengembanganDiri\Edit::class)->name('admin.soal-pengembangan-diri.edit');
 
         // referensi pengembangan diri
         Route::get('ref-pengembangan-diri', \App\Livewire\Admin\PengembanganDiri\RefPengembanganDiri\Index::class)->name('admin.ref-pengembangan-diri');
-        Route::get('ref-pengembangan-diri/create', \App\Livewire\Admin\PengembanganDiri\RefPengembanganDiri\Create::class)->name('admin.ref-pengembangan-diri.create');
-        Route::get('ref-pengembangan-diri/{id}/edit', \App\Livewire\Admin\PengembanganDiri\RefPengembanganDiri\Edit::class)->name('admin.ref-pengembangan-diri.edit');
 
         // soal interpersonal
         Route::get('soal-interpersonal', \App\Livewire\Admin\Interpersonal\SoalInterpersonal\Index::class)->name('admin.soal-interpersonal');
-        Route::get('soal-interpersonal/create', \App\Livewire\Admin\Interpersonal\SoalInterpersonal\Create::class)->name('admin.soal-interpersonal.create');
-        Route::get('soal-interpersonal/{id}/edit', \App\Livewire\Admin\Interpersonal\SoalInterpersonal\Edit::class)->name('admin.soal-interpersonal.edit');
 
         // referensi interpersonal
         Route::get('ref-interpersonal', \App\Livewire\Admin\Interpersonal\RefInterpersonal\Index::class)->name('admin.ref-interpersonal');
-        Route::get('ref-interpersonal/create', \App\Livewire\Admin\Interpersonal\RefInterpersonal\Create::class)->name('admin.ref-interpersonal.create');
-        Route::get('ref-interpersonal/{id}/edit', \App\Livewire\Admin\Interpersonal\RefInterpersonal\Edit::class)->name('admin.ref-interpersonal.edit');
 
         // soal kecerdasan emosi
         Route::get('soal-kecerdasan-emosi', \App\Livewire\Admin\KecerdasanEmosi\SoalKecerdasanEmosi\Index::class)->name('admin.soal-kecerdasan-emosi');
-        Route::get('soal-kecerdasan-emosi/create', \App\Livewire\Admin\KecerdasanEmosi\SoalKecerdasanEmosi\Create::class)->name('admin.soal-kecerdasan-emosi.create');
-        Route::get('soal-kecerdasan-emosi/{id}/edit', \App\Livewire\Admin\KecerdasanEmosi\SoalKecerdasanEmosi\Edit::class)->name('admin.soal-kecerdasan-emosi.edit');
 
         // referensi kecerdasan emosi
         Route::get('ref-kecerdasan-emosi', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Index::class)->name('admin.ref-kecerdasan-emosi');
-        Route::get('ref-kecerdasan-emosi/create', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Create::class)->name('admin.ref-kecerdasan-emosi.create');
-        Route::get('ref-kecerdasan-emosi/{id}/edit', \App\Livewire\Admin\KecerdasanEmosi\RefKecerdasanEmosi\Edit::class)->name('admin.ref-kecerdasan-emosi.edit');
 
         // soal motivasi komitmen
         Route::get('soal-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Index::class)->name('admin.soal-motivasi-komitmen');
@@ -252,14 +236,8 @@ Route::prefix('bkdac')->group(function () {
 
         // soal intelektual
         Route::get('soal-intelektual-subtes1', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Index::class)->name('admin.soal-intelektual-subtes1');
-        Route::get('soal-intelektual-subtes1/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Form::class)->name('admin.soal-intelektual-subtes1.create');
-        Route::get('soal-intelektual-subtes1/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Form::class)->name('admin.soal-intelektual-subtes1.edit');
         Route::get('soal-intelektual-subtes2', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Index::class)->name('admin.soal-intelektual-subtes2');
-        Route::get('soal-intelektual-subtes2/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Form::class)->name('admin.soal-intelektual-subtes2.create');
-        Route::get('soal-intelektual-subtes2/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes2\Form::class)->name('admin.soal-intelektual-subtes2.edit');
         Route::get('soal-intelektual-subtes3', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Index::class)->name('admin.soal-intelektual-subtes3');
-        Route::get('soal-intelektual-subtes3/create', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.create');
-        Route::get('soal-intelektual-subtes3/{id}/edit', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes3\Form::class)->name('admin.soal-intelektual-subtes3.edit');
 
         // soal pspk
         Route::get('soal-pspk', \App\Livewire\Admin\Pspk\Soal\Index::class)->name('admin.soal-pspk');
