@@ -57,10 +57,10 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Event</th>
                                     <th>Jumlah Peserta</th>
                                     <th>Detail</th>
@@ -69,7 +69,7 @@
                             <tbody>
                                 @foreach ($data as $index => $item)
                                     <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama_event }}</td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>

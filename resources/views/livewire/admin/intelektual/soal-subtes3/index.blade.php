@@ -32,30 +32,16 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <button wire:click="showDetail({{ $item->id }})" 
-                                                    class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
-                                                    style="transition: background 0.2s;"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Detail"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="eye"></i></span>
-                                            </button>
-                                            <a
-                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm"
-                                                style="transition: background 0.2s;"
-                                                wire:navigate
-                                                href="{{ route('admin.soal-intelektual-subtes3.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                style="transition: background 0.2s;"
-                                                @disabled(auth()->user()->role == 'user')
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-show :id="$item->id" />
+                                            <x-table.btn-link
+                                                :route="'admin.soal-intelektual-subtes3.edit'"
+                                                :params="['id' => $item->id]"
+                                                :icon="'edit-3'"
+                                                :tooltip="'Edit'"
+                                                :color="'success'"
+                                                :navigate="true"
+                                            />
+                                            <x-table.btn-delete :id="$item->id" :disabled="auth()->user()->role == 'user'" />
                                         </td>
                                     </tr>
                                 @endforeach

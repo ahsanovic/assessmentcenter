@@ -30,7 +30,6 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
-                            <thead>
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
@@ -79,15 +78,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <button
-                                                wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                tabindex="0" class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                style="transition: background 0.2s;"
-                                                @disabled(auth()->user()->role == 'user')
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-delete :id="$item->id" />
                                         </td>
                                     </tr>
                                 @empty

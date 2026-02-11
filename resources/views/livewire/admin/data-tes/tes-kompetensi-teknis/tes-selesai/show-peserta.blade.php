@@ -8,6 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
+                    <h6 class="card-title mb-0">Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
@@ -38,9 +39,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <button wire:click="resetFilters" class="btn btn-sm btn-inverse-danger">
-                                        <span wire:ignore><i class="btn-icon-prepend" data-feather="refresh-ccw"></i> Reset</span>
-                                    </button>
+                                    <x-btn-reset :text="'Reset'" />
                                 </div>
                                 <div class="col-sm-4 d-flex justify-content-end">
                                     <div class="me-2">
@@ -58,10 +57,10 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
                                     <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
@@ -73,7 +72,7 @@
                             <tbody>
                                 @foreach ($data as $index => $item)
                                     <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama }}</td>
                                         <td>
                                             @if ($item->jenis_peserta_id == 1)
@@ -95,22 +94,16 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_kompetensi_teknis_id }}')"
-                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                >
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->hasil_kompetensi_teknis_id" />
                                             @endif
-                                            <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download', [
-                                                    'idEvent' => $item->event_id,
-                                                    'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon"
-                                                target="_blank"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Download Pdf"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="download"></i></span>
-                                            </a>
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.kompetensi-teknis.download'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'download'"
+                                                :tooltip="'Download Pdf'"
+                                                :color="'success'"
+                                                :target="'_blank'"
+                                            />
                                         </td>
                                     </tr>
                                 @endforeach

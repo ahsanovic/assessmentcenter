@@ -54,7 +54,6 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
-                            <thead>
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
@@ -109,12 +108,7 @@
                                             </span>
                                         <td class="text-center">
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_cakap_digital_id }}')"
-                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                    style="transition: background 0.2s;">
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->hasil_cakap_digital_id" />
                                             @endif
                                         </td>
                                     </tr>

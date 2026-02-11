@@ -66,7 +66,7 @@
                                         </td>
                                         <td>
                                             <x-table.btn-edit :id="$item->id" />
-                                            <x-table.btn-delete :id="$item->id" />
+                                            <x-table.btn-delete :id="$item->id" :disabled="auth()->user()->role == 'user'" />
                                         </td>
                                     </tr>
                                 @endforeach

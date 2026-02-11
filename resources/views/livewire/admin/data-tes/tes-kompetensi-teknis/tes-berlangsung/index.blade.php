@@ -8,10 +8,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th class="text-wrap">Nama Event</th>
                                     <th class="text-wrap">Jumlah Peserta</th>
                                     <th class="text-wrap">Detail</th>
@@ -20,7 +20,7 @@
                             <tbody>
                                 @foreach ($data as $index => $item)
                                     <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama_event }}</td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
@@ -31,6 +31,15 @@
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                @if ($data->count() === 0)
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada data ujian kompetensi teknis berlangsung...</div>
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>

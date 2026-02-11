@@ -67,12 +67,7 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'false')
-                                                <button wire:click="deleteConfirmation('{{ $item->ujian_pspk_id }}')"
-                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                >
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->ujian_pspk_id" />
                                             @endif
                                         </td>
                                     </tr>

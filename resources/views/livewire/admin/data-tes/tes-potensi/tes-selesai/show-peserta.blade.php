@@ -108,33 +108,30 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.tes-selesai.show-report', [
-                                                    'idEvent' => $item->event_id,
-                                                    'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Report"
-                                                wire:navigate
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="eye"></i></span>
-                                            </a>
-                                            <a href="{{ route('admin.tes-selesai.download', [
-                                                    'idEvent' => $item->event_id,
-                                                    'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                target="_blank"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Download Pdf"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="download"></i></span>
-                                            </a>
-                                            <a href="{{ route('admin.tes-selesai.rekomendasi-ai', [
-                                                    'idEvent' => $item->event_id,
-                                                    'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Rekomendasi AI"
-                                                wire:navigate
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="thumbs-up"></i></span>
-                                            </a>
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.show-report'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'eye'"
+                                                :tooltip="'Lihat Report'"
+                                                :color="'success'"
+                                                :navigate="true"
+                                            />
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.download'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'download'"
+                                                :tooltip="'Download Pdf'"
+                                                :color="'danger'"
+                                                :target="'_blank'"
+                                            />
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.rekomendasi-ai'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'thumbs-up'"
+                                                :tooltip="'Rekomendasi AI'"
+                                                :color="'warning'"
+                                                :navigate="true"
+                                            />
                                         </td>
                                     </tr>
                                 @endforeach

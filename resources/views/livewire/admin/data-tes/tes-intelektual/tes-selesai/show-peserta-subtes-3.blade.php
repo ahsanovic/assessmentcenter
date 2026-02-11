@@ -8,9 +8,9 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
+                    <h6 class="card-title mb-0">Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
-                            <h6 class="card-title mb-0">Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
                             <div class="row mt-2">
                                 <div class="col-sm-4">
@@ -41,7 +41,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                        <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
                                             <span class="fw-medium">{{ $item->nama }}</span><br>
@@ -61,8 +61,8 @@
                                             </span>
                                         </td>
                                         <td class="text-wrap">
-                                            @if ($item->jenis_peserta_id == 1)
-                                                <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                        </td>
                                         <td class="text-wrap">
                                             <span class="fw-medium text-dark">{{ $item->instansi }}</span>
                                             <br>
@@ -84,12 +84,7 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_intelektual_id }}')"
-                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                    style="transition: background 0.2s;">
-                                                >
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->hasil_intelektual_id" />
                                             @endif
                                         </td>
                                     </tr>

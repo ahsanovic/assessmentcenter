@@ -159,22 +159,16 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;" {{ 
-                                                    ($item->is_finished == 'true' && auth()->user()->role == 'user') ? 'disabled' : ''
-                                                }}"
-                                                wire:navigate
-                                                href="{{ route('admin.event.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                @disabled($item->is_finished == 'true')
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-link
+                                                :route="'admin.event.edit'"
+                                                :params="['id' => $item->id]"
+                                                :icon="'edit-3'"
+                                                :tooltip="'Edit'"
+                                                :color="'success'"
+                                                :navigate="true"
+                                                :disabled="($item->is_finished == 'true' && auth()->user()->role == 'user')"
+                                            />
+                                            <x-table.btn-delete :id="$item->id" :disabled="($item->is_finished == 'true')" />
                                         </td>
                                     </tr>
                                 @endforeach

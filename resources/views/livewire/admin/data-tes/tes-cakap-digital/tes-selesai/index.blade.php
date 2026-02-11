@@ -79,7 +79,7 @@
                                     </tr>
                                 @endforeach
 
-                                @if($data->count() === 0)
+                                @if ($data->count() === 0)
                                     <tr>
                                         <td colspan="9" class="text-center text-muted py-4">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>

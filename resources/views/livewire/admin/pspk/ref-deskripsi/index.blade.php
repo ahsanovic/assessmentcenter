@@ -66,22 +66,15 @@
                                         <td class="text-wrap">{{ $item->deskripsi }}</td>
                                         <td class="text-wrap">{{ $item->deskripsi_plus }}</td>
                                         <td>
-                                            <a class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm"
-                                                style="transition: background 0.2s;"
-                                                wire:navigate
-                                                href="{{ route('admin.ref-pspk.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                style="transition: background 0.2s;"
-                                                @disabled(auth()->user()->role == 'user')
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-link
+                                                :route="'admin.ref-pspk.edit'"
+                                                :id="$item->id"
+                                                :icon="'edit-3'"
+                                                :tooltip="'Edit'"
+                                                :color="'success'"
+                                                :navigate="true"
+                                            />
+                                            <x-table.btn-delete :id="$item->id" :disabled="auth()->user()->role == 'user'" />
                                         </td>
                                     </tr>
                                 @endforeach

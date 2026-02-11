@@ -100,21 +100,15 @@
                                             @endif 
                                         </td>
                                         <td class="text-center">
-                                            <a
-                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                wire:navigate
-                                                href="{{ route('admin.assessor.edit', $item->id) }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </a>
-                                            <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                tabindex="0"
-                                                class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                            </button>
+                                            <x-table.btn-link
+                                                :params="['id' => $item->id]"
+                                                :route="'admin.assessor.edit'"
+                                                :icon="'edit-3'"
+                                                :tooltip="'Edit'"
+                                                :color="'success'"
+                                                :navigate="true"
+                                            />
+                                            <x-table.btn-delete :id="$item->id" />
                                         </td>
                                     </tr>
                                 @endforeach

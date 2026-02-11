@@ -106,13 +106,7 @@
                                         </td>
                                         <td class="text-center">
                                             @if ($item->is_finished == 'false')
-                                                <button wire:click="deleteConfirmation('{{ $item->ujian_kecerdasan_emosi_id }}')"
-                                                    tabindex="0"
-                                                    class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                    style="transition: background 0.2s;">
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->ujian_kecerdasan_emosi_id" />
                                             @endif
                                         </td>
                                     </tr>

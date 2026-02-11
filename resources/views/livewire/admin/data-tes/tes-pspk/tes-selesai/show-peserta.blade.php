@@ -56,10 +56,10 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                            <thead class="table-light border-bottom">
                                 <tr>
-                                    <th>#</th>
+                                    <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
                                     <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
@@ -71,7 +71,7 @@
                             <tbody>
                                 @foreach ($data as $index => $item)
                                     <tr>
-                                        <td>{{ $data->firstItem() + $index }}</td>
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->nama }}</td>
                                         <td>
                                             @if ($item->jenis_peserta_id == 1)
@@ -93,22 +93,16 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')
-                                                <button wire:click="deleteConfirmation('{{ $item->hasil_pspk_id }}')"
-                                                    tabindex="0" class="btn btn-sm btn-outline-danger btn-icon"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus"
-                                                >
-                                                    <span wire:ignore><i class="link-icon" data-feather="trash"></i></span>
-                                                </button>
+                                                <x-table.btn-delete :id="$item->hasil_pspk_id" />
                                             @endif
-                                            <a href="{{ route('admin.tes-selesai.pspk.download', [
-                                                    'idEvent' => $item->event_id,
-                                                    'identifier' => $item->nip ?: $item->nik
-                                                ]) }}" class="btn btn-sm btn-outline-success btn-icon"
-                                                target="_blank"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Download Pdf"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="download"></i></span>
-                                            </a>
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.pspk.download'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'download'"
+                                                :tooltip="'Download Pdf'"
+                                                :color="'success'"
+                                                :target="'_blank'"
+                                            />
                                         </td>
                                     </tr>
                                 @endforeach
