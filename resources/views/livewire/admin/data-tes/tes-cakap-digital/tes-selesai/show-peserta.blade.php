@@ -43,9 +43,15 @@
                                 </div>
                                 <div class="col-sm-4 d-flex justify-content-end">
                                     <div class="me-2">
-                                        <a href="{{ route('admin.tes-selesai.cakap-digital.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)
-                                        </a>
+                                        <x-btn-download 
+                                            :route="'admin.tes-selesai.cakap-digital.download-rekap'"
+                                            :params="[$event->id]"
+                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                            text="Download Rekap Laporan (Excel)"
+                                            icon="download"
+                                            color="success"
+                                            :disabled="$data->isEmpty()"
+                                        />
                                     </div>
                                 </div>
                             </div>

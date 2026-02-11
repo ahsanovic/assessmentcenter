@@ -42,18 +42,26 @@
                                 </div>
                                 <div class="col-sm-6 mb-3 d-flex justify-content-end">
                                     <div class="me-2">
-                                        <a href="{{ route('admin.tes-selesai.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }} btn-icon-text">
-                                            <i class="btn-icon-prepend" data-feather="download"></i>
-                                            Download Rekap Laporan (Excel)
-                                        </a>
+                                        <x-btn-download 
+                                            :route="'admin.tes-selesai.download-rekap'"
+                                            :params="[$event->id]"
+                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                            text="Download Rekap Laporan (Excel)"
+                                            icon="download"
+                                            color="success"
+                                            :disabled="$data->isEmpty()"
+                                        />  
                                     </div>
                                     <div class="me-2">
-                                        <a href="{{ route('admin.tes-selesai.download-all-laporan', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }} btn-icon-text">
-                                            <i class="btn-icon-prepend" data-feather="download"></i>
-                                            Download Semua Laporan PDF (.zip)
-                                        </a>
+                                        <x-btn-download 
+                                            :route="'admin.tes-selesai.download-all-laporan'"
+                                            :params="[$event->id]"
+                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                            text="Download Semua Laporan PDF (.zip)"
+                                            icon="download"
+                                            color="dark"
+                                            :disabled="$data->isEmpty()"
+                                        />
                                     </div>
                                 </div>
                             </div>

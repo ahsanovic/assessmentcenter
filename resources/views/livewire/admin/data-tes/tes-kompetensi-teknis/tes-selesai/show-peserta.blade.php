@@ -13,7 +13,7 @@
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
                             <div class="row mt-2">
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="input-group" wire:ignore>
                                         <span class="input-group-text bg-white"><i data-feather="search"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
@@ -38,19 +38,31 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-1">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
-                                <div class="col-sm-4 d-flex justify-content-end">
+                                <div class="col-sm-6 d-flex justify-content-end">
                                     <div class="me-2">
-                                        <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download-rekap', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-success {{ $data->isEmpty() ? 'disabled' : '' }}">Download Rekap Laporan (Excel)
-                                        </a>
+                                        <x-btn-download 
+                                            :route="'admin.tes-selesai.kompetensi-teknis.download-rekap'"
+                                            :params="[$event->id]"
+                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                            text="Download Rekap Laporan (Excel)"
+                                            icon="download"
+                                            color="success"
+                                            :disabled="$data->isEmpty()"
+                                        />
                                     </div>
                                     <div class="me-2">
-                                        <a href="{{ route('admin.tes-selesai.kompetensi-teknis.download-all-laporan', $event->id) }}?tanggalTes={{ $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '' }}"
-                                            class="btn btn-sm btn-dark {{ $data->isEmpty() ? 'disabled' : '' }}">Download Semua Laporan PDF (.zip)
-                                        </a>
+                                        <x-btn-download 
+                                            :route="'admin.tes-selesai.kompetensi-teknis.download-all-laporan'"
+                                            :params="[$event->id]"
+                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                            text="Download Semua Laporan PDF (.zip)"
+                                            icon="download"
+                                            color="dark"
+                                            :disabled="$data->isEmpty()"
+                                        />
                                     </div>
                                 </div>
                             </div>

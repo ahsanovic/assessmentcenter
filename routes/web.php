@@ -176,13 +176,9 @@ Route::prefix('bkdac')->group(function () {
 
         // soal motivasi komitmen
         Route::get('soal-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Index::class)->name('admin.soal-motivasi-komitmen');
-        Route::get('soal-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Create::class)->name('admin.soal-motivasi-komitmen.create');
-        Route::get('soal-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen\Edit::class)->name('admin.soal-motivasi-komitmen.edit');
 
         // referensi motivasi dan komitmen
         Route::get('ref-motivasi-komitmen', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Index::class)->name('admin.ref-motivasi-komitmen');
-        Route::get('ref-motivasi-komitmen/create', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Create::class)->name('admin.ref-motivasi-komitmen.create');
-        Route::get('ref-motivasi-komitmen/{id}/edit', \App\Livewire\Admin\MotivasiKomitmen\RefMotivasiKomitmen\Edit::class)->name('admin.ref-motivasi-komitmen.edit');
 
         // soal berpikir kritis dan strategis
         Route::get('soal-berpikir-kritis', \App\Livewire\Admin\BerpikirKritis\SoalBerpikirKritis\Index::class)->name('admin.soal-berpikir-kritis');
@@ -201,28 +197,18 @@ Route::prefix('bkdac')->group(function () {
 
         // soal problem solving
         Route::get('soal-problem-solving', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Index::class)->name('admin.soal-problem-solving');
-        Route::get('soal-problem-solving/create', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Create::class)->name('admin.soal-problem-solving.create');
-        Route::get('soal-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\SoalProblemSolving\Edit::class)->name('admin.soal-problem-solving.edit');
 
         // referensi aspek problem solving
         Route::get('ref-aspek-problem-solving', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Index::class)->name('admin.ref-aspek-problem-solving');
-        Route::get('ref-aspek-problem-solving/create', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Create::class)->name('admin.ref-aspek-problem-solving.create');
-        Route::get('ref-aspek-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefAspekProblemSolving\Edit::class)->name('admin.ref-aspek-problem-solving.edit');
 
         // referensi indikator problem solving
         Route::get('ref-indikator-problem-solving', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefIndikatorProblemSolving\Index::class)->name('admin.ref-indikator-problem-solving');
-        Route::get('ref-indikator-problem-solving/create', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefIndikatorProblemSolving\Create::class)->name('admin.ref-indikator-problem-solving.create');
-        Route::get('ref-indikator-problem-solving/{id}/edit', \App\Livewire\Admin\ProblemSolving\RefProblemSolving\RefIndikatorProblemSolving\Edit::class)->name('admin.ref-indikator-problem-solving.edit');
 
         // soal kesadaran diri
         Route::get('soal-kesadaran-diri', \App\Livewire\Admin\KesadaranDiri\SoalKesadaranDiri\Index::class)->name('admin.soal-kesadaran-diri');
-        Route::get('soal-kesadaran-diri/create', \App\Livewire\Admin\KesadaranDiri\SoalKesadaranDiri\Create::class)->name('admin.soal-kesadaran-diri.create');
-        Route::get('soal-kesadaran-diri/{id}/edit', \App\Livewire\Admin\KesadaranDiri\SoalKesadaranDiri\Edit::class)->name('admin.soal-kesadaran-diri.edit');
 
         // referensi kesadaran diri
         Route::get('ref-kesadaran-diri', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Index::class)->name('admin.ref-kesadaran-diri');
-        Route::get('ref-kesadaran-diri/create', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Create::class)->name('admin.ref-kesadaran-diri.create');
-        Route::get('ref-kesadaran-diri/{id}/edit', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Edit::class)->name('admin.ref-kesadaran-diri.edit');
 
         // soal cakap digital
         Route::get('soal-cakap-digital', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Index::class)->name('admin.soal-cakap-digital');
@@ -241,13 +227,9 @@ Route::prefix('bkdac')->group(function () {
 
         // soal pspk
         Route::get('soal-pspk', \App\Livewire\Admin\Pspk\Soal\Index::class)->name('admin.soal-pspk');
-        Route::get('soal-pspk/create', \App\Livewire\Admin\Pspk\Soal\Form::class)->name('admin.soal-pspk.create');
-        Route::get('soal-pspk/{id}/edit', \App\Livewire\Admin\Pspk\Soal\Form::class)->name('admin.soal-pspk.edit');
 
         // referensi pspk
         Route::get('ref-pspk', \App\Livewire\Admin\Pspk\Ref\Index::class)->name('admin.ref-pspk');
-        Route::get('ref-pspk/create', \App\Livewire\Admin\Pspk\Ref\Form::class)->name('admin.ref-pspk.create');
-        Route::get('ref-pspk/{id}/edit', \App\Livewire\Admin\Pspk\Ref\Form::class)->name('admin.ref-pspk.edit');
 
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');

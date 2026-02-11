@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\MotivasiKomitmen\SoalMotivasiKomitmen;
 
+use App\Livewire\Forms\SoalMotivasiKomitmenForm;
 use App\Models\MotivasiKomitmen\RefMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\SoalMotivasiKomitmen;
 use Livewire\Attributes\Layout;
@@ -17,6 +18,10 @@ class Index extends Component
 
     public $jenis_indikator;
     public $selected_id;
+    public $showModal = false;
+    public $isUpdate = false;
+    public SoalMotivasiKomitmenForm $form;
+    public $editId;
 
     #[Url(as: 'q')]
     public ?string $search = '';
@@ -76,6 +81,83 @@ class Index extends Component
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
+        }
+    }
+
+    public function openModal()
+    {
+        $this->resetValidation();
+        $this->form->reset();
+        $this->isUpdate = false;
+        $this->editId = null;
+        $this->showModal = true;
+        $this->dispatch('modalOpened');
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetValidation();
+        $this->form->reset();
+        $this->isUpdate = false;
+        $this->editId = null;
+    }
+
+    public function edit($id)
+    {
+        try {
+            $data = SoalMotivasiKomitmen::findOrFail($id);
+            $this->editId = $data->id;
+            $this->form->jenis_indikator_id = $data->jenis_indikator_id;
+            $this->form->soal = $data->soal;
+            $this->form->opsi_a = $data->opsi_a;
+            $this->form->poin_opsi_a = $data->poin_opsi_a;
+            $this->form->opsi_b = $data->opsi_b;
+            $this->form->poin_opsi_b = $data->poin_opsi_b;
+            $this->isUpdate = true;
+            $this->showModal = true;
+            $this->resetValidation();
+            $this->dispatch('modalOpened');
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
+        }
+    }
+
+    public function save()
+    {
+        $this->validate();
+        try {
+            if ($this->isUpdate) {
+                $data = SoalMotivasiKomitmen::findOrFail($this->editId);
+                $old_data = $data->getOriginal();
+
+                $data->jenis_indikator_id = $this->form->jenis_indikator_id;
+                $data->soal = $this->form->soal;
+                $data->opsi_a = $this->form->opsi_a;
+                $data->poin_opsi_a = $this->form->poin_opsi_a;
+                $data->opsi_b = $this->form->opsi_b;
+                $data->poin_opsi_b = $this->form->poin_opsi_b;
+                $data->save();
+
+                activity_log($data, 'update', 'soal-motivasi-komitmen', $old_data);
+                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data']);
+            } else {
+                $model = SoalMotivasiKomitmen::create([
+                    'jenis_indikator_id' => $this->form->jenis_indikator_id,
+                    'soal' => $this->form->soal,
+                    'opsi_a' => $this->form->opsi_a,
+                    'poin_opsi_a' => $this->form->poin_opsi_a,
+                    'opsi_b' => $this->form->opsi_b,
+                    'poin_opsi_b' => $this->form->poin_opsi_b,
+                ]);
+
+                activity_log($model, 'create', 'soal-motivasi-komitmen');
+                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil tambah data']);
+            }
+            $this->closeModal();
+            $this->resetPage();
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan']);
         }
     }
 }
