@@ -28,7 +28,6 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
-                            <thead>
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
