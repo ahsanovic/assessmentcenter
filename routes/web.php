@@ -30,8 +30,6 @@ Route::prefix('bkdac')->group(function () {
 
         // event
         Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');
-        Route::get('event/create', \App\Livewire\Admin\Event\Form::class)->name('admin.event.create');
-        Route::get('event/{id}/edit', \App\Livewire\Admin\Event\Form::class)->name('admin.event.edit');
         Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
         Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
 
@@ -136,8 +134,6 @@ Route::prefix('bkdac')->group(function () {
 
         // assessor
         Route::get('assessor', \App\Livewire\Admin\Assessor\Index::class)->name('admin.assessor');
-        Route::get('assessor/create', \App\Livewire\Admin\Assessor\Form::class)->name('admin.assessor.create');
-        Route::get('assessor/{id}/edit', \App\Livewire\Admin\Assessor\Form::class)->name('admin.assessor.edit');
 
         // distribusi peserta
         Route::get('distribusi', \App\Livewire\Admin\DistribusiPeserta\Index::class)->name('admin.distribusi-peserta');
@@ -212,13 +208,9 @@ Route::prefix('bkdac')->group(function () {
 
         // soal cakap digital
         Route::get('soal-cakap-digital', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Index::class)->name('admin.soal-cakap-digital');
-        Route::get('soal-cakap-digital/create', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.create');
-        Route::get('soal-cakap-digital/{id}/edit', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Form::class)->name('admin.soal-cakap-digital.edit');
 
         // soal kompetensi teknis
         Route::get('soal-kompetensi-teknis', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Index::class)->name('admin.soal-kompetensi-teknis');
-        Route::get('soal-kompetensi-teknis/create', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Form::class)->name('admin.soal-kompetensi-teknis.create');
-        Route::get('soal-kompetensi-teknis/{id}/edit', \App\Livewire\Admin\KompetensiTeknis\SoalKompetensiTeknis\Form::class)->name('admin.soal-kompetensi-teknis.edit');
 
         // soal intelektual
         Route::get('soal-intelektual-subtes1', \App\Livewire\Admin\Intelektual\SoalIntelektual\SubTes1\Index::class)->name('admin.soal-intelektual-subtes1');

@@ -34,6 +34,10 @@ class ShowPeserta extends Component
     public $is_active;
     public $isUpdate = false;
 
+    // Modal state
+    public $showModal = false;
+    public $showImportModal = false;
+
     // Filter fields
     public $filter_jenis_peserta;
     public $is_portofolio_completed;
@@ -220,7 +224,14 @@ class ShowPeserta extends Component
     public function openCreateModal()
     {
         $this->resetForm();
-        $this->dispatch('open-modal-form');
+        $this->showModal = true;
+        $this->dispatch('modalOpened');
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetForm();
     }
 
     public function openEditModal($id)
@@ -265,7 +276,8 @@ class ShowPeserta extends Component
         $this->jenis_peserta_id = $peserta->jenis_peserta_id;
         $this->is_active = $peserta->is_active;
 
-        $this->dispatch('open-modal-form');
+        $this->showModal = true;
+        $this->dispatch('modalOpened');
     }
 
     public function save()
@@ -338,7 +350,7 @@ class ShowPeserta extends Component
             }
 
             $this->resetForm();
-            $this->dispatch('close-modal-form');
+            $this->closeModal();
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan: ' . $th->getMessage()]);
         }
@@ -395,7 +407,15 @@ class ShowPeserta extends Component
     {
         $this->reset('file_import');
         $this->resetValidation();
-        $this->dispatch('open-modal-import');
+        $this->showImportModal = true;
+        $this->dispatch('modalOpened');
+    }
+
+    public function closeImportModal()
+    {
+        $this->showImportModal = false;
+        $this->reset('file_import');
+        $this->resetValidation();
     }
 
     public function downloadTemplate()
@@ -588,7 +608,7 @@ class ShowPeserta extends Component
             }
 
             $this->reset('file_import');
-            $this->dispatch('close-modal-import');
+            $this->closeImportModal();
 
             if (count($errors) > 0) {
                 // Kategorikan error

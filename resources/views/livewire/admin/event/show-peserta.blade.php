@@ -10,16 +10,16 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
-                        <div>
-                            <button wire:click="downloadTemplate" class="btn btn-sm btn-outline-secondary btn-icon-text" wire:loading.attr="disabled" wire:target="downloadTemplate">
-                                <span wire:ignore><i class="btn-icon-prepend" data-feather="download"></i></span> Template
+                        <div class="d-flex gap-2">
+                            <button wire:click="downloadTemplate" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" wire:loading.attr="disabled" wire:target="downloadTemplate">
+                                <i class="link-icon" data-feather="download" style="width: 16px; height: 16px;"></i>
+                                <span class="fw-semibold" wire:ignore>Template</span>
                             </button>
-                            <button wire:click="openImportModal" class="btn btn-sm btn-outline-success btn-icon-text">
-                                <span wire:ignore><i class="btn-icon-prepend" data-feather="upload"></i></span> Import
+                            <button wire:click="openImportModal" class="btn btn-sm btn-outline-success d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;">
+                                <i class="link-icon" data-feather="upload" style="width: 16px; height: 16px;"></i>
+                                <span class="fw-semibold" wire:ignore>Import</span>
                             </button>
-                            <button wire:click="openCreateModal" class="btn btn-sm btn-outline-primary btn-icon-text">
-                                <span wire:ignore><i class="btn-icon-prepend" data-feather="edit"></i></span> Tambah Peserta
-                            </button>
+                            <x-modal.btn-add text="Tambah Peserta" icon="plus-circle" action="openCreateModal" />
                         </div>
                     </div>
 
@@ -146,13 +146,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <button
-                                                wire:click="openEditModal('{{ $item->id }}')"
-                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"
-                                            >
-                                                <span wire:ignore><i class="link-icon" data-feather="edit-3"></i></span>
-                                            </button>
+                                            <x-table.btn-edit :id="$item->id" action="openEditModal" />
                                             <button
                                                 wire:click="deleteConfirmation('{{ $item->id }}')"
                                                 class="btn btn-sm btn-outline-danger btn-icon rounded-circle border-0 shadow-sm" style="transition: background 0.2s;"
@@ -181,19 +175,48 @@
     </div>
 
     <!-- Modal Form Peserta -->
-    <div class="modal fade" id="modalFormPeserta" tabindex="-1" aria-labelledby="modalFormPesertaLabel" aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalFormPesertaLabel">{{ $isUpdate ? 'Edit' : 'Tambah' }} Peserta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if($showModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-{{ $isUpdate ? 'edit-'.$selected_id : 'create' }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            @if($isUpdate)
+                                <i class="link-icon text-white" data-feather="edit-3" style="width: 24px; height: 24px;"></i>
+                            @else
+                                <i class="link-icon text-white" data-feather="plus-circle" style="width: 24px; height: 24px;"></i>
+                            @endif
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                {{ $isUpdate ? 'Edit Peserta' : 'Tambah Peserta Baru' }}
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                {{ $isUpdate ? 'Perbarui informasi peserta' : 'Isi form untuk menambahkan peserta' }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeModal" class="btn-close btn-close-white" 
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
                 </div>
-                <form wire:submit="save">
-                    <div class="modal-body">
+
+                <!-- Modal Body -->
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa; max-height: 70vh; overflow-y: auto;">
+                    <form wire:submit="save">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Jenis Peserta <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">
+                                        <i class="link-icon me-2" data-feather="users"></i>
+                                        Jenis Peserta <span class="text-danger">*</span>
+                                    </label>
                                     <select wire:model.live="jenis_peserta_id" class="form-select @error('jenis_peserta_id') is-invalid @enderror">
                                         <option value="">- Pilih -</option>
                                         @foreach ($option_jenis_peserta as $key => $item)
@@ -201,150 +224,155 @@
                                         @endforeach
                                     </select>
                                     @error('jenis_peserta_id')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Nama Peserta <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="nama" class="form-control @error('nama') is-invalid @enderror" placeholder="Contoh: Dr. BUDI SANTOSO, S.H., M.H.">
-                                    <small class="text-muted">
-                                        <i class="link-icon" data-feather="info" style="width: 12px; height: 12px;"></i>
-                                        Gelar akan terdeteksi otomatis. Contoh: "Dr. BUDI SANTOSO, S.H., M.H." atau "BUDI SANTOSO" (tanpa gelar)
-                                    </small>
-                                    @error('nama')
-                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                         </div>
 
+                        <x-form.input
+                            label="Nama Peserta"
+                            icon="user"
+                            model="nama"
+                            placeholder="Contoh: Dr. BUDI SANTOSO, S.H., M.H."
+                            :required="true"
+                        />
+                        <small class="text-muted d-block mb-3" style="margin-top: -10px;">
+                            <i class="link-icon" data-feather="info" style="width: 12px; height: 12px;"></i>
+                            Gelar akan terdeteksi otomatis. Contoh: "Dr. BUDI SANTOSO, S.H., M.H." atau "BUDI SANTOSO" (tanpa gelar)
+                        </small>
+
                         @if ($jenis_peserta_id == 1)
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">NIP <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="nip" class="form-control @error('nip') is-invalid @enderror" placeholder="18 digit">
-                                    @error('nip')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                <x-form.input
+                                    label="NIP"
+                                    icon="credit-card"
+                                    model="nip"
+                                    placeholder="18 digit"
+                                    :required="true"
+                                />
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Jabatan <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="jabatan" class="form-control @error('jabatan') is-invalid @enderror" placeholder="Masukkan jabatan">
-                                    @error('jabatan')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                        <x-form.input
+                            label="Jabatan"
+                            icon="briefcase"
+                            model="jabatan"
+                            placeholder="Masukkan jabatan"
+                            :required="true"
+                        />
                         @endif
 
                         @if ($jenis_peserta_id == 2)
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">NIK <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="nik" class="form-control @error('nik') is-invalid @enderror" placeholder="16 digit">
-                                    @error('nik')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                <x-form.input
+                                    label="NIK"
+                                    icon="credit-card"
+                                    model="nik"
+                                    placeholder="16 digit"
+                                    :required="true"
+                                />
                             </div>
                         </div>
                         @endif
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Unit Kerja <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="unit_kerja" class="form-control @error('unit_kerja') is-invalid @enderror" placeholder="Masukkan unit kerja">
-                                    @error('unit_kerja')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Instansi <span class="text-danger">*</span></label>
-                                    <input type="text" wire:model="instansi" class="form-control @error('instansi') is-invalid @enderror" placeholder="Masukkan instansi">
-                                    @error('instansi')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                        <x-form.input
+                            label="Unit Kerja"
+                            icon="home"
+                            model="unit_kerja"
+                            placeholder="Masukkan unit kerja"
+                            :required="true"
+                        />
+
+                        <x-form.input
+                            label="Instansi"
+                            icon="globe"
+                            model="instansi"
+                            placeholder="Masukkan instansi"
+                            :required="true"
+                        />
+
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Password {{ $isUpdate ? '' : '*' }}</label>
-                                    <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ $isUpdate ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter' }}">
-                                    @error('password')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                <x-form.input
+                                    label="Password {{ $isUpdate ? '' : '*' }}"
+                                    icon="lock"
+                                    model="password"
+                                    type="password"
+                                    :placeholder="$isUpdate ? 'Kosongkan jika tidak diubah' : 'Minimal 8 karakter'"
+                                    :required="!$isUpdate"
+                                />
                             </div>
                         </div>
 
                         @if ($isUpdate)
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Status</label>
-                                    <div>
-                                        <div class="form-check form-check-inline">
-                                            <input type="radio" class="form-check-input" wire:model="is_active" id="statusAktif" value="true">
-                                            <label class="form-check-label" for="statusAktif">Aktif</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input type="radio" class="form-check-input" wire:model="is_active" id="statusNonAktif" value="false">
-                                            <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
-                                        </div>
-                                    </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="link-icon me-2" data-feather="toggle-left"></i>
+                                Status
+                            </label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" wire:model="is_active" id="statusAktif" value="true">
+                                    <label class="form-check-label" for="statusAktif">Aktif</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" class="form-check-input" wire:model="is_active" id="statusNonAktif" value="false">
+                                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
                                 </div>
                             </div>
                         </div>
                         @endif
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-inverse-danger btn-icon-text" data-bs-dismiss="modal">
-                            <i class="btn-icon-prepend" data-feather="x"></i>
-                            Batal
-                        </button>
-                        <button type="submit" class="btn btn-inverse-success btn-icon-text">
-                            <i class="btn-icon-prepend" data-feather="save"></i>
-                            <span wire:loading.remove wire:target="save">Simpan</span>
-                            <span wire:loading wire:target="save">Menyimpan...</span>
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel />
+                    <x-modal.btn-save :isUpdate="$isUpdate" />
+                </div>
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Modal Import Peserta -->
-    <div class="modal fade" id="modalImportPeserta" tabindex="-1" aria-labelledby="modalImportPesertaLabel" aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalImportPesertaLabel">Import Peserta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    @if($showImportModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-import"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            <i class="link-icon text-white" data-feather="upload" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                Import Peserta
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                Upload file excel untuk import data peserta
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeImportModal" class="btn-close btn-close-white" 
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
                 </div>
-                <form wire:submit="importPeserta">
-                    <div class="modal-body">
-                        <div class="alert alert-info">
+
+                <!-- Modal Body -->
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                    <form wire:submit="importPeserta">
+                        <div class="alert alert-warning" style="border-radius: 10px; border: none;">
                             <small>
-                                <strong>Petunjuk:</strong>
-                                <ol class="mb-0 ps-3">
+                                <strong><i class="link-icon me-1" data-feather="warning" style="width: 14px; height: 14px;"></i> Petunjuk:</strong>
+                                <ol class="mb-0 ps-3 mt-1">
                                     <li>Download template terlebih dahulu</li>
                                     <li>Isi data sesuai format template</li>
                                     <li>Nama bisa ditulis dengan gelar (contoh: "Dr. BUDI SANTOSO, S.H., M.H.")</li>
@@ -354,63 +382,86 @@
                             </small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">File Excel (.xlsx, .xls)</label>
+                            <label class="form-label fw-semibold">
+                                <i class="link-icon me-2" data-feather="file"></i>
+                                File Excel (.xlsx, .xls)
+                            </label>
                             <input type="file" wire:model="file_import" class="form-control @error('file_import') is-invalid @enderror" accept=".xlsx,.xls">
                             @error('file_import')
-                                <span class="invalid-feedback">{{ $message }}</span>
+                            <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <div wire:loading wire:target="file_import" class="text-muted mt-1">
                                 <small>Mengupload file...</small>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-inverse-danger btn-icon-text" data-bs-dismiss="modal">
-                            <i class="btn-icon-prepend" data-feather="x"></i>
-                            Batal
-                        </button>
-                        <button type="submit" class="btn btn-inverse-success btn-icon-text" wire:loading.attr="disabled" wire:target="importPeserta,file_import">
-                            <i class="btn-icon-prepend" data-feather="upload"></i>
-                            <span wire:loading.remove wire:target="importPeserta">Import</span>
-                            <span wire:loading wire:target="importPeserta">Mengimport...</span>
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel action="closeImportModal" />
+                    <button 
+                        type="button" 
+                        wire:click="importPeserta"
+                        class="btn btn-primary d-flex align-items-center gap-2" 
+                        style="padding: 10px 24px; border-radius: 10px; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); transition: all 0.2s ease;"
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)'"
+                        wire:loading.attr="disabled" wire:target="importPeserta,file_import"
+                    >
+                        <i class="link-icon" data-feather="upload" style="width: 18px; height: 18px;"></i>
+                        <span wire:loading.remove wire:target="importPeserta">Import</span>
+                        <span wire:loading wire:target="importPeserta">Mengimport...</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Modal Import Errors -->
     <div class="modal fade" id="modalImportErrors" tabindex="-1" aria-labelledby="modalImportErrorsLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalImportErrorsLabel">
-                        <i class="link-icon" data-feather="alert-circle"></i>
-                        Detail Error Import
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center" 
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            <i class="link-icon text-white" data-feather="alert-circle" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                Detail Error Import
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                Berikut detail data yang gagal diimport
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa; max-height: 70vh; overflow-y: auto;">
                     <!-- Summary Card -->
-                    <div class="card mb-3">
+                    <div class="card mb-3" style="border-radius: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                         <div class="card-body">
-                            <h6 class="card-title">Ringkasan Import</h6>
+                            <h6 class="card-title fw-bold">Ringkasan Import</h6>
                             <div class="row" id="importSummary">
                                 <div class="col-md-3">
-                                    <div class="text-center p-3 border rounded bg-success-subtle">
+                                    <div class="text-center p-3 border rounded bg-success-subtle" style="border-radius: 10px !important;">
                                         <h4 class="text-success mb-1" id="successCount">0</h4>
                                         <small class="text-muted">Berhasil</small>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="text-center p-3 border rounded bg-danger-subtle">
+                                    <div class="text-center p-3 border rounded bg-danger-subtle" style="border-radius: 10px !important;">
                                         <h4 class="text-danger mb-1" id="failedCount">0</h4>
                                         <small class="text-muted">Gagal</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="p-2 border rounded bg-light">
+                                    <div class="p-2 border rounded bg-light" style="border-radius: 10px !important;">
                                         <small><strong>Kategori Error:</strong></small>
                                         <ul class="list-unstyled mb-0 mt-2" id="errorCategories" style="font-size: 0.875rem;">
                                         </ul>
@@ -421,9 +472,9 @@
                     </div>
 
                     <!-- Error Details -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="mb-0">Detail Error per Baris</h6>
+                    <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <div class="card-header" style="border-radius: 12px 12px 0 0;">
+                            <h6 class="mb-0 fw-bold">Detail Error per Baris</h6>
                         </div>
                         <div class="card-body" style="max-height: 400px; overflow-y: auto;">
                             <div class="table-responsive">
@@ -441,80 +492,134 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px;">
+                    <button type="button" class="btn btn-light d-flex align-items-center gap-2" data-bs-dismiss="modal"
+                            style="padding: 10px 24px; border-radius: 10px; font-weight: 600; border: 2px solid #e0e0e0;">
+                        <i class="link-icon" data-feather="x" style="width: 18px; height: 18px;"></i>
+                        Tutup
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </div>
+
+@push('scripts')
+<script>
+    // Fungsi untuk initialize Feather icons
+    function initFeatherIcons() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+
+    // Initialize saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', initFeatherIcons);
+
+    // Initialize setelah Livewire initialized
+    document.addEventListener('livewire:initialized', () => {
+        initFeatherIcons();
+
+        // Hook untuk setiap morph update
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        });
+
+        // Hook untuk setiap commit
+        Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+            succeed(({ snapshot, effect }) => {
+                requestAnimationFrame(() => {
+                    initFeatherIcons();
+                });
+            });
+        });
+    });
+
+    // Listen untuk event custom 'modalOpened'
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('modalOpened', () => {
+            setTimeout(() => {
+                initFeatherIcons();
+            }, 100);
+        });
+    });
+
+    // MutationObserver untuk mendeteksi perubahan DOM
+    const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1 && (
+                        node.classList?.contains('modal') || 
+                        node.querySelector?.('[data-feather]')
+                    )) {
+                        shouldUpdate = true;
+                    }
+                });
+            }
+        });
+        if (shouldUpdate) {
+            requestAnimationFrame(() => {
+                initFeatherIcons();
+            });
+        }
+    });
+
+    // Mulai observe setelah DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+@endpush
 
 @push('js')
     @script()
         <script>
-            let modalForm = null;
-            let modalImport = null;
             let modalErrors = null;
 
-            // Initialize modals when document is ready
+            // Initialize modal errors (masih pakai Bootstrap JS karena dikelola JS)
             document.addEventListener('DOMContentLoaded', function() {
-                const modalFormEl = document.getElementById('modalFormPeserta');
-                const modalImportEl = document.getElementById('modalImportPeserta');
                 const modalErrorsEl = document.getElementById('modalImportErrors');
-                
-                console.log('Initializing modals...');
-                console.log('modalFormEl:', modalFormEl);
-                console.log('modalImportEl:', modalImportEl);
-                console.log('modalErrorsEl:', modalErrorsEl);
-                
-                if (modalFormEl) modalForm = new bootstrap.Modal(modalFormEl);
-                if (modalImportEl) modalImport = new bootstrap.Modal(modalImportEl);
                 if (modalErrorsEl) modalErrors = new bootstrap.Modal(modalErrorsEl);
-                
-                console.log('Modals initialized:', { modalForm, modalImport, modalErrors });
             });
 
-            // Fallback dengan jQuery jika ada
             $(document).ready(function() {
-                if (!modalForm || !modalImport || !modalErrors) {
-                    const modalFormEl = document.getElementById('modalFormPeserta');
-                    const modalImportEl = document.getElementById('modalImportPeserta');
+                if (!modalErrors) {
                     const modalErrorsEl = document.getElementById('modalImportErrors');
-                    
-                    if (modalFormEl && !modalForm) modalForm = new bootstrap.Modal(modalFormEl);
-                    if (modalImportEl && !modalImport) modalImport = new bootstrap.Modal(modalImportEl);
                     if (modalErrorsEl && !modalErrors) modalErrors = new bootstrap.Modal(modalErrorsEl);
-                    
-                    console.log('Modals initialized via jQuery:', { modalForm, modalImport, modalErrors });
                 }
             });
 
             // Function untuk menampilkan error import dengan detail
             window.showImportErrors = function(data) {
-                console.log('showImportErrors called with data:', data);
-                
                 const { errors, summary, imported, failed } = data;
                 
-                console.log('Extracted values - errors:', errors, 'imported:', imported, 'failed:', failed);
-                
-                // Function untuk update konten modal
                 const updateModalContent = function() {
-                    console.log('Updating modal content...');
-                    
-                    // Update summary counts
                     const successCountEl = document.getElementById('successCount');
                     const failedCountEl = document.getElementById('failedCount');
                     
-                    if (successCountEl) {
-                        successCountEl.textContent = imported || 0;
-                        console.log('Updated success count to:', imported);
-                    }
-                    if (failedCountEl) {
-                        failedCountEl.textContent = failed || 0;
-                        console.log('Updated failed count to:', failed);
-                    }
+                    if (successCountEl) successCountEl.textContent = imported || 0;
+                    if (failedCountEl) failedCountEl.textContent = failed || 0;
                     
-                    // Update error categories
                     const categoriesEl = document.getElementById('errorCategories');
                     
                     if (categoriesEl) {
@@ -535,35 +640,27 @@
                                 const li = document.createElement('li');
                                 li.innerHTML = `${categoryLabels[key]}: <strong>${summary[key]}</strong> baris`;
                                 categoriesEl.appendChild(li);
-                                console.log('Added category:', key, summary[key]);
                             }
                         });
                         
                         if (!hasCategories) {
                             categoriesEl.innerHTML = '<li>Tidak ada kategori error</li>';
                         }
-                        
-                        console.log('Categories updated, innerHTML:', categoriesEl.innerHTML);
                     }
                     
-                    // Update error list dengan format table
                     const errorList = document.getElementById('importErrorList');
-                    console.log('Error list element:', errorList);
                     
                     if (errorList && errors && errors.length > 0) {
                         errorList.innerHTML = '';
                         
                         errors.forEach((error, index) => {
-                            console.log('Processing error', index, ':', error);
                             const tr = document.createElement('tr');
                             
-                            // Extract baris number dan error message
                             const match = error.match(/Baris (\d+): (.+)/);
                             if (match) {
                                 const barisNum = match[1];
                                 const errorMsg = match[2];
                                 
-                                // Determine icon based on error type
                                 let icon = '❌';
                                 let badgeClass = 'badge bg-danger';
                                 
@@ -598,58 +695,29 @@
                             errorList.appendChild(tr);
                         });
                     }
+
+                    // Re-init feather icons in modal
+                    setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50);
                 };
                 
-                // Show modal dan update content setelah modal shown
                 if (modalErrors) {
-                    // Get modal element
                     const modalEl = document.getElementById('modalImportErrors');
-                    
-                    // Update content immediately
                     updateModalContent();
                     
-                    // Listen untuk shown.bs.modal event untuk re-update jika perlu
                     modalEl.addEventListener('shown.bs.modal', function handler() {
-                        console.log('Modal fully shown, updating content again...');
                         updateModalContent();
-                        // Remove listener setelah digunakan
                         modalEl.removeEventListener('shown.bs.modal', handler);
                     });
                     
-                    // Show modal
                     modalErrors.show();
-                    console.log('Modal show() called');
-                } else {
-                    console.error('modalErrors is not initialized');
                 }
             };
 
             $wire.on('show-import-errors', (event) => {
-                console.log('Event received:', event);
-                // Livewire v3 passes data sebagai object dalam array
                 const data = Array.isArray(event) ? event[0] : event;
-                console.log('Processed data:', data);
-                
-                // Tunggu sebentar untuk memastikan DOM siap
                 setTimeout(() => {
                     window.showImportErrors(data);
                 }, 100);
-            });
-
-            $wire.on('open-modal-form', () => {
-                modalForm.show();
-            });
-
-            $wire.on('close-modal-form', () => {
-                modalForm.hide();
-            });
-
-            $wire.on('open-modal-import', () => {
-                modalImport.show();
-            });
-
-            $wire.on('close-modal-import', () => {
-                modalImport.hide();
             });
 
             $wire.on('show-delete-confirmation', () => {

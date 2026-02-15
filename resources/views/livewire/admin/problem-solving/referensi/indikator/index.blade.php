@@ -61,8 +61,11 @@
     </div>
 
     @if($showModal)
-    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);" wire:click.self="closeModal">
-        <div class="modal-dialog modal-xl modal-dialog-centered" style="animation: slideDown 0.3s ease-out;">
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+         wire:key="modal-{{ $isUpdate ? 'edit-'.$editId : 'create' }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-xl" style="animation: slideDown 0.3s ease-out;">
             <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
                 <!-- Modal Header -->
                 <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
