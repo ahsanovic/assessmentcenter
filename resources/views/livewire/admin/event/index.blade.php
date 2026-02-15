@@ -108,17 +108,21 @@
                                             </a>
                                         </td>
                                         @else
-                                        <td></td>
+                                        <td><span class="badge bg-secondary">Tidak ada assessor</span></td>
                                         @endif
                                         <td>
-                                            @if ($item->is_open == 'false')
-                                                <span class="badge bg-danger" wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')" style="cursor: pointer;">
-                                                    ✖ Tutup
-                                                </span>
+                                            @if ($item->metode_tes_id == 1)
+                                                @if ($item->is_open == 'false')
+                                                    <span class="badge bg-danger" wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')" style="cursor: pointer;">
+                                                        ✖ Tutup
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-success" wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')" style="cursor: pointer;">
+                                                        ✔ Buka
+                                                    </span>
+                                                @endif
                                             @else
-                                                <span class="badge bg-success" wire:click="changeStatusPortofolioConfirmation('{{ $item->id }}')" style="cursor: pointer;">
-                                                    ✔ Buka
-                                                </span>
+                                            <span class="badge bg-secondary">Tidak ada portofolio</span>
                                             @endif
                                         </td>
                                         <td>
