@@ -299,6 +299,22 @@
         
         });
     </script>  
+    <script>
+        if (!window.__adminNavigateInit) {
+            window.__adminNavigateInit = true;
+            document.addEventListener('livewire:navigated', () => {
+                if (typeof feather !== 'undefined') feather.replace();
+
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                    var instance = bootstrap.Tooltip.getInstance(el);
+                    if (instance) instance.dispose();
+                    new bootstrap.Tooltip(el);
+                });
+
+                initTooltips();
+            });
+        }
+    </script>
     @stack('js')
 </body>
 

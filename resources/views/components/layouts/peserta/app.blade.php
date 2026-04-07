@@ -68,8 +68,8 @@
 
         <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('assets/vendors/feather-icons/feather.min.js') }}"></script>
-        {{-- <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
-        <script src="{{ asset('assets/js/flatpickr.js') }}"></script> --}}
+        <script src="{{ asset('assets/vendors/flatpickr/flatpickr.min.js') }}"></script>
+        {{-- <script src="{{ asset('assets/js/flatpickr.js') }}"></script> --}}
 
             <!-- Plugin js for this page -->
         <script src="{{ asset('assets/vendors/ace-builds/src-min/ace.js') }}"></script>
@@ -119,6 +119,47 @@
             });
         </script>
         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <script>
+            function initFlatpickrs(container) {
+                (container || document).querySelectorAll('[data-flatpickr]').forEach(input => {
+                    if (input._flatpickr) return;
+                    flatpickr(input, {
+                        dateFormat: 'd-m-Y',
+                        allowInput: false,
+                        defaultDate: input.value || null,
+                        onChange: (_, dateStr) => {
+                            input.value = dateStr;
+                            input.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    });
+                });
+            }
+
+            document.addEventListener('livewire:initialized', () => {
+                initFlatpickrs();
+                Livewire.hook('morph.added', ({ el }) => {
+                    if (el.querySelectorAll) initFlatpickrs(el);
+                });
+            });
+
+            document.addEventListener('livewire:navigated', () => {
+                initFlatpickrs();
+            });
+        </script>
+        <script>
+            if (!window.__pesertaNavigateInit) {
+                window.__pesertaNavigateInit = true;
+                document.addEventListener('livewire:navigated', () => {
+                    if (typeof feather !== 'undefined') feather.replace();
+
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                        var instance = bootstrap.Tooltip.getInstance(el);
+                        if (instance) instance.dispose();
+                        new bootstrap.Tooltip(el);
+                    });
+                });
+            }
+        </script>
         @stack('js')
     </body>
 </html>

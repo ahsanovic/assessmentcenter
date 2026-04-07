@@ -103,6 +103,20 @@
                 });
             });
         </script>
+        <script>
+            if (!window.__assessorNavigateInit) {
+                window.__assessorNavigateInit = true;
+                document.addEventListener('livewire:navigated', () => {
+                    if (typeof feather !== 'undefined') feather.replace();
+
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                        var instance = bootstrap.Tooltip.getInstance(el);
+                        if (instance) instance.dispose();
+                        new bootstrap.Tooltip(el);
+                    });
+                });
+            }
+        </script>
         @stack('js')
     </body>
 </html>

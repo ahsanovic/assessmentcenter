@@ -19,10 +19,13 @@
             </form>
 
             <ul class="navbar-nav">
-                <li class="theme-switcher-wrapper nav-item">
-                    <input type="checkbox" value="" id="theme-switcher">
+                <li class="theme-switcher-wrapper nav-item"
+                    x-data="{ dark: localStorage.getItem('theme') === 'dark' }">
+                    <input type="checkbox" value="" id="theme-switcher"
+                           :checked="dark"
+                           @change="dark = $event.target.checked; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light')">
                     <label for="theme-switcher">
-                        <div class="box">
+                        <div class="box" :class="dark ? 'dark' : 'light'">
                             <div class="ball"></div>
                             <div class="icons">
                                 <i class="feather icon-sun"></i>
@@ -32,13 +35,12 @@
                     </label>
                 </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <li class="nav-item dropdown" x-data="{ open: false }" @click.outside="open = false">
+                    <a class="nav-link dropdown-toggle" href="#" @click.prevent="open = !open" :class="{ show: open }" :aria-expanded="open">
                         <img class="w-30px h-30px ms-1 rounded-circle" src="{{ asset('assets/images/admin.png') }}"
                             alt="profile">
                     </a>
-                    <div class="dropdown-menu p-0" aria-labelledby="profileDropdown">
+                    <div class="dropdown-menu p-0" data-bs-popper="static" :class="{ show: open }">
                         <div class="d-flex flex-column align-items-center border-bottom px-5 py-3">
                             <div class="mb-3">
                                 <img class="w-80px h-80px rounded-circle" src="{{ asset('assets/images/admin.png') }}"
