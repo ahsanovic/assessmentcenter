@@ -61,10 +61,17 @@
                             </div>
                         </div>
                         <p class="card-text text-muted mb-4">Lengkapi data portofolio Anda untuk penilaian assessment center.</p>
-                        <a href="{{ route('peserta.portofolio') }}" class="btn btn-info w-100" wire:navigate>
-                            <i class="me-2" data-feather="arrow-right"></i>
-                            Mulai Mengisi
-                        </a>
+                        @if($peserta->event->is_open == 'false')
+                            <a href="#" class="btn btn-info w-100 disabled" tabindex="-1" aria-disabled="true" style="pointer-events: none;">
+                                <i class="me-2" data-feather="arrow-right"></i>
+                                Akses Ditutup
+                            </a>
+                        @else
+                            <a href="{{ route('peserta.portofolio') }}" class="btn btn-info w-100" wire:navigate>
+                                <i class="me-2" data-feather="arrow-right"></i>
+                                Mulai Mengisi
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -21,6 +21,10 @@ class PortofolioAccess
             return redirect()->route('peserta.dashboard');
         }
 
+        if (auth()->guard('peserta')->user()->event->is_open == 'false') {
+            return redirect()->route('peserta.dashboard');
+        }
+
         return $next($request);
     }
 }
