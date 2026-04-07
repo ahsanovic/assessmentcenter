@@ -149,8 +149,14 @@
                             </script>
                             
                             <div class="d-grid mt-4" wire:ignore>
-                                <button type="submit" class="btn btn-lg text-white d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #0d6efd 0%, #01a7f7 100%); border: none; border-radius: 0.75rem; padding: 0.875rem;">
-                                    <i data-feather="log-in" style="width: 20px; height: 20px;"></i>
+                                <button 
+                                    type="submit" 
+                                    class="btn btn-lg text-white d-flex align-items-center justify-content-center gap-2" 
+                                    style="background: linear-gradient(135deg, #0d6efd 0%, #01a7f7 100%); border: none; border-radius: 0.75rem; padding: 0.875rem;"
+                                    wire:loading.attr="disabled"
+                                >
+                                    <span wire:loading wire:target="login" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    <i data-feather="log-in" style="width: 20px; height: 20px;" wire:loading.remove></i>
                                     <span class="fw-semibold">Masuk</span>
                                 </button>
                             </div>
