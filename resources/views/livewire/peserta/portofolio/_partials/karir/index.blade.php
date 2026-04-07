@@ -9,28 +9,10 @@
     </div>
 
     <!-- Header Card -->
-    <div class="card border-0 shadow-sm mb-4" 
-        style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <div class="card-body p-4">
-            <div class="d-flex align-items-center">
-                <div class="rounded-circle p-3 me-3"
-                    style="background: rgba(102, 126, 234, 0.13); color: #667eea;" wire:ignore>
-                    <i data-feather="folder" style="width: 32px; height: 32px;"></i>
-                </div>
-                <div>
-                    <h3 class="mb-1" style="color: #3c3264; font-weight: 700;">
-                        Kelengkapan Portofolio
-                    </h3>
-                    <p class="mb-0" style="color: #585e74; opacity: .85; font-weight: 500;">
-                        Lengkapi data diri Anda dengan teliti
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-portofolio.header-card />
 
     <!-- Info Alert -->
-    <x-alert-info
+    <x-portofolio.alert-info
         title="Petunjuk Pengisian Portofolio"
         description="Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh. Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!"
         icon="info"
@@ -38,7 +20,7 @@
 
     <div class="row">
         <div class="row">
-            <x-tab-nav :nav="[
+            <x-portofolio.tab-nav :nav="[
                 ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null, 'icon' => 'user', 'color' => 'primary'],
                 ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null, 'icon' => 'book', 'color' => 'success'],
                 ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null, 'icon' => 'award', 'color' => 'warning'],

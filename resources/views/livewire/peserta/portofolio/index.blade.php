@@ -5,7 +5,8 @@
             ['url' => null, 'title' => 'Portofolio'],
         ]" />
     </div>
-    <x-alert-info
+    
+    <x-portofolio.alert-info
         title="Petunjuk Pengisian Portofolio"
         description="Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh. Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!"
         icon="info"
@@ -13,7 +14,7 @@
 
     <div class="row">
         @if ($portofolio->metode_tes_id == 1)
-        <x-tab-nav :nav="[
+        <x-portofolio.tab-nav :nav="[
             ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null, 'icon' => 'user', 'color' => 'primary'],
             ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null, 'icon' => 'book', 'color' => 'success'],
             ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null, 'icon' => 'award', 'color' => 'warning'],
