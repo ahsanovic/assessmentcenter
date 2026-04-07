@@ -44,10 +44,16 @@ class KarirForm extends Component
         }
     }
 
-    private function _getDifferenceYears($value)
+    private function _getDifferenceYears($tahunSelesai)
     {
-        $thn_selesai = date('Y', strtotime($value));
-        $thn_sekarang = date('Y');
+        // Ambil tahun dari tanggal selesai pelatihan
+        $thn_selesai = (int)$tahunSelesai;
+        // Ambil tahun berjalan (tahun sekarang)
+        $thn_sekarang = (int)date('Y');
+        // Jika tahun selesai lebih besar dari tahun sekarang (masa depan), anggap selisih 0
+        if ($thn_selesai > $thn_sekarang) {
+            return 0;
+        }
         $selisih = $thn_sekarang - $thn_selesai;
 
         return $selisih;
@@ -59,7 +65,7 @@ class KarirForm extends Component
 
         try {
             if ($this->isUpdate) {
-                $selisih = $this->_getDifferenceYears(strtotime($this->form->tahun_selesai));
+                $selisih = $this->_getDifferenceYears($this->form->tahun_selesai);
                 if ($selisih > 5) {
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'data yang dapat dimasukkan hanya 5 tahun terakhir']);
                     return;
@@ -79,7 +85,7 @@ class KarirForm extends Component
                 
                 $this->redirect(route('peserta.karir'), true);
             } else {
-                $selisih = $this->_getDifferenceYears(strtotime($this->form->tahun_selesai));
+                $selisih = $this->_getDifferenceYears($this->form->tahun_selesai);
                 if ($selisih > 5) {
                     $this->dispatch('toast', ['type' => 'error', 'message' => 'data yang dapat dimasukkan hanya 5 tahun terakhir']);
                     return;
