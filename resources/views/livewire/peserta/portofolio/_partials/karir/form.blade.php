@@ -31,31 +31,21 @@
     </div>
 
     <!-- Info Alert -->
-    <div class="card border-0 shadow-sm mb-4 border-start border-4 border-danger">
-        <div class="card-body p-3">
-            <div class="d-flex align-items-start">
-                <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-3 flex-shrink-0" wire:ignore>
-                    <i data-feather="briefcase" class="text-danger" style="width: 20px; height: 20px;"></i>
-                </div>
-                <div>
-                    <strong class="text-danger d-block mb-1">Riwayat Karir</strong>
-                    <small class="text-muted">
-                        Masukkan riwayat karir 5 tahun terakhir termasuk jabatan dan tanggung jawab Anda
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-alert-info
+        title="Riwayat Karir"
+        description="Masukkan riwayat karir 5 tahun terakhir termasuk jabatan dan tanggung jawab Anda"
+        icon="info"
+        color="info" />
 
     <div class="row">
         <div class="row">
             <x-tab-nav :nav="[
-                ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null],
-                ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null],
-                ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null],
-                ['url' => null, 'title' => 'Karir', 'active' => 'active'],
-                ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null],
-                ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
+                ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null, 'icon' => 'user', 'color' => 'primary'],
+                ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null, 'icon' => 'book', 'color' => 'success'],
+                ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null, 'icon' => 'award', 'color' => 'warning'],
+                ['url' => null, 'title' => 'Karir', 'active' => 'active', 'icon' => 'briefcase', 'color' => 'info'],
+                ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null, 'icon' => 'star', 'color' => 'danger'],
+                ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null, 'icon' => 'user-check', 'color' => 'primary'],
             ]" />
             <div class="col-8 col-md-10 ps-0">
                 <div class="card border-0 shadow-sm">

@@ -5,34 +5,21 @@
             ['url' => null, 'title' => 'Portofolio'],
         ]" />
     </div>
-    <!-- Alert Info -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm border-start border-4 border-info">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3">
-                            <i class="text-info" data-feather="info" style="width: 24px; height: 24px;"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-2 text-info">Petunjuk Pengisian Portofolio</h6>
-                            <p class="mb-0 text-muted">Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh. Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-alert-info
+        title="Petunjuk Pengisian Portofolio"
+        description="Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh. Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!"
+        icon="info"
+        color="info" />
 
     <div class="row">
         @if ($portofolio->metode_tes_id == 1)
         <x-tab-nav :nav="[
-            ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null],
-            ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null],
-            ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null],
-            ['url' => route('peserta.karir'), 'title' => 'Karir', 'active' => null],
-            ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null],
-            ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null],
+            ['url' => route('peserta.biodata'), 'title' => 'Biodata', 'active' => null, 'icon' => 'user', 'color' => 'primary'],
+            ['url' => route('peserta.pendidikan'), 'title' => 'Pendidikan', 'active' => null, 'icon' => 'book', 'color' => 'success'],
+            ['url' => route('peserta.pelatihan'), 'title' => 'Pelatihan', 'active' => null, 'icon' => 'award', 'color' => 'warning'],
+            ['url' => route('peserta.karir'), 'title' => 'Karir', 'active' => null, 'icon' => 'briefcase', 'color' => 'info'],
+            ['url' => route('peserta.pengalaman'), 'title' => 'Pengalaman Spesifik', 'active' => null, 'icon' => 'star', 'color' => 'danger'],
+            ['url' => route('peserta.penilaian'), 'title' => 'Penilaian Pribadi', 'active' => null, 'icon' => 'user-check', 'color' => 'primary'],
         ]" />
         @endif
         <div class="col-8 col-md-10 ps-0">
