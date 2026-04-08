@@ -12,10 +12,18 @@
                         <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                         <div class="d-flex gap-2">
                             @if ($event->metode_tes_id == 1)
-                            <button wire:click="downloadPortofolio" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" wire:loading.attr="disabled" wire:target="downloadPortofolio">
+                            <button 
+                                wire:click="downloadPortofolio" 
+                                class="btn btn-sm btn-outline-danger d-flex align-items-center gap-2" 
+                                style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" 
+                                wire:loading.attr="disabled" 
+                                wire:target="downloadPortofolio"
+                                @if($event->peserta->isEmpty()) disabled @endif
+                            >
                                 <i class="link-icon" data-feather="download" style="width: 16px; height: 16px;"></i>
                                 <span class="fw-semibold" wire:ignore>Download Portofolio</span>
                             </button>
+                       
                             @endif
                             <button wire:click="downloadTemplate" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" wire:loading.attr="disabled" wire:target="downloadTemplate">
                                 <i class="link-icon" data-feather="download" style="width: 16px; height: 16px;"></i>
