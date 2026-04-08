@@ -379,6 +379,34 @@
         <div class="qa-block">
             <div class="qa-q">{{ $index + 1 }}. {{ $item->pertanyaan }}</div>
             <div class="qa-a">{!! $jawab ? strip_tags($jawab, '<p><br><strong><b><i><em><u>') : '<em>Belum dijawab</em>' !!}</div>
+            @php
+                $option_kode = [
+                    1 => 'OPH',
+                    2 => 'MP',
+                    3 => 'INT',
+                    4 => 'KS',
+                    5 => 'PP',
+                    6 => 'KOM',
+                    7 => 'PB',
+                    8 => 'PDOL',
+                    9 => 'PK',
+                ];
+                $kode = collect(json_decode($item->kode, true))->mapWithKeys(fn($item) => [$item => true])->toArray();
+            @endphp
+            <div style="text-align: right; margin-top: 10px; font-size: 10px;">
+                @php
+                    $kodeList = collect($kode)
+                        ->keys()
+                        ->map(function($key) use ($option_kode) {
+                            return strtolower($option_kode[$key] ?? $key);
+                        })
+                        ->toArray();
+                @endphp
+                @if(count($kodeList) > 0)
+                    <span>({{ implode(',', $kodeList) }})</span>
+                @endif
+            </div>
+       
         </div>
     @empty
         <p>Tidak ada pertanyaan.</p>
