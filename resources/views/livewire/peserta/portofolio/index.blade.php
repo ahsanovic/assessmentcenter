@@ -69,7 +69,7 @@
                                                 <i class="text-muted me-3" data-feather="user"></i>
                                                 <div>
                                                     <small class="text-muted d-block">Nama Lengkap</small>
-                                                    <strong>{{ $biodata->gelar_depan ? $biodata->gelar_depan : '' }} {{ $biodata->nama }}{{ $biodata->gelar_belakang ? ', ' . $biodata->gelar_belakang : '' }}</strong>
+                                                    <strong>{{ $biodata->nama }}</strong>
                                                 </div>
                                             </div>
                                         </div>

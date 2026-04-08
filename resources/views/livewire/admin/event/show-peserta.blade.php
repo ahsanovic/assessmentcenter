@@ -11,6 +11,12 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
                         <div class="d-flex gap-2">
+                            @if ($event->metode_tes_id == 1)
+                            <button wire:click="downloadPortofolio" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" wire:loading.attr="disabled" wire:target="downloadPortofolio">
+                                <i class="link-icon" data-feather="download" style="width: 16px; height: 16px;"></i>
+                                <span class="fw-semibold" wire:ignore>Download Portofolio</span>
+                            </button>
+                            @endif
                             <button wire:click="downloadTemplate" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-2" style="border-radius: 6px; padding: 6px 14px; font-size: 0.875rem;" wire:loading.attr="disabled" wire:target="downloadTemplate">
                                 <i class="link-icon" data-feather="download" style="width: 16px; height: 16px;"></i>
                                 <span class="fw-semibold" wire:ignore>Template</span>
@@ -108,7 +114,7 @@
                                             </span>
                                         </td>
                                         <td class="text-wrap">
-                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                            {{ $item->jabatan }}
                                         </td>
                                         <td>
                                             <span class="fw-medium text-dark">{{ $item->unit_kerja ?? '-' }}</span>
@@ -146,6 +152,20 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
+                                            @if ($event->metode_tes_id == 1)
+                                            <button
+                                                type="button"
+                                                wire:click="downloadPortofolioPeserta('{{ $item->id }}')"
+                                                class="btn btn-sm btn-outline-primary btn-icon rounded-circle border-0 shadow-sm me-1"
+                                                wire:loading.attr="disabled"
+                                                wire:target="downloadPortofolioPeserta"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="PDF portofolio"
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="file-text"></i></span>
+                                            </button>
+                                            @endif
                                             <x-table.btn-edit :id="$item->id" action="openEditModal" />
                                             <button
                                                 wire:click="deleteConfirmation('{{ $item->id }}')"

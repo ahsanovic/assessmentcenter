@@ -418,6 +418,31 @@ class ShowPeserta extends Component
         $this->resetValidation();
     }
 
+    public function downloadPortofolio()
+    {
+        if ((int) $this->event->metode_tes_id !== 1) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'unduh portofolio hanya untuk event dengan metode Assessment Center']);
+
+            return;
+        }
+
+        return $this->redirect(route('admin.event.portofolio-download-zip', ['idEvent' => $this->id_event]));
+    }
+
+    public function downloadPortofolioPeserta($pesertaId)
+    {
+        if ((int) $this->event->metode_tes_id !== 1) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'unduh portofolio hanya untuk event dengan metode Assessment Center']);
+
+            return;
+        }
+
+        return $this->redirect(route('admin.event.portofolio-download-pdf', [
+            'idEvent' => $this->id_event,
+            'pesertaId' => $pesertaId,
+        ]));
+    }
+
     public function downloadTemplate()
     {
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();

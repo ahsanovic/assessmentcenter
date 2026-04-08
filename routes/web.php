@@ -5,6 +5,7 @@ use App\Http\Controllers\LogoutAssessorController;
 use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
+use App\Http\Controllers\DownloadPortofolioController;
 use App\Http\Controllers\DownloadRekapController;
 use App\Http\Controllers\LogoutAdminController;
 use App\Http\Middleware\CheckExamPin;
@@ -31,6 +32,8 @@ Route::prefix('bkdac')->group(function () {
         // event
         Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');
         Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
+        Route::get('event/{idEvent}/portofolio/download-zip', [DownloadPortofolioController::class, 'downloadZip'])->name('admin.event.portofolio-download-zip');
+        Route::get('event/{idEvent}/peserta/{pesertaId}/portofolio/download-pdf', [DownloadPortofolioController::class, 'downloadPdf'])->name('admin.event.portofolio-download-pdf');
         Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
 
         // nomor laporan
