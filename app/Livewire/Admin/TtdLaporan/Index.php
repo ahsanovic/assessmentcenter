@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Admin\TtdLaporan;
 
-use App\Models\Event;
 use App\Models\TtdLaporan;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -96,13 +96,26 @@ class Index extends Component
 
     protected function rules()
     {
-        return [
-            'nama' => 'required',
-            'nip' => 'required|numeric|digits:18',
-            'ttd' => $this->isUpdate
-                ? 'nullable|image|mimes:jpeg,png,jpg|max:200'
-                : 'required|image|mimes:jpeg,png,jpg|max:200',
+        $ttdRules = [
+            $this->isUpdate ? 'nullable' : 'required',
+            'image',
+            'mimes:jpeg,jpg,png',
+            'mimetypes:image/jpeg,image/png',
+            'max:200',
+            'dimensions:max_width=8192,max_height=8192',
         ];
+
+        $rules = [
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|numeric|digits:18',
+            'ttd' => $ttdRules,
+        ];
+
+        if ($this->isUpdate) {
+            $rules['modal_is_active'] = ['required', Rule::in(['t', 'f'])];
+        }
+
+        return $rules;
     }
 
     protected function messages()
@@ -115,8 +128,25 @@ class Index extends Component
             'ttd.required' => 'harus diisi',
             'ttd.image' => 'file harus berupa gambar',
             'ttd.mimes' => 'file harus berupa gambar dengan format jpeg, png, jpg',
-            'ttd.max' => 'file maksimal 200 KB'
+            'ttd.max' => 'file maksimal 200 KB',
+            'ttd.dimensions' => 'dimensi gambar terlalu besar (maks. 8192×8192 px)',
+            'ttd.mimetypes' => 'file harus berupa gambar JPEG atau PNG',
+            'modal_is_active.required' => 'status harus dipilih',
+            'modal_is_active.in' => 'status tidak valid',
         ];
+    }
+
+    /**
+     * Simpan file gambar dengan nama aman (ekstensi dari MIME, bukan nama asli klien).
+     */
+    private function storeTtdFile($file): string
+    {
+        $extension = strtolower((string) $file->guessExtension());
+        if (! in_array($extension, ['jpg', 'jpeg', 'png'], true)) {
+            $extension = 'jpg';
+        }
+
+        return $file->storeAs('tte', uniqid('tte_', true).'.'.$extension, 'public');
     }
 
     public function updatedTtd()
@@ -140,7 +170,7 @@ class Index extends Component
                         Storage::disk('public')->delete($data->ttd);
                     }
 
-                    $path = $this->ttd->storeAs('tte', uniqid() . '.' . $this->ttd->extension(), 'public');
+                    $path = $this->storeTtdFile($this->ttd);
                 }
 
                 $data->nama = $this->nama;
@@ -153,7 +183,7 @@ class Index extends Component
 
                 $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data']);
             } else {
-                $path = $this->ttd->storeAs('tte', uniqid() . '.' . $this->ttd->extension(), 'public');
+                $path = $this->storeTtdFile($this->ttd);
 
                 $data = TtdLaporan::create([
                     'nama' => $this->nama,
@@ -185,18 +215,21 @@ class Index extends Component
     {
         try {
             $data = TtdLaporan::find($this->selected_id);
+
+            if (! $data) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'data tidak ditemukan']);
+                return;
+            }
+
             $old_data = $data->getOriginal();
 
-            if ($data) {
-                // Hapus file ttd jika ada
-                if ($data->ttd && Storage::disk('public')->exists($data->ttd)) {
-                    Storage::disk('public')->delete($data->ttd);
-                }
-
-                activity_log($data, 'delete', 'ttd-laporan', $old_data);
-
-                $data->delete();
+            if ($data->ttd && Storage::disk('public')->exists($data->ttd)) {
+                Storage::disk('public')->delete($data->ttd);
             }
+
+            activity_log($data, 'delete', 'ttd-laporan', $old_data);
+
+            $data->delete();
 
             $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data']);
         } catch (\Throwable $th) {
