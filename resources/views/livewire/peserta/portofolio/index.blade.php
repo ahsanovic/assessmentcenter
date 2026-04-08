@@ -12,6 +12,8 @@
         icon="info"
         color="info" />
 
+    <x-portofolio.progress :progress="$portofolioProgress" />
+
     <div class="row">
         @if ($portofolio->metode_tes_id == 1)
         <x-portofolio.tab-nav :nav="[

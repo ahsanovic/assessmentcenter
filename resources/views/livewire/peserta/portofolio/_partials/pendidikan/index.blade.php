@@ -11,12 +11,7 @@
     <!-- Header Card -->
     <x-portofolio.header-card />
 
-    <!-- Info Alert -->
-    <x-portofolio.alert-info
-        title="Petunjuk Pengisian Portofolio"
-        description="Lengkapi portofolio Anda dengan detail yang mencerminkan perjalanan profesional dan pribadi Anda secara menyeluruh. Mulai dari biodata, pendidikan, pelatihan yang telah diikuti, riwayat karir, pengalaman kerja, hingga penilaian pribadi. Tunjukkan potensi terbaik Anda dan ciptakan kesan mendalam melalui portofolio yang informatif dan menarik!"
-        icon="info"
-        color="info" />
+    <x-portofolio.progress :progress="$portofolioProgress" />
 
     <div class="row">
         <div class="row">
@@ -67,7 +62,7 @@
                                     @foreach ($pendidikan as $index => $item)
                                         <tr>
                                             <td class="ps-4">
-                                                <span class="badge bg-primary rounded-pill">{{ $index + 1 }}</span>
+                                                <span class="badge bg-success rounded-pill">{{ $index + 1 }}</span>
                                             </td>
                                             <td>
                                                 <span class="badge bg-info bg-opacity-10 text-info">

@@ -12,13 +12,7 @@
     <!-- Header Card -->
     <x-portofolio.header-card />
 
-    <!-- Info Alert -->
-    <x-portofolio.alert-info
-        title="Riwayat Pendidikan"
-        description="Masukkan pendidikan formal dari tingkat SMA/SLTA/Sederajat hingga pendidikan terakhir"
-        icon="book-open"
-        color="success" />
-
+    <x-portofolio.progress :progress="$portofolioProgress" />
 
     <div class="row">
         <div class="row">
@@ -37,7 +31,10 @@
                             <div class="rounded-circle bg-success bg-opacity-10 p-2 me-3" wire:ignore>
                                 <i data-feather="{{ $isUpdate ? 'edit' : 'plus-circle' }}" class="text-success" style="width: 20px; height: 20px;"></i>
                             </div>
-                            <h5 class="mb-0 fw-semibold">{{ $isUpdate ? 'Edit' : 'Tambah' }} Data Pendidikan</h5>
+                            <div>
+                                <h5 class="mb-0 fw-semibold">{{ $isUpdate ? 'Edit' : 'Tambah' }} Data Pendidikan</h5>
+                                <small class="text-muted">Pendidikan formal dari tingkat SMA/SLTA/Sederajat</small>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-4">

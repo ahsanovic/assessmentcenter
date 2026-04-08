@@ -4,6 +4,7 @@ namespace App\Livewire\Peserta\Portofolio;
 
 use App\Models\JawabanPengalaman;
 use App\Models\RefPertanyaanPengalaman;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -37,6 +38,7 @@ class Pengalaman extends Component
     {
         return view('livewire.peserta.portofolio._partials.pengalaman.index', [
             'pertanyaan' => $this->pertanyaan,
+            'portofolioProgress' => PortofolioProgress::forAuthPeserta(),
         ]);
     }
 

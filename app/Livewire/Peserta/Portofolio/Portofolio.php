@@ -9,6 +9,7 @@ use App\Models\RefPertanyaanPenilaian;
 use App\Models\RwKarir;
 use App\Models\RwPelatihan;
 use App\Models\RwPendidikan;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -68,7 +69,8 @@ class Portofolio extends Component
             'karir' => $karir,
             'pertanyaan' => $pertanyaan,
             'penilaian' => $penilaian,
-            'portofolio' => $portofolio
+            'portofolio' => $portofolio,
+            'portofolioProgress' => PortofolioProgress::forPeserta($biodata),
         ]);
     }
 }

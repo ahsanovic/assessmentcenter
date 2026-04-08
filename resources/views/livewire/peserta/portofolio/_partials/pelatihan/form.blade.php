@@ -12,12 +12,7 @@
     <!-- Header Card -->
     <x-portofolio.header-card />
 
-    <!-- Info Alert -->
-    <x-portofolio.alert-info
-        title="Riwayat Pelatihan"
-        description="Masukkan riwayat pelatihan 5 tahun terakhir yang relevan dengan posisi yang dilamar"
-        icon="award"
-        color="warning" />
+    <x-portofolio.progress :progress="$portofolioProgress" />
 
     <div class="row">
         <div class="row">
@@ -36,7 +31,10 @@
                             <div class="rounded-circle bg-warning bg-opacity-10 p-2 me-3" wire:ignore>
                                 <i data-feather="{{ $isUpdate ? 'edit' : 'plus-circle' }}" class="text-warning" style="width: 20px; height: 20px;"></i>
                             </div>
-                            <h5 class="mb-0 fw-semibold">{{ $isUpdate ? 'Edit' : 'Tambah' }} Data Pelatihan</h5>
+                            <div>
+                                <h5 class="mb-0 fw-semibold">{{ $isUpdate ? 'Edit' : 'Tambah' }} Data Pelatihan</h5>
+                                <small class="text-muted">Riwayat pelatihan 5 tahun terakhir</small>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-4">

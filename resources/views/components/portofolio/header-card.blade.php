@@ -22,7 +22,7 @@
                    wire:navigate
                 >
                     <i data-feather="eye" class="me-2"></i>
-                    Lihat Data Portofolio
+                    Lihat Ringkasan Portofolio
                 </a>
             </div>
         </div>

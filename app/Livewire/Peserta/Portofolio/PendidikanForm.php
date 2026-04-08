@@ -5,6 +5,7 @@ namespace App\Livewire\Peserta\Portofolio;
 use App\Livewire\Forms\PendidikanRequestForm;
 use App\Models\RefJenjangPendidikan;
 use App\Models\RwPendidikan;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -24,7 +25,8 @@ class PendidikanForm extends Component
         $option_jenjang_pendidikan = RefJenjangPendidikan::pluck('jenjang', 'id');
 
         return view('livewire..peserta.portofolio._partials.pendidikan.form', [
-            'option_jenjang_pendidikan' => $option_jenjang_pendidikan
+            'option_jenjang_pendidikan' => $option_jenjang_pendidikan,
+            'portofolioProgress' => PortofolioProgress::forAuthPeserta(),
         ]);
     }
 

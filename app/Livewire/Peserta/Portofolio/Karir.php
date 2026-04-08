@@ -3,6 +3,7 @@
 namespace App\Livewire\Peserta\Portofolio;
 
 use App\Models\RwKarir;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -24,6 +25,7 @@ class Karir extends Component
 
         return view('livewire..peserta.portofolio._partials.karir.index', [
             'karir' => $karir,
+            'portofolioProgress' => PortofolioProgress::forAuthPeserta(),
         ]);
     }
 

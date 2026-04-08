@@ -3,6 +3,7 @@
 namespace App\Livewire\Peserta\Portofolio;
 
 use App\Models\RwPelatihan;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -24,6 +25,7 @@ class Pelatihan extends Component
 
         return view('livewire..peserta.portofolio._partials.pelatihan.index', [
             'pelatihan' => $pelatihan,
+            'portofolioProgress' => PortofolioProgress::forAuthPeserta(),
         ]);
     }
 

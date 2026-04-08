@@ -4,6 +4,7 @@ namespace App\Livewire\Peserta\Portofolio;
 
 use App\Livewire\Forms\PelatihanRequestForm;
 use App\Models\RwPelatihan;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -20,7 +21,9 @@ class PelatihanForm extends Component
 
     public function render()
     {
-        return view('livewire..peserta.portofolio._partials.pelatihan.form');
+        return view('livewire..peserta.portofolio._partials.pelatihan.form', [
+            'portofolioProgress' => PortofolioProgress::forAuthPeserta(),
+        ]);
     }
 
     public function mount($id = null)

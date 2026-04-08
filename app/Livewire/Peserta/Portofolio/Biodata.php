@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefAgama;
 use App\Models\RefGolPangkat;
+use App\Support\PortofolioProgress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
@@ -56,7 +57,8 @@ class Biodata extends Component
             'biodata' => $biodata,
             'option_agama' => $option_agama,
             'option_gol_pangkat' => $option_gol_pangkat,
-            'portofolio' => $portofolio
+            'portofolio' => $portofolio,
+            'portofolioProgress' => PortofolioProgress::forPeserta($biodata),
         ]);
     }
 
