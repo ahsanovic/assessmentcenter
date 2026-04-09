@@ -53,70 +53,129 @@ class DownloadRekapController extends Controller
         $export_data = collect();
 
         foreach ($all_peserta as $peserta) {
+            // Helper function for formatting array of lines
+            $formatLines = function(array $lines) {
+                $nonEmpty = array_filter($lines, function($desc) {
+                    return !empty($desc) && $desc !== '-';
+                });
+                if (count($nonEmpty) > 1) {
+                    return implode("\n", array_map(function($line) {
+                        return '- ' . trim($line);
+                    }, $lines));
+                }
+                // Single or all dash, still with "- " if not empty (per instruction, else just show what was there)
+                if (isset($lines[0])) {
+                    if (!empty($lines[0]) && $lines[0] != '-') {
+                        return '- ' . trim($lines[0]);
+                    } else {
+                        return '-';
+                    }
+                }
+                return '-';
+            };
+
             // Berpikir Kritis & Strategis
             if (!empty($peserta->hasilBerpikirKritis->uraian_potensi)) {
-                $deskripsiBerpikir = $peserta->hasilBerpikirKritis->uraian_potensi ?? '-';
+                $deskripsiBerpikir = '- ' . trim($peserta->hasilBerpikirKritis->uraian_potensi ?? '-');
             } else {
-                $deskripsiBerpikir = '';
+                $lines = [];
                 for ($i = 1; $i <= 8; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiBerpikir .= json_decode($peserta->hasilBerpikirKritis->$field)->deskripsi ?? '-';
+                    $descObj = isset($peserta->hasilBerpikirKritis->$field) ? json_decode($peserta->hasilBerpikirKritis->$field) : null;
+                    $lines[] = $descObj->deskripsi ?? '-';
                 }
+                $deskripsiBerpikir = $formatLines($lines);
             }
 
             // Problem Solving
             if (!empty($peserta->hasilProblemSolving->uraian_potensi)) {
-                $deskripsiProblem = $peserta->hasilProblemSolving->uraian_potensi ?? '-';
+                $deskripsiProblem = '- ' . trim($peserta->hasilProblemSolving->uraian_potensi ?? '-');
             } else {
-                $deskripsiProblem = '';
+                $lines = [];
                 for ($i = 1; $i <= 8; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiProblem .= json_decode($peserta->hasilProblemSolving->$field)->deskripsi ?? '-';
+                    $descObj = isset($peserta->hasilProblemSolving->$field) ? json_decode($peserta->hasilProblemSolving->$field) : null;
+                    $lines[] = $descObj->deskripsi ?? '-';
                 }
+                $deskripsiProblem = $formatLines($lines);
             }
 
             // Interpersonal
             if (!empty($peserta->hasilInterpersonal->uraian_potensi)) {
-                $deskripsiInterpersonal = json_decode($peserta->hasilInterpersonal->uraian_potensi)->uraian_potensi ?? '-';
+                $uraian = json_decode($peserta->hasilInterpersonal->uraian_potensi)->uraian_potensi ?? '-';
+                $deskripsiInterpersonal = '- ' . trim($uraian);
             } else {
-                $deskripsiInterpersonal = '';
+                $lines = [];
                 for ($i = 1; $i <= 5; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiInterpersonal .= json_decode($peserta->hasilInterpersonal->$field)->uraian_potensi ?? '-';
+                    $descObj = isset($peserta->hasilInterpersonal->$field) ? json_decode($peserta->hasilInterpersonal->$field) : null;
+                    $lines[] = $descObj->uraian_potensi ?? '-';
                 }
+                $deskripsiInterpersonal = $formatLines($lines);
             }
 
             // Kesadaran Diri
             if (!empty($peserta->hasilKesadaranDiri->uraian_potensi)) {
-                $deskripsiKesadaran = json_decode($peserta->hasilKesadaranDiri->uraian_potensi)->uraian_potensi ?? '-';
+                $uraian = json_decode($peserta->hasilKesadaranDiri->uraian_potensi)->uraian_potensi ?? '-';
+                $deskripsiKesadaran = '- ' . trim($uraian);
             } else {
-                $deskripsiKesadaran = '';
+                $lines = [];
                 for ($i = 1; $i <= 3; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiKesadaran .= json_decode($peserta->hasilKesadaranDiri->$field)->uraian_potensi ?? '-';
+                    $descObj = isset($peserta->hasilKesadaranDiri->$field) ? json_decode($peserta->hasilKesadaranDiri->$field) : null;
+                    $lines[] = $descObj->uraian_potensi ?? '-';
                 }
+                $deskripsiKesadaran = $formatLines($lines);
             }
 
             // EQ
             if (!empty($peserta->hasilKecerdasanEmosi->uraian_potensi)) {
-                $deskripsiEQ = json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi)->uraian_potensi ?? '-';
+                $uraian = json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi)->uraian_potensi ?? '-';
+                $deskripsiEQ = '- ' . trim($uraian);
             } else {
-                $deskripsiEQ = '';
+                $lines = [];
                 for ($i = 1; $i <= 4; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiEQ .= json_decode($peserta->hasilKecerdasanEmosi->$field)->uraian_potensi ?? '-';
+                    $descObj = isset($peserta->hasilKecerdasanEmosi->$field) ? json_decode($peserta->hasilKecerdasanEmosi->$field) : null;
+                    $lines[] = $descObj->uraian_potensi ?? '-';
                 }
+                $deskripsiEQ = $formatLines($lines);
             }
 
             // Belajar Cepat & Pengembangan Diri
             if (!empty($peserta->hasilPengembanganDiri->uraian_potensi)) {
-                $deskripsiPengembangan = json_decode($peserta->hasilPengembanganDiri->uraian_potensi)->uraian_potensi ?? '-';
+                $uraian = json_decode($peserta->hasilPengembanganDiri->uraian_potensi)->uraian_potensi ?? '-';
+                $deskripsiPengembangan = '- ' . trim($uraian);
             } else {
-                $deskripsiPengembangan = '';
+                $lines = [];
                 for ($i = 1; $i <= 5; $i++) {
                     $field = 'uraian_potensi_' . $i;
-                    $deskripsiPengembangan .= json_decode($peserta->hasilPengembanganDiri->$field)->uraian_potensi ?? '-';
+                    $descObj = isset($peserta->hasilPengembanganDiri->$field) ? json_decode($peserta->hasilPengembanganDiri->$field) : null;
+                    $lines[] = $descObj->uraian_potensi ?? '-';
                 }
+                $deskripsiPengembangan = $formatLines($lines);
+            }
+
+            // Deskripsi Intelektual
+            $deskripsiIntelektual = [];
+            if (
+                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_1) ||
+                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_2) ||
+                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_3)
+            ) {
+                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_1))
+                    $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_1;
+                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_2))
+                    $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_2;
+                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_3))
+                    $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_3;
+            }
+            if (count($deskripsiIntelektual) > 1) {
+                $deskripsiIntelektualFormatted = implode("\n", array_map(function($desc) {return '- ' . trim($desc);}, $deskripsiIntelektual));
+            } elseif (count($deskripsiIntelektual) === 1) {
+                $deskripsiIntelektualFormatted = '- ' . trim($deskripsiIntelektual[0]);
+            } else {
+                $deskripsiIntelektualFormatted = '-';
             }
 
             $export_data->push([
@@ -143,51 +202,11 @@ class DownloadRekapController extends Controller
                 'EQ (Capaian Level)' => capaianLevel($peserta->hasilKecerdasanEmosi->level_total) ?? '-',
                 'JPM Potensi' => $peserta->nilaiJpm?->jpm . '%' ?? '-',
                 'Kesimpulan' => $peserta->nilaiJpm?->kategori ?? '-',
-                // 'Deskripsi Intelektual' => ($peserta->hasilIntelektual->uraian_potensi_subtes_1 ?? '-') .
-                //     ($peserta->hasilIntelektual->uraian_potensi_subtes_2 ?? '-') .
-                //     ($peserta->hasilIntelektual->uraian_potensi_subtes_3 ?? '-'),
-                // 'Deskripsi Interpersonal' => (json_decode($peserta->hasilInterpersonal->uraian_potensi_1)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilInterpersonal->uraian_potensi_2)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilInterpersonal->uraian_potensi_3)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilInterpersonal->uraian_potensi_4)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilInterpersonal->uraian_potensi_5)->uraian_potensi ?? '-'),
-                // 'Deskripsi Kesadaran Diri' => (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_1)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_2)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilKesadaranDiri->uraian_potensi_3)->uraian_potensi ?? '-'),
-                // 'Deskripsi Berpikir Kritis dan Strategis' => (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_1)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_2)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_3)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_4)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_5)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_6)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_7)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilBerpikirKritis->uraian_potensi_8)->deskripsi ?? '-'),
-                // 'Deskripsi Problem Solving' => (json_decode($peserta->hasilProblemSolving->uraian_potensi_1)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_2)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_3)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_4)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_5)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_6)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_7)->deskripsi ?? '-') .
-                //     (json_decode($peserta->hasilProblemSolving->uraian_potensi_8)->deskripsi ?? '-'),
-                // 'Deskripsi EQ' => (json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi_1)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi_2)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi_3)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi_4)->uraian_potensi ?? '-'),
-                // 'Deskripsi Belajar Cepat dan Pengembangan Diri' => (json_decode($peserta->hasilPengembanganDiri->uraian_potensi_1)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilPengembanganDiri->uraian_potensi_2)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilPengembanganDiri->uraian_potensi_3)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilPengembanganDiri->uraian_potensi_4)->uraian_potensi ?? '-') .
-                //     (json_decode($peserta->hasilPengembanganDiri->uraian_potensi_5)->uraian_potensi ?? '-'),
-                // 'Deskripsi Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->deskripsi ?? '-'
-                'Deskripsi Intelektual' => ($peserta->hasilIntelektual->uraian_potensi_subtes_1 ?? '-') .
-                    ($peserta->hasilIntelektual->uraian_potensi_subtes_2 ?? '-') .
-                    ($peserta->hasilIntelektual->uraian_potensi_subtes_3 ?? '-'),
-
+                'Deskripsi Intelektual' => $deskripsiIntelektualFormatted,
                 'Deskripsi Berpikir Kritis dan Strategis' => $deskripsiBerpikir,
                 'Deskripsi Problem Solving' => $deskripsiProblem,
                 'Deskripsi Belajar Cepat dan Pengembangan Diri' => $deskripsiPengembangan,
-                'Deskripsi Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->deskripsi ?? '-',
+                'Deskripsi Motivasi Komitmen' => !empty($peserta->hasilMotivasiKomitmen->deskripsi) ? '- ' . trim($peserta->hasilMotivasiKomitmen->deskripsi) : '-',
                 'Deskripsi Interpersonal' => $deskripsiInterpersonal,
                 'Deskripsi Kesadaran Diri' => $deskripsiKesadaran,
                 'Deskripsi EQ' => $deskripsiEQ,
