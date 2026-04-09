@@ -65,7 +65,7 @@
                                                 <span class="badge bg-success rounded-pill">{{ $index + 1 }}</span>
                                             </td>
                                             <td>
-                                                <span class="badge bg-info bg-opacity-10 text-info">
+                                                <span class="badge bg-success bg-opacity-10 text-success">
                                                     {{ $item->jenjangPendidikan->jenjang ?? '-' }}
                                                 </span>
                                             </td>
@@ -81,14 +81,8 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a class="btn btn-outline-warning" wire:navigate
-                                                        href="{{ route('peserta.pendidikan.edit', $item->id) }}">
-                                                        <span wire:ignore><i data-feather="edit-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </a>
-                                                    <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                        class="btn btn-outline-danger">
-                                                        <span wire:ignore><i data-feather="trash-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </button>
+                                                    <x-portofolio.btn-edit :id="$item->id" route="peserta.pendidikan.edit" />
+                                                    <x-portofolio.btn-delete :id="$item->id" action="deleteConfirmation('{{ $item->id }}')" />
                                                 </div>
                                             </td>
                                         </tr>

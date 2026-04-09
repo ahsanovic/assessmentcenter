@@ -75,14 +75,8 @@
                                             <td class="text-wrap">{{ $item->subjek_pelatihan }}</td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a class="btn btn-outline-warning" wire:navigate
-                                                        href="{{ route('peserta.pelatihan.edit', $item->id) }}">
-                                                        <span wire:ignore><i data-feather="edit-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </a>
-                                                    <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                        class="btn btn-outline-danger">
-                                                        <span wire:ignore><i data-feather="trash-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </button>
+                                                    <x-portofolio.btn-edit :id="$item->id" route="peserta.pelatihan.edit" />
+                                                    <x-portofolio.btn-delete :id="$item->id" action="deleteConfirmation('{{ $item->id }}')" />
                                                 </div>
                                             </td>
                                         </tr>

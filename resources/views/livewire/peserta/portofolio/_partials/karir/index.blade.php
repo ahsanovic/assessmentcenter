@@ -72,27 +72,33 @@
                                                     {{ $item->tahun_selesai }}
                                                 </small>
                                             </td>
+                                            <td class="text-wrap">{{ $item->instansi }}</td>
+                                            <td class="text-wrap">{{ $item->jabatan }}</td>
                                             <td class="text-wrap">
-                                                <strong>{{ $item->instansi }}</strong>
-                                            </td>
-                                            <td class="text-wrap">
-                                                <span class="badge bg-danger bg-opacity-10 text-danger">
-                                                    {{ $item->jabatan }}
-                                                </span>
-                                            </td>
-                                            <td class="text-wrap">
-                                                <small>{{ Str::limit($item->uraian_tugas, 100) }}</small>
+                                                {{ Str::limit($item->uraian_tugas, 100) }}
+                                                <button type="button" class="btn btn-link p-0" wire:ignore data-bs-toggle="modal" data-bs-target="#modalUraianTugas{{ $item->id }}">
+                                                    <i data-feather="eye" style="width: 14px; height: 14px;" class="ms-1"></i>
+                                                </button>
+                                                <div class="modal fade" id="modalUraianTugas{{ $item->id }}" tabindex="-1" aria-labelledby="modalUraianTugasLabel{{ $item->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="modalUraianTugasLabel{{ $item->id }}">Uraian Tugas {{ $item->jabatan }}</h5>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>{{ $item->uraian_tugas }}</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a class="btn btn-outline-warning" wire:navigate
-                                                        href="{{ route('peserta.karir.edit', $item->id) }}">
-                                                        <span wire:ignore><i data-feather="edit-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </a>
-                                                    <button wire:click="deleteConfirmation('{{ $item->id }}')"
-                                                        class="btn btn-outline-danger">
-                                                        <span wire:ignore><i data-feather="trash-2" style="width: 14px; height: 14px;"></i></span>
-                                                    </button>
+                                                    <x-portofolio.btn-edit :id="$item->id" route="peserta.karir.edit" />
+                                                    <x-portofolio.btn-delete :id="$item->id" action="deleteConfirmation('{{ $item->id }}')" />
                                                 </div>
                                             </td>
                                         </tr>
