@@ -68,6 +68,7 @@
             margin-top: 16px;
             margin-bottom: 6px;
             font-size: 13px;
+            font-style: italic;
         }
 
         .identitas-table {
@@ -134,16 +135,15 @@
             height: auto;
         }
 
-        /* Baris judul + foto: foto di kanan atas area (tidak overlap kotak); judul kiri mepet border tabel (valign bottom) */
-        .identitas-head-row {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-            margin-bottom: 0;
-        }
-
-        .identitas-head-row td {
-            padding: 0;
+        /*
+         * Padding sel foto sama dengan sel lain agar tinggi baris Nama–TTL tidak berubah.
+         * Geser hanya gambar (bukan padding sel) pakai position relative.
+         */
+        .identitas-table td.identitas-foto-cell {
+            width: 80px;
+            vertical-align: top;
+            padding: 4px 6px;
+            text-align: center;
         }
 
         .identitas-heading {
@@ -151,24 +151,39 @@
             padding: 0;
             font-weight: bold;
             font-size: 13px;
+            font-style: italic;
         }
 
         .identitas-head-no-foto {
             margin-top: 16px;
             margin-bottom: 0;
+            font-style: italic;
         }
 
         .identitas-foto-img {
-            width: 56px;
-            height: 56px;
+            position: relative;
+            top: 14px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
-            border-radius: 50%;
+            border-radius: 6px;
             display: block;
-            margin: 0;
+            margin: 0 auto;
         }
 
         .identitas-table.identitas-table--first {
             margin-top: 0;
+        }
+
+        /* Baris bawah (JK–HP): label selebar kolom foto; nilai colspan = tidak ada garis vertikal label|nilai */
+        .identitas-bottom-label {
+            width: 80px;
+            max-width: 80px;
+            vertical-align: top;
+            padding: 4px 4px;
+            text-align: left;
+            word-wrap: break-word;
+            font-size: 11px;
         }
 
         .event-name {
@@ -204,29 +219,85 @@
         <h8>{{ $event->nama_event ?? '' }}</h8>
     </div>
 
+    @php
+        /* Foto hanya sejajar baris Nama s.d. Tempat/Tanggal Lahir (4 baris jika ada NIP, else 3) */
+        $fotoRowspanTop = ($peserta->jenis_peserta_id == 1) ? 4 : 3;
+    @endphp
+    <div class="identitas-head-no-foto">
+        <div class="identitas-heading">{{ $fotoDataUri ? '1. Informasi Personal' : '1. Informasi Personal' }}</div>
+    </div>
     @if($fotoDataUri)
-        <table class="identitas-head-row" border="0" cellpadding="0" cellspacing="0">
-            <tr style="height:56px;">
-                <td valign="bottom" style="width:auto; padding-right:8px;">
-                    <div class="identitas-heading">A. IDENTITAS / BIODATA</div>
-                </td>
-                <td valign="top" align="right" style="width:56px; white-space:nowrap; padding-left:8px;">
-                    <img src="{{ $fotoDataUri }}" alt="foto" class="identitas-foto-img">
-                </td>
-            </tr>
-        </table>
+    {{-- Atas: 3 kolom foto | label | nilai (ada garis antara label–nilai). Bawah: label di kolom selebar foto + nilai colspan 2 (satu garis vertikal saja) --}}
+    <table class="identitas-table identitas-table--first" border="1" style="width:100%; table-layout:fixed; word-wrap: break-word;">
+        <colgroup>
+            <col style="width:80px;">
+            <col style="width:100px;">
+            <col>
+        </colgroup>
+        <tr>
+            <td rowspan="{{ $fotoRowspanTop }}" class="identitas-foto-cell">
+                <img src="{{ $fotoDataUri }}" alt="foto" class="identitas-foto-img">
+            </td>
+            <td><b>Nama Lengkap</b></td>
+            <td>{{ $peserta->nama }}</td>
+        </tr>
+        @if($peserta->jenis_peserta_id == 1)
+        <tr>
+            <td><b>NIP</b></td>
+            <td>{{ $peserta->nip ?? '-' }}</td>
+        </tr>
+        @endif
+        <tr>
+            <td><b>NIK</b></td>
+            <td>{{ $peserta->nik ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td><b>Tempat / Tanggal Lahir</b></td>
+            <td>{{ $peserta->tempat_lahir ?? '-' }}, {{ $peserta->tgl_lahir ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Jenis Kelamin</b></td>
+            <td colspan="2">{{ ($peserta->jk ?? '') === 'L' ? 'Laki-Laki' : (($peserta->jk ?? '') === 'P' ? 'Perempuan' : '-') }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Agama</b></td>
+            <td colspan="2">{{ $peserta->agama->agama ?? '-' }}</td>
+        </tr>
+        @if($peserta->jenis_peserta_id == 1)
+        <tr>
+            <td class="identitas-bottom-label"><b>Pangkat / Golongan</b></td>
+            <td colspan="2">{{ trim(($peserta->golPangkat->pangkat ?? '') . (isset($peserta->golPangkat->golongan) && $peserta->golPangkat->golongan ? ' - ' . $peserta->golPangkat->golongan : '')) ?: '-' }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Jabatan Saat Ini</b></td>
+            <td colspan="2">{{ $peserta->jabatan ?? '-' }}</td>
+        </tr>
+        @endif
+        <tr>
+            <td class="identitas-bottom-label"><b>Unit Kerja</b></td>
+            <td colspan="2">{{ $peserta->unit_kerja ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Instansi</b></td>
+            <td colspan="2">{{ $peserta->instansi ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Alamat Tempat Tinggal</b></td>
+            <td colspan="2">{{ $peserta->alamat ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td class="identitas-bottom-label"><b>Nomor HP</b></td>
+            <td colspan="2">{{ $peserta->no_hp ?? '-' }}</td>
+        </tr>
+    </table>
     @else
-        <div class="identitas-head-no-foto">
-            <div class="identitas-heading">A. IDENTITAS / BIODATA</div>
-        </div>
-    @endif
     <table class="identitas-table identitas-table--first" border="1" style="width:100%; table-layout:fixed;">
         <colgroup>
             <col style="width:28%;">
             <col>
         </colgroup>
         <tr>
-            <td><b>Nama</b></td>
+            <td><b>Nama Lengkap</b></td>
             <td>{{ $peserta->nama }}</td>
         </tr>
         @if($peserta->jenis_peserta_id == 1)
@@ -257,7 +328,7 @@
             <td>{{ trim(($peserta->golPangkat->pangkat ?? '') . (isset($peserta->golPangkat->golongan) && $peserta->golPangkat->golongan ? ' - ' . $peserta->golPangkat->golongan : '')) ?: '-' }}</td>
         </tr>
         <tr>
-            <td><b>Jabatan</b></td>
+            <td><b>Jabatan Saat Ini</b></td>
             <td>{{ $peserta->jabatan ?? '-' }}</td>
         </tr>
         @endif
@@ -270,7 +341,7 @@
             <td>{{ $peserta->instansi ?? '-' }}</td>
         </tr>
         <tr>
-            <td><b>Alamat</b></td>
+            <td><b>Alamat Tempat Tinggal</b></td>
             <td>{{ $peserta->alamat ?? '-' }}</td>
         </tr>
         <tr>
@@ -278,12 +349,12 @@
             <td>{{ $peserta->no_hp ?? '-' }}</td>
         </tr>
     </table>
+    @endif
 
-    <div class="section-title">B. PENDIDIKAN FORMAL</div>
+    <div class="section-title">2. Pendidikan Formal dari TIngkat SMA/SLTA/Setingkat</div>
     <table class="data-table" border="1">
         <thead>
         <tr>
-            <th style="width:4%;">#</th>
             <th>Jenjang</th>
             <th>Nama Sekolah</th>
             <th>Tahun</th>
@@ -294,7 +365,6 @@
         <tbody>
         @forelse ($pendidikan as $index => $item)
             <tr>
-                <td style="text-align:center;">{{ $index + 1 }}</td>
                 <td>{{ $item->jenjangPendidikan->jenjang ?? '' }}</td>
                 <td>{{ $item->nama_sekolah }}</td>
                 <td>{{ $item->thn_masuk }} - {{ $item->thn_lulus }}</td>
@@ -309,11 +379,10 @@
         </tbody>
     </table>
 
-    <div class="section-title">C. PELATIHAN / KURSUS</div>
+    <div class="section-title">3. Pelatihan/Kursus (5 tahun terakhir)</div>
     <table class="data-table" border="1">
         <thead>
         <tr>
-            <th style="width:4%;">#</th>
             <th>Nama Institusi</th>
             <th>Tanggal</th>
             <th>Subjek Pelatihan</th>
@@ -322,7 +391,6 @@
         <tbody>
         @forelse ($pelatihan as $index => $item)
             <tr>
-                <td style="text-align:center;">{{ $index + 1 }}</td>
                 <td>{{ $item->nama_institusi }}</td>
                 <td>{{ $item->tgl_mulai }} - {{ $item->tgl_selesai }}</td>
                 <td>{{ $item->subjek_pelatihan }}</td>
@@ -337,11 +405,10 @@
 
     <div class="page-break"></div>
 
-    <div class="section-title">D. RIWAYAT KARIR</div>
+    <div class="section-title">4. Riwayat Karir (5 tahun terakhir)</div>
     <table class="data-table" border="1">
         <thead>
         <tr>
-            <th style="width:4%;">#</th>
             <th>Jangka Waktu</th>
             <th>Instansi</th>
             <th>Jabatan</th>
@@ -351,7 +418,6 @@
         <tbody>
         @forelse ($karir as $index => $item)
             <tr>
-                <td style="text-align:center;">{{ $index + 1 }}</td>
                 <td>
                     @php
                         $mulai = \Carbon\Carbon::create()->month((int) $item->bulan_mulai)->translatedFormat('F') . ' ' . $item->tahun_mulai;
@@ -371,13 +437,13 @@
         </tbody>
     </table>
 
-    <div class="section-title">E. PENGALAMAN SPESIFIK</div>
+    <div class="section-title">5. Pengalaman Spesifik</div>
     @forelse ($pertanyaan as $index => $item)
         @php
             $jawab = optional($item->jawaban->first())->jawaban;
         @endphp
         <div class="qa-block">
-            <div class="qa-q">{{ $index + 1 }}. {{ $item->pertanyaan }}</div>
+            <div class="qa-q">{{ chr(97 + $index) }}. {{ $item->pertanyaan }}</div>
             <div class="qa-a">{!! $jawab ? strip_tags($jawab, '<p><br><strong><b><i><em><u>') : '<em>Belum dijawab</em>' !!}</div>
             @php
                 $option_kode = [
@@ -406,7 +472,6 @@
                     <span>({{ implode(',', $kodeList) }})</span>
                 @endif
             </div>
-       
         </div>
     @empty
         <p>Tidak ada pertanyaan.</p>
@@ -414,17 +479,28 @@
 
     <div class="page-break"></div>
 
-    <div class="section-title">F. PENILAIAN PRIBADI</div>
+    <div class="section-title">6. Penilaian Pribadi</div>
     @forelse ($penilaian as $index => $item)
         @php
             $jawab = optional($item->jawaban->first())->jawaban;
         @endphp
         <div class="qa-block">
-            <div class="qa-q">{{ $index + 1 }}. {{ $item->pertanyaan }}</div>
+            <div class="qa-q">{{ chr(97 + $index) }}. {{ $item->pertanyaan }}</div>
+       
             <div class="qa-a">{!! $jawab ? strip_tags($jawab, '<p><br><strong><b><i><em><u>') : '<em>Belum dijawab</em>' !!}</div>
         </div>
     @empty
         <p>Tidak ada pertanyaan.</p>
     @endforelse
+
+    <div class="qa-block">
+        <div class="qa-a">
+            Dengan ini saya menyatakan bahwa informasi yang saya sampaikan di atas adalah benar dan saya buat sendiri untuk kepentingan kegiatan {{ $event->nama_event ?? '' }} <br><br>
+            <span style="font-style: italic;">
+                <small>"Dokumen ini sah dan diterbitkan secara elektronik oleh Aplikasi SIKMA sehingga tidak memerlukan tanda tangan basah.
+                Data yang tercantum telah diverifikasi melalui akun resmi peserta pada tanggal {{ now()->format('d-m-Y') }}."</small>
+            </span>
+        </div>
+    </div>
 </body>
 </html>
