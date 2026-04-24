@@ -12,15 +12,21 @@
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                            <div class="row mt-2 align-items-end">
                                 <div class="col-sm-4">
                                     <div class="input-group" wire:ignore>
                                         <span class="input-group-text bg-white"><i data-feather="search"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-auto">
                                     <x-btn-reset :text="'Reset'" />
+                                </div>
+                                <div class="col-auto ms-auto d-flex align-items-end">
+                                    <button type="button" class="btn btn-success d-flex align-items-center gap-2" wire:click="setUjianKeBelumSelesaiMassalConfirmation">
+                                        <i class="link-icon" data-feather="refresh-cw" style="width: 18px; height: 18px;"></i>
+                                        Set belum selesai (massal)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -131,6 +137,22 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Livewire.dispatch('setUjianKeBelumSelesai');
+                }
+            });
+        });
+        window.addEventListener('set-ujian-ke-belum-selesai-massal-confirmation', () => {
+            Swal.fire({
+                title: 'Set semua ujian ke belum selesai?',
+                html: 'Semua ujian <b>Sub Tes 2</b> pada event ini yang berstatus <b>selesai</b> akan diubah menjadi <b>belum selesai</b>.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, terapkan ke semua',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('setUjianKeBelumSelesaiMassal');
                 }
             });
         });

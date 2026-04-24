@@ -79,6 +79,36 @@ class ShowPesertaSubTes3 extends Component
         $this->dispatch('set-ujian-ke-belum-selesai-confirmation');
     }
 
+    public function setUjianKeBelumSelesaiMassalConfirmation()
+    {
+        $this->dispatch('set-ujian-ke-belum-selesai-massal-confirmation');
+    }
+
+    #[On('setUjianKeBelumSelesaiMassal')]
+    public function setUjianKeBelumSelesaiMassal()
+    {
+        try {
+            $updated = UjianIntelektualSubTes3::where('event_id', $this->id_event)
+                ->where('is_finished', 'true')
+                ->update(['is_finished' => 'false']);
+
+            if ($updated === 0) {
+                $this->dispatch('toast', ['type' => 'info', 'message' => 'Tidak ada ujian dengan status selesai pada event ini']);
+
+                return;
+            }
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Berhasil menyetel ' . $updated . ' ujian ke belum selesai',
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian secara massal']);
+        } finally {
+            $this->resetPage();
+        }
+    }
+
     #[On('setUjianKeBelumSelesai')]
     public function setUjianKeBelumSelesai()
     {
