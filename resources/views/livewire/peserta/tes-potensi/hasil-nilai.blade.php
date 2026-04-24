@@ -17,7 +17,7 @@
                         Terima kasih, <strong>{{ auth()->guard('peserta')->user()->nama }}</strong>!
                     </h4>
                     <p class="text-muted mb-4">
-                        Anda telah menyelesaikan <strong>Tes {{ auth()->guard('peserta')->user()->event->metodeTes->metode_tes }}</strong> dengan baik dan penuh semangat!
+                        Anda telah menyelesaikan <strong>Tes Potensi</strong> dengan baik dan penuh semangat!
                     </p>
 
                     <!-- Decorative Element -->
