@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\DataTes\TesIntelektual\TesSelesai;
 
-use App\Livewire\Peserta\TesCakapDigital\Ujian;
 use App\Models\Event;
 use App\Models\Intelektual\HasilIntelektual;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
@@ -55,6 +54,7 @@ class ShowPesertaSubTes1 extends Component
                 'hasil_intelektual.id as hasil_intelektual_id',
                 'hasil_intelektual.created_at as waktu_selesai',
                 'ujian_intelektual_subtes_1.created_at as waktu_mulai',
+                'ujian_intelektual_subtes_1.id as ujian_intelektual_subtes_1_id',
                 'is_finished'
             )
             ->when($this->search, function ($query) {
@@ -71,6 +71,26 @@ class ShowPesertaSubTes1 extends Component
         return view('livewire.admin.data-tes.tes-intelektual.tes-selesai.show-peserta-subtes-1', [
             'data' => $data
         ]);
+    }
+
+    public function setUjianKeBelumSelesaiConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('set-ujian-ke-belum-selesai-confirmation');
+    }
+
+    #[On('setUjianKeBelumSelesai')]
+    public function setUjianKeBelumSelesai()
+    {
+        try {
+            $ujian = UjianIntelektualSubTes1::find($this->selected_id);
+            $ujian->is_finished = 'false';
+            $ujian->save();
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menyetel ujian ke belum selesai']);
+        }
+        catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menyetel ujian ke belum selesai']);
+        }
     }
 
     public function deleteConfirmation($id)

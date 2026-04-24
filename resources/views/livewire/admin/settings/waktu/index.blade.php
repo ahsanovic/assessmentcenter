@@ -166,7 +166,7 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
-                    <x-modal.btn-cancel />
+                    <x-modal.btn-cancel action="closeModal" />
                     <x-modal.btn-save :isUpdate="$isUpdate" />
                 </div>
             </div>

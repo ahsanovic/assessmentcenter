@@ -12,15 +12,21 @@
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                            <div class="row mt-2 align-items-end">
                                 <div class="col-sm-4">
                                     <div class="input-group" wire:ignore>
                                         <span class="input-group-text bg-white"><i data-feather="search"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
                                     </div>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-auto">
                                     <x-btn-reset :text="'Reset'" />
+                                </div>
+                                <div class="col-auto ms-auto d-flex align-items-end">
+                                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2" wire:click="openModalMassal">
+                                        <i class="link-icon" data-feather="users" style="width: 18px; height: 18px;"></i>
+                                        Tambah waktu massal
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +93,18 @@
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'false')
-                                                <x-table.btn-delete :id="$item->ujian_intelektual_subtes_3_id" />
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-primary btn-icon rounded-circle border-0 shadow-sm"
+                                                wire:click="openModal('{{ $item->ujian_intelektual_subtes_3_id }}')"
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
+                                                title="Tambah Waktu Tes"
+                                                style="transition: background 0.2s;"
+                                            >
+                                                <i class="link-icon" data-feather="clock"></i>
+                                            </button>
+                                            <x-table.btn-delete :id="$item->ujian_intelektual_subtes_3_id" />
                                             @endif
                                         </td>
                                     </tr>
@@ -104,6 +121,100 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @if($showModal)
+                    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" 
+                        wire:key="modal-tambah-waktu-{{ $selected_id }}"
+                        x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+                        x-init="init()">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-center" 
+                                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                                            <i class="link-icon text-white" data-feather="clock" style="width: 24px; height: 24px;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                                Tambah Waktu Tes
+                                            </h5>
+                                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                                Isi form untuk menambahkan waktu tes
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button wire:click="closeModal" type="button" class="btn-close btn-close-white" 
+                                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
+                                </div>
+                                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                                    <x-form.input
+                                        label="Tambahan Waktu Tes (menit)"
+                                        icon="clock"
+                                        model="waktu"
+                                        type="number"
+                                        placeholder="tambahan waktu dalam menit"
+                                        :required="true"
+                                        min="1"
+                                        max="10"
+                                    />
+                                </div>
+                                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                                    <x-modal.btn-cancel action="closeModal" />
+                                    <x-modal.btn-save :isUpdate="false" action="tambahWaktu" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($showModalMassal)
+                    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
+                        wire:key="modal-tambah-waktu-massal"
+                        x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+                        x-init="init()">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center justify-content-center"
+                                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                                            <i class="link-icon text-white" data-feather="users" style="width: 24px; height: 24px;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                                Tambah waktu massal
+                                            </h5>
+                                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                                Semua peserta dengan ujian berlangsung (belum selesai) pada event ini
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button wire:click="closeModalMassal" type="button" class="btn-close btn-close-white"
+                                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
+                                </div>
+                                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                                    <x-form.input
+                                        label="Tambahan Waktu Tes (menit)"
+                                        icon="clock"
+                                        model="waktuMassal"
+                                        type="number"
+                                        placeholder="tambahan waktu dalam menit"
+                                        :required="true"
+                                        min="1"
+                                        max="10"
+                                    />
+                                </div>
+                                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                                    <x-modal.btn-cancel action="closeModalMassal" />
+                                    <x-modal.btn-save :isUpdate="false" action="tambahWaktuMassal" text="Terapkan ke semua" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>        
         </div>

@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\DataTes\TesIntelektual\TesBerlangsung;
 use App\Models\Event;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Peserta;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -19,6 +21,12 @@ class ShowPesertaSubTes1 extends Component
     public $event;
     public $id_event;
     public $selected_id;
+
+    public $showModal = false;
+    public $waktu;
+
+    public $showModalMassal = false;
+    public $waktuMassal;
 
     #[Url(as: 'q')]
     public ?string $search =  '';
@@ -61,6 +69,118 @@ class ShowPesertaSubTes1 extends Component
         return view('livewire.admin.data-tes.tes-intelektual.tes-berlangsung.show-peserta-subtes-1', [
             'data' => $data
         ]);
+    }
+
+    public function openModal($id)
+    {
+        $this->showModalMassal = false;
+        $this->waktuMassal = null;
+        $this->selected_id = $id;
+        $this->showModal = true;
+        $this->waktu = null;
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->waktu = null;
+    }
+
+    public function openModalMassal()
+    {
+        $this->showModal = false;
+        $this->waktu = null;
+        $this->showModalMassal = true;
+        $this->waktuMassal = null;
+    }
+
+    public function closeModalMassal()
+    {
+        $this->showModalMassal = false;
+        $this->waktuMassal = null;
+    }
+
+    private function applyTambahMenitKeUjian(Model $ujian, int $menit): void
+    {
+        $base = $ujian->waktu_tes_berakhir
+            ? $ujian->waktu_tes_berakhir->max(now())
+            : now();
+        $ujian->waktu_tes_berakhir = $base->copy()->addMinutes($menit);
+    }
+
+    public function tambahWaktu()
+    {
+        $this->validate([
+            'waktu' => 'required|numeric|min:1|max:4',
+        ], [
+            'waktu.required' => 'Waktu tes harus diisi',
+            'waktu.numeric' => 'Waktu tes harus berupa angka',
+            'waktu.min' => 'Tambahan waktu tes intelektual subtes 1 minimal 1 menit',
+            'waktu.max' => 'Tambahan waktu tes intelektual subtes 1 maksimal 4 menit',
+        ]);
+
+        try {
+            $ujian = UjianIntelektualSubTes1::find($this->selected_id);
+            if (!$ujian) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'data tidak ditemukan']);
+                $this->closeModal();
+                return;
+            }
+
+            $this->applyTambahMenitKeUjian($ujian, (int) $this->waktu);
+            $ujian->save();
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menambah waktu']);
+            $this->closeModal();
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menambah waktu']);
+        } finally {
+            $this->resetPage();
+        }
+    }
+
+    public function tambahWaktuMassal()
+    {
+        $this->validate([
+            'waktuMassal' => 'required|numeric|min:1|max:4',
+        ], [
+            'waktuMassal.required' => 'Waktu tes harus diisi',
+            'waktuMassal.numeric' => 'Waktu tes harus berupa angka',
+            'waktuMassal.min' => 'Tambahan waktu tes intelektual subtes 1 minimal 1 menit',
+            'waktuMassal.max' => 'Tambahan waktu tes intelektual subtes 1 maksimal 4 menit',
+        ]);
+
+        $menit = (int) $this->waktuMassal;
+
+        try {
+            $ujians = UjianIntelektualSubTes1::where('event_id', $this->id_event)
+                ->where('is_finished', 'false')
+                ->get();
+
+            if ($ujians->isEmpty()) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Tidak ada ujian berlangsung untuk ditambah waktunya']);
+                $this->closeModalMassal();
+
+                return;
+            }
+
+            DB::transaction(function () use ($ujians, $menit) {
+                foreach ($ujians as $ujian) {
+                    $this->applyTambahMenitKeUjian($ujian, $menit);
+                    $ujian->save();
+                }
+            });
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Berhasil menambah waktu untuk ' . $ujians->count() . ' peserta',
+            ]);
+            $this->closeModalMassal();
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menambah waktu massal']);
+        } finally {
+            $this->resetPage();
+        }
     }
 
     public function deleteConfirmation($id)

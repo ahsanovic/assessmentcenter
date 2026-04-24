@@ -82,6 +82,17 @@
                                             </span>
                                         </td>
                                         <td>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-success btn-icon rounded-circle border-0 shadow-sm"
+                                                wire:click="setUjianKeBelumSelesaiConfirmation('{{ $item->ujian_intelektual_subtes_3_id }}')"
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
+                                                title="Set Ujian Ke Belum Selesai"
+                                                style="transition: background 0.2s;"
+                                            >
+                                                <i class="link-icon" data-feather="refresh-cw"></i>
+                                            </button>
                                             @if ($item->is_finished == 'true')
                                                 <x-table.btn-delete :id="$item->hasil_intelektual_id" />
                                             @endif
@@ -106,3 +117,22 @@
         <x-pagination :items="$data" />
     </div>
 </div>
+@push('js')
+    <script>
+        window.addEventListener('set-ujian-ke-belum-selesai-confirmation', data => {
+            Swal.fire({
+                title: 'Set Ujian Ke Belum Selesai?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Set Ujian Ke Belum Selesai!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('setUjianKeBelumSelesai');
+                }
+            });
+        });
+    </script>
+@endpush
