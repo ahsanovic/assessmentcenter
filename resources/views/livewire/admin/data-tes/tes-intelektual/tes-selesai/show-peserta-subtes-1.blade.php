@@ -22,9 +22,11 @@
                                 <div class="col-auto">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
-                                <div class="col-auto ms-auto d-flex align-items-end">
-                                    <button type="button" class="btn btn-success d-flex align-items-center gap-2" wire:click="setUjianKeBelumSelesaiMassalConfirmation">
-                                        <i class="link-icon" data-feather="refresh-cw" style="width: 18px; height: 18px;"></i>
+                                <div class="col-auto ms-auto d-flex align-items-end gap-2">
+                                    <button type="button" class="btn btn-sm btn-icon-text btn-warning text-dark" wire:click="setUjianKeBelumSelesaiMassalConfirmation">
+                                        <span wire:ignore>
+                                            <i class="btn-icon-prepend" data-feather="refresh-cw"></i>
+                                        </span>
                                         Set belum selesai (massal)
                                     </button>
                                 </div>
@@ -146,7 +148,7 @@
                 html: 'Semua ujian <b>Sub Tes 1</b> pada event ini yang berstatus <b>selesai</b> akan diubah menjadi <b>belum selesai</b>.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#198754',
+                confirmButtonColor: '#ffc107',
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Ya, terapkan ke semua',
                 cancelButtonText: 'Batal'

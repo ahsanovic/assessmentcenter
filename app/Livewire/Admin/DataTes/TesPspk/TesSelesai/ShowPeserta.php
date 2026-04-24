@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Admin\DataTes\TesPspk\TesSelesai;
 
-use App\Models\KompetensiTeknis\HasilKompetensiTeknis;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\Pspk\HasilPspk;
+use App\Models\Pspk\UjianPspk;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -55,7 +55,8 @@ class ShowPeserta extends Component
                 'hasil_pspk.id as hasil_pspk_id',
                 'hasil_pspk.created_at as waktu_selesai',
                 'ujian_pspk.created_at as waktu_mulai',
-                'is_finished'
+                'ujian_pspk.id as ujian_pspk_id',
+                'ujian_pspk.is_finished',
             )
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -73,8 +74,64 @@ class ShowPeserta extends Component
             ->paginate(10);
 
         return view('livewire.admin.data-tes.tes-pspk.tes-selesai.show-peserta', [
-            'data' => $data
+            'data' => $data,
         ]);
+    }
+
+    public function setUjianKeBelumSelesaiConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('set-ujian-ke-belum-selesai-confirmation');
+    }
+
+    public function setUjianKeBelumSelesaiMassalConfirmation()
+    {
+        $this->dispatch('set-ujian-ke-belum-selesai-massal-confirmation');
+    }
+
+    #[On('setUjianKeBelumSelesaiMassal')]
+    public function setUjianKeBelumSelesaiMassal()
+    {
+        try {
+            $updated = UjianPspk::where('event_id', $this->id_event)
+                ->where('is_finished', 'true')
+                ->update(['is_finished' => 'false']);
+
+            if ($updated === 0) {
+                $this->dispatch('toast', ['type' => 'info', 'message' => 'Tidak ada ujian dengan status selesai pada event ini']);
+
+                return;
+            }
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Berhasil menyetel ' . $updated . ' ujian ke belum selesai',
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian secara massal']);
+        } finally {
+            $this->resetPage();
+        }
+    }
+
+    #[On('setUjianKeBelumSelesai')]
+    public function setUjianKeBelumSelesai()
+    {
+        try {
+            $ujian = UjianPspk::find($this->selected_id);
+            if (!$ujian) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Data ujian tidak ditemukan']);
+
+                return;
+            }
+            $ujian->is_finished = 'false';
+            $ujian->save();
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'Berhasil menyetel ujian ke belum selesai']);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian ke belum selesai']);
+        } finally {
+            $this->resetPage();
+        }
     }
 
     public function deleteConfirmation($id)
