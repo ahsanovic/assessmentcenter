@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Peserta;
+use App\Models\RefAspekPspk;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 class DownloadRekapController extends Controller
@@ -292,6 +293,8 @@ class DownloadRekapController extends Controller
     {
         $tanggal = request()->query('tanggalTes');
 
+        $aspek_potensi = RefAspekPspk::all();
+
         $all_peserta = Peserta::with([
             'event',
             'hasilPspk',
@@ -308,16 +311,26 @@ class DownloadRekapController extends Controller
         $export_data = collect();
 
         foreach ($all_peserta as $peserta) {
-            $export_data->push([
+            $nilaiCapaian = $peserta->hasilPspk?->nilai_capaian ?? [];
+
+            $row = [
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan' => $peserta->jabatan,
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
-                'JPM' => $peserta->hasilPspk?->jpm . '%' ?? '',
-                'Kategori' => $peserta->hasilPspk?->kategori ?? '',
-                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-            ]);
+            ];
+
+            foreach ($aspek_potensi as $index => $item) {
+                $nilai = $nilaiCapaian[$index] ?? null;
+                $row[$item->nama_aspek] = $nilai !== null && $nilai !== '' ? $nilai : '';
+            }
+
+            $row['JPM'] = $peserta->hasilPspk?->jpm . '%' ?? '';
+            $row['Kategori'] = $peserta->hasilPspk?->kategori ?? '';
+            $row['Tanggal Tes'] = \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y');
+
+            $export_data->push($row);
         }
 
         return (new FastExcel($export_data))->download('rekap-laporan-pspk.xlsx');
