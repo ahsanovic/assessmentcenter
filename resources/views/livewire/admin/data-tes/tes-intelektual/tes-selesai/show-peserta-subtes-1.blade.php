@@ -68,7 +68,7 @@
                                             </span>
                                         </td>   
                                         <td class="text-wrap">
-                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                            <span class="text-dark fw-normal">{{ $item->jabatan }}</span>
                                         </td>
                                         <td class="text-wrap">
                                             <span class="fw-medium text-dark">{{ $item->instansi }}</span>

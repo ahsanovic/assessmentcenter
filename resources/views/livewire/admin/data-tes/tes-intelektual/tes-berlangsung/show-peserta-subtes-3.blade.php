@@ -37,7 +37,6 @@
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Nama Peserta</th>
-                                    <th>NIK / NIP - Pangkat/Gol</th>
                                     <th>Jabatan</th>
                                     <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
                                     <th>Mulai Tes</th>
@@ -50,7 +49,6 @@
                                 @foreach ($data as $index => $item)
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $data->firstItem() + $index }}</td>
                                         <td>
                                             <span class="fw-medium">{{ $item->nama }}</span><br>
                                             <span class="text-muted small">
@@ -69,7 +67,8 @@
                                             </span>
                                         </td>
                                         <td class="text-wrap">
-                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
+                                            <span class="text-dark fw-normal">{{ $item->jabatan }}</span>
+                                        </td>
                                         <td class="text-wrap">
                                             <span class="fw-medium text-dark">{{ $item->instansi }}</span>
                                             <br>
@@ -84,6 +83,13 @@
                                         </td>
                                         <td class="text-center">
                                             <span class="fw-semibold text-dark">{{ count(explode(',', $item->soal_id)) }}</span>
+                                            <span class="mx-1 text-muted">/</span>
+                                            <span class="fw-semibold text-success">{{
+                                                    collect(explode(',', $item->jawaban))
+                                                        ->filter(fn($jawab) => $jawab !== '0' && $jawab !== 0 && $jawab !== null && $jawab !== '')
+                                                        ->count()
+                                                }}</span>
+                                        </td>
                                         <td>
                                             @if ($item->is_finished == 'false')
                                                 <span class="badge bg-danger text-white">✖ Belum Selesai</span>
