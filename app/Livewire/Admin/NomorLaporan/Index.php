@@ -120,14 +120,14 @@ class Index extends Component
 
                 $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data']);
             } else {
-                $check_duplicate = NomorLaporan::where('nomor', $this->nomor)
-                    ->where('tanggal', $tanggal)
-                    ->exists();
+                // $check_duplicate = NomorLaporan::where('nomor', $this->nomor)
+                //     ->where('tanggal', $tanggal)
+                //     ->exists();
 
-                if ($check_duplicate) {
-                    $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor ' . $this->nomor . ' sudah ada!']);
-                    return;
-                }
+                // if ($check_duplicate) {
+                //     $this->dispatch('toast', ['type' => 'error', 'message' => 'data dengan nomor ' . $this->nomor . ' sudah ada!']);
+                //     return;
+                // }
 
                 $data = NomorLaporan::create([
                     'event_id' => $this->event_id_modal,
@@ -159,7 +159,19 @@ class Index extends Component
             ->orderByDesc('id')
             ->paginate(10);
 
-        $options_event = Event::pluck('nama_event', 'id');
+        $options_event = Event::query()
+            ->with('metodeTes')
+            ->orderBy('nama_event')
+            ->get()
+            ->mapWithKeys(function (Event $event) {
+                $label = $event->nama_event;
+                $metode = $event->metodeTes?->metode_tes;
+                if ($metode) {
+                    $label .= ' — '.$metode;
+                }
+
+                return [$event->id => $label];
+            });
 
         return view('livewire.admin.nomor-laporan.index', compact('data', 'options_event'));
     }
