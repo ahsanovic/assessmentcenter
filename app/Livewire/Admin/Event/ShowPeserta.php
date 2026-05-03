@@ -5,41 +5,59 @@ namespace App\Livewire\Admin\Event;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefJenisPeserta;
+use App\Services\EventPesertaSpreadsheetImportService;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 #[Layout('components.layouts.admin.app', ['title' => 'Event'])]
 class ShowPeserta extends Component
 {
-    use WithPagination, WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     public $id_event;
+
     public $event;
+
     public $selected_id;
 
     // Form fields
     public $nama;
+
     public $nip;
+
     public $nik;
+
     public $jabatan;
+
     public $instansi;
+
     public $unit_kerja;
+
     public $jenis_peserta_id;
+
     public $password;
+
     public $is_active;
+
     public $isUpdate = false;
 
     // Modal state
     public $showModal = false;
+
     public $showImportModal = false;
 
     // Filter fields
     public $filter_jenis_peserta;
+
     public $is_portofolio_completed;
 
     // Import
@@ -61,27 +79,27 @@ class ShowPeserta extends Component
         if ($this->jenis_peserta_id == 1) {
             // Validasi NIP untuk ASN
             $nipRule = ['required', 'numeric', 'digits:18'];
-            
+
             // Cek duplikat NIP dalam event yang sama
             if ($this->isUpdate) {
-                $nipRule[] = 'unique:peserta,nip,' . $this->selected_id . ',id,event_id,' . $this->id_event;
+                $nipRule[] = 'unique:peserta,nip,'.$this->selected_id.',id,event_id,'.$this->id_event;
             } else {
-                $nipRule[] = 'unique:peserta,nip,NULL,id,event_id,' . $this->id_event;
+                $nipRule[] = 'unique:peserta,nip,NULL,id,event_id,'.$this->id_event;
             }
-            
+
             $rules['nip'] = $nipRule;
             $rules['jabatan'] = ['required'];
-        } else if ($this->jenis_peserta_id == 2) {
+        } elseif ($this->jenis_peserta_id == 2) {
             // Validasi NIK untuk Non ASN
             $nikRule = ['required', 'numeric', 'digits:16'];
-            
+
             // Cek duplikat NIK dalam event yang sama
             if ($this->isUpdate) {
-                $nikRule[] = 'unique:peserta,nik,' . $this->selected_id . ',id,event_id,' . $this->id_event;
+                $nikRule[] = 'unique:peserta,nik,'.$this->selected_id.',id,event_id,'.$this->id_event;
             } else {
-                $nikRule[] = 'unique:peserta,nik,NULL,id,event_id,' . $this->id_event;
+                $nikRule[] = 'unique:peserta,nik,NULL,id,event_id,'.$this->id_event;
             }
-            
+
             $rules['nik'] = $nikRule;
         }
 
@@ -105,7 +123,7 @@ class ShowPeserta extends Component
             'password.required' => 'harus diisi',
             'password.min' => 'minimal 8 karakter',
             'jenis_peserta_id.required' => 'harus dipilih',
-            'unit_kerja.required' => 'harus diisi'
+            'unit_kerja.required' => 'harus diisi',
         ];
     }
 
@@ -153,16 +171,16 @@ class ShowPeserta extends Component
             ->where('event_id', $this->id_event)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('nik', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%');
+                    $q->where('nama', 'like', '%'.$this->search.'%')
+                        ->orWhere('nip', 'like', '%'.$this->search.'%')
+                        ->orWhere('nik', 'like', '%'.$this->search.'%')
+                        ->orWhere('jabatan', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->filter_jenis_peserta, function ($query) {
                 $query->where('jenis_peserta_id', $this->filter_jenis_peserta);
             })
-            ->when(!is_null($this->is_portofolio_completed) && $this->is_portofolio_completed !== '', function ($query) {
+            ->when(! is_null($this->is_portofolio_completed) && $this->is_portofolio_completed !== '', function ($query) {
                 if ($this->is_portofolio_completed === 'true') {
                     $query->whereNotNull('tempat_lahir')
                         ->whereNotNull('tgl_lahir')
@@ -241,17 +259,17 @@ class ShowPeserta extends Component
         $this->selected_id = $id;
 
         $peserta = Peserta::findOrFail($id);
-        
+
         // Dapatkan nama raw dari database (tanpa accessor)
         $namaRaw = $peserta->getOriginal('nama');
         $gelarDepan = $peserta->gelar_depan;
         $gelarBelakang = $peserta->gelar_belakang;
-        
+
         // Cek apakah nama raw sudah mengandung gelar (data lama/korup)
         // Jika gelar_depan ada dan nama raw dimulai dengan gelar tersebut, berarti data korup
         $namaAlreadyHasGelarDepan = $gelarDepan && stripos($namaRaw, trim($gelarDepan)) === 0;
         $namaAlreadyHasGelarBelakang = $gelarBelakang && stripos($namaRaw, trim($gelarBelakang)) !== false;
-        
+
         if ($namaAlreadyHasGelarDepan || $namaAlreadyHasGelarBelakang) {
             // Data korup: nama raw sudah mengandung gelar, gunakan nama raw saja
             $this->nama = $namaRaw;
@@ -259,15 +277,15 @@ class ShowPeserta extends Component
             // Data normal: susun nama lengkap dari field terpisah
             $namaLengkap = '';
             if ($gelarDepan) {
-                $namaLengkap .= $gelarDepan . ' ';
+                $namaLengkap .= $gelarDepan.' ';
             }
             $namaLengkap .= $namaRaw;
             if ($gelarBelakang) {
-                $namaLengkap .= ', ' . $gelarBelakang;
+                $namaLengkap .= ', '.$gelarBelakang;
             }
             $this->nama = trim($namaLengkap);
         }
-        
+
         $this->nip = $peserta->nip;
         $this->nik = $peserta->nik;
         $this->jabatan = $peserta->getOriginal('jabatan');
@@ -287,7 +305,7 @@ class ShowPeserta extends Component
         try {
             // Parse nama dan gelar
             $parsedNama = parse_nama_gelar($this->nama);
-            
+
             if ($this->isUpdate) {
                 $data = Peserta::findOrFail($this->selected_id);
                 $old_data = $data->getOriginal();
@@ -300,15 +318,15 @@ class ShowPeserta extends Component
                     $data->nip = null;
                     $data->nik = $this->nik;
                     $data->jabatan = null;
-                } else if ($this->jenis_peserta_id == 1 && ($data->jenis_peserta_id == 2 && $data->nik != null)) {
+                } elseif ($this->jenis_peserta_id == 1 && ($data->jenis_peserta_id == 2 && $data->nik != null)) {
                     $data->nik = null;
                     $data->nip = $this->nip;
                     $data->jabatan = $this->jabatan;
-                } else if ($this->jenis_peserta_id == 1) {
+                } elseif ($this->jenis_peserta_id == 1) {
                     $data->nik = null;
                     $data->nip = $this->nip;
                     $data->jabatan = $this->jabatan;
-                } else if ($this->jenis_peserta_id == 2) {
+                } elseif ($this->jenis_peserta_id == 2) {
                     $data->nip = null;
                     $data->nik = $this->nik;
                     $data->jabatan = null;
@@ -352,7 +370,7 @@ class ShowPeserta extends Component
             $this->resetForm();
             $this->closeModal();
         } catch (\Throwable $th) {
-            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan: ' . $th->getMessage()]);
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan: '.$th->getMessage()]);
         }
     }
 
@@ -445,20 +463,34 @@ class ShowPeserta extends Component
 
     public function downloadTemplate()
     {
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
 
         // Header
         $headers = ['No', 'Nama (bisa dengan gelar)', 'Jenis Peserta (ASN/Non ASN)', 'NIP (18 digit, kosongkan jika Non ASN)', 'NIK (16 digit, kosongkan jika ASN)', 'Jabatan (kosongkan jika Non ASN)', 'Unit Kerja', 'Instansi', 'Password (min 8 karakter)'];
         $sheet->fromArray($headers, null, 'A1');
 
-        // Contoh data - dengan dan tanpa gelar
-        $exampleData = [
-            [1, 'Dr. BUDI SANTOSO, S.H., M.H.', 'ASN', '199001012020011001', '', 'Kepala Bagian', 'BKD Jatim', 'Pemerintah Provinsi Jawa Timur', 'password123'],
-            [2, 'SITI RAHAYU, S.E.', 'Non ASN', '', '3201012345678901', '', 'SDM', 'PT ABC', 'password456'],
-            [3, 'AHMAD WIJAYA', 'ASN', '198505152010011002', '', 'Analis Kebijakan', 'Biro Hukum', 'Kementerian Dalam Negeri', 'password789'],
+        // NIP/NIK harus teks agar Excel tidak merusak digit panjang (presisi angka).
+        $sheet->getStyle('D:D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        $sheet->getStyle('E:E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
+        // Contoh data — NIP/NIK sebagai string eksplisit
+        $examples = [
+            ['A' => 1, 'B' => 'Dr. BUDI SANTOSO, S.H., M.H.', 'C' => 'ASN', 'D' => '199001012020011001', 'E' => '', 'F' => 'Kepala Bagian', 'G' => 'BKD Jatim', 'H' => 'Pemerintah Provinsi Jawa Timur', 'I' => 'password123'],
+            ['A' => 2, 'B' => 'SITI RAHAYU, S.E.', 'C' => 'Non ASN', 'D' => '', 'E' => '3201012345678901', 'F' => '', 'G' => 'SDM', 'H' => 'PT ABC', 'I' => 'password456'],
+            ['A' => 3, 'B' => 'AHMAD WIJAYA', 'C' => 'ASN', 'D' => '198505152010011002', 'E' => '', 'F' => 'Analis Kebijakan', 'G' => 'Biro Hukum', 'H' => 'Kementerian Dalam Negeri', 'I' => 'password789'],
         ];
-        $sheet->fromArray($exampleData, null, 'A2');
+        $startRow = 2;
+        foreach ($examples as $i => $cols) {
+            $r = $startRow + $i;
+            foreach ($cols as $col => $val) {
+                if (($col === 'D' || $col === 'E') && ($val !== '' && $val !== null)) {
+                    $sheet->setCellValueExplicit($col.$r, (string) $val, DataType::TYPE_STRING);
+                } else {
+                    $sheet->setCellValue($col.$r, $val);
+                }
+            }
+        }
 
         // Auto width
         foreach (range('A', 'I') as $col) {
@@ -467,7 +499,7 @@ class ShowPeserta extends Component
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $filename = 'template_import_peserta.xlsx';
-        $path = storage_path('app/' . $filename);
+        $path = storage_path('app/'.$filename);
 
         $writer->save($path);
 
@@ -477,6 +509,48 @@ class ShowPeserta extends Component
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    public function checkPendingImportResult(): void
+    {
+        $userId = auth()->id() ?? 0;
+        $cacheKey = 'admin_import_peserta_result_'.$userId;
+        $payload = cache()->pull($cacheKey);
+        if (! $payload) {
+            return;
+        }
+
+        if (! empty($payload['fatal'])) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Import peserta gagal: '.$payload['fatal'],
+            ]);
+
+            return;
+        }
+
+        $imported = (int) ($payload['imported'] ?? 0);
+        $errors = $payload['errors'] ?? [];
+        $failed = (int) ($payload['failed'] ?? count($errors));
+
+        if ($failed > 0) {
+            $errorSummary = EventPesertaSpreadsheetImportService::categorizeImportErrors($errors);
+            $this->dispatch('toast', [
+                'type' => 'warning',
+                'message' => "Import selesai: $imported berhasil, $failed gagal.",
+            ]);
+            $this->dispatch('show-import-errors',
+                errors: $errors,
+                summary: $errorSummary,
+                imported: $imported,
+                failed: $failed
+            );
+        } else {
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => "Berhasil import $imported peserta",
+            ]);
+        }
     }
 
     public function importPeserta()
@@ -490,202 +564,68 @@ class ShowPeserta extends Component
         ]);
 
         try {
-            $path = $this->file_import->getRealPath();
-            $spreadsheet = IOFactory::load($path);
-            $sheet = $spreadsheet->getActiveSheet();
-            $rows = $sheet->toArray();
+            $storedPath = $this->file_import->store('imports/peserta', 'local');
+            if (! $storedPath) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyimpan file impor.']);
 
-            // Skip header
-            array_shift($rows);
-
-            $imported = 0;
-            $errors = [];
-            $importedNips = []; // Track NIP dalam batch import
-            $importedNiks = []; // Track NIK dalam batch import
-
-            foreach ($rows as $index => $row) {
-                $rowNum = $index + 2;
-
-                // Skip empty row
-                if (empty($row[1])) {
-                    continue;
-                }
-
-                $nama = trim($row[1] ?? '');
-                $jenisPesertaStr = strtolower(trim($row[2] ?? ''));
-                $nip = trim($row[3] ?? '');
-                $nik = trim($row[4] ?? '');
-                $jabatan = trim($row[5] ?? '');
-                $unitKerja = trim($row[6] ?? '');
-                $instansi = trim($row[7] ?? '');
-                $password = trim($row[8] ?? '');
-
-                // Determine jenis peserta
-                $jenisPesertaId = null;
-                if ($jenisPesertaStr === 'asn') {
-                    $jenisPesertaId = 1;
-                } elseif ($jenisPesertaStr === 'non asn') {
-                    $jenisPesertaId = 2;
-                }
-
-                // Validation
-                if (empty($nama)) {
-                    $errors[] = "Baris $rowNum: Nama harus diisi";
-                    continue;
-                }
-
-                if (!$jenisPesertaId) {
-                    $errors[] = "Baris $rowNum: Jenis peserta harus ASN atau Non ASN";
-                    continue;
-                }
-
-                if ($jenisPesertaId == 1 && (empty($nip) || strlen($nip) != 18)) {
-                    $errors[] = "Baris $rowNum: NIP harus 18 digit untuk ASN";
-                    continue;
-                }
-
-                // Cek duplikat NIP di event ini (database)
-                if ($jenisPesertaId == 1) {
-                    $existingNip = Peserta::where('event_id', $this->id_event)
-                        ->where('nip', $nip)
-                        ->exists();
-                    
-                    if ($existingNip) {
-                        $errors[] = "Baris $rowNum: NIP $nip sudah terdaftar di event ini";
-                        continue;
-                    }
-
-                    // Cek duplikat NIP dalam file import yang sama
-                    if (in_array($nip, $importedNips)) {
-                        $errors[] = "Baris $rowNum: NIP $nip duplikat dalam file import";
-                        continue;
-                    }
-
-                    $importedNips[] = $nip;
-                }
-
-                if ($jenisPesertaId == 2 && (empty($nik) || strlen($nik) != 16)) {
-                    $errors[] = "Baris $rowNum: NIK harus 16 digit untuk Non ASN";
-                    continue;
-                }
-
-                // Cek duplikat NIK di event ini (database)
-                if ($jenisPesertaId == 2) {
-                    $existingNik = Peserta::where('event_id', $this->id_event)
-                        ->where('nik', $nik)
-                        ->exists();
-                    
-                    if ($existingNik) {
-                        $errors[] = "Baris $rowNum: NIK $nik sudah terdaftar di event ini";
-                        continue;
-                    }
-
-                    // Cek duplikat NIK dalam file import yang sama
-                    if (in_array($nik, $importedNiks)) {
-                        $errors[] = "Baris $rowNum: NIK $nik duplikat dalam file import";
-                        continue;
-                    }
-
-                    $importedNiks[] = $nik;
-                }
-
-                if ($jenisPesertaId == 1 && empty($jabatan)) {
-                    $errors[] = "Baris $rowNum: Jabatan harus diisi untuk ASN";
-                    continue;
-                }
-
-                if (empty($unitKerja)) {
-                    $errors[] = "Baris $rowNum: Unit kerja harus diisi";
-                    continue;
-                }
-
-                if (empty($instansi)) {
-                    $errors[] = "Baris $rowNum: Instansi harus diisi";
-                    continue;
-                }
-
-                if (empty($password) || strlen($password) < 8) {
-                    $errors[] = "Baris $rowNum: Password harus minimal 8 karakter";
-                    continue;
-                }
-
-                // Parse nama dan gelar
-                $parsedNama = parse_nama_gelar($nama);
-
-                // Create peserta
-                $data = Peserta::create([
-                    'nama' => $parsedNama['nama'],
-                    'gelar_depan' => $parsedNama['gelar_depan'],
-                    'gelar_belakang' => $parsedNama['gelar_belakang'],
-                    'event_id' => $this->id_event,
-                    'jenis_peserta_id' => $jenisPesertaId,
-                    'nip' => $jenisPesertaId == 1 ? $nip : null,
-                    'nik' => $jenisPesertaId == 2 ? $nik : null,
-                    'jabatan' => $jenisPesertaId == 1 ? $jabatan : null,
-                    'unit_kerja' => $unitKerja,
-                    'instansi' => $instansi,
-                    'password' => bcrypt($password),
-                    'is_active' => 'true',
-                ]);
-
-                activity_log($data, 'create', 'peserta (import)');
-                $imported++;
+                return;
             }
+
+            $fullPath = Storage::disk('local')->path($storedPath);
+            $eventId = (int) $this->id_event;
+            $userId = auth()->id() ?? 0;
 
             $this->reset('file_import');
             $this->closeImportModal();
 
-            if (count($errors) > 0) {
-                // Kategorikan error
-                $errorSummary = $this->categorizeImportErrors($errors);
-                
-                $this->dispatch('toast', [
-                    'type' => 'warning',
-                    'message' => "Import selesai: $imported berhasil, " . count($errors) . " gagal.",
-                ]);
-                
-                // Dispatch event dengan data error
-                $this->dispatch('show-import-errors', 
-                    errors: $errors,
-                    summary: $errorSummary,
-                    imported: $imported,
-                    failed: count($errors)
-                );
-            } else {
-                $this->dispatch('toast', [
-                    'type' => 'success',
-                    'message' => "Berhasil import $imported peserta",
-                ]);
-            }
+            $this->dispatch('toast', [
+                'type' => 'info',
+                'message' => 'Import peserta berjalan di latar belakang. Mohon tunggu beberapa saat — notifikasi hasil akan muncul otomatis di halaman ini.',
+            ]);
+
+            Bus::dispatchAfterResponse(function () use ($fullPath, $storedPath, $eventId, $userId) {
+                @set_time_limit(600);
+                if (function_exists('ini_set')) {
+                    @ini_set('max_execution_time', '600');
+                }
+
+                $cacheKey = 'admin_import_peserta_result_'.$userId;
+
+                try {
+                    $importer = app(EventPesertaSpreadsheetImportService::class);
+                    $result = $importer->import($eventId, $fullPath);
+
+                    $errors = $result['errors'];
+                    $errorCount = count($errors);
+                    if ($errorCount > 500) {
+                        $errors = array_slice($errors, 0, 500);
+                        $errors[] = '… dan '.($errorCount - 500).' baris lainnya gagal (potongan daftar; periksa data sumber).';
+                    }
+
+                    cache()->put($cacheKey, [
+                        'imported' => $result['imported'],
+                        'errors' => $errors,
+                        'failed' => $errorCount,
+                        'fatal' => null,
+                    ], now()->addMinutes(30));
+                } catch (\Throwable $th) {
+                    \Illuminate\Support\Facades\Log::error('Import peserta: gagal', [
+                        'event_id' => $eventId,
+                        'message' => $th->getMessage(),
+                    ]);
+
+                    cache()->put($cacheKey, [
+                        'imported' => 0,
+                        'errors' => [],
+                        'failed' => 0,
+                        'fatal' => $th->getMessage(),
+                    ], now()->addMinutes(30));
+                } finally {
+                    Storage::disk('local')->delete($storedPath);
+                }
+            });
         } catch (\Throwable $th) {
-            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal import: ' . $th->getMessage()]);
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal memulai import: '.$th->getMessage()]);
         }
-    }
-
-    private function categorizeImportErrors($errors)
-    {
-        $categories = [
-            'duplikat_database' => 0,
-            'duplikat_file' => 0,
-            'format_salah' => 0,
-            'data_kosong' => 0,
-            'lainnya' => 0,
-        ];
-
-        foreach ($errors as $error) {
-            if (strpos($error, 'sudah terdaftar di event') !== false) {
-                $categories['duplikat_database']++;
-            } elseif (strpos($error, 'duplikat dalam file') !== false) {
-                $categories['duplikat_file']++;
-            } elseif (strpos($error, 'harus') !== false && (strpos($error, 'digit') !== false || strpos($error, 'karakter') !== false)) {
-                $categories['format_salah']++;
-            } elseif (strpos($error, 'harus diisi') !== false) {
-                $categories['data_kosong']++;
-            } else {
-                $categories['lainnya']++;
-            }
-        }
-
-        return $categories;
     }
 }

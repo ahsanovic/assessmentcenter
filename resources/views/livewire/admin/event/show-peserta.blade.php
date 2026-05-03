@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.10s="checkPendingImportResult">
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
         ['url' => route('admin.event'), 'title' => 'Event'],
@@ -401,11 +401,12 @@
                             <small>
                                 <strong><i class="link-icon me-1" data-feather="warning" style="width: 14px; height: 14px;"></i> Petunjuk:</strong>
                                 <ol class="mb-0 ps-3 mt-1">
-                                    <li>Download template terlebih dahulu</li>
-                                    <li>Isi data sesuai format template</li>
+                                    <li>Download template terlebih dahulu (kolom NIP/NIK sudah diset sebagai teks)</li>
+                                    <li>Isi data sesuai format template — jangan ubah jenis kolom NIP/NIK menjadi Angka</li>
                                     <li>Nama bisa ditulis dengan gelar (contoh: "Dr. BUDI SANTOSO, S.H., M.H.")</li>
                                     <li>Gelar depan dan belakang akan terdeteksi otomatis</li>
                                     <li>Upload file yang sudah diisi</li>
+                                    <li>Impor ulang file yang sama: baris dengan NIP/NIK yang sudah ada di event ini akan <strong>ditolak</strong> (bukan menimpa data lama); hanya peserta baru yang ditambahkan</li>
                                 </ol>
                             </small>
                         </div>
