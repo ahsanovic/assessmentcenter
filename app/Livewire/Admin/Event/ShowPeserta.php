@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefJenisPeserta;
 use App\Services\EventPesertaSpreadsheetImportService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
@@ -513,7 +514,7 @@ class ShowPeserta extends Component
 
     public function checkPendingImportResult(): void
     {
-        $userId = auth()->id() ?? 0;
+        $userId = Auth::id() ?? 0;
         $cacheKey = 'admin_import_peserta_result_'.$userId;
         $payload = cache()->pull($cacheKey);
         if (! $payload) {
@@ -573,7 +574,7 @@ class ShowPeserta extends Component
 
             $fullPath = Storage::disk('local')->path($storedPath);
             $eventId = (int) $this->id_event;
-            $userId = auth()->id() ?? 0;
+            $userId = Auth::id() ?? 0;
 
             $this->reset('file_import');
             $this->closeImportModal();
