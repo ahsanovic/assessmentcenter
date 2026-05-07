@@ -53,8 +53,8 @@ return [
 
         'assessor' => [
             'driver' => 'session',
-            'provider' => 'assessor'
-        ]
+            'provider' => 'assessor',
+        ],
     ],
 
     /*
