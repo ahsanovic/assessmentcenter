@@ -33,6 +33,9 @@ class Event extends Model
     protected $table = 'event';
     protected $guarded = ['id'];
 
+    /** ID metode tes di `ref_metode_tes`; kuesioner responden hanya dipakai event dengan metode ini (biasanya teks kolom metode_tes = "Lainnya"). */
+    public const METODE_KUESIONER_RESPONDEN = 2;
+
     protected function setTglMulaiAttribute($value)
     {
         $this->attributes['tgl_mulai'] = date('Y-m-d', strtotime($value));

@@ -38,12 +38,24 @@ class Show extends Component
     {
         $this->id_event = $idEvent;
         $this->event = Event::with('peserta')->findOrFail($this->id_event);
+
+        if ((int) $this->event->metode_tes_id !== Event::METODE_KUESIONER_RESPONDEN) {
+            abort(404);
+        }
+
         $this->pertanyaan = Kuesioner::pluck('deskripsi', 'id')->toArray();
     }
 
     public function downloadExcel()
     {
-        $peserta = $this->event->peserta()->with('jawabanResponden')->get();
+        $peserta = $this->event->peserta()
+            ->whereHas('jawabanResponden', function ($query) {
+                $query->where('event_id', $this->id_event);
+            })
+            ->with(['jawabanResponden' => function ($query) {
+                $query->where('event_id', $this->id_event)->latest('id');
+            }])
+            ->get();
         $skorLabel = [
             1 => 'Sangat Tidak Setuju',
             2 => 'Tidak Setuju',
@@ -76,7 +88,7 @@ class Show extends Component
             ];
         }
 
-        $filename = 'jawaban-responden-' . str_replace(' ', '-', strtolower($this->event->name ?? 'event')) . '-' . date('Y-m-d') . '.xlsx';
+        $filename = 'jawaban-responden-' . str_replace(' ', '-', strtolower($this->event->nama_event ?? 'event')) . '-' . date('Y-m-d') . '.xlsx';
 
         return (new FastExcel(collect($exportData)))->download($filename);
     }
@@ -84,13 +96,18 @@ class Show extends Component
     public function render()
     {
         $data = $this->event->peserta()
-            ->with('jawabanResponden')
+            ->whereHas('jawabanResponden', function ($query) {
+                $query->where('event_id', $this->id_event);
+            })
+            ->with(['jawabanResponden' => function ($query) {
+                $query->where('event_id', $this->id_event)->latest('id');
+            }])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%');
                 });
             })
-            ->paginate(5);
+            ->paginate(10);
 
         return view('livewire.admin.hasil-responden.show', [
             'data' => $data,
