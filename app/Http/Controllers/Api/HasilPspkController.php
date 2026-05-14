@@ -122,11 +122,12 @@ class HasilPspkController extends Controller
             'nik' => $peserta?->nik,
             'tahun_tes' => $tahunTes,
             'nomor_laporan_individu' => $this->resolveNomorLaporanIndividu($peserta, $nomorLaporans),
+            'tanggal_tes' => $peserta?->test_started_at,
             'level_pspk' => $levelPspk,
             'nilai' => $nilaiOrdered,
             'nilai_jpm' => $hasil->jpm !== null ? round((float) $hasil->jpm, 2) : null,
             'kategori_teks' => $hasil->kategori,
-            'kategori_id' => $this->kategoriKeAngka($hasil->kategori),
+            'kategori_angka' => $this->kategoriKeAngka($hasil->kategori),
         ];
     }
 
