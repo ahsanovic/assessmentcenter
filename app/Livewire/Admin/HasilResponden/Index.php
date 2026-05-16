@@ -5,7 +5,6 @@ namespace App\Livewire\Admin\HasilResponden;
 use App\Models\Event;
 use App\Models\JawabanResponden;
 use App\Models\Kuesioner;
-use App\Models\RefMetodeTes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
@@ -23,11 +22,26 @@ class Index extends Component
 
     #[Url(as: 'q')]
     public ?string $search = '';
-    public string $downloadPeriod = '1m';
+
+    /** Format d-m-Y; diisi dari flatpickr range */
+    public ?string $downloadDari = null;
+
+    /** Format d-m-Y */
+    public ?string $downloadSampai = null;
 
     public function updatedSearch()
     {
         $this->resetPage();
+    }
+
+    public function updatedDownloadDari(): void
+    {
+        $this->resetValidation('downloadKuesioner');
+    }
+
+    public function updatedDownloadSampai(): void
+    {
+        $this->resetValidation('downloadKuesioner');
     }
 
     public function render()
@@ -37,15 +51,10 @@ class Index extends Component
             ->where('event.metode_tes_id', Event::METODE_KUESIONER_RESPONDEN);
 
         if ($this->search !== '') {
-            $totalQuery->where('event.nama_event', 'like', '%' . $this->search . '%');
+            $totalQuery->where('event.nama_event', 'like', '%'.$this->search.'%');
         }
 
         $totalResponden = $totalQuery->count();
-
-        $metodeKuesionerLabel = RefMetodeTes::query()
-            ->whereKey(Event::METODE_KUESIONER_RESPONDEN)
-            ->value('metode_tes')
-            ?: 'Lainnya';
 
         $data = Event::query()
             ->with(['metodeTes'])
@@ -53,36 +62,52 @@ class Index extends Component
             ->where('metode_tes_id', Event::METODE_KUESIONER_RESPONDEN)
             ->whereHas('jawabanResponden')
             ->when($this->search, function ($query) {
-                $query->where('nama_event', 'like', '%' . $this->search . '%');
+                $query->where('nama_event', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $downloadSince = $this->resolveDownloadStartDate();
-        $downloadPreviewCount = $this->jawabanExportBaseQuery($downloadSince)->count();
-        $downloadSinceLabel = $downloadSince->locale('id')->translatedFormat('d F Y');
+        $range = $this->resolveExportDateRange();
+        $downloadPreviewCount = $range
+            ? $this->jawabanExportBaseQuery()->count()
+            : 0;
+        $downloadReady = $range !== null && $downloadPreviewCount > 0;
+        $activeDownloadPreset = $this->detectActiveDownloadPreset($range);
+        $downloadStatusMessage = null;
+        $downloadRangeLabel = null;
+        if ($range) {
+            [$from, $to] = $range;
+            $downloadRangeLabel = $from->locale('id')->translatedFormat('d M Y')
+                .' s.d. '
+                .$to->locale('id')->translatedFormat('d M Y');
+            $downloadStatusMessage = $downloadPreviewCount > 0
+                ? number_format($downloadPreviewCount, 0, ',', '.').' jawaban siap diunduh'
+                : 'Tidak ada data pada rentang ini';
+        } else {
+            $downloadStatusMessage = 'Pilih rentang tanggal untuk melihat data unduhan';
+        }
 
         return view('livewire.admin.hasil-responden.index', compact(
             'data',
             'totalResponden',
-            'metodeKuesionerLabel',
             'downloadPreviewCount',
-            'downloadSinceLabel'
+            'downloadRangeLabel',
+            'downloadReady',
+            'downloadStatusMessage',
+            'activeDownloadPreset'
         ));
     }
 
     public function downloadKuesioner()
     {
-        $periodLabels = [
-            '1m' => '1-bulan',
-            '3m' => '3-bulan',
-            '6m' => '6-bulan',
-            '1y' => '1-tahun',
-        ];
+        if (! $this->resolveExportDateRange()) {
+            $this->addError('downloadKuesioner', 'Pilih rentang tanggal unduhan terlebih dahulu.');
 
-        $startDate = $this->resolveDownloadStartDate();
-        if ($this->jawabanExportBaseQuery($startDate)->doesntExist()) {
-            $this->addError('downloadKuesioner', 'Tidak ada jawaban kuesioner pada periode yang dipilih.');
+            return null;
+        }
+
+        if ($this->jawabanExportBaseQuery()->doesntExist()) {
+            $this->addError('downloadKuesioner', 'Tidak ada jawaban kuesioner pada rentang tanggal yang dipilih.');
 
             return null;
         }
@@ -96,7 +121,7 @@ class Index extends Component
             5 => 'Sangat Setuju',
         ];
 
-        $rows = $this->jawabanExportBaseQuery($startDate)
+        $rows = $this->jawabanExportBaseQuery()
             ->orderByDesc('jawaban_responden.created_at')
             ->get([
                 'jawaban_responden.kuesioner_id',
@@ -115,7 +140,7 @@ class Index extends Component
             foreach ($kuesionerIds as $i => $id) {
                 $pertanyaanText = $pertanyaan[$id] ?? '-';
                 $skor = isset($skors[$i]) ? (int) $skors[$i] : 0;
-                $detailJawaban[] = 'Pertanyaan: ' . $pertanyaanText . ' | Skor: ' . ($skorLabel[$skor] ?? '-');
+                $detailJawaban[] = 'Pertanyaan: '.$pertanyaanText.' | Skor: '.($skorLabel[$skor] ?? '-');
             }
 
             return [
@@ -128,38 +153,111 @@ class Index extends Component
             ];
         });
 
-        $periodLabel = $periodLabels[$this->downloadPeriod] ?? '1-bulan';
-        $filename = 'kuesioner-responden-' . $periodLabel . '-' . now()->format('Y-m-d') . '.xlsx';
+        [$fromExport, $toExport] = $this->resolveExportDateRange();
+        $filename = 'kuesioner-responden-dari-'
+            .$fromExport->format('Y-m-d')
+            .'-sampai-'
+            .$toExport->format('Y-m-d')
+            .'.xlsx';
 
         return (new FastExcel($exportData))->download($filename);
     }
 
-    private function jawabanExportBaseQuery(?Carbon $from = null): Builder
+    public function applyDownloadRangePreset(string $preset): void
     {
-        $from ??= $this->resolveDownloadStartDate();
+        $today = now();
 
-        return JawabanResponden::query()
-            ->join('event', 'event.id', '=', 'jawaban_responden.event_id')
-            ->leftJoin('peserta', 'peserta.id', '=', 'jawaban_responden.peserta_id')
-            ->where('event.metode_tes_id', Event::METODE_KUESIONER_RESPONDEN)
-            ->where('jawaban_responden.created_at', '>=', $from);
+        [$from, $to] = match ($preset) {
+            'today' => [$today->copy()->startOfDay(), $today->copy()->endOfDay()],
+            '7d' => [$today->copy()->subDays(6)->startOfDay(), $today->copy()->endOfDay()],
+            '30d' => [$today->copy()->subDays(29)->startOfDay(), $today->copy()->endOfDay()],
+            'month' => [$today->copy()->startOfMonth()->startOfDay(), $today->copy()->endOfDay()],
+            default => [null, null],
+        };
+
+        if (! $from || ! $to) {
+            return;
+        }
+
+        $this->downloadDari = $from->format('d-m-Y');
+        $this->downloadSampai = $to->format('d-m-Y');
+        $this->resetValidation('downloadKuesioner');
+        $this->dispatch('flatpickr-download-range-set', from: $this->downloadDari, to: $this->downloadSampai);
     }
 
-    private function resolveDownloadStartDate(): Carbon
+    private function jawabanExportBaseQuery(): Builder
     {
-        return match ($this->downloadPeriod) {
-            '3m' => now()->subMonthsNoOverflow(3)->startOfDay(),
-            '6m' => now()->subMonthsNoOverflow(6)->startOfDay(),
-            '1y' => now()->subYear()->startOfDay(),
-            default => now()->subMonthNoOverflow()->startOfDay(),
-        };
+        $q = JawabanResponden::query()
+            ->join('event', 'event.id', '=', 'jawaban_responden.event_id')
+            ->leftJoin('peserta', 'peserta.id', '=', 'jawaban_responden.peserta_id')
+            ->where('event.metode_tes_id', Event::METODE_KUESIONER_RESPONDEN);
+
+        $range = $this->resolveExportDateRange();
+        if ($range) {
+            [$from, $to] = $range;
+            $q->whereBetween('jawaban_responden.created_at', [$from, $to]);
+        } else {
+            $q->whereRaw('0 = 1');
+        }
+
+        return $q;
+    }
+
+    /**
+     * @return array{0: \Carbon\Carbon, 1: \Carbon\Carbon}|null
+     */
+    private function resolveExportDateRange(): ?array
+    {
+        if (blank($this->downloadDari) || blank($this->downloadSampai)) {
+            return null;
+        }
+
+        try {
+            $from = Carbon::createFromFormat('d-m-Y', $this->downloadDari)->startOfDay();
+            $to = Carbon::createFromFormat('d-m-Y', $this->downloadSampai)->endOfDay();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if ($from->greaterThan($to)) {
+            return [$to->copy()->startOfDay(), $from->copy()->endOfDay()];
+        }
+
+        return [$from, $to];
+    }
+
+    /**
+     * @param  array{0: \Carbon\Carbon, 1: \Carbon\Carbon}|null  $range
+     */
+    private function detectActiveDownloadPreset(?array $range): ?string
+    {
+        if (! $range) {
+            return null;
+        }
+
+        [$from, $to] = $range;
+        $today = now();
+        $presets = [
+            'today' => [$today->copy()->startOfDay(), $today->copy()->endOfDay()],
+            '7d' => [$today->copy()->subDays(6)->startOfDay(), $today->copy()->endOfDay()],
+            '30d' => [$today->copy()->subDays(29)->startOfDay(), $today->copy()->endOfDay()],
+            'month' => [$today->copy()->startOfMonth()->startOfDay(), $today->copy()->endOfDay()],
+        ];
+
+        foreach ($presets as $key => [$presetFrom, $presetTo]) {
+            if ($from->equalTo($presetFrom) && $to->equalTo($presetTo)) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'downloadPeriod']);
-        $this->downloadPeriod = '1m';
+        $this->reset(['search', 'downloadDari', 'downloadSampai']);
+        $this->resetValidation('downloadKuesioner');
         $this->resetPage();
-        $this->render();
+        $this->dispatch('flatpickr-download-range-clear');
     }
 }
