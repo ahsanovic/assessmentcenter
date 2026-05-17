@@ -13,6 +13,7 @@ class Index extends Component
     use WithPagination;
 
     public $tgl_mulai;
+
     public $selected_id;
 
     public function render()
@@ -20,7 +21,7 @@ class Index extends Component
         $data = Event::withCount(['peserta', 'ujianPspk'])
             ->with(['peserta', 'ujianPspk'])
             ->whereIsFinished('false')
-            ->whereIn('metode_tes_id', [5,6])
+            ->whereIn('metode_tes_id', [5, 6, 7, 8])
             ->orderByDesc('id')
             ->paginate(10);
 

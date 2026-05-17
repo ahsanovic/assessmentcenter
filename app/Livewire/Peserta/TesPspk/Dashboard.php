@@ -30,8 +30,9 @@ class Dashboard extends Component
         if ($ujian_selesai > 0) {
             session()->flash('toast', [
                 'type' => 'error',
-                'message' => 'Anda sudah melakukan Tes PSPK.'
+                'message' => 'Anda sudah melakukan Tes PSPK.',
             ]);
+
             return $this->redirect(route('peserta.tes-pspk.home'), navigate: true);
         }
 
@@ -53,11 +54,37 @@ class Dashboard extends Component
                     $level_pspk = 2;
                     $jenis_tes = 8;
                     break;
+                case 7: // PSPK level 3
+                    $level_pspk = 3;
+                    $jenis_tes = 9;
+                    break;
+                case 8: // PSPK level 4
+                    $level_pspk = 3; // level 3 dan 4 memiliki soal yang sama
+                    $jenis_tes = 10;
+                    break;
+                default:
+                    $level_pspk = null;
+                    $jenis_tes = null;
+                    break;
             }
 
-            $soal = SoalPspk::where('level_pspk_id', $level_pspk)
-                ->inRandomOrder()
-                ->get(['id', 'kunci_jawaban']);
+            if (in_array($level_pspk, [3, 4])) {
+                $soalAnkas = SoalPspk::where('level_pspk_id', $level_pspk)
+                    ->where('jenis_soal', SoalPspk::JENIS_ANKAS)
+                    ->inRandomOrder()
+                    ->get(['id']);
+
+                $soalSjt = SoalPspk::where('level_pspk_id', $level_pspk)
+                    ->where('jenis_soal', SoalPspk::JENIS_SJT)
+                    ->inRandomOrder()
+                    ->get(['id']);
+
+                $soal = $soalAnkas->concat($soalSjt);
+            } else {
+                $soal = SoalPspk::where('level_pspk_id', $level_pspk)
+                    ->inRandomOrder()
+                    ->get(['id', 'kunci_jawaban']);
+            }
 
             $jumlah_soal = $soal->count();
             $soal_id = $soal->implode('id', ',');
@@ -69,12 +96,12 @@ class Dashboard extends Component
             $aspek_list = RefAspekPspk::pluck('kode_aspek')->toArray();
             $skor_awal = array_fill_keys($aspek_list, 0);
 
-            $ujian = new UjianPspk();
+            $ujian = new UjianPspk;
             $ujian->event_id = Auth::guard('peserta')->user()->event_id;
             $ujian->peserta_id = Auth::guard('peserta')->user()->id;
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
-            $ujian->kunci_jawaban = $soal->implode('kunci_jawaban', ',');
+            $ujian->kunci_jawaban = in_array($level_pspk, [3, 4]) ? null : $soal->implode('kunci_jawaban', ',');
             $ujian->skor_aspek = $skor_awal;
             $ujian->waktu_tes_berakhir = $waktu_tes_berakhir;
             $ujian->save();

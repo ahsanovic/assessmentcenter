@@ -15,6 +15,7 @@ class HasilPspk extends Model
     protected $casts = [
         'deskripsi' => 'array',
         'nilai_capaian' => 'array',
+        'saran_pengembangan' => 'array',
     ];
 
     public function peserta()

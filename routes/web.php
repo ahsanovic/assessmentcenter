@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
-use App\Http\Controllers\LogoutAssessorController;
-use App\Http\Controllers\LogoutPesertaController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
 use App\Http\Controllers\DownloadPortofolioController;
+use App\Http\Controllers\DownloadPspkKasusLampiranAdminController;
 use App\Http\Controllers\DownloadRekapController;
+use App\Http\Controllers\DownloadSoalPspkLampiranPdfController;
 use App\Http\Controllers\LogoutAdminController;
+use App\Http\Controllers\LogoutAssessorController;
+use App\Http\Controllers\LogoutPesertaController;
+use App\Http\Controllers\ShowPspkLampiranPdfViewerController;
 use App\Http\Middleware\CheckExamPin;
 use Illuminate\Support\Facades\Route;
 
@@ -130,7 +133,7 @@ Route::prefix('bkdac')->group(function () {
         // log pelanggaran tes kompetensi teknis
         Route::get('pelanggaran/tes-kompetensi-teknis', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Index::class)->name('admin.pelanggaran-tes-kompetensi-teknis');
         Route::get('pelanggaran/tes-kompetensi-teknis/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesKompetensiTeknis\Show::class)->name('admin.pelanggaran-tes-kompetensi-teknis.show');
-        
+
         // log pelanggaran tes pspk
         Route::get('pelanggaran/tes-pspk', \App\Livewire\Admin\PelanggaranTes\TesPspk\Index::class)->name('admin.pelanggaran-tes-pspk');
         Route::get('pelanggaran/tes-pspk/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesPspk\Show::class)->name('admin.pelanggaran-tes-pspk.show');
@@ -225,6 +228,8 @@ Route::prefix('bkdac')->group(function () {
 
         // referensi pspk
         Route::get('ref-pspk', \App\Livewire\Admin\Pspk\Ref\Index::class)->name('admin.ref-pspk');
+        Route::get('pspk-kasus-lampiran', \App\Livewire\Admin\Pspk\KasusLampiran\Index::class)->name('admin.pspk-kasus-lampiran');
+        Route::get('pspk-kasus-lampiran/{kasus}/pdf', DownloadPspkKasusLampiranAdminController::class)->name('admin.pspk-kasus-lampiran.pdf');
 
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');
@@ -319,6 +324,8 @@ Route::middleware(['auth:peserta'])->group(function () {
     Route::prefix('tes-pspk')->group(function () {
         Route::get('/', \App\Livewire\Peserta\TesPspk\Index::class)->name('peserta.tes-pspk')->middleware(CheckExamPin::class);
         Route::get('home', \App\Livewire\Peserta\TesPspk\Dashboard::class)->name('peserta.tes-pspk.home')->middleware(CheckExamPin::class);
+        Route::get('lampiran-pdf/{soal}', DownloadSoalPspkLampiranPdfController::class)->name('peserta.tes-pspk.lampiran-pdf')->middleware(CheckExamPin::class);
+        Route::get('lampiran-baca/{soal}', ShowPspkLampiranPdfViewerController::class)->name('peserta.tes-pspk.lampiran-baca')->middleware(CheckExamPin::class);
         Route::get('ujian/{id}', \App\Livewire\Peserta\TesPspk\Ujian::class)->name('peserta.tes-pspk.ujian')->middleware(CheckExamPin::class);
         Route::get('hasil', \App\Livewire\Peserta\TesPspk\Hasil::class)->name('peserta.tes-pspk.hasil')->middleware(CheckExamPin::class);
     });

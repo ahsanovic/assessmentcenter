@@ -255,7 +255,7 @@
         <tr>
             <td width="20">Level</td>
             <td width="5">:</td>
-            <td>{{ $data->metode_tes_id == 5 ? '1' : '2' }}</td>
+            <td>{{ $data->metode_tes_id == 7 ? '3' : ($data->metode_tes_id == 8 ? '4' : '-') }}</td>
         </tr>
     </table>
     
@@ -298,21 +298,11 @@
     <div class="identitas-header"><b>B. CAPAIAN KOMPETENSI</b></div>
     <table class="aspek-table" border="1">
         <tr>
-            <th colspan="2" rowspan="2"><b>UNIT KOMPETENSI</b></th>
-            <th colspan="2"><b>NILAI CAPAIAN</b></th>
-            <th rowspan="2"><b>KETERANGAN</b></th>
+            <th><b>NO</b></th>
+            <th><b>ASPEK KOMPETENSI</b></th>
+            <th><b>STANDAR</b></th>
+            <th><b>CAPAIAN</b></th>
         </tr>
-        @if ($data->metode_tes_id == 5) {{-- Level 1 --}}
-        <tr>
-            <th width="8%"><b>0</b></th>
-            <th width="8%"><b>1</b></th>
-        </tr>
-        @elseif ($data->metode_tes_id == 6) {{--  Level 2 --}}
-        <tr>
-            <th width="8%"><b>1</b></th>
-            <th width="8%"><b>2</b></th>
-        </tr>
-        @endif
         @php
             $no = 1;    
         @endphp
@@ -331,86 +321,24 @@
                         {{ $item->deskripsi_aspek }}
                     </i>
                 </td>
-                @if ($data->metode_tes_id == 5) {{-- Level 1 --}}
-                    {{-- Kolom Nilai Capaian 1 --}}
-                    <td style="text-align: center">
-                        {{ $nilai == 0.5 ? '0.5' : '' }}
-                    </td>
-
-                    {{-- Kolom Nilai Capaian 2 --}}
-                    <td style="text-align: center">
-                        {{ in_array($nilai, [1, 1.5]) ? $nilai : '' }}
-                    </td>
-
-                    {{-- Kategori --}}
-                    <td style="text-align: center">
-                        @switch($nilai)
-                            @case(0.5)
-                                Cukup Mampu
-                                @break
-                            @case(1)
-                                Mampu
-                                @break
-                            @case(1.5)
-                                Sangat Mampu
-                                @break
-                            @default
-                                '';
-                        @endswitch
-                    </td>
-                @elseif ($data->metode_tes_id == 6) {{-- Level 2 --}}
-                    {{-- Kolom Nilai Capaian 1 --}}
-                    <td style="text-align: center">
-                        {{ in_array($nilai, [1, 1.5]) ? $nilai : '' }}
-                    </td>
-
-                    {{-- Kolom Nilai Capaian 2 --}}
-                    <td style="text-align: center">
-                        {{ in_array($nilai, [2, 2.5]) ? $nilai : '' }}
-                    </td>
-
-                    {{-- Kategori --}}
-                    <td style="text-align: center">
-                        @switch($nilai)
-                            @case(1)
-                                Kurang Mampu
-                                @break
-                            @case(1.5)
-                                Cukup Mampu
-                                @break
-                            @case(2)
-                                Mampu
-                                @break
-                            @case(2.5)
-                                Sangat Mampu
-                                @break
-                            @default
-                                '';
-                        @endswitch
-                    </td>
-                @endif
+                <td width="10%" style="text-align: center;">
+                    4
+                </td>
+                <td width="10%" style="text-align: center;">
+                    {{ $nilai ?? 0 }}
+                </td>
             </tr>
         @endforeach
     </table>
 
     <div class="page-break"></div>
-    @php
-    if ($data->metode_tes_id == 5) {
-        $jumlah_nilai_capaian = collect($data->hasilPspk[0]->nilai_capaian)->filter(function($n) {
-            return in_array($n, [1, 1.5]);
-        })->count();
-    } elseif ($data->metode_tes_id == 6) {
-        $jumlah_nilai_capaian = collect($data->hasilPspk[0]->nilai_capaian)->filter(function($n) {
-            return in_array($n, [2, 2.5]);
-        })->count();
-    }
-    @endphp
+
     <table class="aspek-table" border="1">
     <tr>
         <td colspan="5" style="padding-left: 10px;">
-            <b>REKOMENDASI:</b> <br/>
-            Berdasarkan grafik capaian kompetensi, jumlah nilai capaian kompetensi
-            Sdr/i {{ $peserta->nama }} adalah {{ $jumlah_nilai_capaian }} dari 9 kompetensi yang disyaratkan jabatan, atau dinyatakan dengan : 
+            Berdasarkan hasil penilaian, total nilai capaian adalah {{ array_sum($nilaiCapaian) }}
+            dari total nilai standar yaitu 36 atau setara dengan {{ number_format($jpm, 2) }}%
+            dan masuk dalam kategori {{ $kategori }}.
         </td>
     </tr>
     <tr>
@@ -448,57 +376,38 @@
     <div class="deskripsi-header"><b>D. SARAN PENGEMBANGAN KOMPETENSI</b></div>
     <table class="aspek-table" border="1">
         <tr>
-            <th colspan="2"><b>AREA PENGEMBANGAN</b></th>
+            <th><b>NO</b></th>
+            <th><b>ASPEK KOMPETENSI</b></th>
             <th><b>CAPAIAN</b></th>
-            <th><b>LANGKAH-LANGKAH YANG DILAKUKAN</b></th>
+            <th><b>SARAN PENGEMBANGAN</b></th>
         </tr>
         @php
             $no = 1;
         @endphp
         @foreach ($aspek_potensi as $item)
         <tr>
-            <td width="3">{{ $no++ }}</td>
-            <td>
+            <td width="3">{{ $no++ }}.</td>
+            <td width="30%">
                 {{ $item->nama_aspek }}
             </td>
-            <td>
+            <td width="10%" style="text-align: center;">
                 @php
-                    $nilai = $nilaiCapaian[$loop->index] ?? null;
+                    $nilai = $data->hasilPspk[0]->nilai_capaian[$loop->index] ?? null;
                 @endphp
-                @if ($data->metode_tes_id == 5)
-                    {{ in_array($nilai, [1, 1.5]) ? 'Memenuhi Standar Kompetensi' : 'Belum Memenuhi Standar Kompetensi' }}
-                @elseif ($data->metode_tes_id == 6)
-                    {{ in_array($nilai, [2, 2.5]) ? 'Memenuhi Standar Kompetensi' : 'Belum Memenuhi Standar Kompetensi' }}
-                @endif
+                {{ $nilai ?? 0 }}
             </td>
             <td>
                 @php
-                    $level_pspk = $data->metode_tes_id == 5 ? 1 : 2;
-                    $ref = \App\Models\Pspk\RefSaranPengembangan::where('level_pspk_id', $level_pspk)->first();
-                    $saran_pengembangan = $ref->{$item->kode_aspek} ?? '';
-                    $items = preg_split('/-\s+/', trim($saran_pengembangan), -1, PREG_SPLIT_NO_EMPTY);
+                    $saran = $saran_pengembangan[$item->kode_aspek] ?? null;
+                    $items = $saran !== null && $saran !== ''
+                        ? preg_split('/-\s+/', trim((string) $saran), -1, PREG_SPLIT_NO_EMPTY)
+                        : [];
                 @endphp
-                @if ($data->metode_tes_id == 5)
-                    @if (in_array($nilai, [1, 1.5]))
-                        {{ 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi' }}
-                    @else
-                        <div>
-                            @foreach ($items as $text)
-                                - {{ trim($text) }}<br>
-                            @endforeach
-                        </div>
-                    @endif
-                @elseif ($data->metode_tes_id == 6)
-                    @if (in_array($nilai, [2, 2.5]))
-                        {{ 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi' }}
-                    @else
-                        <div>
-                            @foreach ($items as $text)
-                                - {{ trim($text) }}<br>
-                            @endforeach
-                        </div>
-                    @endif
-                @endif
+                <div>
+                    @foreach ($items as $text)
+                        - {{ trim($text) }}<br>
+                    @endforeach
+                </div>
             </td>
         </tr>
         @endforeach

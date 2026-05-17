@@ -284,6 +284,76 @@
                 </div>
             </div>
         @endif
+
+        @if ($metode_tes_id === 7)
+            <!-- Tes PSPK Level 3 Card -->
+            @php
+                $data_pspk_lv3 = getFinishedTesPspkLv3($event_id, $peserta_id);
+                $test_pspk_lv3_started = collect($data_pspk_lv3)->contains(true);
+            @endphp
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm {{ $test_pspk_lv3_started ? 'opacity-75' : 'card-hover' }}">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle {{ $test_pspk_lv3_started ? 'bg-success-subtle' : '' }} p-3 me-3" style="{{ !$test_pspk_lv3_started ? 'background-color: rgba(13, 110, 253, 0.15);' : '' }}">
+                                <i class="{{ $test_pspk_lv3_started ? 'text-success' : '' }}" data-feather="{{ $test_pspk_lv3_started ? 'check-circle' : 'award' }}" style="width: 24px; height: 24px; {{ !$test_pspk_lv3_started ? 'color: #0d6efd;' : '' }}"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Tes PSPK Level 3</h5>
+                            <small class="text-muted">Penilaian Kepegawaian</small>
+                        </div>
+                        <p class="card-text text-muted mb-4">Uji kompetensi PSPK tingkat lanjutan untuk penilaian kepegawaian.</p>
+                        @if($test_pspk_lv3_started)
+                            <button class="btn btn-success w-100" disabled>
+                                <i class="me-2" data-feather="check"></i>
+                                Sudah Selesai
+                            </button>
+                        @else
+                            <a href="{{ route('peserta.tes-pspk') }}" class="btn w-100 text-white" style="background-color: #0d6efd;" wire:navigate>
+                                <i class="me-2" data-feather="play"></i>
+                                Mulai Tes
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if ($metode_tes_id === 8)
+            <!-- Tes PSPK Level 4 Card -->
+            @php
+                $data_pspk_lv4 = getFinishedTesPspkLv4($event_id, $peserta_id);
+                $test_pspk_lv4_started = collect($data_pspk_lv4)->contains(true);
+            @endphp
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm {{ $test_pspk_lv4_started ? 'opacity-75' : 'card-hover' }}">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="rounded-circle {{ $test_pspk_lv4_started ? 'bg-success-subtle' : '' }} p-3 me-3" style="{{ !$test_pspk_lv4_started ? 'background-color: rgba(13, 110, 253, 0.15);' : '' }}">
+                                <i class="{{ $test_pspk_lv4_started ? 'text-success' : '' }}" data-feather="{{ $test_pspk_lv4_started ? 'check-circle' : 'award' }}" style="width: 24px; height: 24px; {{ !$test_pspk_lv4_started ? 'color: #0d6efd;' : '' }}"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Tes PSPK Level 4</h5>
+                            <small class="text-muted">Penilaian Kepegawaian</small>
+                        </div>
+                        <p class="card-text text-muted mb-4">Uji kompetensi PSPK tingkat lanjutan untuk penilaian kepegawaian.</p>
+                        @if($test_pspk_lv4_started)
+                            <button class="btn btn-success w-100" disabled>
+                                <i class="me-2" data-feather="check"></i>
+                                Sudah Selesai
+                            </button>
+                        @else
+                            <a href="{{ route('peserta.tes-pspk') }}" class="btn w-100 text-white" style="background-color: #0d6efd;" wire:navigate>
+                                <i class="me-2" data-feather="play"></i>
+                                Mulai Tes
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Info Section -->

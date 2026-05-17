@@ -113,6 +113,7 @@
                 'routes' => [
                     'admin.soal-pspk',
                     'admin.ref-pspk',
+                    'admin.pspk-kasus-lampiran',
                 ]
             ],
         ];
@@ -590,6 +591,10 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-pspk') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.soal-pspk') ? 'active' : '' }}">Soal</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.pspk-kasus-lampiran') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.pspk-kasus-lampiran') || isActiveRoute('admin.pspk-kasus-lampiran.pdf') ? 'active' : '' }}">Paket analisa kasus (PDF)</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-pspk') }}" wire:navigate

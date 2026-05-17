@@ -69,10 +69,35 @@
     .bg-pspk-subtle {
         background-color: rgba(111, 66, 193, 0.1);
     }
+    .ankas-pdf-panel {
+        min-height: 70vh;
+        border-right: 2px solid #dee2e6;
+    }
+    .ankas-pdf-panel iframe {
+        width: 100%;
+        height: calc(70vh - 52px);
+        border: none;
+        display: block;
+    }
+    .ankas-soal-panel {
+        display: flex;
+        flex-direction: column;
+        max-height: 70vh;
+    }
+    .ankas-soal-panel .soal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+    }
+    .phase-badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
 </style>
 @endpush
 
-<div x-data
+{{-- <div x-data
 x-init="
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
@@ -89,7 +114,8 @@ x-init="
         };
         toastr[e.type](e.message);
     });
-">
+"> --}}
+<div>
     <!-- Header Card -->
     <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
         <div class="card-body p-4 text-white">
@@ -110,6 +136,13 @@ x-init="
     <!-- Status Bar -->
     <div class="card border-0 shadow-sm mb-4 status-bar">
         <div class="card-body py-3">
+            @if($isLevel34)
+            <div class="mb-2">
+                <span class="badge phase-badge {{ $isAnkasPhase ? 'bg-pspk-subtle text-pspk' : 'bg-info bg-opacity-10 text-info' }} px-3 py-2">
+                    {{ $isAnkasPhase ? 'Tahap 1: Analisa Kasus (Ankas)' : 'Tahap 2: Situational Judgment Test (SJT)' }}
+                </span>
+            </div>
+            @endif
             <div class="row align-items-center g-3">
                 <div class="col-6 col-md-3">
                     <div class="d-flex align-items-center">
@@ -145,27 +178,187 @@ x-init="
                     </div>
                 </div>
                 <div class="col-6 col-md-3 text-md-end">
-                    <button class="btn btn-warning"
-                        x-data
-                        @click="Swal.fire({
-                            title: 'Apakah Anda yakin mengakhiri tes?',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Akhiri Tes!',
-                            cancelButtonText: 'Batal',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $wire.finish();
-                            }
-                        })"
-                    >
-                        <span wire:ignore><i data-feather="log-out" style="width: 18px; height: 18px;" class="me-1"></i></span>
-                        Selesai
-                    </button>
+                    @if($isLevel34 && $isAnkasPhase)
+                        <button class="btn btn-pspk" wire:click="lanjutKeSjt" @if(!$allAnkasAnswered) disabled @endif>
+                            <span wire:ignore><i data-feather="arrow-right-circle" style="width: 18px; height: 18px;" class="me-1"></i></span>
+                            Lanjut Tes Berikutnya
+                        </button>
+                    @else
+                        <button class="btn btn-warning"
+                            x-data
+                            @click="Swal.fire({
+                                title: 'Apakah Anda yakin mengakhiri tes?',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Akhiri Tes!',
+                                cancelButtonText: 'Batal',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $wire.finish();
+                                }
+                            })"
+                        >
+                            <span wire:ignore><i data-feather="log-out" style="width: 18px; height: 18px;" class="me-1"></i></span>
+                            Selesai
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+
+    {{-- ==========================================
+         ANKAS PHASE: Split View (PDF kiri, Soal kanan)
+         ========================================== --}}
+    @if($isLevel34 && $isAnkasPhase)
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="row g-0">
+            <!-- PDF Panel (Kiri) -->
+            <div class="col-lg-6 ankas-pdf-panel">
+                <div class="card-header bg-white border-bottom py-2 px-3">
+                    <div class="d-flex align-items-center" wire:ignore>
+                        <i data-feather="file-text" style="width: 18px; height: 18px;" class="text-pspk me-2"></i>
+                        <h6 class="mb-0">Lampiran PDF Analisa Kasus</h6>
+                    </div>
+                </div>
+                @if($soal->kasusLampiran?->lampiran_pdf_path)
+                    <iframe
+                        src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
+                        title="Lampiran PDF"
+                        sandbox="allow-scripts allow-same-origin"
+                        referrerpolicy="same-origin"
+                        class="iframe-lampiran-pdf"
+                    ></iframe>
+                @else
+                    <div class="d-flex align-items-center justify-content-center" style="height: calc(70vh - 52px);">
+                        <p class="text-muted mb-0">PDF lampiran tidak tersedia</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Soal Panel (Kanan) -->
+            <div class="col-lg-6 ankas-soal-panel">
+                <div class="card-header bg-white border-bottom py-3 px-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span class="badge text-white me-3 px-3 py-2" style="font-size: 1rem; background-color: #6f42c1;">
+                                Soal {{ $phaseNomor }}
+                            </span>
+                            @if(isset($flagged[$nomor_sekarang]))
+                                <span class="badge bg-warning text-dark">🔖 Ditandai</span>
+                            @endif
+                        </div>
+                        <small class="text-muted">{{ $phaseNomor }} dari {{ $jml_soal }} soal</small>
+                    </div>
+                </div>
+                <div class="soal-body">
+                    <div class="mb-4">
+                        <p class="fs-5 mb-0">{{ $soal->soal }}</p>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
+                                <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
+                                <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
+                                <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
+                                <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
+                            </label>
+                        </div>
+                        <div class="col-12">
+                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
+                                <input class="form-check-input me-3" type="radio"
+                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
+                                <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-secondary" wire:click="navigate({{ $nomor_sekarang - 1 }})"
+                            @if ($nomor_sekarang == 1) disabled @endif>
+                            <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
+                            Sebelumnya
+                        </button>
+                        <button class="btn btn-pspk" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                            Simpan & Lanjutkan
+                            <span wire:ignore><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
+                        </button>
+                        <button class="btn {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}" wire:click="toggleFlag({{ $nomor_sekarang }})">
+                            🔖 {{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4" style="border-top: 2px solid rgba(111, 66, 193, 0.3);">
+
+    <!-- Navigation Grid Ankas -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+            <h6 class="mb-0">
+                <span wire:ignore><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
+                Navigasi Soal Ankas
+            </h6>
+        </div>
+        <div class="card-body p-4">
+            <div class="d-flex flex-wrap gap-2">
+                @for ($i = 1; $i <= $jmlAnkas; $i++)
+                    <button wire:click="navigate({{ $i }})"
+                        class="btn nav-btn btn-sm {{ $jawaban[$i - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$i]) ? 'flagged-btn' : '' }}"
+                        style="{{ $i == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
+                    >
+                        {{ $i }}
+                        @if(isset($flagged[$i]))
+                            <span class="flag-icon">🔖</span>
+                        @endif
+                    </button>
+                @endfor
+            </div>
+            <div class="mt-4 d-flex flex-wrap gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm btn-success me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Sudah Dijawab</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm btn-outline-danger me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Belum Dijawab</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="btn btn-sm flagged-btn me-2" style="width: 30px; height: 30px;"></span>
+                    <small class="text-muted">Ditandai</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @else
+    {{-- ==========================================
+         STANDARD LAYOUT (Level 1/2, atau SJT phase)
+         ========================================== --}}
 
     <!-- Question Card -->
     <div class="card border-0 shadow-sm mb-4">
@@ -173,53 +366,51 @@ x-init="
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <span class="badge text-white me-3 px-3 py-2" style="font-size: 1rem; background-color: #6f42c1;">
-                        Soal {{ $nomor_sekarang }}
+                        Soal {{ $isLevel34 ? $phaseNomor : $nomor_sekarang }}
                     </span>
                     @if(isset($flagged[$nomor_sekarang]))
                         <span class="badge bg-warning text-dark">🔖 Ditandai</span>
                     @endif
                 </div>
-                <small class="text-muted">{{ $nomor_sekarang }} dari {{ $jml_soal }} soal</small>
+                <small class="text-muted">{{ $isLevel34 ? $phaseNomor : $nomor_sekarang }} dari {{ $jml_soal }} soal</small>
             </div>
         </div>
         <div class="card-body p-4">
-            <!-- Question Text -->
             <div class="mb-4">
                 <p class="fs-5 mb-0">{{ $soal->soal }}</p>
             </div>
 
-            <!-- Options -->
             <div class="row g-3 mb-4">
                 <div class="col-12">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
+                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
                             wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
                         <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
                     </label>
                 </div>
                 <div class="col-12">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
+                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
                             wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
                         <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
                     </label>
                 </div>
                 <div class="col-12">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
+                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
                             wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
                         <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
                     </label>
                 </div>
                 <div class="col-12">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
+                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
                             wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
                         <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
                     </label>
                 </div>
                 <div class="col-12">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban_user[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
+                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
                             wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
                         <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
@@ -227,10 +418,12 @@ x-init="
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="d-flex flex-wrap gap-2">
+                @php
+                    $prevMin = $isLevel34 ? ($jmlAnkas + 1) : 1;
+                @endphp
                 <button class="btn btn-outline-secondary" wire:click="navigate({{ $nomor_sekarang - 1 }})"
-                    @if ($nomor_sekarang == 1) disabled @endif>
+                    @if ($nomor_sekarang == $prevMin) disabled @endif>
                     <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
                     Sebelumnya
                 </button>
@@ -250,33 +443,27 @@ x-init="
         <div class="card-header bg-white border-0 py-3">
             <h6 class="mb-0">
                 <span wire:ignore><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
-                Navigasi Soal
+                Navigasi Soal{{ $isLevel34 ? ' SJT' : '' }}
             </h6>
         </div>
         <div class="card-body p-4">
             @php
-                $nomor_soal = 1;
-                $kosong = 0;
+                $navStart = $isLevel34 ? ($jmlAnkas + 1) : 1;
+                $navEnd = $isLevel34 ? $totalSoalAll : $jml_soal;
+                $nomor_display = 1;
             @endphp
             <div class="d-flex flex-wrap gap-2">
-                @for ($i = 0; $i < 3; $i++)
-                    @for ($j = 1; $j <= 18; $j++)
-                        @if($nomor_soal <= $jml_soal)
-                        <button wire:click="navigate({{ $nomor_soal }})"
-                            class="btn nav-btn btn-sm {{ $jawaban[$nomor_soal - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$nomor_soal]) ? 'flagged-btn' : '' }}"
-                            style="{{ $nomor_soal == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
-                        >
-                            {{ $nomor_soal }}
-                            @if(isset($flagged[$nomor_soal]))
-                                <span class="flag-icon">🔖</span>
-                            @endif
-                        </button>
-                        @php 
-                            if($jawaban[$nomor_soal - 1] === '0') $kosong++;
-                            $nomor_soal++; 
-                        @endphp
+                @for ($idx = $navStart; $idx <= $navEnd; $idx++)
+                    <button wire:click="navigate({{ $idx }})"
+                        class="btn nav-btn btn-sm {{ $jawaban[$idx - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$idx]) ? 'flagged-btn' : '' }}"
+                        style="{{ $idx == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
+                    >
+                        {{ $isLevel34 ? $nomor_display : $idx }}
+                        @if(isset($flagged[$idx]))
+                            <span class="flag-icon">🔖</span>
                         @endif
-                    @endfor
+                    </button>
+                    @php $nomor_display++; @endphp
                 @endfor
             </div>
             <div class="mt-4 d-flex flex-wrap gap-3">
@@ -295,6 +482,8 @@ x-init="
             </div>
         </div>
     </div>
+
+    @endif
 </div>
 
 @push('js')
@@ -335,7 +524,7 @@ x-init="
 
     var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
     var isShow = false;
-    
+
     var x = setInterval(function() {
         var now = new Date().getTime();
         var distance = waktuBerakhir - now;

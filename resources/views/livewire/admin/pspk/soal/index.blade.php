@@ -14,15 +14,23 @@
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
                             <div class="row mt-2">
                                 <div class="col-sm-2">
-                                    <select wire:model.live="level_pspk_id" class="form-select" id="level-pspk">
+                                    <select wire:model.live="filter_level_pspk" class="form-select" id="level-pspk">
                                         <option value="">pilih level pspk</option>
                                         @foreach ($level_pspk_options as $key => $item)
                                             <option value="{{ $key }}">{{ $item }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-sm-3">
-                                    <select wire:model.live="aspek_id" class="form-select" id="aspek">
+                                <div class="col-sm-2">
+                                    <select wire:model.live="filter_jenis_soal" class="form-select" id="jenis_soal">
+                                        <option value="">pilih jenis soal</option>
+                                        @foreach ($jenis_soal_options as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select wire:model.live="filter_aspek" class="form-select" id="aspek">
                                         <option value="">pilih aspek</option>
                                         @foreach ($aspek_options as $key => $item)
                                             <option value="{{ $key }}">{{ $item }}</option>
@@ -47,6 +55,7 @@
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Aspek</th>
+                                    <th>Jenis</th>
                                     <th>Level</th>
                                     <th>Deskripsi Soal</th>
                                     <th></th>
@@ -61,6 +70,11 @@
                                                 {{ $item->aspek->nama_aspek }}
                                             </span>
                                         </td>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                {{ $jenis_soal_options[$item->jenis_soal] ?? '—' }}
+                                            </span>
+                                        </td>
                                         <td>{{ $item->levelPspk->nama_pspk }}</td>
                                         <td class="text-wrap">{{ $item->soal }}</td>
                                         <td>
@@ -72,7 +86,7 @@
 
                                 @if($data->count() === 0)
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted py-4">
+                                        <td colspan="6" class="text-center text-muted py-4">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data soal...</div>
                                         </td>
@@ -122,14 +136,17 @@
                 <!-- Modal Body -->
                 <div class="modal-body" style="padding: 32px; background: #f8f9fa; max-height: 70vh; overflow-y: auto;">
                     <form wire:submit="save">
+                        @php
+                            $formLv34 = in_array((int) ($form->level_pspk_id ?? 0), [3, 4], true);
+                        @endphp
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">
                                         <i class="link-icon me-2" data-feather="layers"></i>
                                         Level PSPK
                                     </label>
-                                    <select wire:model="form.level_pspk_id" class="form-select @error('form.level_pspk_id') is-invalid @enderror">
+                                    <select wire:model.live="form.level_pspk_id" class="form-select @error('form.level_pspk_id') is-invalid @enderror">
                                         <option value="">Pilih level pspk</option>
                                         @foreach ($level_pspk_options as $key => $item)
                                             <option value="{{ $key }}">{{ $item }}</option>
@@ -140,7 +157,27 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            @if($formLv34)
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="link-icon me-2" data-feather="grid"></i>
+                                        Jenis soal <span class="text-danger">*</span>
+                                    </label>
+                                    <select wire:model.live="form.jenis_soal" class="form-select @error('form.jenis_soal') is-invalid @enderror">
+                                        <option value="">Pilih jenis</option>
+                                        @foreach ($jenis_soal_options as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="form-text text-muted">Wajib untuk level 3 atau 4 (Ankas / SJT).</div>
+                                    @error('form.jenis_soal')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            @endif
+                            <div class="{{ $formLv34 ? 'col-md-4' : 'col-md-8' }}">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">
                                         <i class="link-icon me-2" data-feather="bookmark"></i>
@@ -168,6 +205,28 @@
                             placeholder="Masukkan deskripsi soal"
                             :required="true"
                         />
+
+                        @if($form->perluPaketKasusPdf())
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    <i class="link-icon me-2" data-feather="file-text"></i>
+                                    Paket analisa kasus (PDF) <span class="text-danger">*</span>
+                                </label>
+                                <select wire:model="form.kasus_lampiran_id" class="form-select @error('form.kasus_lampiran_id') is-invalid @enderror">
+                                    <option value="">Pilih paket (satu PDF untuk semua soal Ankas level ini)</option>
+                                    @foreach ($kasus_lampiran_options as $kid => $label)
+                                        <option value="{{ $kid }}">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="form-text text-muted">
+                                    Kelola berkas di menu PSPK → <a href="{{ route('admin.pspk-kasus-lampiran') }}" class="fw-semibold">Paket analisa kasus (PDF)</a>.
+                                    Soal SJT tidak memakai lampiran.
+                                </div>
+                                @error('form.kasus_lampiran_id')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        @endif
 
                         <div class="row">
                             <div class="col-md-8">

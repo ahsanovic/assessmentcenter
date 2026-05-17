@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefAspekPspk;
 use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
-use ZipArchive;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
 
@@ -16,11 +14,10 @@ class DownloadLaporanPspkController extends Controller
 {
     public function createPdf($idEvent, $identifier)
     {
-        $peserta = Peserta::with('golPangkat')
-            ->where(function ($q) use ($identifier) {
-                $q->where('nip', $identifier)
-                    ->orWhere('nik', $identifier);
-            })
+        $peserta = Peserta::where(function ($q) use ($identifier) {
+            $q->where('nip', $identifier)
+                ->orWhere('nik', $identifier);
+        })
             ->whereHas('ujianPspk', function ($q) use ($idEvent) {
                 $q->where('event_id', $idEvent);
             })
@@ -52,15 +49,26 @@ class DownloadLaporanPspkController extends Controller
             }
         }
 
-        $pdf = Pdf::loadView('livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', [
+        $view = match ($data->metode_tes_id) {
+            5 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', // PSPK level 1
+            6 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', // PSPK level 2
+            7 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf-lv34', // PSPK level 3
+            8 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf-lv34', // PSPK level 4
+        };
+
+        $pdf = Pdf::loadView($view, [
             'peserta' => $peserta,
             'data' => $data,
             'aspek_potensi' => $aspek_potensi,
+            'saran_pengembangan' => $data->hasilPspk[0]->saran_pengembangan ?? [],
+            'deskripsi' => $data->hasilPspk[0]->deskripsi ?? [],
+            'jpm' => $data->hasilPspk[0]->jpm ?? 0,
+            'kategori' => $data->hasilPspk[0]->kategori ?? '',
             'tte' => $tte,
             'nomor_laporan' => $nomor_laporan ?? null,
         ])->setPaper('A4', 'portrait');
 
-        return $pdf->stream('report-pspk-' . $peserta->nip ?: $peserta->nik . '-' . strtoupper($peserta->nama) . '.pdf');
+        return $pdf->stream('report-pspk-'.$peserta->nip ?: $peserta->nik.'-'.strtoupper($peserta->nama).'.pdf');
     }
 
     public function downloadAll($idEvent)
@@ -112,7 +120,9 @@ class DownloadLaporanPspkController extends Controller
                         })
                         ->first();
 
-                    if (!$data) continue;
+                    if (! $data) {
+                        continue;
+                    }
 
                     // ambil nomor laporan sesuai tanggal ujian
                     $nomor_laporan = null;
@@ -134,7 +144,7 @@ class DownloadLaporanPspkController extends Controller
                     // nama file di dalam zip
                     $identifier = $peserta->nip ?: $peserta->nik;
                     $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', strtoupper($peserta->nama));
-                    $filename = $identifier . '-' . $safeName . '.pdf';
+                    $filename = $identifier.'-'.$safeName.'.pdf';
 
                     // masukkan langsung ke stream
                     $zip->addFile($filename, $pdf->output());

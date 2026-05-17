@@ -5,15 +5,14 @@ namespace App\Models\Pspk;
 use App\Models\Peserta;
 use Illuminate\Database\Eloquent\Model;
 
-class UjianPspk extends Model
+class UjianPspkLv34 extends Model
 {
-    protected $table = 'ujian_pspk';
+    protected $table = 'ujian_pspk_lv3_4';
 
     protected $guarded = ['id'];
 
     protected $casts = [
         'waktu_tes_berakhir' => 'datetime',
-        'pspk_lv34_entered_sjt_at' => 'datetime',
         'skor_aspek' => 'array',
     ];
 

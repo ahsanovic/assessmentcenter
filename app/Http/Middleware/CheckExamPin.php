@@ -38,8 +38,11 @@ class CheckExamPin
             'tes-intelektual/subtes3/*',
             'tes-intelektual/hasil-nilai',
             'tes-pspk/home',
+            'tes-pspk/lampiran-pdf/*',
+            'tes-pspk/lampiran-baca/*',
             'tes-pspk/ujian/*',
             'tes-pspk/hasil',
+            'tes-pspk-lv3/home',
         ];
 
         $prefix = $request->segment(1);
@@ -61,6 +64,7 @@ class CheckExamPin
             'tes-cakap-digital',
             'tes-kompetensi-teknis',
             'tes-pspk',
+            'tes-pspk-lv3',
         ];
 
         if (in_array($request->path(), $examRoutes, true)) {

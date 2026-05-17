@@ -17,15 +17,16 @@ use App\Models\Pspk\UjianPspk;
 use Illuminate\Support\Facades\Auth;
 use Ulid\Ulid;
 
-if (!function_exists('countJpm')) {
+if (! function_exists('countJpm')) {
     function countJpm($capaian_level)
     {
         $jpm = array_sum(array_map('floatval', $capaian_level)) / (5 * 8);
+
         return $jpm;
     }
 }
 
-if (!function_exists('getKategori')) {
+if (! function_exists('getKategori')) {
     function getKategori($jpm)
     {
         // if ($jpm >= 0.9) {
@@ -38,9 +39,9 @@ if (!function_exists('getKategori')) {
 
         if ($jpm >= 0.8 && $jpm <= 1) {
             $kategori = 'Tinggi';
-        } else if ($jpm >= 0.6 && $jpm < 0.8) {
+        } elseif ($jpm >= 0.6 && $jpm < 0.8) {
             $kategori = 'Menengah';
-        } else if ($jpm < 0.6) {
+        } elseif ($jpm < 0.6) {
             $kategori = 'Rendah';
         }
 
@@ -106,7 +107,7 @@ if (!function_exists('getKategori')) {
 //     }
 // }
 
-if (!function_exists('capaianLevel')) {
+if (! function_exists('capaianLevel')) {
     function capaianLevel($level_total)
     {
         switch ($level_total) {
@@ -114,49 +115,49 @@ if (!function_exists('capaianLevel')) {
                 $capaian_level = '5';
                 break;
             case '5':
-                $capaian_level =  '5';
+                $capaian_level = '5';
                 break;
             case '5-':
-                $capaian_level =  '4';
+                $capaian_level = '4';
                 break;
             case '4+':
-                $capaian_level =  '4';
+                $capaian_level = '4';
                 break;
             case '4':
-                $capaian_level =  '4';
+                $capaian_level = '4';
                 break;
             case '4-':
-                $capaian_level =  '3';
+                $capaian_level = '3';
                 break;
             case '3+':
-                $capaian_level =  '3';
+                $capaian_level = '3';
                 break;
             case '3':
-                $capaian_level =  '3';
+                $capaian_level = '3';
                 break;
             case '3-':
-                $capaian_level =  '2';
+                $capaian_level = '2';
                 break;
             case '2+':
-                $capaian_level =  '2';
+                $capaian_level = '2';
                 break;
             case '2':
-                $capaian_level =  '2';
+                $capaian_level = '2';
                 break;
             case '2-':
-                $capaian_level =  '1';
+                $capaian_level = '1';
                 break;
             case '1+':
-                $capaian_level =  '1';
+                $capaian_level = '1';
                 break;
             case '1':
-                $capaian_level =  '1';
+                $capaian_level = '1';
                 break;
             case '1-':
-                $capaian_level =  '1';
+                $capaian_level = '1';
                 break;
             default:
-                $capaian_level =  '0';
+                $capaian_level = '0';
                 break;
         }
 
@@ -164,7 +165,7 @@ if (!function_exists('capaianLevel')) {
     }
 }
 
-if (!function_exists('getFinishedTes')) {
+if (! function_exists('getFinishedTes')) {
     function getFinishedTes($event_id, $peserta_id)
     {
         return [
@@ -200,7 +201,7 @@ if (!function_exists('getFinishedTes')) {
     }
 }
 
-if (!function_exists('getFinishedTesCakapDigital')) {
+if (! function_exists('getFinishedTesCakapDigital')) {
     function getFinishedTesCakapDigital($event_id, $peserta_id)
     {
         return [
@@ -212,7 +213,7 @@ if (!function_exists('getFinishedTesCakapDigital')) {
     }
 }
 
-if (!function_exists('getFinishedTesKompetensiTeknis')) {
+if (! function_exists('getFinishedTesKompetensiTeknis')) {
     function getFinishedTesKompetensiTeknis($event_id, $peserta_id)
     {
         return [
@@ -224,7 +225,7 @@ if (!function_exists('getFinishedTesKompetensiTeknis')) {
     }
 }
 
-if (!function_exists('getFinishedTesPspk')) {
+if (! function_exists('getFinishedTesPspk')) {
     function getFinishedTesPspk($event_id, $peserta_id)
     {
         return [
@@ -236,7 +237,31 @@ if (!function_exists('getFinishedTesPspk')) {
     }
 }
 
-if (!function_exists('getFinishedTesIntelektual')) {
+if (! function_exists('getFinishedTesPspkLv3')) {
+    function getFinishedTesPspkLv3($event_id, $peserta_id)
+    {
+        return [
+            'tes_pspk_lv3' => UjianPspk::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (! function_exists('getFinishedTesPspkLv4')) {
+    function getFinishedTesPspkLv4($event_id, $peserta_id)
+    {
+        return [
+            'tes_pspk_lv4' => UjianPspk::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (! function_exists('getFinishedTesIntelektual')) {
     function getFinishedTesIntelektual($event_id, $peserta_id)
     {
         return [
@@ -256,14 +281,14 @@ if (!function_exists('getFinishedTesIntelektual')) {
     }
 }
 
-if (!function_exists('activity_log')) {
+if (! function_exists('activity_log')) {
     function activity_log($model, $action, $modul, $old_data = null)
     {
-        if (!$model || !method_exists($model, 'getAttributes')) {
+        if (! $model || ! method_exists($model, 'getAttributes')) {
             return;
         }
 
-        if (!in_array($action, ['create', 'update', 'delete'])) {
+        if (! in_array($action, ['create', 'update', 'delete'])) {
             return;
         }
 
@@ -273,15 +298,15 @@ if (!function_exists('activity_log')) {
             'modul' => $modul,
             'action' => $action,
             'model_id' => $model->id,
-            'old_data'  => in_array($action, ['update', 'delete']) ? json_encode($old_data) : null,
-            'new_data'  => in_array($action, ['create', 'update']) ? json_encode($model->getAttributes()) : null,
+            'old_data' => in_array($action, ['update', 'delete']) ? json_encode($old_data) : null,
+            'new_data' => in_array($action, ['create', 'update']) ? json_encode($model->getAttributes()) : null,
             'ip_address' => request()->ip(),
             'user_agent' => request()->header('User-Agent'),
         ]);
     }
 }
 
-if (!function_exists('sanitize_log_data')) {
+if (! function_exists('sanitize_log_data')) {
     function sanitize_log_data(array $data)
     {
         $sensitive = ['password', 'id'];
@@ -290,21 +315,22 @@ if (!function_exists('sanitize_log_data')) {
                 unset($data[$key]);
             }
         }
+
         return $data;
     }
 }
 
-if (!function_exists('parse_nama_gelar')) {
+if (! function_exists('parse_nama_gelar')) {
     /**
      * Parse nama lengkap dan ekstrak gelar depan, nama, dan gelar belakang
-     * 
-     * @param string $namaLengkap Nama lengkap dengan atau tanpa gelar
+     *
+     * @param  string  $namaLengkap  Nama lengkap dengan atau tanpa gelar
      * @return array ['gelar_depan' => string|null, 'nama' => string, 'gelar_belakang' => string|null]
      */
     function parse_nama_gelar($namaLengkap)
     {
         $namaLengkap = trim($namaLengkap);
-        
+
         // Daftar gelar depan (case insensitive)
         $gelarDepanList = [
             // Akademik
@@ -321,7 +347,7 @@ if (!function_exists('parse_nama_gelar')) {
             'Letjen', 'Mayjen', 'Brigjen', 'Kolonel', 'Letkol', 'Mayor', 'Kapten', 'Lettu', 'Letda',
             'Komjen', 'Irjen', 'Brigpol', 'Kompol', 'AKP', 'AKBP', 'IPTU', 'IPDA',
         ];
-        
+
         // Daftar gelar belakang (case insensitive)
         $gelarBelakangList = [
             // Sarjana (S1)
@@ -368,27 +394,27 @@ if (!function_exists('parse_nama_gelar')) {
             // Keagamaan
             'M.Th.I.', 'M.Th.I', 'MThI', 'M.Pd.I.', 'M.Pd.I', 'MPdI', 'Lc.', 'Lc',
         ];
-        
+
         $gelarDepan = null;
         $gelarBelakang = null;
         $nama = $namaLengkap;
-        
+
         // 1. Ekstrak gelar depan
         $foundGelarDepan = [];
         $tempNama = $namaLengkap;
-        
+
         // Cari gelar depan dari awal nama
         $continueSearch = true;
         while ($continueSearch) {
             $continueSearch = false;
             foreach ($gelarDepanList as $gelar) {
                 // Buat pattern yang case insensitive
-                $pattern = '/^' . preg_quote($gelar, '/') . '\.?\s+/i';
+                $pattern = '/^'.preg_quote($gelar, '/').'\.?\s+/i';
                 if (preg_match($pattern, $tempNama, $matches)) {
                     $foundGelar = trim($matches[0]);
                     // Normalisasi gelar (tambahkan titik jika tidak ada)
-                    if (!str_ends_with($foundGelar, '.')) {
-                        $foundGelar = rtrim($foundGelar) . '.';
+                    if (! str_ends_with($foundGelar, '.')) {
+                        $foundGelar = rtrim($foundGelar).'.';
                     }
                     $foundGelarDepan[] = $foundGelar;
                     $tempNama = trim(preg_replace($pattern, '', $tempNama, 1));
@@ -397,35 +423,37 @@ if (!function_exists('parse_nama_gelar')) {
                 }
             }
         }
-        
-        if (!empty($foundGelarDepan)) {
+
+        if (! empty($foundGelarDepan)) {
             $gelarDepan = implode(' ', $foundGelarDepan);
             $nama = $tempNama;
         }
-        
+
         // 2. Ekstrak gelar belakang
         // Gelar belakang biasanya dipisahkan dengan koma atau spasi setelah nama
         $foundGelarBelakang = [];
-        
+
         // Cek apakah ada koma di nama (pemisah gelar belakang)
         if (strpos($nama, ',') !== false) {
             $parts = explode(',', $nama, 2);
             $namaPart = trim($parts[0]);
             $gelarPart = isset($parts[1]) ? trim($parts[1]) : '';
-            
-            if (!empty($gelarPart)) {
+
+            if (! empty($gelarPart)) {
                 // Parse gelar belakang yang dipisah koma
                 $gelarItems = preg_split('/[,\s]+/', $gelarPart);
                 foreach ($gelarItems as $item) {
                     $item = trim($item);
-                    if (empty($item)) continue;
-                    
+                    if (empty($item)) {
+                        continue;
+                    }
+
                     foreach ($gelarBelakangList as $gelar) {
-                        if (strcasecmp($item, str_replace('.', '', $gelar)) === 0 || 
+                        if (strcasecmp($item, str_replace('.', '', $gelar)) === 0 ||
                             strcasecmp($item, $gelar) === 0) {
                             // Normalisasi gelar
                             $normalizedGelar = $item;
-                            if (!str_contains($normalizedGelar, '.') && strlen($normalizedGelar) > 1) {
+                            if (! str_contains($normalizedGelar, '.') && strlen($normalizedGelar) > 1) {
                                 // Cari format yang benar dari list
                                 foreach ($gelarBelakangList as $g) {
                                     if (strcasecmp(str_replace('.', '', $g), $normalizedGelar) === 0 && str_contains($g, '.')) {
@@ -439,8 +467,8 @@ if (!function_exists('parse_nama_gelar')) {
                         }
                     }
                 }
-                
-                if (!empty($foundGelarBelakang)) {
+
+                if (! empty($foundGelarBelakang)) {
                     $nama = $namaPart;
                     $gelarBelakang = implode(', ', $foundGelarBelakang);
                 }
@@ -451,14 +479,14 @@ if (!function_exists('parse_nama_gelar')) {
             $namaWords = [];
             $gelarWords = [];
             $inGelar = false;
-            
+
             foreach ($words as $index => $word) {
                 $isGelar = false;
                 $cleanWord = trim($word, '.,');
-                
+
                 foreach ($gelarBelakangList as $gelar) {
                     $cleanGelar = trim($gelar, '.');
-                    if (strcasecmp($cleanWord, $cleanGelar) === 0 || 
+                    if (strcasecmp($cleanWord, $cleanGelar) === 0 ||
                         strcasecmp($cleanWord, str_replace('.', '', $gelar)) === 0) {
                         $isGelar = true;
                         // Normalisasi
@@ -474,29 +502,29 @@ if (!function_exists('parse_nama_gelar')) {
                         break;
                     }
                 }
-                
-                if (!$isGelar && !$inGelar) {
+
+                if (! $isGelar && ! $inGelar) {
                     $namaWords[] = $word;
-                } elseif (!$isGelar && $inGelar) {
+                } elseif (! $isGelar && $inGelar) {
                     // Setelah menemukan gelar, kata berikutnya juga kemungkinan gelar
                     // tapi jika bukan gelar, anggap bagian dari nama
                     $namaWords[] = $word;
                 }
             }
-            
-            if (!empty($gelarWords)) {
+
+            if (! empty($gelarWords)) {
                 $nama = implode(' ', $namaWords);
                 $gelarBelakang = implode(', ', $gelarWords);
             }
         }
-        
+
         // Bersihkan nama dari spasi berlebih
         $nama = trim(preg_replace('/\s+/', ' ', $nama));
-        
+
         return [
-            'gelar_depan' => !empty($gelarDepan) ? $gelarDepan : null,
+            'gelar_depan' => ! empty($gelarDepan) ? $gelarDepan : null,
             'nama' => $nama,
-            'gelar_belakang' => !empty($gelarBelakang) ? $gelarBelakang : null,
+            'gelar_belakang' => ! empty($gelarBelakang) ? $gelarBelakang : null,
         ];
     }
 }

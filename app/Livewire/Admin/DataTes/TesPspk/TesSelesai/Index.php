@@ -15,12 +15,15 @@ class Index extends Component
     use WithPagination;
 
     public $level_pspk;
+
     public $tgl_mulai;
+
     public $selected_id;
+
     public $event;
 
     #[Url(as: 'q')]
-    public ?string $search =  '';
+    public ?string $search = '';
 
     public function updatedSearch()
     {
@@ -45,6 +48,8 @@ class Index extends Component
         $levelToMetode = [
             1 => 5,
             2 => 6,
+            3 => 7,
+            4 => 8,
         ];
 
         $data = Event::withCount(['peserta', 'hasilPspk', 'peserta as peserta_selesai_count' => function ($query) {
@@ -53,7 +58,7 @@ class Index extends Component
             });
         }])
             ->with(['peserta', 'hasilPspk'])
-            ->whereIn('metode_tes_id', [5, 6])
+            ->whereIn('metode_tes_id', [5, 6, 7, 8])
             ->when($this->level_pspk, function ($query) use ($levelToMetode) {
                 $metode = $levelToMetode[$this->level_pspk] ?? null;
 
