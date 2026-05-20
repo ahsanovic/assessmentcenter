@@ -230,6 +230,7 @@ Route::prefix('bkdac')->group(function () {
         Route::get('ref-pspk', \App\Livewire\Admin\Pspk\Ref\Index::class)->name('admin.ref-pspk');
         Route::get('pspk-kasus-lampiran', \App\Livewire\Admin\Pspk\KasusLampiran\Index::class)->name('admin.pspk-kasus-lampiran');
         Route::get('pspk-kasus-lampiran/{kasus}/pdf', DownloadPspkKasusLampiranAdminController::class)->name('admin.pspk-kasus-lampiran.pdf');
+        Route::get('ref-saran-pengembangan', \App\Livewire\Admin\Pspk\RefSaranPengembangan\Index::class)->name('admin.ref-saran-pengembangan');
 
         // users
         Route::get('users', \App\Livewire\Admin\Users\Index::class)->name('admin.user');

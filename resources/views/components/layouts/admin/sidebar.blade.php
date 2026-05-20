@@ -113,6 +113,7 @@
                 'routes' => [
                     'admin.soal-pspk',
                     'admin.ref-pspk',
+                    'admin.ref-saran-pengembangan',
                     'admin.pspk-kasus-lampiran',
                 ]
             ],
@@ -599,6 +600,10 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-pspk') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.ref-pspk') ? 'active' : '' }}">Referensi Deskripsi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-saran-pengembangan') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.ref-saran-pengembangan') ? 'active' : '' }}">Ref Saran Pengembangan</a>
                             </li>
                         </ul>
                     </div>
