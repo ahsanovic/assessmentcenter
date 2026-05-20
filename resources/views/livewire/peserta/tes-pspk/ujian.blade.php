@@ -337,21 +337,24 @@ x-init="
                     <span wire:ignore><i data-feather="file-text" style="width:15px;height:15px" class="text-pspk me-2"></i></span>
                     <small class="fw-semibold text-muted">Lampiran PDF Analisa Kasus</small>
                 </div>
-                @if($soal->kasusLampiran?->lampiran_pdf_path)
-                    <iframe
-                        src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
-                        title="Lampiran PDF"
-                        sandbox="allow-scripts allow-same-origin"
-                        referrerpolicy="same-origin"
-                    ></iframe>
-                @else
-                    <div class="ankas-fs-pdf-empty">
-                        <div class="text-center">
-                            <span wire:ignore><i data-feather="file-minus" style="width:48px;height:48px" class="text-muted mb-2"></i></span>
-                            <p class="text-muted mb-0">PDF lampiran tidak tersedia</p>
+                <div wire:ignore style="flex:1;display:flex;flex-direction:column;">
+                    @if($soal->kasusLampiran?->lampiran_pdf_path)
+                        <iframe
+                            src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
+                            title="Lampiran PDF"
+                            sandbox="allow-scripts allow-same-origin"
+                            referrerpolicy="same-origin"
+                            style="flex:1;width:100%;border:none;"
+                        ></iframe>
+                    @else
+                        <div class="ankas-fs-pdf-empty">
+                            <div class="text-center">
+                                <i data-feather="file-minus" style="width:48px;height:48px" class="text-muted mb-2"></i>
+                                <p class="text-muted mb-0">PDF lampiran tidak tersedia</p>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
 
             <div class="ankas-fs-divider"></div>
@@ -733,11 +736,9 @@ x-init="
     });
 </script>
 <script>
-    $(document).ready(function() {
-        $('.form-check-input').change(function() {
-            $('#btn-simpan').removeAttr('disabled');
-        })
-    })
+    $(document).on('change', '.form-check-input', function() {
+        $('#btn-simpan').removeAttr('disabled');
+    });
 
     var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
     var isShow = false;

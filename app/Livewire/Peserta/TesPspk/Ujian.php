@@ -11,6 +11,7 @@ use App\Models\RefAspekPspk;
 use App\Traits\PelanggaranTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -21,17 +22,29 @@ class Ujian extends Component
     use PelanggaranTrait, TimerTrait;
 
     public $soal;
+
     public $jml_soal;
+
     public $id_soal;
+
     public $nomor_soal;
+
     public $jawaban_user = [];
+
     public $jawaban_kosong;
+
     public $id_ujian;
+
     public $timer;
+
     public $flagged = [];
+
     public int $levelPspk = 0;
+
     public int $jmlAnkas = 0;
+
     public bool $isLevel34 = false;
+
     public bool $lv34SjtEntered = false;
 
     #[On('updateFlagsFromBrowser')]
@@ -65,7 +78,7 @@ class Ujian extends Component
             ->first();
 
         if (! $data) {
-            session()->flash('toast', [
+            Session::flash('toast', [
                 'type' => 'error',
                 'message' => 'Data ujian tidak ditemukan. Silakan mulai tes terlebih dahulu.',
             ]);
@@ -137,7 +150,7 @@ class Ujian extends Component
         $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$this->id_soal - 1]);
 
         if ($this->isLevel34 && $this->lv34SjtEntered && $this->id_soal > $this->jmlAnkas) {
-            session(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $this->id_soal]);
+            Session::put(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $this->id_soal]);
         }
 
         $this->timerTest('Pspk');
@@ -250,7 +263,7 @@ class Ujian extends Component
             && $nomor_soal >= 1
             && $nomor_soal <= $this->jmlAnkas
             && $this->lv34SjtEntered) {
-            session()->flash('toast', [
+            Session::flash('toast', [
                 'type' => 'info',
                 'message' => 'Jawaban analisa kasus tidak dapat diubah setelah Anda melanjutkan ke bagian SJT.',
             ]);
@@ -258,7 +271,7 @@ class Ujian extends Component
             $target = max(
                 $this->jmlAnkas + 1,
                 min(
-                    (int) session('pspk_lv34_last_sjt_nomor_'.$data->id, $this->jmlAnkas + 1),
+                    (int) Session::get('pspk_lv34_last_sjt_nomor_'.$data->id, $this->jmlAnkas + 1),
                     $this->jml_soal
                 )
             );
@@ -379,11 +392,10 @@ class Ujian extends Component
         }
 
         if ($this->isLevel34 && $nomor_soal <= $this->jmlAnkas) {
-            if ($nomor_soal < $this->jmlAnkas) {
-                $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $nomor_soal + 1]), navigate: true);
-            } else {
-                $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $nomor_soal]), navigate: true);
-            }
+            $targetId = $nomor_soal < $this->jmlAnkas ? $nomor_soal + 1 : $nomor_soal;
+            $this->navigateAnkasInPlace($targetId);
+
+            return;
         } elseif ($nomor_soal < $this->jml_soal) {
             $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $nomor_soal + 1]), navigate: true);
         } else {
@@ -408,10 +420,25 @@ class Ujian extends Component
         $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$id - 1]);
 
         if ($this->isLevel34 && $id > $this->jmlAnkas && $this->lv34SjtEntered) {
-            session(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $id]);
+            Session::put(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $id]);
+        }
+
+        if ($this->isLevel34 && $id <= $this->jmlAnkas && ! $this->lv34SjtEntered) {
+            $this->navigateAnkasInPlace($id);
+
+            return;
         }
 
         $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $id]), navigate: true);
+    }
+
+    private function navigateAnkasInPlace(int $targetId): void
+    {
+        $this->id_soal = $targetId;
+        $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$targetId - 1]);
+
+        $url = route('peserta.tes-pspk.ujian', ['id' => $targetId]);
+        $this->js('window.history.replaceState({}, \'\', '.json_encode($url).')');
     }
 
     public function lanjutKeSjt()
@@ -434,7 +461,7 @@ class Ujian extends Component
 
         $this->lv34SjtEntered = true;
 
-        session([
+        Session::put([
             'pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $this->jmlAnkas + 1,
         ]);
 
@@ -446,7 +473,7 @@ class Ujian extends Component
         try {
             $data = UjianPspk::findOrFail($this->id_ujian);
 
-            session()->forget([
+            Session::forget([
                 'pspk_lv34_last_sjt_nomor_'.$data->id,
             ]);
 
@@ -616,7 +643,7 @@ class Ujian extends Component
             return $this->redirect(route('peserta.tes-pspk.hasil'));
         } catch (\Throwable $th) {
             // throw $th;
-            session()->flash('toast', [
+            Session::flash('toast', [
                 'type' => 'error',
                 'message' => 'Terjadi kesalahan',
             ]);
@@ -661,7 +688,7 @@ class Ujian extends Component
 
         if ($requestedId > $this->jmlAnkas) {
             if (! $this->semuaAnkasTerjawab()) {
-                session()->flash('toast', [
+                Session::flash('toast', [
                     'type' => 'warning',
                     'message' => 'Selesaikan dulu tahap analisa kasus.',
                 ]);
@@ -670,7 +697,7 @@ class Ujian extends Component
             }
 
             if (! $this->lv34SjtEntered) {
-                session()->flash('toast', [
+                Session::flash('toast', [
                     'type' => 'warning',
                     'message' => 'Gunakan tombol Lanjut Tes Berikutnya untuk memulai bagian SJT.',
                 ]);
@@ -682,10 +709,10 @@ class Ujian extends Component
         }
 
         if ($this->lv34SjtEntered) {
-            $target = session($lastNomorKey, $this->jmlAnkas + 1);
+            $target = Session::get($lastNomorKey, $this->jmlAnkas + 1);
             $target = max($this->jmlAnkas + 1, min((int) $target, $this->jml_soal));
 
-            session()->flash('toast', [
+            Session::flash('toast', [
                 'type' => 'info',
                 'message' => 'Anda sudah melanjutkan ke tes SJT. Tidak dapat kembali ke soal analisa kasus.',
             ]);
