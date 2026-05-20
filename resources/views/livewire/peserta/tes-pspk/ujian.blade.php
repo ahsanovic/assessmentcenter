@@ -47,12 +47,6 @@
         position: relative;
         font-weight: 600;
     }
-    .status-bar {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: white;
-    }
     .btn-pspk {
         background-color: #6f42c1;
         border-color: #6f42c1;
@@ -63,36 +57,208 @@
         border-color: #5a32a3;
         color: white;
     }
-    .text-pspk {
-        color: #6f42c1;
-    }
-    .bg-pspk-subtle {
-        background-color: rgba(111, 66, 193, 0.1);
-    }
-    .ankas-pdf-panel {
-        min-height: 70vh;
-        border-right: 2px solid #dee2e6;
-    }
-    .ankas-pdf-panel iframe {
-        width: 100%;
-        height: calc(70vh - 52px);
-        border: none;
-        display: block;
-    }
-    .ankas-soal-panel {
-        display: flex;
-        flex-direction: column;
-        max-height: 70vh;
-    }
-    .ankas-soal-panel .soal-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1.5rem;
-    }
+    .text-pspk { color: #6f42c1; }
+    .bg-pspk-subtle { background-color: rgba(111, 66, 193, 0.1); }
     .phase-badge {
         font-size: 0.8rem;
         font-weight: 600;
         letter-spacing: 0.5px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ANKAS FULLSCREEN IMMERSIVE LAYOUT (Level 3/4)
+       ═══════════════════════════════════════════════ */
+    .ankas-fs {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        display: flex;
+        flex-direction: column;
+        background: #f4f3f8;
+    }
+    .tooltip {
+        z-index: 1100 !important;
+    }
+
+    .ankas-fs-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1rem;
+        background: #fff;
+        border-bottom: 2px solid rgba(111, 66, 193, 0.12);
+        box-shadow: 0 2px 12px rgba(111, 66, 193, 0.06);
+        flex-shrink: 0;
+        height: 54px;
+        gap: 0.5rem;
+    }
+
+    .ankas-fs-timer-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: linear-gradient(135deg, rgba(111,66,193,0.08) 0%, rgba(161,140,209,0.12) 100%);
+        padding: 0.3rem 0.85rem;
+        border-radius: 2rem;
+        color: #6f42c1;
+    }
+    .ankas-fs-timer-pill .timer-badge {
+        font-size: 1rem;
+    }
+
+    .ankas-fs-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 1rem;
+    }
+
+    .ankas-fs-content {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        min-height: 0;
+    }
+
+    .ankas-fs-pdf {
+        flex: 0 0 62%;
+        max-width: 62%;
+        display: flex;
+        flex-direction: column;
+        background: #eceef3;
+        position: relative;
+    }
+    .ankas-fs-pdf-header {
+        display: flex;
+        align-items: center;
+        padding: 0.45rem 1rem;
+        background: rgba(255,255,255,0.95);
+        border-bottom: 1px solid #e2e4ea;
+        flex-shrink: 0;
+        backdrop-filter: blur(4px);
+    }
+    .ankas-fs-pdf iframe {
+        flex: 1;
+        width: 100%;
+        border: none;
+        display: block;
+    }
+    .ankas-fs-pdf-empty {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+    }
+
+    .ankas-fs-divider {
+        width: 3px;
+        background: linear-gradient(180deg, rgba(111,66,193,0.15) 0%, rgba(111,66,193,0.05) 100%);
+        flex-shrink: 0;
+    }
+
+    .ankas-fs-soal {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #fff;
+    }
+    .ankas-fs-soal-head {
+        padding: 0.65rem 1.25rem;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+        flex-shrink: 0;
+    }
+    .ankas-fs-soal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(111,66,193,0.2) transparent;
+    }
+    .ankas-fs-soal-body::-webkit-scrollbar { width: 6px; }
+    .ankas-fs-soal-body::-webkit-scrollbar-thumb {
+        background: rgba(111,66,193,0.2);
+        border-radius: 3px;
+    }
+
+    .ankas-fs-option {
+        padding: 0.85rem 1rem;
+        border-radius: 0.5rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.15s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: #fff;
+        font-size: 0.92rem;
+    }
+    .ankas-fs-option:hover {
+        border-color: #6f42c1;
+        background-color: rgba(111, 66, 193, 0.04);
+    }
+    .ankas-fs-option.selected {
+        border-color: #6f42c1;
+        background: rgba(111, 66, 193, 0.08);
+        box-shadow: 0 0 0 1px rgba(111, 66, 193, 0.15);
+    }
+
+    .ankas-fs-actions {
+        padding: 0.6rem 1.25rem;
+        border-top: 1px solid #eee;
+        background: #fff;
+        flex-shrink: 0;
+    }
+
+    .ankas-fs-nav-panel {
+        border-top: 2px solid rgba(111, 66, 193, 0.1);
+        background: #faf9fe;
+        padding: 0.75rem 1.25rem;
+        flex-shrink: 0;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+    .ankas-fs-nav-btn {
+        min-width: 36px;
+        height: 36px;
+        position: relative;
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .ankas-fs-nav-legend {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    .ankas-fs-nav-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .ankas-fs-nav-legend-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    /* ═══════════════════════════
+       STANDARD LAYOUT
+       ═══════════════════════════ */
+    .status-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: white;
     }
 </style>
 @endpush
@@ -116,6 +282,195 @@ x-init="
     });
 "> --}}
 <div>
+    @if($isLevel34 && $isAnkasPhase)
+    {{-- ══════════════════════════════════════════════════════════════
+         IMMERSIVE FULLSCREEN ANKAS (Level 3/4 - Tahap 1)
+         PDF lebih lebar 62%, navigasi terintegrasi
+         ══════════════════════════════════════════════════════════════ --}}
+    <div class="ankas-fs" x-data="{ showNav: false }">
+        {{-- Top Bar --}}
+        <div class="ankas-fs-topbar">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-pspk-subtle text-pspk px-2 py-1 phase-badge">
+                    <span wire:ignore><i data-feather="layers" style="width:13px;height:13px" class="me-1"></i></span>
+                    Tahap 1: Ankas
+                </span>
+                <span class="badge text-white px-2 py-1" style="background:#6f42c1;font-size:0.78rem;">
+                    Soal {{ $phaseNomor }} / {{ $jml_soal }}
+                </span>
+            </div>
+
+            <div class="ankas-fs-timer-pill" wire:ignore.self>
+                <span wire:ignore><i data-feather="clock" style="width:15px;height:15px"></i></span>
+                <strong class="time timer-badge"></strong>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="ankas-fs-stat bg-success bg-opacity-10 text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Sudah dijawab">
+                    <span wire:ignore><i data-feather="check" style="width:12px;height:12px"></i></span>
+                    {{ $jml_soal - $jawaban_kosong }}
+                </span>
+                <span class="ankas-fs-stat bg-danger bg-opacity-10 text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Belum dijawab">
+                    <span wire:ignore><i data-feather="x" style="width:12px;height:12px"></i></span>
+                    {{ $jawaban_kosong ?? 0 }}
+                </span>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
+                    @click="showNav = !showNav"
+                    :class="{ 'btn-pspk text-white border-0': showNav }"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Navigasi Soal">
+                    <span wire:ignore><i data-feather="grid" style="width:15px;height:15px"></i></span>
+                </button>
+                <button class="btn btn-sm btn-pspk rounded-pill px-3"
+                    wire:click="lanjutKeSjt"
+                    @if(!$allAnkasAnswered) disabled @endif>
+                    Lanjut SJT
+                    <span wire:ignore><i data-feather="arrow-right" style="width:14px;height:14px" class="ms-1"></i></span>
+                </button>
+            </div>
+        </div>
+
+        {{-- Split Content Area --}}
+        <div class="ankas-fs-content">
+            {{-- PDF Panel (62%) --}}
+            <div class="ankas-fs-pdf">
+                <div class="ankas-fs-pdf-header">
+                    <span wire:ignore><i data-feather="file-text" style="width:15px;height:15px" class="text-pspk me-2"></i></span>
+                    <small class="fw-semibold text-muted">Lampiran PDF Analisa Kasus</small>
+                </div>
+                @if($soal->kasusLampiran?->lampiran_pdf_path)
+                    <iframe
+                        src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
+                        title="Lampiran PDF"
+                        sandbox="allow-scripts allow-same-origin"
+                        referrerpolicy="same-origin"
+                    ></iframe>
+                @else
+                    <div class="ankas-fs-pdf-empty">
+                        <div class="text-center">
+                            <span wire:ignore><i data-feather="file-minus" style="width:48px;height:48px" class="text-muted mb-2"></i></span>
+                            <p class="text-muted mb-0">PDF lampiran tidak tersedia</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <div class="ankas-fs-divider"></div>
+
+            {{-- Soal Panel --}}
+            <div class="ankas-fs-soal">
+                {{-- Soal Header --}}
+                <div class="ankas-fs-soal-head">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge text-white px-3 py-2" style="font-size:0.9rem;background:#6f42c1;">
+                                Soal {{ $phaseNomor }}
+                            </span>
+                            @if(isset($flagged[$nomor_sekarang]))
+                                <span class="badge bg-warning text-dark px-2 py-1">🔖 Ditandai</span>
+                            @endif
+                        </div>
+                        <small class="text-muted">{{ $phaseNomor }} dari {{ $jml_soal }}</small>
+                    </div>
+                </div>
+
+                {{-- Soal Body (scrollable) --}}
+                <div class="ankas-fs-soal-body">
+                    <div class="mb-4">
+                        <p class="mb-0 lh-base" style="font-size:1.05rem;">{{ $soal->soal }}</p>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2">
+                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
+                            <input class="form-check-input me-3" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
+                            <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
+                        </label>
+                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
+                            <input class="form-check-input me-3" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
+                            <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
+                        </label>
+                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
+                            <input class="form-check-input me-3" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
+                            <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
+                        </label>
+                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
+                            <input class="form-check-input me-3" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
+                            <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
+                        </label>
+                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
+                            <input class="form-check-input me-3" type="radio"
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
+                            <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Navigation Drawer (collapsible) --}}
+                <div class="ankas-fs-nav-panel" x-show="showNav" x-collapse>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        @for ($i = 1; $i <= $jmlAnkas; $i++)
+                            <button wire:click="navigate({{ $i }})"
+                                class="btn ankas-fs-nav-btn btn-sm
+                                    {{ $jawaban[$i - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }}
+                                    {{ isset($flagged[$i]) ? 'flagged-btn' : '' }}"
+                                style="{{ $i == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111,66,193,0.5);' : '' }}"
+                            >
+                                {{ $i }}
+                                @if(isset($flagged[$i]))
+                                    <span class="flag-icon" style="font-size:11px;top:-4px;right:-4px;">🔖</span>
+                                @endif
+                            </button>
+                        @endfor
+                    </div>
+                    <div class="ankas-fs-nav-legend">
+                        <div class="ankas-fs-nav-legend-item">
+                            <span class="ankas-fs-nav-legend-dot bg-success"></span>
+                            <small class="text-muted" style="font-size:0.72rem;">Dijawab</small>
+                        </div>
+                        <div class="ankas-fs-nav-legend-item">
+                            <span class="ankas-fs-nav-legend-dot border border-danger"></span>
+                            <small class="text-muted" style="font-size:0.72rem;">Belum</small>
+                        </div>
+                        <div class="ankas-fs-nav-legend-item">
+                            <span class="ankas-fs-nav-legend-dot" style="background:#ffd15c;"></span>
+                            <small class="text-muted" style="font-size:0.72rem;">Ditandai</small>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Fixed Action Bar --}}
+                <div class="ankas-fs-actions">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm px-3"
+                            wire:click="navigate({{ $nomor_sekarang - 1 }})"
+                            @if ($nomor_sekarang == 1) disabled @endif>
+                            <span wire:ignore><i data-feather="chevron-left" style="width:16px;height:16px"></i></span>
+                            <span class="d-none d-xl-inline ms-1">Sebelumnya</span>
+                        </button>
+                        <button class="btn btn-pspk btn-sm flex-fill"
+                            wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                            Simpan & Lanjut
+                            <span wire:ignore><i data-feather="chevron-right" style="width:16px;height:16px" class="ms-1"></i></span>
+                        </button>
+                        <button class="btn btn-sm px-3 {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}"
+                            wire:click="toggleFlag({{ $nomor_sekarang }})"
+                            data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}">
+                            🔖
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @else
+    {{-- ══════════════════════════════════════════════
+         STANDARD LAYOUT (Level 1/2, atau SJT phase)
+         ══════════════════════════════════════════════ --}}
+
     <!-- Header Card -->
     <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
         <div class="card-body p-4 text-white">
@@ -206,159 +561,6 @@ x-init="
             </div>
         </div>
     </div>
-
-    {{-- ==========================================
-         ANKAS PHASE: Split View (PDF kiri, Soal kanan)
-         ========================================== --}}
-    @if($isLevel34 && $isAnkasPhase)
-
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="row g-0">
-            <!-- PDF Panel (Kiri) -->
-            <div class="col-lg-6 ankas-pdf-panel">
-                <div class="card-header bg-white border-bottom py-2 px-3">
-                    <div class="d-flex align-items-center" wire:ignore>
-                        <i data-feather="file-text" style="width: 18px; height: 18px;" class="text-pspk me-2"></i>
-                        <h6 class="mb-0">Lampiran PDF Analisa Kasus</h6>
-                    </div>
-                </div>
-                @if($soal->kasusLampiran?->lampiran_pdf_path)
-                    <iframe
-                        src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
-                        title="Lampiran PDF"
-                        sandbox="allow-scripts allow-same-origin"
-                        referrerpolicy="same-origin"
-                        class="iframe-lampiran-pdf"
-                    ></iframe>
-                @else
-                    <div class="d-flex align-items-center justify-content-center" style="height: calc(70vh - 52px);">
-                        <p class="text-muted mb-0">PDF lampiran tidak tersedia</p>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Soal Panel (Kanan) -->
-            <div class="col-lg-6 ankas-soal-panel">
-                <div class="card-header bg-white border-bottom py-3 px-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <span class="badge text-white me-3 px-3 py-2" style="font-size: 1rem; background-color: #6f42c1;">
-                                Soal {{ $phaseNomor }}
-                            </span>
-                            @if(isset($flagged[$nomor_sekarang]))
-                                <span class="badge bg-warning text-dark">🔖 Ditandai</span>
-                            @endif
-                        </div>
-                        <small class="text-muted">{{ $phaseNomor }} dari {{ $jml_soal }} soal</small>
-                    </div>
-                </div>
-                <div class="soal-body">
-                    <div class="mb-4">
-                        <p class="fs-5 mb-0">{{ $soal->soal }}</p>
-                    </div>
-
-                    <div class="row g-3 mb-4">
-                        <div class="col-12">
-                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
-                                <input class="form-check-input me-3" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
-                                <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
-                            </label>
-                        </div>
-                        <div class="col-12">
-                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
-                                <input class="form-check-input me-3" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
-                                <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
-                            </label>
-                        </div>
-                        <div class="col-12">
-                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
-                                <input class="form-check-input me-3" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
-                                <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
-                            </label>
-                        </div>
-                        <div class="col-12">
-                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
-                                <input class="form-check-input me-3" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
-                                <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
-                            </label>
-                        </div>
-                        <div class="col-12">
-                            <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
-                                <input class="form-check-input me-3" type="radio"
-                                    wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
-                                <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2">
-                        <button class="btn btn-outline-secondary" wire:click="navigate({{ $nomor_sekarang - 1 }})"
-                            @if ($nomor_sekarang == 1) disabled @endif>
-                            <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
-                            Sebelumnya
-                        </button>
-                        <button class="btn btn-pspk" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
-                            Simpan & Lanjutkan
-                            <span wire:ignore><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
-                        </button>
-                        <button class="btn {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}" wire:click="toggleFlag({{ $nomor_sekarang }})">
-                            🔖 {{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <hr class="my-4" style="border-top: 2px solid rgba(111, 66, 193, 0.3);">
-
-    <!-- Navigation Grid Ankas -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-0 py-3">
-            <h6 class="mb-0">
-                <span wire:ignore><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
-                Navigasi Soal Ankas
-            </h6>
-        </div>
-        <div class="card-body p-4">
-            <div class="d-flex flex-wrap gap-2">
-                @for ($i = 1; $i <= $jmlAnkas; $i++)
-                    <button wire:click="navigate({{ $i }})"
-                        class="btn nav-btn btn-sm {{ $jawaban[$i - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$i]) ? 'flagged-btn' : '' }}"
-                        style="{{ $i == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
-                    >
-                        {{ $i }}
-                        @if(isset($flagged[$i]))
-                            <span class="flag-icon">🔖</span>
-                        @endif
-                    </button>
-                @endfor
-            </div>
-            <div class="mt-4 d-flex flex-wrap gap-3">
-                <div class="d-flex align-items-center">
-                    <span class="btn btn-sm btn-success me-2" style="width: 30px; height: 30px;"></span>
-                    <small class="text-muted">Sudah Dijawab</small>
-                </div>
-                <div class="d-flex align-items-center">
-                    <span class="btn btn-sm btn-outline-danger me-2" style="width: 30px; height: 30px;"></span>
-                    <small class="text-muted">Belum Dijawab</small>
-                </div>
-                <div class="d-flex align-items-center">
-                    <span class="btn btn-sm flagged-btn me-2" style="width: 30px; height: 30px;"></span>
-                    <small class="text-muted">Ditandai</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @else
-    {{-- ==========================================
-         STANDARD LAYOUT (Level 1/2, atau SJT phase)
-         ========================================== --}}
 
     <!-- Question Card -->
     <div class="card border-0 shadow-sm mb-4">
@@ -488,6 +690,21 @@ x-init="
 
 @push('js')
 <script>
+    function initAnkasTooltips() {
+        document.querySelectorAll('.ankas-fs [data-bs-toggle="tooltip"]').forEach(function (el) {
+            var instance = bootstrap.Tooltip.getInstance(el);
+            if (instance) instance.dispose();
+            new bootstrap.Tooltip(el);
+        });
+    }
+
+    document.addEventListener('livewire:initialized', function () {
+        initAnkasTooltips();
+        Livewire.hook('morph.updated', function () {
+            initAnkasTooltips();
+        });
+    });
+
     document.addEventListener('livewire:init', () => {
         Livewire.on('load-flags-from-browser', () => {
             let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');

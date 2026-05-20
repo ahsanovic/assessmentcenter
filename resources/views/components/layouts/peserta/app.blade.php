@@ -147,16 +147,26 @@
             });
         </script>
         <script>
+            function initPesertaTooltips(container) {
+                (container || document).querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+                    var instance = bootstrap.Tooltip.getInstance(el);
+                    if (instance) instance.dispose();
+                    new bootstrap.Tooltip(el);
+                });
+            }
+
+            document.addEventListener('livewire:initialized', function () {
+                initPesertaTooltips();
+                Livewire.hook('morph.updated', function () {
+                    initPesertaTooltips();
+                });
+            });
+
             if (!window.__pesertaNavigateInit) {
                 window.__pesertaNavigateInit = true;
-                document.addEventListener('livewire:navigated', () => {
+                document.addEventListener('livewire:navigated', function () {
                     if (typeof feather !== 'undefined') feather.replace();
-
-                    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                        var instance = bootstrap.Tooltip.getInstance(el);
-                        if (instance) instance.dispose();
-                        new bootstrap.Tooltip(el);
-                    });
+                    initPesertaTooltips();
                 });
             }
         </script>

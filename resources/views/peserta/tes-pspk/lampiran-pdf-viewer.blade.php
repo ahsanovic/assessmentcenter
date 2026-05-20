@@ -163,7 +163,16 @@
 
         let pdfDoc = null;
         let pdfjsLib = null;
-        let zoomLevel = 1;
+        let zoomLevel = (function () {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const z = parseFloat(params.get('zoom'));
+                if (!isNaN(z) && z >= MIN_ZOOM && z <= MAX_ZOOM) {
+                    return z;
+                }
+            } catch (_) { /* noop */ }
+            return 1;
+        })();
         let isRendering = false;
 
         async function fail(msg) {
