@@ -194,20 +194,58 @@ class Ujian extends Component
         }
     }
 
+    /**
+     * Sinkronkan ulang seluruh jawaban_user dari database.
+     *
+     * Dipakai saat navigasi soal agar pilihan radio yang belum disimpan
+     * (perubahan wire:model yang ter-batch) tidak nyangkut di state dan
+     * membuat tombol navigasi soal lain ikut berubah hijau.
+     */
+    private function refreshJawabanUserFromDatabase(): void
+    {
+        if (blank($this->id_ujian)) {
+            return;
+        }
+
+        $row = UjianPspk::whereKey($this->id_ujian)->select('jawaban')->first();
+        if (! $row) {
+            return;
+        }
+
+        $this->jawaban_user = explode(',', $row->jawaban ?? '');
+
+        $kosong = 0;
+        foreach ($this->jawaban_user as $j) {
+            if ($j == '0') {
+                $kosong++;
+            }
+        }
+        $this->jawaban_kosong = $kosong;
+    }
+
     public function render()
     {
+        $row = UjianPspk::whereKey($this->id_ujian)->select('jawaban')->first();
+        $jawabanTersimpan = $row ? explode(',', $row->jawaban ?? '') : $this->jawaban_user;
+
         $isAnkasPhase = false;
         $allAnkasAnswered = true;
         $phaseJmlSoal = $this->jml_soal;
-        $phaseKosong = $this->jawaban_kosong;
+        $phaseKosong = 0;
         $phaseNomor = $this->id_soal;
+
+        for ($i = 0; $i < $this->jml_soal; $i++) {
+            if (($jawabanTersimpan[$i] ?? '0') == '0') {
+                $phaseKosong++;
+            }
+        }
 
         if ($this->isLevel34 && $this->jmlAnkas > 0) {
             $isAnkasPhase = $this->id_soal <= $this->jmlAnkas;
 
             $ankasKosong = 0;
             for ($i = 0; $i < $this->jmlAnkas; $i++) {
-                if ($this->jawaban_user[$i] == '0') {
+                if (($jawabanTersimpan[$i] ?? '0') == '0') {
                     $ankasKosong++;
                     $allAnkasAnswered = false;
                 }
@@ -220,7 +258,7 @@ class Ujian extends Component
             } else {
                 $sjtKosong = 0;
                 for ($i = $this->jmlAnkas; $i < $this->jml_soal; $i++) {
-                    if ($this->jawaban_user[$i] == '0') {
+                    if (($jawabanTersimpan[$i] ?? '0') == '0') {
                         $sjtKosong++;
                     }
                 }
@@ -233,6 +271,7 @@ class Ujian extends Component
         return view('livewire.peserta.tes-pspk.ujian', [
             'nomor_sekarang' => $this->id_soal,
             'jawaban' => $this->jawaban_user,
+            'jawaban_tersimpan' => $jawabanTersimpan,
             'jawaban_kosong' => $phaseKosong,
             'jml_soal' => $phaseJmlSoal,
             'soal' => $this->soal,
@@ -383,14 +422,6 @@ class Ujian extends Component
         $data->nilai_total = array_sum($updated_skor);
         $data->save();
 
-        // Hapus flag soal jika ada
-        if (isset($this->flagged[$nomor_soal])) {
-            unset($this->flagged[$nomor_soal]);
-
-            // Hapus juga dari localStorage (via JS)
-            $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
-        }
-
         if ($this->isLevel34 && $nomor_soal <= $this->jmlAnkas) {
             $targetId = $nomor_soal < $this->jmlAnkas ? $nomor_soal + 1 : $nomor_soal;
             $this->navigateAnkasInPlace($targetId);
@@ -415,6 +446,8 @@ class Ujian extends Component
         if ($redirect = $this->enforceLevel34PhaseUrl($id)) {
             return $redirect;
         }
+
+        $this->refreshJawabanUserFromDatabase();
 
         $this->id_soal = $id;
         $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$id - 1]);

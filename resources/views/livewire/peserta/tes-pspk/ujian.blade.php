@@ -382,30 +382,30 @@ x-init="
                         <p class="mb-0 lh-base" style="font-size:1.05rem;">{{ $soal->soal }}</p>
                     </div>
 
-                    <div class="d-flex flex-column gap-2">
-                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
+                    <div class="d-flex flex-column gap-2" wire:key="ankas-opsi-block-{{ $nomor_sekarang }}">
+                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-A" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
                             <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi-{{ $nomor_sekarang }}-A">
                             <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
                         </label>
-                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
+                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-B" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
                             <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi-{{ $nomor_sekarang }}-B">
                             <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
                         </label>
-                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
+                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-C" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
                             <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi-{{ $nomor_sekarang }}-C">
                             <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
                         </label>
-                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
+                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-D" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
                             <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi-{{ $nomor_sekarang }}-D">
                             <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
                         </label>
-                        <label class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
+                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-E" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
                             <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
+                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi-{{ $nomor_sekarang }}-E">
                             <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
                         </label>
                     </div>
@@ -417,7 +417,7 @@ x-init="
                         @for ($i = 1; $i <= $jmlAnkas; $i++)
                             <button wire:click="navigate({{ $i }})"
                                 class="btn ankas-fs-nav-btn btn-sm
-                                    {{ $jawaban[$i - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }}
+                                    {{ ($jawaban_tersimpan[$i - 1] ?? '0') === '0' ? 'btn-outline-danger' : 'btn-success' }}
                                     {{ isset($flagged[$i]) ? 'flagged-btn' : '' }}"
                                 style="{{ $i == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111,66,193,0.5);' : '' }}"
                             >
@@ -454,7 +454,8 @@ x-init="
                             <span class="d-none d-xl-inline ms-1">Sebelumnya</span>
                         </button>
                         <button class="btn btn-pspk btn-sm flex-fill"
-                            wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                            wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan"
+                            @if(($jawaban[$nomor_sekarang - 1] ?? '0') === '0') disabled @endif>
                             Simpan & Lanjut
                             <span wire:ignore><i data-feather="chevron-right" style="width:16px;height:16px" class="ms-1"></i></span>
                         </button>
@@ -585,39 +586,39 @@ x-init="
                 <p class="fs-5 mb-0">{{ $soal->soal }}</p>
             </div>
 
-            <div class="row g-3 mb-4">
-                <div class="col-12">
+            <div class="row g-3 mb-4" wire:key="std-opsi-block-{{ $nomor_sekarang }}">
+                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-A">
                     <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi1">
+                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi-{{ $nomor_sekarang }}-A">
                         <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
                     </label>
                 </div>
-                <div class="col-12">
+                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-B">
                     <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi2">
+                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi-{{ $nomor_sekarang }}-B">
                         <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
                     </label>
                 </div>
-                <div class="col-12">
+                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-C">
                     <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi3">
+                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi-{{ $nomor_sekarang }}-C">
                         <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
                     </label>
                 </div>
-                <div class="col-12">
+                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-D">
                     <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi4">
+                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi-{{ $nomor_sekarang }}-D">
                         <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
                     </label>
                 </div>
-                <div class="col-12">
+                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-E">
                     <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
                         <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi5">
+                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi-{{ $nomor_sekarang }}-E">
                         <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
                     </label>
                 </div>
@@ -632,7 +633,8 @@ x-init="
                     <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
                     Sebelumnya
                 </button>
-                <button class="btn btn-pspk" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan" disabled>
+                <button class="btn btn-pspk" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan"
+                    @if(($jawaban[$nomor_sekarang - 1] ?? '0') === '0') disabled @endif>
                     Simpan & Lanjutkan
                     <span wire:ignore><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
                 </button>
@@ -660,7 +662,7 @@ x-init="
             <div class="d-flex flex-wrap gap-2">
                 @for ($idx = $navStart; $idx <= $navEnd; $idx++)
                     <button wire:click="navigate({{ $idx }})"
-                        class="btn nav-btn btn-sm {{ $jawaban[$idx - 1] === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$idx]) ? 'flagged-btn' : '' }}"
+                        class="btn nav-btn btn-sm {{ ($jawaban_tersimpan[$idx - 1] ?? '0') === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$idx]) ? 'flagged-btn' : '' }}"
                         style="{{ $idx == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
                     >
                         {{ $isLevel34 ? $nomor_display : $idx }}
