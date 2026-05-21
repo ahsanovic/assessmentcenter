@@ -49,24 +49,15 @@ class DownloadLaporanPspkController extends Controller
             }
         }
 
-        $view = match ($data->metode_tes_id) {
-            5 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', // PSPK level 1
-            6 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', // PSPK level 2
-            7 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf-lv34', // PSPK level 3
-            8 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf-lv34', // PSPK level 4
-        };
+        $view = $this->resolvePdfView($data->metode_tes_id);
 
-        $pdf = Pdf::loadView($view, [
-            'peserta' => $peserta,
-            'data' => $data,
-            'aspek_potensi' => $aspek_potensi,
-            'saran_pengembangan' => $data->hasilPspk[0]->saran_pengembangan ?? [],
-            'deskripsi' => $data->hasilPspk[0]->deskripsi ?? [],
-            'jpm' => $data->hasilPspk[0]->jpm ?? 0,
-            'kategori' => $data->hasilPspk[0]->kategori ?? '',
-            'tte' => $tte,
-            'nomor_laporan' => $nomor_laporan ?? null,
-        ])->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadView($view, $this->buildPdfPayload(
+            $peserta,
+            $data,
+            $aspek_potensi,
+            $tte,
+            $nomor_laporan ?? null
+        ))->setPaper('A4', 'portrait');
 
         return $pdf->stream('report-pspk-'.$peserta->nip ?: $peserta->nik.'-'.strtoupper($peserta->nama).'.pdf');
     }
@@ -77,6 +68,8 @@ class DownloadLaporanPspkController extends Controller
 
         $aspek_potensi = RefAspekPspk::all();
         $tte = TtdLaporan::where('is_active', 't')->first();
+        $event = Event::findOrFail($idEvent);
+        $view = $this->resolvePdfView($event->metode_tes_id);
 
         $all_peserta = Peserta::with('event')
             ->where('event_id', $idEvent)
@@ -89,7 +82,7 @@ class DownloadLaporanPspkController extends Controller
             ->get();
 
         $response = new StreamedResponse(
-            function () use ($all_peserta, $aspek_potensi, $tte, $idEvent) {
+            function () use ($all_peserta, $aspek_potensi, $tte, $idEvent, $view) {
                 if (ob_get_level()) {
                     ob_end_clean();
                 }
@@ -133,13 +126,13 @@ class DownloadLaporanPspkController extends Controller
                     }
 
                     // generate PDF
-                    $pdf = Pdf::loadView('livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf', [
-                        'peserta' => $peserta,
-                        'aspek_potensi' => $aspek_potensi,
-                        'data' => $data,
-                        'tte' => $tte,
-                        'nomor_laporan' => $nomor_laporan ?? null,
-                    ])->setPaper('A4', 'portrait');
+                    $pdf = Pdf::loadView($view, $this->buildPdfPayload(
+                        $peserta,
+                        $data,
+                        $aspek_potensi,
+                        $tte,
+                        $nomor_laporan
+                    ))->setPaper('A4', 'portrait');
 
                     // nama file di dalam zip
                     $identifier = $peserta->nip ?: $peserta->nik;
@@ -155,5 +148,34 @@ class DownloadLaporanPspkController extends Controller
         );
 
         return $response;
+    }
+
+    private function resolvePdfView(int $metodeTesId): string
+    {
+        return match ($metodeTesId) {
+            5, 6 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf',
+            7, 8 => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf-lv34',
+            default => 'livewire.admin.data-tes.tes-pspk.tes-selesai.download-pdf',
+        };
+    }
+
+    private function buildPdfPayload(
+        Peserta $peserta,
+        Event $data,
+        $aspek_potensi,
+        $tte,
+        ?string $nomor_laporan
+    ): array {
+        return [
+            'peserta' => $peserta,
+            'data' => $data,
+            'aspek_potensi' => $aspek_potensi,
+            'saran_pengembangan' => $data->hasilPspk[0]->saran_pengembangan ?? [],
+            'deskripsi' => $data->hasilPspk[0]->deskripsi ?? [],
+            'jpm' => $data->hasilPspk[0]->jpm ?? 0,
+            'kategori' => $data->hasilPspk[0]->kategori ?? '',
+            'tte' => $tte,
+            'nomor_laporan' => $nomor_laporan,
+        ];
     }
 }
