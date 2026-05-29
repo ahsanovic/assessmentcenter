@@ -642,10 +642,18 @@ class Ujian extends Component
                     $saran = RefSaranPengembangan::where('level_pspk_id', (int) auth()->guard('peserta')->user()->event->metode_tes_id == 7 ? 3 : 4)
                         ->first();
 
-                    if ($val == 4) {
-                        $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
-                    } else {
-                        $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
+                    if (auth()->guard('peserta')->user()->event->metode_tes_id == 7) { // level 3
+                        if ($val == 3) {
+                            $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
+                        } else {
+                            $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
+                        }
+                    } else if (auth()->guard('peserta')->user()->event->metode_tes_id == 8) { // level 4
+                        if ($val == 4) {
+                            $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
+                        } else {
+                            $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
+                        }
                     }
                 }
             }

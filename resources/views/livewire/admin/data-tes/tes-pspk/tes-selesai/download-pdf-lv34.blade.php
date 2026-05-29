@@ -8,7 +8,7 @@
             margin-left: 1.5cm;
             margin-top: 1cm;
             margin-right: 1.5cm;
-            margin-bottom: 1cm;
+            margin-bottom: 1.5cm;
         }
         
         body {
@@ -160,6 +160,7 @@
         .ttd-section {
             width: 100%;
             margin-top: 40px;
+            page-break-inside: avoid;
         }
         
         .ttd-box {
@@ -196,16 +197,15 @@
 
         .footer {
             position: fixed;
-            bottom: 0;
+            bottom: -1.1cm;
             left: 0;
             right: 0;
-            height: 50px;
             text-align: center;
         }
 
         .footer img {
             width: 100%;
-            height: auto;
+            height: 65px;
         }
     </style>
 </head>
@@ -322,7 +322,7 @@
                     </i>
                 </td>
                 <td width="10%" style="text-align: center;">
-                    4
+                    {{ $data->metode_tes_id == 7 ? '3' : ($data->metode_tes_id == 8 ? '4' : '-') }}
                 </td>
                 <td width="10%" style="text-align: center;">
                     {{ $nilai ?? 0 }}
@@ -337,7 +337,7 @@
     <tr>
         <td colspan="5" style="padding-left: 10px;">
             Berdasarkan hasil penilaian, total nilai capaian adalah {{ array_sum($nilaiCapaian) }}
-            dari total nilai standar yaitu 36 atau setara dengan {{ number_format($jpm, 2) }}%
+            dari total nilai standar yaitu {{ $data->metode_tes_id == 7 ? '27' : ($data->metode_tes_id == 8 ? '36' : '-') }} atau setara dengan {{ number_format($jpm, 2) }}%
             dan masuk dalam kategori {{ $kategori }}.
         </td>
     </tr>
@@ -369,8 +369,6 @@
         </tr>
         @endforeach
     </table>
-
-    <div class="page-break"></div>
 
     <!-- Saran Pengembangan Kompetensi -->
     <div class="deskripsi-header"><b>D. SARAN PENGEMBANGAN KOMPETENSI</b></div>
@@ -412,8 +410,6 @@
         </tr>
         @endforeach
     </table>
-
-    <div class="page-break"></div>
 
     <!-- Tanda Tangan -->
     <div class="ttd-section">
