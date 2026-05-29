@@ -643,7 +643,7 @@ class Ujian extends Component
                         ->first();
 
                     if (auth()->guard('peserta')->user()->event->metode_tes_id == 7) { // level 3
-                        if ($val == 3) {
+                        if ($val == 3 || $val == 4) {
                             $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
                         } else {
                             $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
