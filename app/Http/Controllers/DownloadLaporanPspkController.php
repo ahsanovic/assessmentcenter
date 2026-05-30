@@ -7,6 +7,8 @@ use App\Models\Peserta;
 use App\Models\RefAspekPspk;
 use App\Models\TtdLaporan;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipStream\ZipStream;
 
@@ -19,7 +21,8 @@ class DownloadLaporanPspkController extends Controller
                 ->orWhere('nik', $identifier);
         })
             ->whereHas('ujianPspk', function ($q) use ($idEvent) {
-                $q->where('event_id', $idEvent);
+                $q->where('event_id', $idEvent)
+                    ->where('is_finished', 'true');
             })
             ->firstOrFail();
 
@@ -36,18 +39,9 @@ class DownloadLaporanPspkController extends Controller
             'hasilPspk' => function ($query) use ($peserta) {
                 $query->where('peserta_id', $peserta->id);
             },
-        ])
-            ->where('id', $idEvent)
-            ->whereHas('ujianPspk', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->first();
+        ])->findOrFail($idEvent);
 
-        foreach ($data->nomorLaporan as $nomorLaporan) {
-            if ($nomorLaporan->tanggal == \Carbon\Carbon::parse($peserta->test_started_at)->format('d-m-Y')) {
-                $nomor_laporan = $nomorLaporan->nomor;
-            }
-        }
+        $nomor_laporan = $this->resolveNomorLaporan($peserta, $data->nomorLaporan);
 
         $view = $this->resolvePdfView($data->metode_tes_id);
 
@@ -56,7 +50,7 @@ class DownloadLaporanPspkController extends Controller
             $data,
             $aspek_potensi,
             $tte,
-            $nomor_laporan ?? null
+            $nomor_laporan
         ))->setPaper('A4', 'portrait');
 
         return $pdf->stream('report-pspk-'.$peserta->nip ?: $peserta->nik.'-'.strtoupper($peserta->nama).'.pdf');
@@ -106,24 +100,13 @@ class DownloadLaporanPspkController extends Controller
                         'hasilPspk' => function ($query) use ($peserta) {
                             $query->where('peserta_id', $peserta->id);
                         },
-                    ])
-                        ->where('id', $idEvent)
-                        ->whereHas('ujianPspk', function ($query) {
-                            $query->where('is_finished', 'true');
-                        })
-                        ->first();
+                    ])->find($idEvent);
 
-                    if (! $data) {
+                    if (! $data || $data->hasilPspk->isEmpty()) {
                         continue;
                     }
 
-                    // ambil nomor laporan sesuai tanggal ujian
-                    $nomor_laporan = null;
-                    foreach ($data->nomorLaporan as $nl) {
-                        if ($nl->tanggal == \Carbon\Carbon::parse($peserta->test_started_at)->format('d-m-Y')) {
-                            $nomor_laporan = $nl->nomor;
-                        }
-                    }
+                    $nomor_laporan = $this->resolveNomorLaporan($peserta, $data->nomorLaporan);
 
                     // generate PDF
                     $pdf = Pdf::loadView($view, $this->buildPdfPayload(
@@ -166,16 +149,54 @@ class DownloadLaporanPspkController extends Controller
         $tte,
         ?string $nomor_laporan
     ): array {
+        $hasil = $data->hasilPspk->first();
+
         return [
             'peserta' => $peserta,
             'data' => $data,
             'aspek_potensi' => $aspek_potensi,
-            'saran_pengembangan' => $data->hasilPspk[0]->saran_pengembangan ?? [],
-            'deskripsi' => $data->hasilPspk[0]->deskripsi ?? [],
-            'jpm' => $data->hasilPspk[0]->jpm ?? 0,
-            'kategori' => $data->hasilPspk[0]->kategori ?? '',
+            'saran_pengembangan' => $hasil?->saran_pengembangan ?? [],
+            'deskripsi' => $hasil?->deskripsi ?? [],
+            'jpm' => $hasil?->jpm ?? 0,
+            'kategori' => $hasil?->kategori ?? '',
             'tte' => $tte,
             'nomor_laporan' => $nomor_laporan,
         ];
+    }
+
+    private function resolveNomorLaporan(Peserta $peserta, Collection $nomorLaporans): ?string
+    {
+        $items = $nomorLaporans->filter(fn ($nl) => filled($nl->nomor));
+        if ($items->isEmpty()) {
+            return null;
+        }
+
+        $tesDay = $peserta->test_started_at
+            ? Carbon::parse($peserta->test_started_at)->startOfDay()
+            : null;
+
+        foreach ($items as $nl) {
+            $rawTgl = $nl->getRawOriginal('tanggal');
+            if ($tesDay === null || ! $rawTgl) {
+                continue;
+            }
+            if (Carbon::parse($rawTgl)->startOfDay()->equalTo($tesDay)) {
+                return $nl->nomor;
+            }
+        }
+
+        if ($items->count() === 1) {
+            return $items->first()->nomor;
+        }
+
+        return $items->sort(function ($a, $b) {
+            $ta = $a->getRawOriginal('tanggal') ?? '';
+            $tb = $b->getRawOriginal('tanggal') ?? '';
+            if ($ta !== $tb) {
+                return strcmp($tb, $ta);
+            }
+
+            return (string) $b->getKey() <=> (string) $a->getKey();
+        })->first()?->nomor;
     }
 }

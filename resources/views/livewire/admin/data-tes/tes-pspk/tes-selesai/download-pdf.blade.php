@@ -239,7 +239,7 @@
     </div>
     
     <div class="nomor-surat">
-        NOMOR : {{ $data->nomorLaporan[0]->nomor ?? '' }}
+        NOMOR : {{ $nomor_laporan ?? '' }}
     </div>
     
     <!-- Tujuan -->
