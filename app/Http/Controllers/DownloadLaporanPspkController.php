@@ -53,7 +53,7 @@ class DownloadLaporanPspkController extends Controller
             $nomor_laporan
         ))->setPaper('A4', 'portrait');
 
-        return $pdf->stream('report-pspk-'.$peserta->nip ?: $peserta->nik.'-'.strtoupper($peserta->nama).'.pdf');
+        return $pdf->stream($this->buildPdfFilename($peserta));
     }
 
     public function downloadAll($idEvent)
@@ -117,13 +117,8 @@ class DownloadLaporanPspkController extends Controller
                         $nomor_laporan
                     ))->setPaper('A4', 'portrait');
 
-                    // nama file di dalam zip
-                    $identifier = $peserta->nip ?: $peserta->nik;
-                    $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', strtoupper($peserta->nama));
-                    $filename = $identifier.'-'.$safeName.'.pdf';
-
                     // masukkan langsung ke stream
-                    $zip->addFile($filename, $pdf->output());
+                    $zip->addFile($this->buildPdfFilename($peserta), $pdf->output());
                 }
 
                 $zip->finish(); // kirim zip ke browser
@@ -131,6 +126,18 @@ class DownloadLaporanPspkController extends Controller
         );
 
         return $response;
+    }
+
+    private function buildPdfFilename(Peserta $peserta): string
+    {
+        $tanggalTes = $peserta->test_started_at
+            ? Carbon::parse($peserta->test_started_at)->format('d-m-Y')
+            : '00-00-0000';
+
+        $identifier = $peserta->nip ?: $peserta->nik;
+        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', strtoupper($peserta->nama));
+
+        return $tanggalTes.'_'.$identifier.'_'.$safeName.'.pdf';
     }
 
     private function resolvePdfView(int $metodeTesId): string
