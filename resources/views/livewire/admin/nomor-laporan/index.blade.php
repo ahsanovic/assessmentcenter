@@ -59,6 +59,7 @@
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Event</th>
+                                    <th>Metode Tes</th>
                                     <th>Nomor Laporan</th>
                                     <th>Tanggal Laporan</th>
                                     <th></th>
@@ -69,6 +70,7 @@
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap">{{ $item->event?->nama_event }}</td>
+                                        <td>{{ $item->event?->metodeTes?->metode_tes }}</td>
                                         <td>{{ $item->nomor }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d F Y') }}</td>
                                         <td class="text-center">
