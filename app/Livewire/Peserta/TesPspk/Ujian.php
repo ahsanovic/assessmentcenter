@@ -609,7 +609,12 @@ class Ujian extends Component
                     if (! $val) {
                         $data->skor_aspek[$key] = 0;
                     }
-                    $total_nilai[] = $this->_getLevelPerAspekLv34($data->skor_aspek[$key]);
+
+                    if (auth()->guard('peserta')->user()->event->metode_tes_id == 7) {
+                        $total_nilai[] = $this->_getLevelPerAspekLv3($data->skor_aspek[$key]);
+                    } else {
+                        $total_nilai[] = $this->_getLevelPerAspekLv4($data->skor_aspek[$key]);
+                    }
                 }
 
                 // jpm
@@ -792,12 +797,36 @@ class Ujian extends Component
         return $level;
     }
 
-    private function _getLevelPerAspekLv34($nilai)
+    // private function _getLevelPerAspekLv34($nilai)
+    // {
+    //     $level = match (true) {
+    //         $nilai >= 6 && $nilai <= 9 => 2,
+    //         $nilai >= 10 && $nilai <= 14 => 3,
+    //         $nilai >= 15 && $nilai <= 18 => 4,
+    //         default => 0,
+    //     };
+
+    //     return $level;
+    // }
+
+    private function _getLevelPerAspekLv3($nilai)
     {
         $level = match (true) {
-            $nilai >= 6 && $nilai <= 9 => 2,
-            $nilai >= 10 && $nilai <= 14 => 3,
-            $nilai >= 15 && $nilai <= 18 => 4,
+            $nilai >= 0 && $nilai <= 6 => 2,
+            $nilai >= 7 && $nilai <= 12 => 3,
+            $nilai >= 13 && $nilai <= 18 => 4,
+            default => 0,
+        };
+
+        return $level;
+    }
+
+    private function _getLevelPerAspekLv4($nilai)
+    {
+        $level = match (true) {
+            $nilai >= 0 && $nilai <= 4 => 2,
+            $nilai >= 5 && $nilai <= 9 => 3,
+            $nilai >= 10 && $nilai <= 18 => 4,
             default => 0,
         };
 

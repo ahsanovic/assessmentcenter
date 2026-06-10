@@ -60,8 +60,8 @@ class SoalPspkForm extends Form
     protected function poinRules(): array
     {
         return (int) $this->level_pspk_id === 3
-            ? ['required', 'integer', 'between:1,3']
-            : ['nullable', 'integer', 'between:1,3'];
+            ? ['required', 'integer', 'between:0,3']
+            : ['nullable', 'integer', 'between:0,3'];
     }
 
     public function rules()
@@ -104,7 +104,7 @@ class SoalPspkForm extends Form
             $key = 'poin_opsi_'.$suffix;
             $poinMsgs[$key.'.required'] = 'harus diisi';
             $poinMsgs[$key.'.integer'] = 'harus angka';
-            $poinMsgs[$key.'.between'] = 'harus antara 1 sampai 3';
+            $poinMsgs[$key.'.between'] = 'harus antara 0 sampai 3';
         }
 
         return array_merge($poinMsgs, [
