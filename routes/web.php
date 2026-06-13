@@ -122,6 +122,10 @@ Route::prefix('bkdac')->group(function () {
         Route::get('hasil-responden', \App\Livewire\Admin\HasilResponden\Index::class)->name('admin.hasil-responden');
         Route::get('hasil-responden/{idEvent}', \App\Livewire\Admin\HasilResponden\Show::class)->name('admin.hasil-responden.show');
 
+        // jawaban peserta
+        Route::get('jawaban-peserta/pspk', \App\Livewire\Admin\JawabanPeserta\Pspk\Index::class)->name('admin.jawaban-peserta.pspk');
+        Route::get('jawaban-peserta/pspk/{idEvent}', \App\Livewire\Admin\JawabanPeserta\Pspk\Show::class)->name('admin.jawaban-peserta.pspk.show');
+
         // log pelanggaran tes potensi
         Route::get('pelanggaran/tes-potensi', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Index::class)->name('admin.pelanggaran-tes');
         Route::get('pelanggaran/tes-potensi/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Show::class)->name('admin.pelanggaran-tes.show');

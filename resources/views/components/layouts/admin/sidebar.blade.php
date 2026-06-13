@@ -117,6 +117,12 @@
                     'admin.pspk-kasus-lampiran',
                 ]
             ],
+            'jawaban-peserta' => [
+                'routes' => [
+                    'admin.jawaban-peserta.pspk',
+                    'admin.jawaban-peserta.pspk.show',
+                ]
+            ],
         ];
 
         $activeCollapse = [];
@@ -362,6 +368,24 @@
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-pspk') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-pspk') ? 'active' : '' }}">Pelanggaran Tes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item nav-category">Jawaban Peserta</li>
+                <li class="nav-item">
+                    <a class="nav-link {{ isset($activeCollapse['jawaban-peserta']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#jawaban-peserta" role="button"
+                        aria-expanded="{{ isset($activeCollapse['jawaban-peserta']) ? 'true' : 'false' }}" aria-controls="jawaban-peserta">
+                        <i class="link-icon" data-feather="file-text"></i>
+                        <span class="link-title">Jawaban Peserta</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse{{ isset($activeCollapse['jawaban-peserta']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="jawaban-peserta">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.jawaban-peserta.pspk') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.jawaban-peserta.pspk') ? 'active' : '' }}">Tes PSPK</a>
                             </li>
                         </ul>
                     </div>
