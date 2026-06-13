@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? config('app.name') }}</title>
+    <meta name="admin-current-route" content="{{ Route::currentRouteName() }}">
     <!-- color-modes:js -->
     <script src="{{ asset('assets/js/color-modes.js') }}"></script>
     <!-- endinject -->
@@ -300,9 +301,78 @@
         });
     </script>  
     <script>
+        function syncAdminSidebar() {
+            const sidebarNav = document.querySelector('#sidebarNav[data-server-managed]');
+            if (!sidebarNav) return;
+
+            const path = window.location.pathname.replace(/\/$/, '') || '/';
+
+            sidebarNav.querySelectorAll('a.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            sidebarNav.querySelectorAll('.nav-item.active').forEach(item => {
+                item.classList.remove('active');
+            });
+            sidebarNav.querySelectorAll('.collapse').forEach(el => {
+                const instance = bootstrap.Collapse.getInstance(el);
+                if (instance) instance.dispose();
+                el.classList.remove('show');
+            });
+            sidebarNav.querySelectorAll('[data-bs-toggle="collapse"]').forEach(toggle => {
+                toggle.classList.add('collapsed');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+
+            let bestMatch = null;
+            let bestLength = 0;
+
+            sidebarNav.querySelectorAll('a.nav-link[href]').forEach(link => {
+                if (link.hasAttribute('data-bs-toggle')) return;
+
+                let linkPath;
+                try {
+                    linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                } catch (e) {
+                    return;
+                }
+
+                if (path === linkPath || path.startsWith(linkPath + '/')) {
+                    if (linkPath.length > bestLength) {
+                        bestLength = linkPath.length;
+                        bestMatch = link;
+                    }
+                }
+            });
+
+            if (!bestMatch) return;
+
+            bestMatch.classList.add('active');
+
+            const navItem = bestMatch.closest('.nav-item');
+            if (navItem) {
+                navItem.classList.add('active');
+            }
+
+            const collapse = bestMatch.closest('.collapse');
+            if (!collapse) return;
+
+            collapse.classList.add('show');
+
+            const toggle = sidebarNav.querySelector(`a[href="#${collapse.id}"][data-bs-toggle="collapse"]`);
+            if (toggle) {
+                toggle.classList.remove('collapsed');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+        }
+
         if (!window.__adminNavigateInit) {
             window.__adminNavigateInit = true;
+
+            document.addEventListener('DOMContentLoaded', syncAdminSidebar);
+
             document.addEventListener('livewire:navigated', () => {
+                requestAnimationFrame(() => syncAdminSidebar());
+
                 if (typeof feather !== 'undefined') feather.replace();
 
                 document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {

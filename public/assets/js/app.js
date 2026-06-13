@@ -150,10 +150,13 @@
   const current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
 
   if (sidebar) {
-    const sidebarNavLinks = document.querySelectorAll('.sidebar .nav li a');
-    sidebarNavLinks.forEach( navLink => {
-      addActiveClass(navLink);
-    });
+    const sidebarNav = sidebar.querySelector('#sidebarNav');
+    if (!sidebarNav || !sidebarNav.hasAttribute('data-server-managed')) {
+      const sidebarNavLinks = document.querySelectorAll('.sidebar .nav li a');
+      sidebarNavLinks.forEach( navLink => {
+        addActiveClass(navLink);
+      });
+    }
   }
 
   if (horizontalMenu) {

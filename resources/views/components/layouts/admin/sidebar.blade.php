@@ -1,5 +1,47 @@
 <div>
     @php
+        $tesTypeSegments = ['intelektual', 'cakap-digital', 'kompetensi-teknis', 'pspk'];
+
+        if (! function_exists('adminRouteMatches')) {
+            function adminRouteMatches(?string $current, string $routeName, array $excludeSegmentsAfter = []): bool
+            {
+                if ($current === null) {
+                    return false;
+                }
+
+                if ($current === $routeName) {
+                    return true;
+                }
+
+                $prefix = $routeName.'.';
+                if (! str_starts_with($current, $prefix)) {
+                    return false;
+                }
+
+                if ($excludeSegmentsAfter === []) {
+                    return true;
+                }
+
+                $remainder = substr($current, strlen($prefix));
+                $firstSegment = explode('.', $remainder, 2)[0];
+
+                return ! in_array($firstSegment, $excludeSegmentsAfter, true);
+            }
+        }
+
+        if (! function_exists('isActiveRoute')) {
+            function isActiveRoute(string $routeName, bool $exact = true, array $excludeSegmentsAfter = []): bool
+            {
+                $current = \Route::currentRouteName();
+
+                if ($exact) {
+                    return $current === $routeName;
+                }
+
+                return adminRouteMatches($current, $routeName, $excludeSegmentsAfter);
+            }
+        }
+
         // Daftar id dari collapsible menu beserta route yang mereka cover
         $collapseMenus = [
             'referensi' => [
@@ -19,8 +61,8 @@
             ],
             'data-tes-potensi' => [
                 'routes' => [
-                    'admin.tes-berlangsung',
-                    'admin.tes-selesai',
+                    ['name' => 'admin.tes-berlangsung', 'exclude' => $tesTypeSegments],
+                    ['name' => 'admin.tes-selesai', 'exclude' => $tesTypeSegments],
                     'admin.hasil-responden',
                     'admin.pelanggaran-tes',
                 ]
@@ -120,7 +162,6 @@
             'jawaban-peserta' => [
                 'routes' => [
                     'admin.jawaban-peserta.pspk',
-                    'admin.jawaban-peserta.pspk.show',
                 ]
             ],
         ];
@@ -129,27 +170,22 @@
         $currentRoute = \Route::currentRouteName();
 
         foreach ($collapseMenus as $id => $menu) {
-            if (isset($menu['routes'])) {
-                foreach ($menu['routes'] as $routeName) {
-                    if (str_starts_with($currentRoute, $routeName)) {
-                        $activeCollapse[$id] = true;
-                        break;
-                    }
+            if (! isset($menu['routes'])) {
+                continue;
+            }
+
+            foreach ($menu['routes'] as $route) {
+                $routeName = is_array($route) ? $route['name'] : $route;
+                $exclude = is_array($route) ? ($route['exclude'] ?? []) : [];
+
+                if (adminRouteMatches($currentRoute, $routeName, $exclude)) {
+                    $activeCollapse[$id] = true;
+                    break;
                 }
             }
         }
-
-        // Helper for child link active
-        function isActiveRoute($routeName, $exact = true) {
-            $current = \Route::currentRouteName();
-            if ($exact) {
-                return $current === $routeName;
-            } else {
-                return str_starts_with($current, $routeName);
-            }
-        }
     @endphp
-    <nav class="sidebar">
+    <nav class="sidebar" wire:key="admin-sidebar-{{ $currentRoute ?? 'none' }}">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
                 SIKMA
@@ -161,7 +197,7 @@
             </div>
         </div>
         <div class="sidebar-body">
-            <ul class="nav" id="sidebarNav">
+            <ul class="nav" id="sidebarNav" data-server-managed="true">
 
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.dashboard') ? 'active' : '' }}">
@@ -227,7 +263,7 @@
 
                 <li class="nav-item nav-category">Event</li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.event') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.event') ? 'active' : '' }}">
+                    <a href="{{ route('admin.event') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.event', false) ? 'active' : '' }}">
                         <i class="link-icon" data-feather="calendar"></i>
                         <span class="link-title">Data Event</span>
                     </a>
@@ -239,7 +275,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.distribusi-peserta') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.distribusi-peserta') ? 'active' : '' }}">
+                    <a href="{{ route('admin.distribusi-peserta') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.distribusi-peserta', false) ? 'active' : '' }}">
                         <i class="link-icon" data-feather="shuffle"></i>
                         <span class="link-title">Distribusi Peserta</span>
                     </a>
@@ -263,11 +299,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.intelektual') ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.intelektual', false) ? 'active' : '' }}">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.intelektual') ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.intelektual', false) ? 'active' : '' }}">Tes Selesai</a>
                             </li>
                         </ul>
                     </div>
@@ -283,19 +319,19 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung') ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung', false, $tesTypeSegments) ? 'active' : '' }}">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai') ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai', false, $tesTypeSegments) ? 'active' : '' }}">Tes Selesai</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.hasil-responden') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.hasil-responden') ? 'active' : '' }}">Hasil Responden</a>
+                                    class="nav-link {{ isActiveRoute('admin.hasil-responden', false) ? 'active' : '' }}">Hasil Responden</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes') ? 'active' : '' }}">Pelanggaran Tes</a>
+                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes', false) ? 'active' : '' }}">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -311,15 +347,15 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.cakap-digital') ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.cakap-digital', false) ? 'active' : '' }}">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.cakap-digital') ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.cakap-digital', false) ? 'active' : '' }}">Tes Selesai</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-cakap-digital') ? 'active' : '' }}">Pelanggaran Tes</a>
+                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-cakap-digital', false) ? 'active' : '' }}">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -335,15 +371,15 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.kompetensi-teknis') ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.kompetensi-teknis', false) ? 'active' : '' }}">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.kompetensi-teknis') ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.kompetensi-teknis', false) ? 'active' : '' }}">Tes Selesai</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-kompetensi-teknis') ? 'active' : '' }}">Pelanggaran Tes</a>
+                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-kompetensi-teknis', false) ? 'active' : '' }}">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -359,15 +395,15 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.pspk') ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.pspk', false) ? 'active' : '' }}">Tes Berlangsung</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.pspk') ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.pspk', false) ? 'active' : '' }}">Tes Selesai</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-pspk') ? 'active' : '' }}">Pelanggaran Tes</a>
+                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-pspk', false) ? 'active' : '' }}">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -385,7 +421,7 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.jawaban-peserta.pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.jawaban-peserta.pspk') ? 'active' : '' }}">Tes PSPK</a>
+                                    class="nav-link {{ isActiveRoute('admin.jawaban-peserta.pspk', false) ? 'active' : '' }}">Tes PSPK</a>
                             </li>
                         </ul>
                     </div>
@@ -403,23 +439,23 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-intelektual') ? 'active' : '' }}">Data Referensi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-intelektual', false) ? 'active' : '' }}">Data Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.model-soal-intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.model-soal-intelektual') ? 'active' : '' }}">Model Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.model-soal-intelektual', false) ? 'active' : '' }}">Model Soal</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-intelektual-subtes1') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes1') ? 'active' : '' }}">Soal Sub Tes 1</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes1', false) ? 'active' : '' }}">Soal Sub Tes 1</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-intelektual-subtes2') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes2') ? 'active' : '' }}">Soal Sub Tes 2</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes2', false) ? 'active' : '' }}">Soal Sub Tes 2</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-intelektual-subtes3') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes3') ? 'active' : '' }}">Soal Sub Tes 3</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-intelektual-subtes3', false) ? 'active' : '' }}">Soal Sub Tes 3</a>
                             </li>
                         </ul>
                     </div>
@@ -435,11 +471,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-pengembangan-diri') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-pengembangan-diri') ? 'active' : '' }}">Data Referensi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-pengembangan-diri', false) ? 'active' : '' }}">Data Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-pengembangan-diri') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-pengembangan-diri') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-pengembangan-diri', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -454,12 +490,12 @@
                     <div class="collapse{{ isset($activeCollapse['interpersonal']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="interpersonal">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="{{ route('admin.ref-interpersonal') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.ref-interpersonal') ? 'active' : '' }}">Data
+                                <a href="{{ route('admin.ref-interpersonal') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.ref-interpersonal', false) ? 'active' : '' }}">Data
                                     Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-interpersonal') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-interpersonal') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-interpersonal', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -475,11 +511,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-kecerdasan-emosi') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-kecerdasan-emosi') ? 'active' : '' }}">Data Referensi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-kecerdasan-emosi', false) ? 'active' : '' }}">Data Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-kecerdasan-emosi') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-kecerdasan-emosi') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-kecerdasan-emosi', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -495,11 +531,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-motivasi-komitmen') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-motivasi-komitmen') ? 'active' : '' }}">Data Referensi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-motivasi-komitmen', false) ? 'active' : '' }}">Data Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-motivasi-komitmen') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-motivasi-komitmen') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-motivasi-komitmen', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -515,15 +551,15 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-aspek-berpikir-kritis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-aspek-berpikir-kritis') ? 'active' : '' }}">Data Referensi Aspek</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-aspek-berpikir-kritis', false) ? 'active' : '' }}">Data Referensi Aspek</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-indikator-berpikir-kritis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-indikator-berpikir-kritis') ? 'active' : '' }}">Data Referensi Indikator</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-indikator-berpikir-kritis', false) ? 'active' : '' }}">Data Referensi Indikator</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-berpikir-kritis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-berpikir-kritis') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-berpikir-kritis', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -539,15 +575,15 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-aspek-problem-solving') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-aspek-problem-solving') ? 'active' : '' }}">Data Referensi Aspek</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-aspek-problem-solving', false) ? 'active' : '' }}">Data Referensi Aspek</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-indikator-problem-solving') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-indikator-problem-solving') ? 'active' : '' }}">Data Referensi Indikator</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-indikator-problem-solving', false) ? 'active' : '' }}">Data Referensi Indikator</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-problem-solving') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-problem-solving') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-problem-solving', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -563,11 +599,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-kesadaran-diri') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-kesadaran-diri') ? 'active' : '' }}">Data Referensi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-kesadaran-diri', false) ? 'active' : '' }}">Data Referensi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-kesadaran-diri') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-kesadaran-diri') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-kesadaran-diri', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -583,7 +619,7 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-cakap-digital') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-cakap-digital', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -599,7 +635,7 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-kompetensi-teknis') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-kompetensi-teknis', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>
@@ -615,19 +651,19 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-pspk') ? 'active' : '' }}">Soal</a>
+                                    class="nav-link {{ isActiveRoute('admin.soal-pspk', false) ? 'active' : '' }}">Soal</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.pspk-kasus-lampiran') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pspk-kasus-lampiran') || isActiveRoute('admin.pspk-kasus-lampiran.pdf') ? 'active' : '' }}">Paket analisa kasus (PDF)</a>
+                                    class="nav-link {{ isActiveRoute('admin.pspk-kasus-lampiran', false) ? 'active' : '' }}">Paket analisa kasus (PDF)</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-pspk') ? 'active' : '' }}">Referensi Deskripsi</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-pspk', false) ? 'active' : '' }}">Referensi Deskripsi</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-saran-pengembangan') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.ref-saran-pengembangan') ? 'active' : '' }}">Ref Saran Pengembangan</a>
+                                    class="nav-link {{ isActiveRoute('admin.ref-saran-pengembangan', false) ? 'active' : '' }}">Ref Saran Pengembangan</a>
                             </li>
                         </ul>
                     </div>
