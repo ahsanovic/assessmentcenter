@@ -6,6 +6,7 @@
     'placeholder' => '',
     'required' => false,
     'disabled' => false,
+    'readonly' => false,
     'maxlength' => null,
     'width' => '100%'
 ])
@@ -25,8 +26,9 @@
             class="form-control @error($model) is-invalid @enderror" 
             placeholder="{{ $placeholder }}"
             @if($disabled) disabled @endif
+            @if($readonly) readonly @endif
             @if($maxlength) maxlength="{{ $maxlength }}" @endif
-            style="padding: 12px 16px; border-radius: 10px; border: 2px solid #e0e0e0; transition: all 0.3s ease; font-size: 0.95rem; width: {{ $width }};"
+            style="padding: 12px 16px; border-radius: 10px; border: 2px solid #e0e0e0; transition: all 0.3s ease; font-size: 0.95rem; width: {{ $width }};@if($readonly) background:#f3f4f6;@endif"
             onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102, 126, 234, 0.1)'"
             onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"
             {{ $attributes }}

@@ -51,6 +51,7 @@
                     'admin.pertanyaan-pengalaman',
                     'admin.pertanyaan-penilaian',
                     'admin.kuesioner',
+                    'admin.pegawai',
                 ]
             ],
             'data-tes-intelektual' => [
@@ -164,6 +165,11 @@
                     'admin.jawaban-peserta.pspk',
                 ]
             ],
+            'dokumen' => [
+                'routes' => [
+                    'admin.dokumen.berita-acara',
+                ]
+            ],
         ];
 
         $activeCollapse = [];
@@ -238,6 +244,11 @@
                                     Pertanyaan Kuesioner
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.pegawai') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.pegawai') ? 'active' : '' }}">
+                                    Data Pegawai
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -286,7 +297,25 @@
                         <span class="link-title">Nomor Laporan Penilaian</span>
                     </a>
                 </li>
-                
+
+                <li class="nav-item nav-category">Dokumen</li>
+                <li class="nav-item">
+                    <a class="nav-link {{ isset($activeCollapse['dokumen']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#dokumen" role="button"
+                        aria-expanded="{{ isset($activeCollapse['dokumen']) ? 'true' : 'false' }}" aria-controls="dokumen">
+                        <i class="link-icon" data-feather="file"></i>
+                        <span class="link-title">Dokumen</span>
+                        <i class="link-arrow" data-feather="chevron-down"></i>
+                    </a>
+                    <div class="collapse{{ isset($activeCollapse['dokumen']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="dokumen">
+                        <ul class="nav sub-menu">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.dokumen.berita-acara') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.dokumen.berita-acara', false) ? 'active' : '' }}">Berita Acara</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="nav-item nav-category">Pelaksanaan Tes</li>
                 <li class="nav-item">
                     <a class="nav-link {{ isset($activeCollapse['data-tes-intelektual']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#data-tes-intelektual" role="button"

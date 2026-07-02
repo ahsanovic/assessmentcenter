@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "chillerlan/php-qrcode": "^6.0",
         "dasundev/livewire-quill-text-editor": "^1.0",
         "laravel/framework": "^11.31",
         "laravel/passport": "^12.0",

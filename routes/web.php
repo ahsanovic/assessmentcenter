@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\DownloadBeritaAcaraController;
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
+use App\Http\Controllers\DownloadPegawaiQrCodeController;
 use App\Http\Controllers\DownloadPortofolioController;
 use App\Http\Controllers\DownloadPspkKasusLampiranAdminController;
 use App\Http\Controllers\DownloadRekapController;
@@ -22,6 +24,10 @@ Route::prefix('bkdac')->group(function () {
 
         // alat tes
         Route::get('alat-tes', \App\Livewire\Admin\AlatTes\Index::class)->name('admin.alat-tes');
+
+        // pegawai (referensi berita acara)
+        Route::get('pegawai', \App\Livewire\Admin\RefPegawai\Index::class)->name('admin.pegawai');
+        Route::get('pegawai/{id}/qrcode', [DownloadPegawaiQrCodeController::class, 'show'])->name('admin.pegawai.qrcode');
 
         // metode tes
         Route::get('metode-tes', \App\Livewire\Admin\MetodeTes\Index::class)->name('admin.metode-tes');
@@ -44,6 +50,10 @@ Route::prefix('bkdac')->group(function () {
 
         // ttd laporan
         Route::get('ttd-laporan', \App\Livewire\Admin\TtdLaporan\Index::class)->name('admin.ttd-laporan');
+
+        // dokumen
+        Route::get('dokumen/berita-acara', \App\Livewire\Admin\Dokumen\BeritaAcara\Index::class)->name('admin.dokumen.berita-acara');
+        Route::get('dokumen/berita-acara/{id}/download', [DownloadBeritaAcaraController::class, 'download'])->name('admin.dokumen.berita-acara.download');
 
         // data tes berlangsung
         Route::get('potensi/tes-berlangsung', \App\Livewire\Admin\DataTes\TesPotensi\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');

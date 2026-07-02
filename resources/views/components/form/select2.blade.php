@@ -4,17 +4,17 @@
     'model',
     'required' => false,
     'placeholder' => '- pilih -',
+    'live' => false,
 ])
 
 @php
     $id = 'select2-' . str_replace('.', '-', $model);
 @endphp
 
+@if($live)
 <div
     class="mb-4"
-    x-data="{
-        value: @entangle($model)
-    }"
+    x-data="{ value: @entangle($model).live }"
     x-init="
         () => {
             const el = $refs.select;
@@ -23,21 +23,47 @@
                 placeholder: '{{ $placeholder }}',
                 allowClear: true,
                 width: '100%',
-                dropdownParent: $(el).closest('.modal') ?? $('body'),
+                minimumResultsForSearch: 0,
+                dropdownParent: $(el).closest('.modal').length ? $(el).closest('.modal') : $('body'),
             });
 
-            // set value (edit)
             if (value) {
                 $(el).val(value).trigger('change.select2');
             }
 
-            // sync to Livewire
             $(el).on('change', () => {
-                value = $(el).val();
+                value = $(el).val() || null;
             });
         }
     "
 >
+@else
+<div
+    class="mb-4"
+    x-data="{ value: @entangle($model) }"
+    x-init="
+        () => {
+            const el = $refs.select;
+
+            $(el).select2({
+                placeholder: '{{ $placeholder }}',
+                allowClear: true,
+                width: '100%',
+                minimumResultsForSearch: 0,
+                dropdownParent: $(el).closest('.modal').length ? $(el).closest('.modal') : $('body'),
+            });
+
+            if (value) {
+                $(el).val(value).trigger('change.select2');
+            }
+
+            $(el).on('change', () => {
+                value = $(el).val() || null;
+            });
+        }
+    "
+>
+@endif
     <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem; letter-spacing: 0.01em;">
         <span class="d-flex align-items-center gap-2">
             <i class="link-icon" data-feather="{{ $icon }}" style="width: 16px; height: 16px;"></i>
