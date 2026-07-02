@@ -70,6 +70,8 @@
 
         .footnote { margin-top: 20px; font-size: 12px; }
         .footnote ol { margin: 4px 0 0 18px; padding: 0; }
+
+        @include('pdf.partials.markdown-styles')
     </style>
 </head>
 <body>
@@ -106,9 +108,9 @@
         <table class="detail">
             <tr>
                 <td colspan="3" style="padding-top:8px;">
-                    a.&nbsp; Telah diselenggarakan Uji Kompetensi dari pukul
-                    <b>{{ $waktu_mulai ?: '............' }}</b> sampai dengan pukul
-                    <b>{{ $waktu_selesai ?: '............' }}</b>
+                    a.&nbsp; Telah diselenggarakan {{ $jenis_penkom }} dari pukul
+                    <b>{{ $waktu_mulai ?: '............' }}</b>@if(!empty($zona_waktu)) {{ $zona_waktu }}@endif sampai dengan pukul
+                    <b>{{ $waktu_selesai ?: '............' }}</b>@if(!empty($zona_waktu)) {{ $zona_waktu }}@endif
                 </td>
             </tr>
             <tr>
@@ -139,7 +141,9 @@
             <tr>
                 <td class="label" style="padding-left:18px;">Yaitu Nomor</td>
                 <td class="sep">:</td>
-                <td>{{ $nomor_tidak_hadir ?: '-' }}</td>
+                <td>
+                    @include('pdf.partials.markdown', ['html' => $nomor_tidak_hadir_html ?? null, 'fallback' => $nomor_tidak_hadir ?? null])
+                </td>
             </tr>
             <tr>
                 <td class="label" style="padding-left:18px; padding-top:8px;">Jumlah Peserta yang Hadir</td>
@@ -151,9 +155,8 @@
         <div class="item">
             <div>b.&nbsp; Catatan selama pelaksanaan Ujian *)</div>
             <div style="padding-left:18px; margin-top:4px; text-align:justify;">
-                @if (!empty(trim((string) $catatan)))
-                    {!! nl2br(e($catatan)) !!}
-                @else
+                @include('pdf.partials.markdown', ['html' => $catatan_html ?? null, 'fallback' => $catatan ?? null, 'empty' => ''])
+                @if (empty($catatan_html ?? '') && empty(trim((string) ($catatan ?? ''))))
                     <div class="catatan-line"></div>
                     <div class="catatan-line"></div>
                     <div class="catatan-line"></div>

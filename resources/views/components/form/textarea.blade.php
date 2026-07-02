@@ -7,7 +7,11 @@
     'rows' => 4
 ])
 
-<div class="mb-4">
+@php
+    $fieldKey = 'form-field-' . str_replace(['.', '[', ']'], '-', $model);
+@endphp
+
+<div class="mb-4" wire:key="{{ $fieldKey }}">
     <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem; letter-spacing: 0.01em;">
         <span class="d-flex align-items-center gap-2">
             <i class="link-icon" data-feather="{{ $icon }}" style="width: 16px; height: 16px;"></i>

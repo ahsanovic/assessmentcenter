@@ -127,6 +127,27 @@
                         <div class="card-body">
                             <h6 class="text-danger mb-3"><i class="link-icon" data-feather="calendar"></i> Konteks Dokumen</h6>
                             <div class="row">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem;">
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="link-icon" data-feather="git-branch" style="width: 16px; height: 16px;"></i>
+                                            Mekanisme Penkom <span class="text-danger">*</span>
+                                        </span>
+                                    </label>
+                                    <div class="d-flex gap-3 align-items-center flex-wrap mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="mekanisme-tusi" value="tusi" wire:model.live="mekanisme_penkom" @disabled($isUpdate)>
+                                            <label class="form-check-label @if($isUpdate) text-muted @endif" for="mekanisme-tusi">Tusi</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="mekanisme-retribusi" value="retribusi" wire:model.live="mekanisme_penkom" @disabled($isUpdate)>
+                                            <label class="form-check-label @if($isUpdate) text-muted @endif" for="mekanisme-retribusi">Retribusi</label>
+                                        </div>
+                                        @if($isUpdate)
+                                            <small class="text-muted">Mekanisme penkom tidak dapat diubah saat edit.</small>
+                                        @endif
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <x-form.select2
                                         label="Event"
@@ -140,6 +161,15 @@
                                         @endforeach
                                     </x-form.select2>
                                 </div>
+                                @if($mekanisme_penkom === 'tusi')
+                                <div class="col-md-6">
+                                    <x-form.select label="Jenis Penkom" icon="tag" model="jenis_penkom" placeholder="- pilih jenis penkom -">
+                                        <option value="Uji Kompetensi">Uji Kompetensi</option>
+                                        <option value="Uji Potensi">Uji Potensi</option>
+                                        <option value="Uji Kompetensi dan Potensi">Uji Kompetensi dan Potensi</option>
+                                    </x-form.select>
+                                </div>
+                                @endif
                                 <div class="col-md-6">
                                     <x-form.input
                                         label="Judul Berita Acara"
@@ -149,25 +179,118 @@
                                         :required="true"
                                     />
                                 </div>
+                                @if($mekanisme_penkom === 'retribusi')
+                                <div class="col-md-6">
+                                    <x-form.input label="Nama Kegiatan" icon="clipboard" model="nama_kegiatan" placeholder="mis. Asesmen Seleksi Jabatan Pimpinan Tinggi Pratama" />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.input label="Nomor Surat" icon="hash" model="nomor_surat" placeholder="mis. 800.1.14 / 3951 / 204.6 / 2026" />
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    @if($mekanisme_penkom === 'retribusi')
+                    {{-- ============ FORM RETRIBUSI ============ --}}
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="clock"></i> Waktu &amp; Tempat</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <x-form.date label="Tanggal" icon="calendar" model="tanggal_modal" placeholder="pilih tanggal" />
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.time label="Pukul (Mulai)" icon="clock" model="waktu_mulai" placeholder="pilih waktu" />
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.time label="Pukul (Selesai)" icon="clock" model="waktu_selesai" placeholder="pilih waktu" />
+                                </div>
+                                <div class="col-md-2">
+                                    <x-form.select label="Zona Waktu" icon="globe" model="zona_waktu" placeholder="- pilih -">
+                                        <option value="WIB">WIB</option>
+                                        <option value="WITA">WITA</option>
+                                        <option value="WIT">WIT</option>
+                                    </x-form.select>
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.input label="Di Lingkungan Pemerintah" icon="home" model="di_lingkungan_pemerintah" placeholder="mis. Kabupaten Manokwari" />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.input label="Bertempat Di" icon="map-pin" model="tempat" placeholder="mis. Universitas Papua Manokwari" />
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card mb-3 border-0 shadow-sm">
                         <div class="card-body">
-                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="clock"></i> Waktu Pelaksanaan</h6>
+                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="info"></i> Rincian Pelaksanaan</h6>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <x-form.input label="Hari" icon="calendar" model="hari" placeholder="mis. Senin" />
+                                    <x-form.input label="Pejabat yang Dinilai" icon="user" model="pejabat_dinilai" type="number" placeholder="0" />
                                 </div>
+                                <div class="col-md-3">
+                                    <x-form.input label="Seharusnya Hadir" icon="users" model="jumlah_peserta_seharusnya" type="number" placeholder="0" />
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.input label="Tidak Hadir" icon="user-x" model="jumlah_peserta_tidak_hadir" type="number" placeholder="0" />
+                                </div>
+                                <div class="col-md-3" wire:key="display-jumlah-peserta-hadir-retribusi">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem;">
+                                            <span class="d-flex align-items-center gap-2">
+                                                <i class="link-icon" data-feather="user-check" style="width: 16px; height: 16px;"></i>
+                                                Peserta Hadir
+                                            </span>
+                                        </label>
+                                        <input type="text" class="form-control" style="padding: 12px 16px; border-radius: 10px; border: 2px solid #e0e0e0; background:#eef2ff;" value="{{ $this->jumlahPesertaHadir }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.markdown label="Nomor Peserta (tidak hadir)" icon="hash" model="nomor_tidak_hadir" placeholder="nomor peserta yang tidak hadir" minHeight="90px" />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.markdown label="Alasan Ketidakhadiran" icon="help-circle" model="alasan_tidak_hadir" placeholder="alasan ketidakhadiran peserta" minHeight="90px" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="file-text"></i> Penyerahan Hasil</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <x-form.date label="Tanggal Penyerahan Rekapitulasi Level" icon="calendar" model="tanggal_penyerahan_rekap" placeholder="pilih tanggal" />
+                                </div>
+                                <div class="col-md-6">
+                                    <x-form.date label="Tanggal Penyerahan Laporan Individu" icon="calendar" model="tanggal_penyerahan_laporan" placeholder="pilih tanggal" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    {{-- ============ FORM TUSI ============ --}}
+                    <div class="card mb-3 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="clock"></i> Waktu Pelaksanaan</h6>
+                            <div class="row">
                                 <div class="col-md-3">
                                     <x-form.date label="Tanggal" icon="calendar" model="tanggal_modal" placeholder="pilih tanggal" />
                                 </div>
                                 <div class="col-md-3">
-                                    <x-form.input label="Pukul (Mulai)" icon="clock" model="waktu_mulai" placeholder="mis. 08.00" />
+                                    <x-form.time label="Pukul (Mulai)" icon="clock" model="waktu_mulai" placeholder="pilih waktu" />
                                 </div>
                                 <div class="col-md-3">
-                                    <x-form.input label="Pukul (Selesai)" icon="clock" model="waktu_selesai" placeholder="mis. 10.00" />
+                                    <x-form.time label="Pukul (Selesai)" icon="clock" model="waktu_selesai" placeholder="pilih waktu" />
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.select label="Zona Waktu" icon="globe" model="zona_waktu" placeholder="- pilih -">
+                                        <option value="WIB">WIB</option>
+                                        <option value="WITA">WITA</option>
+                                        <option value="WIT">WIT</option>
+                                    </x-form.select>
                                 </div>
                             </div>
                         </div>
@@ -192,7 +315,7 @@
                                 <div class="col-md-2">
                                     <x-form.input label="Tidak Hadir" icon="user-x" model="jumlah_peserta_tidak_hadir" type="number" placeholder="0" />
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2" wire:key="display-jumlah-peserta-hadir-tusi">
                                     <div class="mb-4">
                                         <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem;">
                                             <span class="d-flex align-items-center gap-2">
@@ -204,19 +327,42 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <x-form.textarea label="Yaitu Nomor (peserta tidak hadir)" icon="hash" model="nomor_tidak_hadir" placeholder="nomor peserta yang tidak hadir" :rows="2" />
+                                    <x-form.markdown label="Nomor peserta tidak hadir" icon="hash" model="nomor_tidak_hadir" placeholder="nomor peserta yang tidak hadir" minHeight="90px" />
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <div class="card mb-3 border-0 shadow-sm">
                         <div class="card-body">
-                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="edit-3"></i> Catatan Selama Pelaksanaan</h6>
-                            <x-form.textarea label="Catatan" icon="edit-3" model="catatan" placeholder="ketidaksesuaian kondisi, ketidakhadiran, pelanggaran tata tertib, dll (opsional)" :rows="4" />
+                            <x-form.markdown label="Catatan Selama Pelaksanaan" icon="edit-3" model="catatan" placeholder="ketidaksesuaian kondisi, ketidakhadiran, pelanggaran tata tertib, dll (mendukung Markdown, opsional)" minHeight="120px" />
                         </div>
                     </div>
 
+                    @if($mekanisme_penkom === 'retribusi')
+                    {{-- ============ PANITIA RETRIBUSI ============ --}}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-danger mb-3"><i class="link-icon" data-feather="award"></i> Yang Membuat Berita Acara</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="fw-semibold mb-2 text-secondary">1. Panitia Penyelenggara</div>
+                                    <x-form.input label="Instansi/Unit" icon="briefcase" model="panitia1_instansi" placeholder="mis. UPT Pusat Penilaian Pegawai BKD Prov. Jatim" />
+                                    <x-form.input label="Nama" icon="user" model="admin_nama" placeholder="nama panitia" />
+                                    <x-form.input label="NIP" icon="hash" model="admin_nip" placeholder="NIP panitia" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="fw-semibold mb-2 text-secondary">2. Panitia Instansi</div>
+                                    <x-form.input label="Instansi/Unit" icon="briefcase" model="panitia2_instansi" placeholder="mis. BKPSDM Kabupaten Manokwari" />
+                                    <x-form.input label="Nama" icon="user" model="tester_nama" placeholder="nama panitia" />
+                                    <x-form.input label="NIP" icon="hash" model="tester_nip" placeholder="NIP panitia" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    {{-- ============ PANITIA TUSI ============ --}}
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <h6 class="text-danger mb-3"><i class="link-icon" data-feather="award"></i> Yang Membuat Berita Acara</h6>
@@ -244,6 +390,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
@@ -263,9 +410,69 @@
     @endif
 </div>
 
+@push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <style>
+        .EasyMDEContainer .CodeMirror {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+        .editor-toolbar {
+            border-radius: 10px 10px 0 0;
+            border: 2px solid #e0e0e0;
+            border-bottom: none;
+        }
+    </style>
+@endpush
+
+@push('js')
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+@endpush
+
 @push('js')
     @script()
         <script>
+            const markdownEditors = {};
+
+            function initMarkdownEditors() {
+                if (typeof EasyMDE === 'undefined') return;
+
+                document.querySelectorAll('[data-markdown-editor]').forEach((el) => {
+                    if (el._easymde) return;
+
+                    const model = el.dataset.markdownModel;
+                    const minHeight = el.dataset.minHeight || '100px';
+
+                    const editor = new EasyMDE({
+                        element: el,
+                        spellChecker: false,
+                        status: false,
+                        minHeight,
+                        placeholder: el.getAttribute('placeholder') || '',
+                        toolbar: ['bold', 'italic', 'heading', '|', 'unordered-list', 'ordered-list', '|', 'link', 'quote', '|', 'preview'],
+                    });
+
+                    el._easymde = editor;
+                    markdownEditors[model] = editor;
+
+                    editor.value($wire.get(model) || '');
+
+                    editor.codemirror.on('change', () => {
+                        $wire.set(model, editor.value(), false);
+                    });
+                });
+            }
+
+            function setMarkdownEditorValue(model, value) {
+                const editor = markdownEditors[model]
+                    || document.querySelector(`[data-markdown-model="${model}"]`)?._easymde;
+
+                if (editor) {
+                    editor.value(value ?? '');
+                }
+            }
+
             function initFeatherIcons() {
                 if (typeof feather !== 'undefined') {
                     feather.replace();
@@ -290,6 +497,33 @@
                         onChange: (_, dateStr) => {
                             if (!hiddenInput) return;
                             hiddenInput.value = dateStr;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        },
+                    });
+                });
+            }
+
+            function initModalTimeFlatpickr() {
+                document.querySelectorAll('[data-flatpickr-time]').forEach((input) => {
+                    input._flatpickr?.destroy();
+
+                    const model = input.dataset.model;
+                    const hiddenInput = input
+                        .closest('.mb-4')
+                        ?.querySelector(`input[type="hidden"][wire\\:model="${model}"]`);
+
+                    const value = hiddenInput?.value || null;
+
+                    input._flatpickr = flatpickr(input, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: 'H.i',
+                        time_24hr: true,
+                        allowInput: false,
+                        defaultDate: value || null,
+                        onChange: (_, timeStr) => {
+                            if (!hiddenInput) return;
+                            hiddenInput.value = timeStr;
                             hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
                         },
                     });
@@ -342,8 +576,25 @@
                 Livewire.on('modalOpened', () => {
                     setTimeout(() => {
                         initModalFlatpickr();
+                        initModalTimeFlatpickr();
+                        initMarkdownEditors();
                         initFeatherIcons();
                     }, 150);
+                });
+
+                Livewire.on('set-flatpickr-time', (payload) => {
+                    const data = Array.isArray(payload) ? payload[0] : payload;
+                    const input = document.querySelector(`[data-flatpickr-time][data-model="${data.model}"]`);
+                    if (input?._flatpickr && data.value) {
+                        input._flatpickr.setDate(data.value, true, 'H.i');
+                    }
+                });
+
+                Livewire.on('set-markdown', (payload) => {
+                    const data = Array.isArray(payload) ? payload[0] : payload;
+                    setTimeout(() => {
+                        setMarkdownEditorValue(data?.model, data?.value ?? '');
+                    }, 200);
                 });
 
                 Livewire.on('set-flatpickr', (payload) => {
@@ -357,7 +608,12 @@
 
             document.addEventListener('livewire:initialized', () => {
                 initFeatherIcons();
-                Livewire.hook('morph.updated', () => requestAnimationFrame(initFeatherIcons));
+                Livewire.hook('morph.updated', () => {
+                    requestAnimationFrame(() => {
+                        initFeatherIcons();
+                        initMarkdownEditors();
+                    });
+                });
             });
         </script>
     @endscript

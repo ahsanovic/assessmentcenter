@@ -8,10 +8,16 @@
     'disabled' => false,
     'readonly' => false,
     'maxlength' => null,
-    'width' => '100%'
+    'width' => '100%',
+    'live' => false,
 ])
 
-<div class="mb-4">
+@php
+    $fieldKey = 'form-field-' . str_replace(['.', '[', ']'], '-', $model);
+    $inputId = 'input-' . str_replace(['.', '[', ']'], '-', $model);
+@endphp
+
+<div class="mb-4" wire:key="{{ $fieldKey }}">
     <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem; letter-spacing: 0.01em;">
         <span class="d-flex align-items-center gap-2">
             <i class="link-icon" data-feather="{{ $icon }}" style="width: 16px; height: 16px;"></i>
@@ -20,9 +26,16 @@
         </span>
     </label>
     <div class="position-relative">
-        <input 
-            type="{{ $type }}" 
-            wire:model="{{ $model }}" 
+        <input
+            id="{{ $inputId }}"
+            type="{{ $type }}"
+            @if($live)
+                wire:model.live="{{ $model }}"
+            @elseif($type === 'number')
+                wire:model.blur="{{ $model }}"
+            @else
+                wire:model="{{ $model }}"
+            @endif
             class="form-control @error($model) is-invalid @enderror" 
             placeholder="{{ $placeholder }}"
             @if($disabled) disabled @endif

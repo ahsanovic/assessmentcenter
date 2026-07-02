@@ -1,14 +1,14 @@
 @props([
     'label',
-    'icon' => 'calendar',
+    'icon' => 'clock',
     'model',
-    'placeholder' => 'pilih tanggal',
+    'placeholder' => 'pilih waktu',
     'required' => false,
     'disabled' => false,
 ])
 
 @php
-    $id = 'datepicker-' . str_replace('.', '-', $model);
+    $id = 'timepicker-' . str_replace('.', '-', $model);
     $fieldKey = 'form-field-' . str_replace(['.', '[', ']'], '-', $model);
 @endphp
 
@@ -22,21 +22,21 @@
     </label>
     <input type="hidden" wire:model="{{ $model }}">
     <div class="input-group" wire:ignore>
-        <input 
+        <input
             id="{{ $id }}"
-            data-flatpickr
-            type="text" 
+            data-flatpickr-time
+            type="text"
             class="form-control @error($model) is-invalid @enderror"
             style="padding: 12px 16px; border-radius: 10px 0 0 10px; border: 2px solid #e0e0e0; transition: all 0.3s ease; font-size: 0.95rem;"
             onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 4px rgba(102, 126, 234, 0.1)'"
             onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"
-            placeholder="{{ $placeholder }}" 
+            placeholder="{{ $placeholder }}"
             data-model="{{ $model }}"
             readonly="readonly"
             @if($disabled) disabled @endif
         >
         <span class="input-group-text" data-toggle style="background: white; border: 2px solid #e0e0e0; border-left: none; border-radius: 0 10px 10px 0; cursor: pointer;">
-            <i class="link-icon" data-feather="calendar" style="width: 16px; height: 16px;"></i>
+            <i class="link-icon" data-feather="clock" style="width: 16px; height: 16px;"></i>
         </span>
     </div>
     @error($model)
@@ -46,4 +46,3 @@
         </div>
     @enderror
 </div>
-
