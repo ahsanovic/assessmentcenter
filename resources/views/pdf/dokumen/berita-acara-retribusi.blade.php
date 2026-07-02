@@ -178,7 +178,7 @@
         <p style="margin-top:10px;">Yang membuat berita acara:</p>
 
         <div class="ttd-block">
-            <div>1.&nbsp; {{ $panitia1_instansi ?: '-' }}</div>
+            <div>1.&nbsp; Panitia Penyelenggara ({{ $panitia1_instansi ?: '-' }})</div>
             <table class="ttd-detail">
                 <tr>
                     <td class="label">Nama</td>
@@ -199,7 +199,7 @@
         </div>
 
         <div class="ttd-block" style="margin-top:12px;">
-            <div>2.&nbsp; {{ $panitia2_instansi ?: '-' }}</div>
+            <div>2.&nbsp; Panitia {{ $panitia2_instansi ?: '-' }}</div>
             <table class="ttd-detail">
                 <tr>
                     <td class="label">Nama</td>

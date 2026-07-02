@@ -261,6 +261,10 @@ class Index extends Component
 
     public function updatedMekanismePenkom(): void
     {
+        if ($this->mekanisme_penkom === 'retribusi' && blank($this->panitia1_instansi)) {
+            $this->panitia1_instansi = 'UPT Pusat Penilaian Pegawai BKD Prov. Jatim';
+        }
+
         $this->dispatch('modalOpened');
         $this->dispatchMarkdownEditors();
     }
@@ -472,7 +476,7 @@ class Index extends Component
         $this->admin_nama = '';
         $this->admin_nip = '';
         $this->admin_pegawai_id = '';
-        $this->panitia1_instansi = '';
+        $this->panitia1_instansi = 'UPT Pusat Penilaian Pegawai BKD Prov. Jatim';
         $this->tester_nama = '';
         $this->tester_nip = '';
         $this->tester_pegawai_id = '';
