@@ -48,7 +48,7 @@ class PspkFinishUjianService
             ->get()
             ->keyBy('id');
 
-        $skorAspek = $ujian->skor_aspek ?? [];
+        $skorAspek = (array) ($ujian->skor_aspek ?? []);
         $aspekList = RefAspekPspk::pluck('kode_aspek')->toArray();
 
         foreach ($aspekList as $aspek) {
@@ -136,51 +136,48 @@ class PspkFinishUjianService
     private function saveHasil(UjianPspk $ujian, int $metodeTesId): void
     {
         $data = $ujian->fresh();
+        $skorAspek = (array) ($data->skor_aspek ?? []);
+
+        foreach ($skorAspek as $key => $val) {
+            if (! $val) {
+                $skorAspek[$key] = 0;
+            }
+        }
 
         if ($metodeTesId === 5) {
             $totalNilai = [];
-            foreach ($data->skor_aspek as $key => $val) {
-                if (! $val) {
-                    $data->skor_aspek[$key] = 0;
-                }
-                $totalNilai[] = $this->getLevelPerAspekLv1($data->skor_aspek[$key]);
+            foreach ($skorAspek as $val) {
+                $totalNilai[] = $this->getLevelPerAspekLv1($val);
             }
 
             $jpm = (array_sum($totalNilai)) / (1 * 9) * 100;
             $kategori = $this->getKategori($jpm);
-            $deskripsi = $this->buildDeskripsiLv1($data, $totalNilai);
-            $saranPengembangan = $this->buildSaranLv1($data, $totalNilai);
+            $deskripsi = $this->buildDeskripsiLv1($skorAspek, $totalNilai);
+            $saranPengembangan = $this->buildSaranLv1($skorAspek, $totalNilai);
         } elseif ($metodeTesId === 6) {
             $totalNilai = [];
-            foreach ($data->skor_aspek as $key => $val) {
-                if (! $val) {
-                    $data->skor_aspek[$key] = 0;
-                }
-                $totalNilai[] = $this->getLevelPerAspekLv2($data->skor_aspek[$key]);
+            foreach ($skorAspek as $val) {
+                $totalNilai[] = $this->getLevelPerAspekLv2($val);
             }
 
             $jpm = (array_sum($totalNilai)) / (2 * 9) * 100;
             $kategori = $this->getKategori($jpm);
-            $deskripsi = $this->buildDeskripsiLv2($data, $totalNilai);
-            $saranPengembangan = $this->buildSaranLv2($data, $totalNilai);
+            $deskripsi = $this->buildDeskripsiLv2($skorAspek, $totalNilai);
+            $saranPengembangan = $this->buildSaranLv2($skorAspek, $totalNilai);
         } elseif (in_array($metodeTesId, [7, 8], true)) {
             $totalNilai = [];
-            foreach ($data->skor_aspek as $key => $val) {
-                if (! $val) {
-                    $data->skor_aspek[$key] = 0;
-                }
-
+            foreach ($skorAspek as $val) {
                 if ($metodeTesId === 7) {
-                    $totalNilai[] = $this->getLevelPerAspekLv3($data->skor_aspek[$key]);
+                    $totalNilai[] = $this->getLevelPerAspekLv3($val);
                 } else {
-                    $totalNilai[] = $this->getLevelPerAspekLv4($data->skor_aspek[$key]);
+                    $totalNilai[] = $this->getLevelPerAspekLv4($val);
                 }
             }
 
             $jpm = $this->countJpmLv34(array_sum($totalNilai), $metodeTesId);
             $kategori = $this->getKategori($jpm);
-            $deskripsi = $this->buildDeskripsiLv34($data, $totalNilai);
-            $saranPengembangan = $this->buildSaranLv34($data, $totalNilai, $metodeTesId);
+            $deskripsi = $this->buildDeskripsiLv34($skorAspek, $totalNilai);
+            $saranPengembangan = $this->buildSaranLv34($skorAspek, $totalNilai, $metodeTesId);
         } else {
             throw new \RuntimeException('Metode tes PSPK tidak dikenali.');
         }
@@ -205,11 +202,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildDeskripsiLv1(UjianPspk $data, array $totalNilai): array
+    private function buildDeskripsiLv1(array $skorAspek, array $totalNilai): array
     {
         $deskripsi = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $desc = RefDescPspk::where('level_pspk', 1)
                 ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kodeAspek)->first()->id)
                 ->first();
@@ -229,11 +226,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildSaranLv1(UjianPspk $data, array $totalNilai): array
+    private function buildSaranLv1(array $skorAspek, array $totalNilai): array
     {
         $saranPengembangan = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $saran = RefSaranPengembangan::where('level_pspk_id', 1)->first();
 
             if (in_array($val, [1, 1.5])) {
@@ -249,11 +246,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildDeskripsiLv2(UjianPspk $data, array $totalNilai): array
+    private function buildDeskripsiLv2(array $skorAspek, array $totalNilai): array
     {
         $deskripsi = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $desc = RefDescPspk::where('level_pspk', 2)
                 ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kodeAspek)->first()->id)
                 ->first();
@@ -275,11 +272,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildSaranLv2(UjianPspk $data, array $totalNilai): array
+    private function buildSaranLv2(array $skorAspek, array $totalNilai): array
     {
         $saranPengembangan = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $saran = RefSaranPengembangan::where('level_pspk_id', 2)->first();
 
             if (in_array($val, [2, 2.5])) {
@@ -295,11 +292,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildDeskripsiLv34(UjianPspk $data, array $totalNilai): array
+    private function buildDeskripsiLv34(array $skorAspek, array $totalNilai): array
     {
         $deskripsi = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $desc = RefDescPspk::where('level_pspk', 3)
                 ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kodeAspek)->first()->id)
                 ->first();
@@ -319,11 +316,11 @@ class PspkFinishUjianService
     /**
      * @return array<string, string|null>
      */
-    private function buildSaranLv34(UjianPspk $data, array $totalNilai, int $metodeTesId): array
+    private function buildSaranLv34(array $skorAspek, array $totalNilai, int $metodeTesId): array
     {
         $saranPengembangan = [];
         foreach ($totalNilai as $key => $val) {
-            $kodeAspek = array_keys($data->skor_aspek)[$key];
+            $kodeAspek = array_keys($skorAspek)[$key];
             $saran = RefSaranPengembangan::where('level_pspk_id', $metodeTesId === 7 ? 3 : 4)
                 ->first();
 
