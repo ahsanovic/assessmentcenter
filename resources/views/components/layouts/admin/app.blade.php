@@ -125,6 +125,23 @@
             });
         });
 
+        window.addEventListener('show-paksa-akhiri-confirmation', data => {
+            Swal.fire({
+                title: 'Paksa akhiri ujian?',
+                text: 'Skor akan dihitung otomatis dari jawaban yang tersimpan dan status ujian diubah menjadi selesai.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f0ad4e',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Akhiri ujian',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('paksaAkhiri');
+                }
+            });
+        });
+
         window.addEventListener('change-status-portofolio-confirmation', data => {
             Swal.fire({
                 title: 'Ubah Status Portofolio?',

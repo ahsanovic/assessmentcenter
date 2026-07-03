@@ -2,12 +2,10 @@
 
 namespace App\Livewire\Peserta\TesPspk;
 
-use App\Models\Pspk\HasilPspk;
-use App\Models\Pspk\RefDescPspk;
-use App\Models\Pspk\RefSaranPengembangan;
 use App\Models\Pspk\SoalPspk;
 use App\Models\Pspk\UjianPspk;
 use App\Models\RefAspekPspk;
+use App\Services\Pspk\PspkFinishUjianService;
 use App\Traits\PelanggaranTrait;
 use App\Traits\TimerTrait;
 use Illuminate\Support\Facades\Auth;
@@ -510,185 +508,15 @@ class Ujian extends Component
                 'pspk_lv34_last_sjt_nomor_'.$data->id,
             ]);
 
-            if (auth()->guard('peserta')->user()->event->metode_tes_id == 5) { // pspk level 1
-                // nilai capaian
-                $total_nilai = [];
-                foreach ($data->skor_aspek as $key => $val) {
-                    if (! $val) {
-                        $data->skor_aspek[$key] = 0;
-                    }
-                    $total_nilai[] = $this->_getLevelPerAspek($data->skor_aspek[$key]);
-                }
-
-                // jpm
-                $jpm = (array_sum($total_nilai)) / (1 * 9) * 100;
-
-                // kategori
-                $kategori = $this->_getKategori($jpm);
-
-                // deskripsi
-                $deskripsi = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $desc = RefDescPspk::where('level_pspk', 1)
-                        ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
-                        ->first();
-
-                    if ($val == 0.5) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
-                    } elseif ($val == 1) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi;
-                    } elseif ($val == 1.5) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
-                    }
-                }
-
-                // saran pengembangan
-                $saran_pengembangan = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $saran = RefSaranPengembangan::where('level_pspk_id', 1)->first();
-
-                    if (in_array($val, [1, 1.5])) {
-                        $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
-                    } else {
-                        $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
-                    }
-                }
-            } elseif (auth()->guard('peserta')->user()->event->metode_tes_id == 6) { // pspk level 2
-                // nilai capaian
-                $total_nilai = [];
-                foreach ($data->skor_aspek as $key => $val) {
-                    if (! $val) {
-                        $data->skor_aspek[$key] = 0;
-                    }
-                    $total_nilai[] = $this->_getLevelPerAspekLv2($data->skor_aspek[$key]);
-                }
-
-                // jpm
-                $jpm = (array_sum($total_nilai)) / (2 * 9) * 100;
-
-                // kategori
-                $kategori = $this->_getKategori($jpm);
-
-                // deskripsi
-                $deskripsi = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $desc = RefDescPspk::where('level_pspk', 2)
-                        ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
-                        ->first();
-
-                    if ($val == 1) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
-                    } elseif ($val == 1.5) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
-                    } elseif ($val == 2) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi;
-                    } elseif ($val == 2.5) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
-                    }
-                }
-
-                // saran pengembangan
-                $saran_pengembangan = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $saran = RefSaranPengembangan::where('level_pspk_id', 2)->first();
-
-                    if (in_array($val, [2, 2.5])) {
-                        $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
-                    } else {
-                        $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
-                    }
-                }
-            } elseif (in_array((int) auth()->guard('peserta')->user()->event->metode_tes_id, [7, 8])) { // pspk level 3 dan 4
-                // nilai capaian
-                $total_nilai = [];
-                foreach ($data->skor_aspek as $key => $val) {
-                    if (! $val) {
-                        $data->skor_aspek[$key] = 0;
-                    }
-
-                    if (auth()->guard('peserta')->user()->event->metode_tes_id == 7) {
-                        $total_nilai[] = $this->_getLevelPerAspekLv3($data->skor_aspek[$key]);
-                    } else {
-                        $total_nilai[] = $this->_getLevelPerAspekLv4($data->skor_aspek[$key]);
-                    }
-                }
-
-                // jpm
-                $jpm = $this->_countJpmLv34(array_sum($total_nilai));
-
-                // kategori
-                $kategori = $this->_getKategori($jpm);
-
-                // dekskripsi
-                $deskripsi = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $desc = RefDescPspk::where('level_pspk', 3)
-                        ->where('aspek_id', RefAspekPspk::where('kode_aspek', $kode_aspek)->first()->id)
-                        ->first();
-
-                    if ($val == 2) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_min;
-                    } elseif ($val == 3) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi;
-                    } elseif ($val == 4) {
-                        $deskripsi[$kode_aspek] = $desc->deskripsi_plus;
-                    }
-                }
-
-                // saran pengembangan
-                $saran_pengembangan = [];
-                foreach ($total_nilai as $key => $val) {
-                    $kode_aspek = array_keys($data->skor_aspek)[$key];
-                    $saran = RefSaranPengembangan::where('level_pspk_id', (int) auth()->guard('peserta')->user()->event->metode_tes_id == 7 ? 3 : 4)
-                        ->first();
-
-                    if (auth()->guard('peserta')->user()->event->metode_tes_id == 7) { // level 3
-                        if ($val == 3 || $val == 4) {
-                            $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
-                        } else {
-                            $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
-                        }
-                    } else if (auth()->guard('peserta')->user()->event->metode_tes_id == 8) { // level 4
-                        if ($val == 4) {
-                            $saran_pengembangan[$kode_aspek] = 'Dapat diberikan tantangan di level kompetensi yang lebih tinggi.';
-                        } else {
-                            $saran_pengembangan[$kode_aspek] = $saran->{$kode_aspek} ?? null;
-                        }
-                    }
-                }
-            }
-
-            HasilPspk::updateOrCreate(
-                [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
-                    'ujian_id' => $data->id,
-                ],
-                [
-                    'nilai_total' => $data->nilai_total,
-                    'nilai_capaian' => $total_nilai,
-                    'jpm' => $jpm,
-                    'kategori' => $kategori,
-                    'deskripsi' => $deskripsi,
-                    'saran_pengembangan' => $saran_pengembangan,
-                ]
+            app(PspkFinishUjianService::class)->finish(
+                $data,
+                (int) auth()->guard('peserta')->user()->event->metode_tes_id
             );
 
-            // change status ujian to true (finish)
-            $data->is_finished = true;
-            $data->save();
-
-            // Bersihkan localStorage via JS
             $this->dispatch('clear-flags-browser');
 
             return $this->redirect(route('peserta.tes-pspk.hasil'));
         } catch (\Throwable $th) {
-            // throw $th;
             Session::flash('toast', [
                 'type' => 'error',
                 'message' => 'Terjadi kesalahan',
@@ -767,94 +595,5 @@ class Ujian extends Component
         }
 
         return null;
-    }
-
-    private function _getLevelPerAspek($nilai)
-    {
-        if ($nilai >= 6 && $nilai <= 10) {
-            $level = 0.5;
-        } elseif ($nilai >= 11 && $nilai <= 14) {
-            $level = 1;
-        } elseif ($nilai >= 15 && $nilai <= 18) {
-            $level = 1.5;
-        }
-
-        return $level;
-    }
-
-    private function _getLevelPerAspekLv2($nilai)
-    {
-        if ($nilai >= 6 && $nilai <= 11) {
-            $level = 1;
-        } elseif ($nilai >= 12 && $nilai <= 17) {
-            $level = 1.5;
-        } elseif ($nilai >= 18 && $nilai <= 23) {
-            $level = 2;
-        } elseif ($nilai >= 24 && $nilai <= 30) {
-            $level = 2.5;
-        }
-
-        return $level;
-    }
-
-    // private function _getLevelPerAspekLv34($nilai)
-    // {
-    //     $level = match (true) {
-    //         $nilai >= 6 && $nilai <= 9 => 2,
-    //         $nilai >= 10 && $nilai <= 14 => 3,
-    //         $nilai >= 15 && $nilai <= 18 => 4,
-    //         default => 0,
-    //     };
-
-    //     return $level;
-    // }
-
-    private function _getLevelPerAspekLv3($nilai)
-    {
-        $level = match (true) {
-            $nilai >= 0 && $nilai <= 6 => 2,
-            $nilai >= 7 && $nilai <= 12 => 3,
-            $nilai >= 13 && $nilai <= 18 => 4,
-            default => 0,
-        };
-
-        return $level;
-    }
-
-    private function _getLevelPerAspekLv4($nilai)
-    {
-        $level = match (true) {
-            $nilai >= 0 && $nilai <= 4 => 2,
-            $nilai >= 5 && $nilai <= 9 => 3,
-            $nilai >= 10 && $nilai <= 18 => 4,
-            default => 0,
-        };
-
-        return $level;
-    }
-
-    private function _getKategori($jpm)
-    {
-        if ($jpm >= 90) {
-            $kategori = 'Optimal';
-        } elseif ($jpm < 90 && $jpm >= 78) {
-            $kategori = 'Cukup Optimal';
-        } elseif ($jpm < 78) {
-            $kategori = 'Kurang Optimal';
-        }
-
-        return $kategori;
-    }
-
-    private function _countJpmLv34(int $total_nilai_capaian): float
-    {
-        $metode_tes_id = auth()->guard('peserta')->user()->event->metode_tes_id;
-        if ($metode_tes_id == 7) {
-            return $total_nilai_capaian / (3 * 9) * 100;
-        } elseif ($metode_tes_id == 8) {
-            return $total_nilai_capaian / (4 * 9) * 100;
-        }
-
-        return 0;
     }
 }

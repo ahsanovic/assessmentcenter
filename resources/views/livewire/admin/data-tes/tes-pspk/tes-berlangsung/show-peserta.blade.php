@@ -89,6 +89,17 @@
                                             >
                                                 <i class="link-icon" data-feather="clock"></i>
                                             </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
+                                                wire:click="paksaAkhiriConfirmation('{{ $item->ujian_pspk_id }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Paksa akhiri ujian"
+                                                style="transition: background 0.2s;"
+                                            >
+                                                <i class="link-icon" data-feather="check-circle"></i>
+                                            </button>
                                             <x-table.btn-delete :id="$item->ujian_pspk_id" />
                                             @endif
                                         </td>

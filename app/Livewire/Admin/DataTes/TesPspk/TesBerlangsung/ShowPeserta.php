@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\Pspk\UjianPspk;
 use App\Models\SettingWaktuTes;
+use App\Services\Pspk\PspkFinishUjianService;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -261,6 +262,46 @@ class ShowPeserta extends Component
     {
         $this->selected_id = $id;
         $this->dispatch('show-delete-confirmation');
+    }
+
+    public function paksaAkhiriConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('show-paksa-akhiri-confirmation');
+    }
+
+    #[On('paksaAkhiri')]
+    public function paksaAkhiri()
+    {
+        try {
+            $ujian = UjianPspk::find($this->selected_id);
+
+            if (! $ujian) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Data ujian tidak ditemukan']);
+                return;
+            }
+
+            if ($ujian->event_id != $this->id_event) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Ujian tidak termasuk event ini']);
+                return;
+            }
+
+            app(PspkFinishUjianService::class)->finish(
+                $ujian,
+                (int) $this->event->metode_tes_id
+            );
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Berhasil mengakhiri ujian dan menghitung skor',
+            ]);
+        } catch (\RuntimeException $e) {
+            $this->dispatch('toast', ['type' => 'warning', 'message' => $e->getMessage()]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal mengakhiri ujian']);
+        } finally {
+            $this->resetPage();
+        }
     }
 
     #[On('delete')]
