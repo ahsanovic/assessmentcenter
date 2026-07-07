@@ -106,6 +106,33 @@
                     positionClass: 'toast-top-center'
                 });
             });
+
+            window.openAbsensiPdf = function(url) {
+                if (!url) {
+                    return;
+                }
+
+                if (window.__absensiPdfTab && !window.__absensiPdfTab.closed) {
+                    window.__absensiPdfTab.location.href = url;
+                    window.__absensiPdfTab = null;
+
+                    return;
+                }
+
+                const tab = window.open(url, '_blank');
+
+                if (!tab) {
+                    window.location.href = url;
+                }
+            };
+
+            Livewire.on('download-attendance', (...params) => {
+                const payload = params[0];
+                const url = payload?.url
+                    ?? (Array.isArray(payload) ? payload[0]?.url : null);
+
+                window.openAbsensiPdf(url);
+            });
         });
     </script>
     <script>
@@ -281,40 +308,172 @@
     </script>
     <script>
         document.addEventListener('livewire:initialized', () => {
-        
+
+            const bindFlatpickrToggle = (input) => {
+                const toggle = input.closest('.input-group')?.querySelector('[data-toggle]');
+                if (!toggle || toggle._flatpickrBound) {
+                    return;
+                }
+
+                toggle._flatpickrBound = true;
+                toggle.addEventListener('click', () => input._flatpickr?.open());
+            };
+
             const initFlatpickr = (input) => {
-        
                 input._flatpickr?.destroy();
-        
+
                 const model = input.dataset.model;
-        
-                // tunggu Livewire hydrate value
+
                 requestAnimationFrame(() => {
-        
                     const hiddenInput = input
                         .closest('.mb-4')
-                        .querySelector(`input[type="hidden"][wire\\:model="${model}"]`);
-        
+                        ?.querySelector(`input[type="hidden"][wire\\:model="${model}"]`);
+
                     const value = hiddenInput?.value || null;
-        
+
                     input._flatpickr = flatpickr(input, {
-                        dateFormat: "d-m-Y",
+                        dateFormat: 'd-m-Y',
                         allowInput: false,
                         defaultDate: value,
-        
+
                         onChange: (_, dateStr) => {
+                            if (!hiddenInput) return;
                             hiddenInput.value = dateStr;
                             hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
+                        },
                     });
+
+                    bindFlatpickrToggle(input);
                 });
             };
-        
-            // SAAT MODAL / DOM DITAMBAHKAN
+
+            const initTimeFlatpickr = (input) => {
+                input._flatpickr?.destroy();
+
+                const model = input.dataset.model;
+
+                requestAnimationFrame(() => {
+                    const hiddenInput = input
+                        .closest('.mb-4')
+                        ?.querySelector(`input[type="hidden"][wire\\:model="${model}"]`);
+
+                    const value = hiddenInput?.value || null;
+
+                    input._flatpickr = flatpickr(input, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: 'H.i',
+                        time_24hr: true,
+                        allowInput: false,
+                        defaultDate: value || null,
+
+                        onChange: (_, timeStr) => {
+                            if (!hiddenInput) return;
+                            hiddenInput.value = timeStr;
+                            hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        },
+                    });
+
+                    bindFlatpickrToggle(input);
+                });
+            };
+
+            const syncFilterDateToLivewire = (wrapper, dateStr) => {
+                const property = wrapper.dataset.filterModel;
+                const componentEl = wrapper.closest('[wire\\:id]');
+                const component = componentEl
+                    ? Livewire.find(componentEl.getAttribute('wire:id'))
+                    : null;
+
+                if (property && component) {
+                    component.set(property, dateStr);
+                    return;
+                }
+
+                const input = wrapper.querySelector('[data-input]');
+                if (!input) return;
+
+                input.value = dateStr;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            };
+
+            const initPageDateFilterEl = (el) => {
+                if (!el?.dataset?.filterModel) return;
+
+                if (el._flatpickr) {
+                    el._flatpickr.destroy();
+                    el._flatpickr = null;
+                }
+
+                el._flatpickr = flatpickr(el, {
+                    wrap: true,
+                    dateFormat: 'd-m-Y',
+                    allowInput: false,
+                    onChange: (_, dateStr) => {
+                        syncFilterDateToLivewire(el, dateStr);
+                    },
+                });
+            };
+
+            const initPageDateFilters = (root = document) => {
+                if (root instanceof Element && root.dataset?.filterModel) {
+                    initPageDateFilterEl(root);
+                    return;
+                }
+
+                const scope = root instanceof Element ? root : document;
+                scope.querySelectorAll('[data-filter-model]').forEach(initPageDateFilterEl);
+            };
+
+            initPageDateFilters();
+
             Livewire.hook('morph.added', ({ el }) => {
+                initPageDateFilters(el);
                 el.querySelectorAll('[data-flatpickr]').forEach(initFlatpickr);
+                el.querySelectorAll('[data-flatpickr-time]').forEach(initTimeFlatpickr);
             });
-        
+
+            Livewire.on('reset-select2', () => {
+                document.querySelectorAll('[data-filter-model]').forEach((el) => {
+                    el._flatpickr?.clear();
+                });
+            });
+
+            document.addEventListener('livewire:navigated', () => {
+                setTimeout(() => initPageDateFilters(), 100);
+            });
+
+            Livewire.on('modalOpened', () => {
+                setTimeout(() => {
+                    document.querySelectorAll('[data-flatpickr]').forEach(initFlatpickr);
+                    document.querySelectorAll('[data-flatpickr-time]').forEach(initTimeFlatpickr);
+                }, 150);
+            });
+
+            Livewire.on('set-flatpickr', (payload) => {
+                const data = Array.isArray(payload) ? payload[0] : payload;
+                const input = document.querySelector(`[data-flatpickr][data-model="${data.model}"]`);
+                if (input?._flatpickr && data.value) {
+                    input._flatpickr.setDate(data.value, true, 'd-m-Y');
+                }
+
+                const hiddenInput = input
+                    ?.closest('.mb-4')
+                    ?.querySelector(`input[type="hidden"][wire\\:model="${data.model}"]`);
+
+                if (hiddenInput && data.value) {
+                    hiddenInput.value = data.value;
+                    hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+
+            Livewire.on('set-flatpickr-time', (payload) => {
+                const data = Array.isArray(payload) ? payload[0] : payload;
+                const input = document.querySelector(`[data-flatpickr-time][data-model="${data.model}"]`);
+                if (input?._flatpickr && data.value) {
+                    input._flatpickr.setDate(data.value, true, 'H.i');
+                }
+            });
         });
     </script>  
     <script>

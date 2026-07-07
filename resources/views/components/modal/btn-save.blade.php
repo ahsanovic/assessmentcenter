@@ -13,6 +13,7 @@
     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.4)'"
     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.3)'"
     wire:loading.attr="disabled" wire:target="{{ $action }}"
+    {{ $attributes }}
 >
     <span wire:loading wire:target="{{ $action }}" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
     <i class="link-icon" data-feather="{{ $icon }}" style="width: 18px; height: 18px;"></i>

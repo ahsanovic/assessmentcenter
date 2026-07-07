@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Event;
 
+use App\Models\AbsensiEvent;
 use App\Models\Assessor;
 use App\Models\Event;
 use App\Models\RefJabatanDiuji;
@@ -25,6 +26,7 @@ class Index extends Component
 
     // Modal state
     public $showModal = false;
+    public $showAttendanceModal = false;
     public $isUpdate = false;
     public $editId;
 
@@ -39,6 +41,37 @@ class Index extends Component
     public $pin_ujian;
     public $is_open;
     public $is_finished;
+    public $attendance_event_id;
+
+    public $attendance_event_nama;
+
+    public $attendance_judul;
+
+    public $attendance_hari;
+
+    public $attendance_tanggal;
+
+    public $attendance_sesi;
+
+    public $attendance_peserta_dari;
+
+    public $attendance_peserta_sampai;
+
+    public $attendance_jumlah_peserta_sesi;
+
+    public $attendance_baris_tambahan = 10;
+
+    public $attendance_total_peserta = 0;
+
+    public $attendance_existing_sesi = [];
+
+    public $attendance_waktu_mulai;
+
+    public $attendance_waktu_selesai;
+
+    public $attendance_zona_waktu;
+
+    public $attendance_tempat;
 
     #[Url(as: 'q')]
     public ?string $search = '';
@@ -166,6 +199,334 @@ class Index extends Component
         $this->showModal = false;
         $this->resetValidation();
         $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'editId', 'isUpdate']);
+    }
+
+    public function openAttendanceModal(int $id): void
+    {
+        $event = Event::withCount('peserta')->findOrFail($id);
+
+        if ($event->peserta_count < 1) {
+            $this->dispatch('toast', ['type' => 'warning', 'message' => 'belum ada peserta yang diimport']);
+
+            return;
+        }
+
+        $this->resetValidation();
+        $this->reset([
+            'attendance_event_id',
+            'attendance_event_nama',
+            'attendance_judul',
+            'attendance_hari',
+            'attendance_tanggal',
+            'attendance_sesi',
+            'attendance_peserta_dari',
+            'attendance_peserta_sampai',
+            'attendance_jumlah_peserta_sesi',
+            'attendance_baris_tambahan',
+            'attendance_total_peserta',
+            'attendance_existing_sesi',
+            'attendance_waktu_mulai',
+            'attendance_waktu_selesai',
+            'attendance_zona_waktu',
+            'attendance_tempat',
+        ]);
+
+        $this->attendance_event_id = $event->id;
+        $this->attendance_event_nama = $event->nama_event;
+        $this->attendance_total_peserta = $event->peserta_count;
+        $this->attendance_existing_sesi = $this->loadExistingAttendanceSesi($event->id);
+        $this->attendance_tanggal = $event->tgl_mulai;
+        $this->attendance_hari = $this->detectHari($event->tgl_mulai);
+        $this->attendance_zona_waktu = 'WIB';
+        $this->attendance_baris_tambahan = 10;
+
+        $this->showAttendanceModal = true;
+        $this->dispatchAttendancePickers();
+    }
+
+    public function selectAttendanceSesi(int $sesi): void
+    {
+        $this->attendance_sesi = $sesi;
+        $this->loadAttendanceFormForSesi($sesi);
+        $this->dispatchAttendancePickers();
+    }
+
+    public function loadAttendanceRecord(int $id): void
+    {
+        $absensi = AbsensiEvent::where('event_id', $this->attendance_event_id)->findOrFail($id);
+
+        $this->attendance_sesi = $absensi->sesi;
+        $this->attendance_tanggal = $absensi->tanggal;
+        $this->attendance_hari = $absensi->hari ?? $this->detectHari($absensi->tanggal);
+        $this->fillAttendanceFormFromModel($absensi);
+        $this->dispatchAttendancePickers();
+    }
+
+    public function updatedAttendanceSesi($value): void
+    {
+        if (blank($value) || blank($this->attendance_event_id)) {
+            return;
+        }
+
+        $this->loadAttendanceFormForSesi((int) $value);
+        $this->dispatchAttendancePickers();
+    }
+
+    protected function loadExistingAttendanceSesi(int $eventId): array
+    {
+        return AbsensiEvent::query()
+            ->where('event_id', $eventId)
+            ->orderBy('tanggal')
+            ->orderBy('sesi')
+            ->get()
+            ->map(fn ($item) => [
+                'id' => $item->id,
+                'sesi' => $item->sesi,
+                'label' => $item->sesiLabel(),
+            ])
+            ->all();
+    }
+
+    public function updatedAttendanceJumlahPesertaSesi(): void
+    {
+        $this->syncPesertaRangeFromJumlah();
+    }
+
+    protected function suggestAttendanceRangeForNewSesi(): void
+    {
+        $this->attendance_peserta_dari = AbsensiEvent::nextPesertaDari($this->attendance_event_id);
+        $this->syncPesertaRangeFromJumlah();
+    }
+
+    protected function syncPesertaRangeFromJumlah(): void
+    {
+        if (blank($this->attendance_jumlah_peserta_sesi) || (int) $this->attendance_jumlah_peserta_sesi < 1) {
+            return;
+        }
+
+        if (blank($this->attendance_peserta_dari) && filled($this->attendance_event_id)) {
+            $this->attendance_peserta_dari = AbsensiEvent::nextPesertaDari($this->attendance_event_id);
+        }
+
+        if (blank($this->attendance_peserta_dari)) {
+            return;
+        }
+
+        $jumlah = max(1, (int) $this->attendance_jumlah_peserta_sesi);
+        $this->attendance_peserta_sampai = min(
+            (int) $this->attendance_peserta_dari + $jumlah - 1,
+            $this->attendance_total_peserta ?: PHP_INT_MAX
+        );
+    }
+
+    protected function findAbsensiForCurrentContext(int $sesi): ?AbsensiEvent
+    {
+        if (blank($this->attendance_tanggal)) {
+            return null;
+        }
+
+        return AbsensiEvent::query()
+            ->where('event_id', $this->attendance_event_id)
+            ->where('tanggal', AbsensiEvent::tanggalToDatabase($this->attendance_tanggal))
+            ->where('sesi', $sesi)
+            ->first();
+    }
+
+    protected function fillAttendanceFormFromModel(AbsensiEvent $absensi): void
+    {
+        $this->attendance_judul = $absensi->judul;
+        $this->attendance_peserta_dari = $absensi->peserta_dari;
+        $this->attendance_peserta_sampai = $absensi->peserta_sampai;
+        $this->attendance_jumlah_peserta_sesi = $absensi->jumlah_peserta_sesi
+            ?? (($absensi->peserta_dari && $absensi->peserta_sampai)
+                ? $absensi->peserta_sampai - $absensi->peserta_dari + 1
+                : null);
+        $this->attendance_baris_tambahan = $absensi->baris_tambahan ?? 10;
+        $this->attendance_waktu_mulai = $absensi->waktu_mulai;
+        $this->attendance_waktu_selesai = $absensi->waktu_selesai;
+        $this->attendance_zona_waktu = $absensi->zona_waktu;
+        $this->attendance_tempat = $absensi->tempat;
+    }
+
+    protected function loadAttendanceFormForSesi(int $sesi): void
+    {
+        $absensi = $this->findAbsensiForCurrentContext($sesi);
+
+        if ($absensi) {
+            $this->fillAttendanceFormFromModel($absensi);
+
+            return;
+        }
+
+        if (blank($this->attendance_zona_waktu)) {
+            $this->attendance_zona_waktu = 'WIB';
+        }
+
+        $this->suggestAttendanceRangeForNewSesi();
+    }
+
+    protected function dispatchAttendancePickers(): void
+    {
+        $this->dispatch('modalOpened');
+        $this->dispatch('set-flatpickr', [
+            'model' => 'attendance_tanggal',
+            'value' => $this->attendance_tanggal,
+        ]);
+
+        if ($this->attendance_waktu_mulai) {
+            $this->dispatch('set-flatpickr-time', [
+                'model' => 'attendance_waktu_mulai',
+                'value' => $this->attendance_waktu_mulai,
+            ]);
+        }
+
+        if ($this->attendance_waktu_selesai) {
+            $this->dispatch('set-flatpickr-time', [
+                'model' => 'attendance_waktu_selesai',
+                'value' => $this->attendance_waktu_selesai,
+            ]);
+        }
+    }
+
+    public function closeAttendanceModal(): void
+    {
+        $this->showAttendanceModal = false;
+        $this->resetValidation();
+        $this->reset([
+            'attendance_event_id',
+            'attendance_event_nama',
+            'attendance_judul',
+            'attendance_hari',
+            'attendance_tanggal',
+            'attendance_sesi',
+            'attendance_peserta_dari',
+            'attendance_peserta_sampai',
+            'attendance_jumlah_peserta_sesi',
+            'attendance_baris_tambahan',
+            'attendance_total_peserta',
+            'attendance_existing_sesi',
+            'attendance_waktu_mulai',
+            'attendance_waktu_selesai',
+            'attendance_zona_waktu',
+            'attendance_tempat',
+        ]);
+    }
+
+    public function updatedAttendanceTanggal($value): void
+    {
+        $this->attendance_hari = $this->detectHari($value);
+
+        if (filled($this->attendance_sesi)) {
+            $this->loadAttendanceFormForSesi((int) $this->attendance_sesi);
+            $this->dispatchAttendancePickers();
+        }
+    }
+
+    protected function detectHari($value): ?string
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        $hariId = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+        ];
+
+        $timestamp = strtotime((string) $value);
+
+        if ($timestamp === false) {
+            return null;
+        }
+
+        return $hariId[date('l', $timestamp)] ?? null;
+    }
+
+    public function saveAndPrintAttendance()
+    {
+        $this->syncPesertaRangeFromJumlah();
+
+        $validated = $this->validate([
+            'attendance_event_id' => ['required', 'exists:event,id'],
+            'attendance_judul' => ['required', 'string', 'max:1000'],
+            'attendance_tanggal' => ['required', 'date_format:d-m-Y'],
+            'attendance_sesi' => ['required', 'integer', 'min:1', 'max:99'],
+            'attendance_jumlah_peserta_sesi' => ['required', 'integer', 'min:1'],
+            'attendance_baris_tambahan' => ['required', 'integer', 'min:0', 'max:100'],
+            'attendance_peserta_dari' => ['required', 'integer', 'min:1'],
+            'attendance_peserta_sampai' => ['required', 'integer', 'min:1', 'gte:attendance_peserta_dari'],
+            'attendance_waktu_mulai' => ['required', 'string', 'max:20'],
+            'attendance_waktu_selesai' => ['nullable', 'string', 'max:20'],
+            'attendance_zona_waktu' => ['required', 'in:WIB,WITA,WIT'],
+            'attendance_tempat' => ['required', 'string', 'max:255'],
+        ], [
+            'attendance_event_id.required' => 'event tidak valid',
+            'attendance_judul.required' => 'judul presensi wajib diisi',
+            'attendance_tanggal.required' => 'tanggal wajib diisi',
+            'attendance_tanggal.date_format' => 'format tanggal tidak valid',
+            'attendance_sesi.required' => 'sesi wajib diisi',
+            'attendance_jumlah_peserta_sesi.required' => 'jumlah peserta per sesi wajib diisi',
+            'attendance_baris_tambahan.required' => 'jumlah baris tambahan wajib diisi',
+            'attendance_peserta_dari.required' => 'nomor peserta awal wajib diisi',
+            'attendance_peserta_sampai.required' => 'nomor peserta akhir wajib diisi',
+            'attendance_peserta_sampai.gte' => 'nomor peserta akhir harus lebih besar atau sama dengan nomor awal',
+            'attendance_waktu_mulai.required' => 'waktu mulai wajib diisi',
+            'attendance_zona_waktu.required' => 'zona waktu wajib dipilih',
+            'attendance_tempat.required' => 'tempat wajib diisi',
+        ]);
+
+        $pesertaDari = (int) $this->attendance_peserta_dari;
+        $pesertaSampai = (int) $this->attendance_peserta_sampai;
+
+        if ($pesertaSampai > $this->attendance_total_peserta) {
+            $this->addError('attendance_peserta_sampai', 'nomor peserta akhir melebihi total peserta ('.$this->attendance_total_peserta.')');
+
+            return;
+        }
+
+        try {
+            $absensi = AbsensiEvent::firstOrNew([
+                'event_id' => $validated['attendance_event_id'],
+                'tanggal' => AbsensiEvent::tanggalToDatabase($validated['attendance_tanggal']),
+                'sesi' => $validated['attendance_sesi'],
+            ]);
+            $isNew = ! $absensi->exists;
+            $oldData = $isNew ? null : $absensi->getOriginal();
+
+            $absensi->fill([
+                'judul' => $validated['attendance_judul'],
+                'hari' => $this->detectHari($validated['attendance_tanggal']),
+                'tanggal' => $validated['attendance_tanggal'],
+                'sesi' => $validated['attendance_sesi'],
+                'peserta_dari' => $pesertaDari,
+                'peserta_sampai' => $pesertaSampai,
+                'jumlah_peserta_sesi' => $validated['attendance_jumlah_peserta_sesi'],
+                'baris_tambahan' => $validated['attendance_baris_tambahan'],
+                'waktu_mulai' => $validated['attendance_waktu_mulai'],
+                'waktu_selesai' => $validated['attendance_waktu_selesai'],
+                'zona_waktu' => $validated['attendance_zona_waktu'],
+                'tempat' => $validated['attendance_tempat'],
+                'created_by' => $absensi->created_by ?? auth()->id(),
+            ]);
+            $absensi->save();
+            $absensi->refresh();
+
+            activity_log($absensi, $isNew ? 'create' : 'update', 'absensi-event', $oldData);
+
+            $pdfUrl = route('admin.dokumen.absensi.download', [
+                'id' => $absensi->id,
+            ]).'?v='.$absensi->updated_at->timestamp;
+
+            $this->dispatch('download-attendance', url: $pdfUrl);
+            $this->closeAttendanceModal();
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'terjadi kesalahan saat menyimpan absensi']);
+        }
     }
 
     public function edit($id)

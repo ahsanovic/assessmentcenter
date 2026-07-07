@@ -4,6 +4,7 @@ use App\Http\Controllers\DownloadBeritaAcaraController;
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
+use App\Http\Controllers\DownloadAbsensiEventController;
 use App\Http\Controllers\DownloadPegawaiQrCodeController;
 use App\Http\Controllers\DownloadPortofolioController;
 use App\Http\Controllers\DownloadPspkKasusLampiranAdminController;
@@ -54,6 +55,8 @@ Route::prefix('bkdac')->group(function () {
         // dokumen
         Route::get('dokumen/berita-acara', \App\Livewire\Admin\Dokumen\BeritaAcara\Index::class)->name('admin.dokumen.berita-acara');
         Route::get('dokumen/berita-acara/{id}/download', [DownloadBeritaAcaraController::class, 'download'])->name('admin.dokumen.berita-acara.download');
+        Route::get('dokumen/absensi', \App\Livewire\Admin\Dokumen\Absensi\Index::class)->name('admin.dokumen.absensi');
+        Route::get('dokumen/absensi/{id}/download', [DownloadAbsensiEventController::class, 'download'])->name('admin.dokumen.absensi.download');
 
         // data tes berlangsung
         Route::get('potensi/tes-berlangsung', \App\Livewire\Admin\DataTes\TesPotensi\TesBerlangsung\Index::class)->name('admin.tes-berlangsung');

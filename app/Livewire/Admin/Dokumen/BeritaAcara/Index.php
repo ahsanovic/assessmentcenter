@@ -493,8 +493,12 @@ class Index extends Component
                 });
             })
             ->when($this->tanggal, function ($query) {
-                $tanggal = date('Y-m-d', strtotime($this->tanggal));
-                $query->whereDate('tanggal', $tanggal);
+                try {
+                    $tanggal = \Carbon\Carbon::createFromFormat('d-m-Y', $this->tanggal)->format('Y-m-d');
+                    $query->whereDate('tanggal', $tanggal);
+                } catch (\Throwable) {
+                    // abaikan format tanggal tidak valid
+                }
             })
             ->when($this->event_id, fn ($query) => $query->where('event_id', $this->event_id))
             ->orderByDesc('id')

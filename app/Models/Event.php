@@ -96,6 +96,11 @@ class Event extends Model
         return $this->belongsToMany(Assessor::class, 'assessor_event', 'event_id', 'assessor_id')->withTimestamps();
     }
 
+    public function absensiEvent()
+    {
+        return $this->hasOne(AbsensiEvent::class, 'event_id', 'id');
+    }
+
     public function assessorPeserta()
     {
         return $this->hasManyThrough(

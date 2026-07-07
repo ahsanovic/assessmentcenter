@@ -137,6 +137,22 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @php
+                                                $canPrintAbsensi = $item->peserta_count > 0;
+                                            @endphp
+                                            <button
+                                                type="button"
+                                                @if ($canPrintAbsensi)
+                                                    wire:click="openAttendanceModal('{{ $item->id }}')"
+                                                @endif
+                                                class="btn btn-sm btn-outline-primary btn-icon rounded-circle border-0 shadow-sm me-1 @unless($canPrintAbsensi) disabled opacity-50 @endunless"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="{{ $canPrintAbsensi ? 'Cetak Absensi' : 'Belum ada peserta yang diimport' }}"
+                                                @disabled(!$canPrintAbsensi)
+                                            >
+                                                <span wire:ignore><i class="link-icon" data-feather="printer"></i></span>
+                                            </button>
                                             <x-table.btn-edit :id="$item->id" />
                                             <x-table.btn-delete :id="$item->id" :disabled="($item->is_finished == 'true')" />
                                         </td>
@@ -353,9 +369,196 @@
         }
     </style>
     @endif
+
+    @if($showAttendanceModal)
+    <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
+         wire:key="modal-attendance-{{ $attendance_event_id }}"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-init="init()">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center justify-content-center"
+                             style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(10px);">
+                            <i class="link-icon text-white" data-feather="printer" style="width: 24px; height: 24px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title text-white fw-bold mb-0" style="font-size: 1.5rem;">
+                                Cetak Absensi
+                            </h5>
+                            <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">
+                                {{ $attendance_event_nama }}
+                            </p>
+                        </div>
+                    </div>
+                    <button type="button" wire:click="closeAttendanceModal" class="btn-close btn-close-white"
+                            style="filter: brightness(0) invert(1); opacity: 0.8; transition: opacity 0.2s;"
+                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></button>
+                </div>
+
+                <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                    <x-form.textarea
+                        label="Judul Presensi"
+                        icon="type"
+                        model="attendance_judul"
+                        placeholder="Contoh: PEMETAAN PENILAIAN KOMPETENSI DAN POTENSI..."
+                        :required="true"
+                        :rows="3"
+                    />
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <x-form.date
+                                label="Tanggal"
+                                icon="calendar"
+                                model="attendance_tanggal"
+                                placeholder="pilih tanggal"
+                                :required="true"
+                            />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold mb-2" style="color: #344054; font-size: 0.875rem;">
+                                    <span class="d-flex align-items-center gap-2">
+                                        <i class="link-icon" data-feather="sun" style="width: 16px; height: 16px;"></i>
+                                        Hari
+                                    </span>
+                                </label>
+                                <input type="text" class="form-control" style="padding: 12px 16px; border-radius: 10px; border: 2px solid #e0e0e0; background: #eef2ff;" value="{{ $attendance_hari ?? '-' }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <x-form.select label="Zona Waktu" icon="globe" model="attendance_zona_waktu" placeholder="- pilih -" :required="true">
+                                <option value="WIB">WIB</option>
+                                <option value="WITA">WITA</option>
+                                <option value="WIT">WIT</option>
+                            </x-form.select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <x-form.input
+                                label="Sesi"
+                                icon="layers"
+                                model="attendance_sesi"
+                                type="number"
+                                placeholder="Contoh: 1"
+                                min="1"
+                                max="99"
+                                :required="true"
+                            />
+                        </div>
+                        <div class="col-md-4">
+                            <x-form.input
+                                label="Jumlah Peserta Sesi"
+                                icon="users"
+                                model="attendance_jumlah_peserta_sesi"
+                                type="number"
+                                placeholder="Contoh: 15"
+                                min="1"
+                                :required="true"
+                                :live="true"
+                            />
+                        </div>
+                        <div class="col-md-4">
+                            <x-form.input
+                                label="Baris Tambahan PDF"
+                                icon="plus-square"
+                                model="attendance_baris_tambahan"
+                                type="number"
+                                placeholder="Contoh: 10"
+                                min="0"
+                                max="100"
+                                :required="true"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <x-form.input
+                                label="No. Peserta (Dari)"
+                                icon="hash"
+                                model="attendance_peserta_dari"
+                                type="number"
+                                placeholder="Otomatis"
+                                min="1"
+                                :required="true"
+                                readonly
+                            />
+                        </div>
+                        <div class="col-md-6">
+                            <x-form.input
+                                label="No. Peserta (Sampai)"
+                                icon="hash"
+                                model="attendance_peserta_sampai"
+                                type="number"
+                                placeholder="Otomatis"
+                                min="1"
+                                :required="true"
+                                readonly
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mb-4 px-1">
+                        <small class="text-muted">
+                            Total peserta event: <strong>{{ $attendance_total_peserta }}</strong> orang.
+                            Isi <strong>Jumlah Peserta Sesi</strong> — nomor dari/sampai terisi otomatis.
+                            <strong>Baris Tambahan PDF</strong> = baris kosong setelah peserta terakhir.
+                        </small>
+                        @if (count($attendance_existing_sesi) > 0)
+                            <div class="mt-2 d-flex flex-wrap gap-1">
+                                @foreach ($attendance_existing_sesi as $item)
+                                    <button type="button"
+                                        wire:click="loadAttendanceRecord({{ $item['id'] }})"
+                                        class="btn btn-xs btn-outline-primary">
+                                        {{ $item['label'] }}
+                                    </button>
+                                @endforeach
+                            </div>
+                            <small class="text-muted d-block mt-2">
+                                Range peserta baru otomatis melanjutkan nomor terakhir dari semua tanggal/sesi sebelumnya.
+                            </small>
+                        @endif
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <x-form.time label="Pukul (Mulai)" icon="clock" model="attendance_waktu_mulai" placeholder="pilih waktu" :required="true" />
+                        </div>
+                        <div class="col-md-6">
+                            <x-form.time label="Pukul (Selesai)" icon="clock" model="attendance_waktu_selesai" placeholder="pilih waktu" />
+                        </div>
+                    </div>
+
+                    <x-form.input
+                        label="Tempat"
+                        icon="map-pin"
+                        model="attendance_tempat"
+                        placeholder="Contoh: SMKN 1 Bondowoso (Lab 1)"
+                        :required="true"
+                    />
+                </div>
+
+                <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                    <x-modal.btn-cancel action="closeAttendanceModal" />
+                    <x-modal.btn-save
+                        text="Simpan dan Cetak"
+                        icon="printer"
+                        action="saveAndPrintAttendance"
+                        onclick="window.__absensiPdfTab = window.open('about:blank', '_blank')"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
-@push('scripts')
+@push('js')
 <script>
     function initFeatherIcons() { if (typeof feather !== 'undefined') feather.replace(); }
     document.addEventListener('DOMContentLoaded', initFeatherIcons);
@@ -368,29 +571,4 @@
     const observer = new MutationObserver((mutations) => { let shouldUpdate = false; mutations.forEach((mutation) => { if (mutation.addedNodes.length > 0) { mutation.addedNodes.forEach((node) => { if (node.nodeType === 1 && (node.classList?.contains('modal') || node.querySelector?.('[data-feather]'))) { shouldUpdate = true; } }); } }); if (shouldUpdate) { requestAnimationFrame(() => { initFeatherIcons(); }); } });
     document.addEventListener('DOMContentLoaded', () => { observer.observe(document.body, { childList: true, subtree: true }); });
 </script>
-@endpush
-
-@push('js')
-    @script()
-        <script>
-            // Initialize flatpickr untuk modal (saat modal muncul)
-            Livewire.on('modalOpened', () => {
-                setTimeout(() => {
-                    document.querySelectorAll('[data-flatpickr]').forEach(el => {
-                        if (!el._flatpickr) {
-                            flatpickr(el, {
-                                dateFormat: 'd-m-Y',
-                                onChange: function(selectedDates, dateStr) {
-                                    const model = el.getAttribute('data-model');
-                                    if (model) {
-                                        @this.set(model, dateStr);
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }, 200);
-            });
-        </script>
-    @endscript
 @endpush

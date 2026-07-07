@@ -21,8 +21,8 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    <div class="input-group flatpickr" id="flatpickr-filter-date">
-                                        <input type="text" wire:model.live="tanggal"
+                                    <div class="input-group flatpickr" data-filter-model="tanggal">
+                                        <input type="text"
                                             class="form-control flatpickr-input" placeholder="tanggal"
                                             data-input="" readonly="readonly">
                                         <span class="input-group-text input-group-addon" data-toggle="">
@@ -530,20 +530,6 @@
                 });
             }
 
-            function initFilterFlatpickr() {
-                const el = document.querySelector('#flatpickr-filter-date');
-                if (!el || el._flatpickr) return;
-
-                el._flatpickr = flatpickr(el, {
-                    wrap: true,
-                    dateFormat: 'd-m-Y',
-                    allowInput: false,
-                    onChange: (_, dateStr) => {
-                        @this.set('tanggal', dateStr);
-                    },
-                });
-            }
-
             function initFilterSelect2() {
                 const $filter = $('#filter-event');
                 if (!$filter.length) return;
@@ -564,13 +550,10 @@
 
             $(document).ready(function () {
                 initFilterSelect2();
-                initFilterFlatpickr();
                 initFeatherIcons();
 
                 Livewire.on('reset-select2', () => {
                     $('#filter-event').val(null).trigger('change');
-                    const filterDate = document.querySelector('#flatpickr-filter-date');
-                    filterDate?._flatpickr?.clear();
                 });
 
                 Livewire.on('modalOpened', () => {

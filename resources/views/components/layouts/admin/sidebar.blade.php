@@ -168,6 +168,7 @@
             'dokumen' => [
                 'routes' => [
                     'admin.dokumen.berita-acara',
+                    'admin.dokumen.absensi',
                 ]
             ],
         ];
@@ -311,6 +312,10 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.dokumen.berita-acara') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.dokumen.berita-acara', false) ? 'active' : '' }}">Berita Acara</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.dokumen.absensi') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.dokumen.absensi', false) ? 'active' : '' }}">Absensi</a>
                             </li>
                         </ul>
                     </div>
