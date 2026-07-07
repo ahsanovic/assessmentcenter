@@ -1,34 +1,42 @@
 <?php
 
+use Database\Migrations\Concerns\ManagesMysqlConstraints;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    use ManagesMysqlConstraints;
+
     public function up(): void
     {
-        Schema::table('absensi_event', function (Blueprint $table) {
-            $table->dropForeign(['event_id']);
-            $table->dropUnique(['event_id', 'sesi']);
-        });
+        $this->dropForeignOnColumnIfExists('absensi_event', 'event_id');
+        $this->dropIndexIfExists('absensi_event', 'absensi_event_event_id_sesi_unique');
 
-        Schema::table('absensi_event', function (Blueprint $table) {
-            $table->unique(['event_id', 'tanggal', 'sesi']);
-            $table->foreign('event_id')->references('id')->on('event')->cascadeOnDelete();
-        });
+        if (! $this->indexExists('absensi_event', 'absensi_event_event_id_tanggal_sesi_unique')) {
+            Schema::table('absensi_event', function (Blueprint $table) {
+                $table->unique(
+                    ['event_id', 'tanggal', 'sesi'],
+                    'absensi_event_event_id_tanggal_sesi_unique'
+                );
+            });
+        }
+
+        $this->addForeignEventIdIfMissing();
     }
 
     public function down(): void
     {
-        Schema::table('absensi_event', function (Blueprint $table) {
-            $table->dropForeign(['event_id']);
-            $table->dropUnique(['event_id', 'tanggal', 'sesi']);
-        });
+        $this->dropForeignOnColumnIfExists('absensi_event', 'event_id');
+        $this->dropIndexIfExists('absensi_event', 'absensi_event_event_id_tanggal_sesi_unique');
 
-        Schema::table('absensi_event', function (Blueprint $table) {
-            $table->unique(['event_id', 'sesi']);
-            $table->foreign('event_id')->references('id')->on('event')->cascadeOnDelete();
-        });
+        if (! $this->indexExists('absensi_event', 'absensi_event_event_id_sesi_unique')) {
+            Schema::table('absensi_event', function (Blueprint $table) {
+                $table->unique(['event_id', 'sesi'], 'absensi_event_event_id_sesi_unique');
+            });
+        }
+
+        $this->addForeignEventIdIfMissing();
     }
 };
