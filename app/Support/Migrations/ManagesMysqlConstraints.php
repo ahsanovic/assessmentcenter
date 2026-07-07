@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Migrations\Concerns;
+namespace App\Support\Migrations;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
