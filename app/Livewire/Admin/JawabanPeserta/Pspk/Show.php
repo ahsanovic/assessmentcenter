@@ -89,8 +89,8 @@ class Show extends Component
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Jawaban PSPK');
 
-        $headers = ['NIP', 'Nama Peserta', 'Soal', 'Jawaban Peserta', 'Kunci', 'Skor per Opsi'];
-        $lastCol = 'F';
+        $headers = ['NIP', 'Nama Peserta', 'Jabatan', 'Unit Kerja', 'Soal', 'Jawaban Peserta', 'Kunci', 'Skor per Opsi'];
+        $lastCol = 'H';
 
         $sheet->mergeCells("A1:{$lastCol}1");
         $sheet->setCellValue('A1', $this->event->nama_event);
@@ -133,6 +133,8 @@ class Show extends Component
             foreach ($rows as $answerRow) {
                 $nip = (string) ($peserta->nip ?? '-');
                 $nama = (string) ($peserta->nama ?? '-');
+                $jabatan = (string) ($peserta->jabatan ?? '-');
+                $unitKerja = (string) ($peserta->unit_kerja ?? '-');
                 $soalText = 'Soal '.$answerRow['nomor'].'. '.$answerRow['pertanyaan'];
                 $jawaban = $answerRow['jawaban_peserta'];
                 $kunci = $answerRow['kunci'] ?? '-';
@@ -140,10 +142,12 @@ class Show extends Component
 
                 $sheet->setCellValueExplicit('A'.$row, $nip, DataType::TYPE_STRING);
                 $sheet->setCellValueExplicit('B'.$row, $nama, DataType::TYPE_STRING);
-                $sheet->setCellValueExplicit('C'.$row, $soalText, DataType::TYPE_STRING);
-                $sheet->setCellValueExplicit('D'.$row, $jawaban, DataType::TYPE_STRING);
-                $sheet->setCellValueExplicit('E'.$row, $kunci, DataType::TYPE_STRING);
-                $sheet->setCellValueExplicit('F'.$row, $skorOpsi, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('C'.$row, $jabatan, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('D'.$row, $unitKerja, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('E'.$row, $soalText, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('F'.$row, $jawaban, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('G'.$row, $kunci, DataType::TYPE_STRING);
+                $sheet->setCellValueExplicit('H'.$row, $skorOpsi, DataType::TYPE_STRING);
 
                 $row++;
             }
