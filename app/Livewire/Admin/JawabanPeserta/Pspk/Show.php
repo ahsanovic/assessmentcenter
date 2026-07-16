@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Pspk\SoalPspk;
 use App\Models\Pspk\UjianPspk;
 use App\Services\PspkJawabanService;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -159,8 +160,8 @@ class Show extends Component
         }
 
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $filename = 'jawaban-pspk-'.str_replace(' ', '-', strtolower($this->event->nama_event ?? 'event')).'-'.date('Y-m-d').'.xlsx';
-        $path = storage_path('app/'.$filename);
+        $filename = 'jawaban-pspk-'.Str::slug($this->event->nama_event ?? 'event').'-'.date('Y-m-d').'.xlsx';
+        $path = storage_path('app/'.Str::uuid().'.xlsx');
         $writer->save($path);
 
         return response()->streamDownload(function () use ($path) {
