@@ -120,6 +120,8 @@ class Show extends Component
             ->get()
             ->keyBy('id');
 
+        $canonicalSoalOrder = $service->canonicalSoalOrder($allSoalIds, $soalMap, $this->levelPspk);
+
         $row = 4;
 
         foreach ($ujianList as $ujian) {
@@ -128,7 +130,8 @@ class Show extends Component
                 (string) $ujian->soal_id,
                 (string) $ujian->jawaban,
                 $this->levelPspk,
-                $soalMap
+                $soalMap,
+                $canonicalSoalOrder
             );
 
             foreach ($rows as $answerRow) {

@@ -147,33 +147,69 @@ class PspkJawabanService
     }
 
     /**
+     * @param  array<int|string>  $soalIds
+     * @return array<int>
+     */
+    public function canonicalSoalOrder(array $soalIds, Collection $soalMap, int $levelPspk): array
+    {
+        $ids = collect($soalIds)
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values();
+
+        if (in_array($levelPspk, [3, 4], true)) {
+            return $ids
+                ->sortBy(function (int $id) use ($soalMap) {
+                    $soal = $soalMap->get($id);
+                    $jenis = $soal ? (int) $soal->jenis_soal : 0;
+
+                    return [$jenis, $id];
+                })
+                ->values()
+                ->all();
+        }
+
+        return $ids->sort()->values()->all();
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function buildRowsForUjian(
         string $soalIdCsv,
         string $jawabanCsv,
         int $levelPspk,
-        ?Collection $soalMap = null
+        ?Collection $soalMap = null,
+        ?array $canonicalSoalOrder = null
     ): array {
         $soalIds = explode(',', $soalIdCsv);
         $jawabans = explode(',', $jawabanCsv);
 
+        $jawabanBySoalId = [];
+        foreach ($soalIds as $i => $soalId) {
+            $jawabanBySoalId[(int) $soalId] = $jawabans[$i] ?? '0';
+        }
+
         if ($soalMap === null) {
             $soalMap = SoalPspk::with('aspek')
-                ->whereIn('id', $soalIds)
+                ->whereIn('id', array_keys($jawabanBySoalId))
                 ->get()
                 ->keyBy('id');
         }
 
+        $orderedSoalIds = $canonicalSoalOrder ?? array_map('intval', $soalIds);
+
         $rows = [];
 
-        foreach ($soalIds as $i => $soalId) {
-            $soal = $soalMap->get((int) $soalId);
+        foreach ($orderedSoalIds as $i => $soalId) {
+            $soalId = (int) $soalId;
+            $soal = $soalMap->get($soalId);
             if (! $soal) {
                 continue;
             }
 
-            $jawaban = $jawabans[$i] ?? '0';
+            $jawaban = $jawabanBySoalId[$soalId] ?? '0';
             $jenisKunci = $this->resolveJenisKunci($soal, $levelPspk);
             $status = $this->evaluateAnswer($soal, $jawaban, $levelPspk);
             $kunciLetter = $this->kunciLetterForDisplay($soal, $levelPspk);
