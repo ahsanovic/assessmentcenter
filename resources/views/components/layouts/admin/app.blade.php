@@ -69,6 +69,7 @@
 
     <!-- Plugin js for this page -->
     <script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/js/admin-dashboard-charts.js') }}"></script>
     <!-- End plugin js for this page -->
 
     <script src="{{ asset('assets/vendors/sweetalert2/sweetalert2.min.js') }}"></script>
