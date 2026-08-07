@@ -12,8 +12,8 @@
                     <div class="card mt-4 mb-4 bg-light-subtle">
                         <div class="card-body">
                             <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
-                                <div class="col-sm-4">
+                            <div class="row mt-2 align-items-end">
+                                <div class="col-sm-3">
                                     <div class="input-group" wire:ignore>
                                         <span class="input-group-text bg-white"><i data-feather="search"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
@@ -38,21 +38,34 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-auto">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
-                                <div class="col-sm-4 d-flex justify-content-end">
-                                    <div class="me-2">
-                                        <x-btn-download 
-                                            :route="'admin.tes-selesai.cakap-digital.download-rekap'"
-                                            :params="[$event->id]"
-                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
-                                            text="Download Rekap Laporan (Excel)"
-                                            icon="download"
-                                            color="success"
-                                            :disabled="$data->isEmpty()"
-                                        />
-                                    </div>
+                                <div class="col d-flex justify-content-end flex-wrap gap-2 align-items-end">
+                                    <x-btn-download 
+                                        :route="'admin.tes-selesai.cakap-digital.download-rekap'"
+                                        :params="[$event->id]"
+                                        :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                        text="Rekap Laporan (Excel)"
+                                        icon="download"
+                                        color="success"
+                                        :disabled="$data->isEmpty()"
+                                    />
+                                    <x-btn-download 
+                                        :route="'admin.tes-selesai.cakap-digital.download-all-laporan'"
+                                        :params="[$event->id]"
+                                        :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                                        text="Laporan PDF (.zip)"
+                                        icon="download"
+                                        color="dark"
+                                        :disabled="$data->isEmpty()"
+                                    />
+                                    <button type="button" class="btn btn-sm btn-icon-text btn-warning text-dark" wire:click="setUjianKeBelumSelesaiMassalConfirmation">
+                                        <span wire:ignore>
+                                            <i class="btn-icon-prepend" data-feather="refresh-cw"></i>
+                                        </span>
+                                        Set belum selesai (massal)
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +80,7 @@
                                     <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
                                     <th>Mulai Tes</th>
                                     <th>Selesai Tes</th>
-                                    <th class="text-center"></th>
+                                    <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,10 +125,30 @@
                                                 <span class="text-muted px-1">/</span>
                                                 {{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('H:i:s') }}
                                             </span>
+                                        </td>
                                         <td class="text-center">
                                             @if ($item->is_finished == 'true')
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
+                                                    wire:click="setUjianKeBelumSelesaiConfirmation('{{ $item->ujian_cakap_digital_id }}')"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Set ujian ke belum selesai"
+                                                    style="transition: background 0.2s;"
+                                                >
+                                                    <i class="link-icon" data-feather="refresh-cw"></i>
+                                                </button>
                                                 <x-table.btn-delete :id="$item->hasil_cakap_digital_id" />
                                             @endif
+                                            <x-table.btn-link
+                                                :route="'admin.tes-selesai.cakap-digital.download'"
+                                                :params="['idEvent' => $item->event_id, 'identifier' => $item->nip ?: $item->nik]"
+                                                :icon="'download'"
+                                                :tooltip="'Download Pdf'"
+                                                :color="'success'"
+                                                :target="'_blank'"
+                                            />
                                         </td>
                                     </tr>
                                 @endforeach
@@ -128,3 +161,38 @@
         <x-pagination :items="$data" />
     </div>
 </div>
+@push('js')
+    <script>
+        window.addEventListener('set-ujian-ke-belum-selesai-confirmation', () => {
+            Swal.fire({
+                title: 'Set ujian ke belum selesai?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, ubah status',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('setUjianKeBelumSelesai');
+                }
+            });
+        });
+        window.addEventListener('set-ujian-ke-belum-selesai-massal-confirmation', () => {
+            Swal.fire({
+                title: 'Set semua ujian Cakap Digital ke belum selesai?',
+                html: 'Semua ujian pada event ini yang berstatus <b>selesai</b> akan diubah menjadi <b>belum selesai</b>.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ffc107',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, terapkan ke semua',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('setUjianKeBelumSelesaiMassal');
+                }
+            });
+        });
+    </script>
+@endpush

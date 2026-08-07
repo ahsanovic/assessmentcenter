@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai;
 
 use App\Models\CakapDigital\HasilCakapDigital;
+use App\Models\CakapDigital\UjianCakapDigital;
 use App\Models\Event;
 use App\Models\Peserta;
 use Livewire\Attributes\Layout;
@@ -54,7 +55,8 @@ class ShowPeserta extends Component
                 'hasil_cakap_digital.id as hasil_cakap_digital_id',
                 'hasil_cakap_digital.created_at as waktu_selesai',
                 'ujian_cakap_digital.created_at as waktu_mulai',
-                'is_finished'
+                'ujian_cakap_digital.id as ujian_cakap_digital_id',
+                'ujian_cakap_digital.is_finished',
             )
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -74,6 +76,62 @@ class ShowPeserta extends Component
         return view('livewire.admin.data-tes.tes-cakap-digital.tes-selesai.show-peserta', [
             'data' => $data
         ]);
+    }
+
+    public function setUjianKeBelumSelesaiConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('set-ujian-ke-belum-selesai-confirmation');
+    }
+
+    public function setUjianKeBelumSelesaiMassalConfirmation()
+    {
+        $this->dispatch('set-ujian-ke-belum-selesai-massal-confirmation');
+    }
+
+    #[On('setUjianKeBelumSelesaiMassal')]
+    public function setUjianKeBelumSelesaiMassal()
+    {
+        try {
+            $updated = UjianCakapDigital::where('event_id', $this->id_event)
+                ->where('is_finished', 'true')
+                ->update(['is_finished' => 'false']);
+
+            if ($updated === 0) {
+                $this->dispatch('toast', ['type' => 'info', 'message' => 'Tidak ada ujian dengan status selesai pada event ini']);
+
+                return;
+            }
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Berhasil menyetel ' . $updated . ' ujian ke belum selesai',
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian secara massal']);
+        } finally {
+            $this->resetPage();
+        }
+    }
+
+    #[On('setUjianKeBelumSelesai')]
+    public function setUjianKeBelumSelesai()
+    {
+        try {
+            $ujian = UjianCakapDigital::find($this->selected_id);
+            if (!$ujian) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => 'Data ujian tidak ditemukan']);
+
+                return;
+            }
+            $ujian->is_finished = 'false';
+            $ujian->save();
+            $this->dispatch('toast', ['type' => 'success', 'message' => 'Berhasil menyetel ujian ke belum selesai']);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian ke belum selesai']);
+        } finally {
+            $this->resetPage();
+        }
     }
 
     public function deleteConfirmation($id)

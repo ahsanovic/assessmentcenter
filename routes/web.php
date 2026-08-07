@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DownloadBeritaAcaraController;
+use App\Http\Controllers\DownloadLaporanCakapDigitalController;
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
@@ -102,6 +103,8 @@ Route::prefix('bkdac')->group(function () {
         // data tes cakap digital selesai
         Route::get('cakap-digital/cd-finish', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\Index::class)->name('admin.tes-selesai.cakap-digital');
         Route::get('cakap-digital/cd-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.cakap-digital.show-peserta');
+        Route::get('cakap-digital/cd-finish/{idEvent}/{identifier}/download', [DownloadLaporanCakapDigitalController::class, 'createPdf'])->name('admin.tes-selesai.cakap-digital.download');
+        Route::get('cakap-digital/cd-finish/{idEvent}/download-all', [DownloadLaporanCakapDigitalController::class, 'downloadAll'])->name('admin.tes-selesai.cakap-digital.download-all-laporan');
         Route::get('cakap-digital/cd-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapCakapDigital'])->name('admin.tes-selesai.cakap-digital.download-rekap');
 
         // data tes intelektual berlangsung
