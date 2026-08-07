@@ -87,7 +87,7 @@ class UjianSubTes1 extends Component
         ]);
     }
 
-    public function saveAndNext($nomor_soal)
+    public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $index_array = $nomor_soal - 1;
         $data = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
@@ -95,30 +95,31 @@ class UjianSubTes1 extends Component
             ->where('is_finished', 'false')
             ->first();
 
+        if (!$data) {
+            $this->skipRender();
+            return null;
+        }
+
         $soal_id = explode(',', $data->soal_id);
 
-        // update jawaban
         $jawaban_user = explode(',', $data->jawaban);
+        $jawaban_baru = $jawaban ?? ($this->jawaban_user[$index_array] ?? '0');
+        $jawaban_baru = ($jawaban_baru === '' || $jawaban_baru === null) ? '0' : $jawaban_baru;
 
-        $jawaban_user[$index_array] = $this->jawaban_user[$index_array] ?? '0';
-        $jawaban_user_str = implode(',', $jawaban_user);
-
-        // Simpan jawaban user
-        $data->jawaban = $jawaban_user_str;
+        $jawaban_user[$index_array] = $jawaban_baru;
+        $data->jawaban = implode(',', $jawaban_user);
         $data->save();
 
-        // Perbarui Livewire state
         $this->jawaban_user = $jawaban_user;
-        $this->jawaban_kosong = collect($this->jawaban_user)->filter(fn($j) => $j == '0')->count();
+        $this->jawaban_kosong = collect($this->jawaban_user)->filter(fn ($j) => $j == '0')->count();
 
-        // hitung nilai
         $total_skor = 0;
         for ($i = 1; $i <= $this->jml_soal; $i++) {
             $idx = $i - 1;
-            $jawaban = $jawaban_user[$idx] ?? null;
-            if ($jawaban && isset($soal_id[$idx])) {
+            $jawabanItem = $jawaban_user[$idx] ?? null;
+            if ($jawabanItem && isset($soal_id[$idx])) {
                 $soal = SoalIntelektual::find($soal_id[$idx]);
-                if ($soal && $soal->kunci_jawaban == $jawaban) {
+                if ($soal && $soal->kunci_jawaban == $jawabanItem) {
                     $total_skor += 1;
                 }
             }
@@ -126,28 +127,66 @@ class UjianSubTes1 extends Component
         $data->nilai = $total_skor;
         $data->save();
 
-        // Hapus flag soal jika ada
-        if (isset($this->flagged[$nomor_soal])) {
-            unset($this->flagged[$nomor_soal]);
-    
-            // Hapus juga dari localStorage (via JS)
-            $this->dispatch('toggle-flag-in-browser', nomor: $nomor_soal);
+        $target = $nomor_soal < $this->jml_soal ? $nomor_soal + 1 : $nomor_soal;
+
+        $this->skipRender();
+
+        $payload = $this->soalPayload($target);
+
+        if ((int) $nomor_soal === (int) $this->jml_soal) {
+            $payload['prompt_soal_terakhir'] = true;
+            $payload['semua_terjawab'] = (int) $this->jawaban_kosong === 0;
+            $payload['jawaban_kosong'] = (int) $this->jawaban_kosong;
+            $payload['soal_belum_dijawab'] = $this->indeksPertamaBelumDijawab();
         }
 
-        if ($nomor_soal < $this->jml_soal) {
-            $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => $nomor_soal + 1]), true);
-        } else if ($nomor_soal == $this->jml_soal) {
-            $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => $nomor_soal]), true);
+        return $payload;
+    }
+
+    private function indeksPertamaBelumDijawab(): int
+    {
+        foreach ($this->jawaban_user as $idx => $jawaban) {
+            if ((string) $jawaban === '0' || $jawaban === '' || $jawaban === null) {
+                return $idx + 1;
+            }
         }
+
+        return 1;
     }
 
     public function navigate($id)
     {
-        if ($id >= 1 && $id <= $this->jml_soal) {
-            $this->id_soal = $id;
-            $this->soal = SoalIntelektual::find($this->nomor_soal[$id - 1]);
-            $this->redirect(route('peserta.tes-intelektual.subtes1', ['id' => $id]), true);
+        if ($id < 1 || $id > $this->jml_soal) {
+            $this->skipRender();
+            return null;
         }
+
+        $this->skipRender();
+
+        return $this->soalPayload((int) $id);
+    }
+
+    private function soalPayload(int $id): array
+    {
+        $this->id_soal = $id;
+        $this->soal = SoalIntelektual::find($this->nomor_soal[$id - 1]);
+
+        $jawaban = (string) ($this->jawaban_user[$id - 1] ?? '');
+        $selected = ($jawaban !== '' && $jawaban !== '0') ? $jawaban : '';
+
+        return [
+            'nomor' => $id,
+            'teks' => $this->soal?->soal,
+            'opsi_a' => $this->soal?->opsi_a,
+            'opsi_b' => $this->soal?->opsi_b,
+            'opsi_c' => $this->soal?->opsi_c,
+            'opsi_d' => $this->soal?->opsi_d,
+            'opsi_e' => $this->soal?->opsi_e,
+            'selected' => $selected,
+            'jawaban_user' => array_values($this->jawaban_user),
+            'jawaban_kosong' => (int) $this->jawaban_kosong,
+            'url' => route('peserta.tes-intelektual.subtes1', ['id' => $id]),
+        ];
     }
 
     public function finish()
