@@ -3,15 +3,6 @@
     .form-check-input[type="checkbox"] {
         border: 2px solid #dee2e6;
     }
-    .form-check-input[type="radio"] {
-        width: 1.2em;
-        height: 1.2em;
-        cursor: pointer;
-    }
-    .form-check-input[type="radio"]:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
     .question-card {
         transition: all 0.3s ease;
         border-left: 4px solid transparent;
@@ -20,18 +11,43 @@
         border-left-color: #0d6efd;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
+    .question-card.has-error {
+        border-left-color: #dc3545;
+    }
     .rating-label {
         font-size: 0.85rem;
         color: #6c757d;
     }
-    .rating-container {
-        background: linear-gradient(90deg, #fee2e2 0%, #fef3c7 25%, #d1fae5 50%, #cffafe 75%, #ddd6fe 100%);
-        border-radius: 50px;
-        padding: 0.75rem 1.5rem;
+    .star-rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
     }
-    .rating-number {
-        font-weight: 600;
-        color: #374151;
+    .star-btn {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        line-height: 1;
+        cursor: pointer;
+        color: #d1d5db;
+        font-size: 2.5rem;
+        transition: color 0.15s ease, transform 0.15s ease;
+    }
+    .star-btn:hover,
+    .star-btn:focus-visible {
+        color: #fbbf24;
+        transform: scale(1.12);
+        outline: none;
+    }
+    .star-btn.active {
+        color: #f59e0b;
+    }
+    .star-rating:hover .star-btn {
+        color: #fbbf24;
+    }
+    .star-rating:hover .star-btn:hover ~ .star-btn {
+        color: #d1d5db;
     }
 </style>
 @endpush
@@ -89,7 +105,7 @@
                         </div>
                         <div>
                             <h6 class="mb-2 text-info">Petunjuk Pengisian</h6>
-                            <p class="mb-0 text-muted">Berikan penilaian Anda terhadap pelaksanaan Penilaian Kompetensi (Uji Kompetensi) yang telah diikuti dengan cara memilih rentang jawaban yang telah disediakan.</p>
+                            <p class="mb-0 text-muted">Berikan penilaian Anda terhadap pelaksanaan Penilaian Kompetensi (Uji Kompetensi) yang telah diikuti dengan cara memilih jumlah bintang (1–5). Semua pertanyaan wajib diisi sebelum mengirim jawaban.</p>
                         </div>
                     </div>
                 </div>
@@ -102,7 +118,13 @@
         <div class="card-body p-4">
             <form wire:submit="submit">
                 @foreach ($kuesioner as $key => $item)
-                    <div class="question-card card mb-4 border-0 bg-light rounded-3">
+                    @php
+                        $hasError = $item->is_esai === 'f'
+                            ? $errors->has("jawaban_responden.{$item->id}.skor")
+                            : $errors->has("jawaban_responden.{$item->id}.jawaban_esai");
+                        $selectedSkor = (int) ($jawaban_responden[$item->id]['skor'] ?? 0);
+                    @endphp
+                    <div class="question-card card mb-4 border-0 bg-light rounded-3 {{ $hasError ? 'has-error' : '' }}">
                         <div class="card-body p-4">
                             @if ($item->is_esai == 'f')
                                 <!-- Rating Question -->
@@ -110,43 +132,50 @@
                                     <span class="badge bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
                                         {{ $loop->iteration }}
                                     </span>
-                                    <h6 class="mb-0 flex-grow-1">{{ $item->deskripsi }}</h6>
+                                    <h6 class="mb-0 flex-grow-1">
+                                        {{ $item->deskripsi }}
+                                        <span class="text-danger">*</span>
+                                    </h6>
                                 </div>
-                                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center mt-4">
-                                    <span class="rating-label me-md-3 mb-2 mb-md-0">Sangat Tidak Setuju</span>
-                                    <div class="rating-container d-flex align-items-center gap-3">
+                                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center mt-4 gap-2">
+                                    <span class="rating-label me-md-2">Sangat Tidak Setuju</span>
+                                    <div class="star-rating" role="radiogroup" aria-label="Penilaian pertanyaan {{ $loop->iteration }}">
                                         @for ($i = 1; $i <= 5; $i++)
-                                            <div class="form-check form-check-inline m-0">
-                                                <input 
-                                                    class="form-check-input" 
-                                                    type="radio"
-                                                    wire:model.defer="jawaban_responden.{{ $item->id }}.skor" 
-                                                    value="{{ $i }}"
-                                                    id="rating_{{ $item->id }}_{{ $i }}"
-                                                >
-                                                <label class="form-check-label rating-number" for="rating_{{ $item->id }}_{{ $i }}">
-                                                    {{ $i }}
-                                                </label>
-                                            </div>
+                                            <button
+                                                type="button"
+                                                class="star-btn {{ $selectedSkor >= $i ? 'active' : '' }}"
+                                                wire:click="setRating({{ $item->id }}, {{ $i }})"
+                                                aria-label="{{ $i }} bintang"
+                                                title="{{ $i }} bintang"
+                                            >★</button>
                                         @endfor
                                     </div>
-                                    <span class="rating-label ms-md-3 mt-2 mt-md-0">Sangat Setuju</span>
+                                    <span class="rating-label ms-md-2">Sangat Setuju</span>
                                 </div>
+                                @error("jawaban_responden.{$item->id}.skor")
+                                    <div class="text-danger small text-center mt-3">{{ $message }}</div>
+                                @enderror
                             @else
                                 <!-- Essay Question -->
                                 <div class="d-flex align-items-start mb-3">
                                     <span class="badge bg-success rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
                                         {{ $loop->iteration }}
                                     </span>
-                                    <h6 class="mb-0 flex-grow-1">{{ $item->deskripsi }}</h6>
+                                    <h6 class="mb-0 flex-grow-1">
+                                        {{ $item->deskripsi }}
+                                        <span class="text-danger">*</span>
+                                    </h6>
                                 </div>
                                 <div class="mt-3">
                                     <textarea 
-                                        class="form-control border-0 shadow-sm" 
+                                        class="form-control border-0 shadow-sm @error("jawaban_responden.{$item->id}.jawaban_esai") is-invalid @enderror" 
                                         wire:model.defer="jawaban_responden.{{ $item->id }}.jawaban_esai" 
                                         rows="4"
                                         placeholder="Tulis jawaban Anda di sini..."
                                     ></textarea>
+                                    @error("jawaban_responden.{$item->id}.jawaban_esai")
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             @endif
                         </div>
@@ -157,36 +186,29 @@
                 <div class="card border-0 bg-warning bg-opacity-10 rounded-3 mb-4">
                     <div class="card-body p-4">
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="konfirmasi" wire:model="konfirmasi" style="width: 1.25em; height: 1.25em;">
+                            <input type="checkbox" class="form-check-input @error('konfirmasi') is-invalid @enderror" id="konfirmasi" wire:model.live="konfirmasi" style="width: 1.25em; height: 1.25em;">
                             <label class="form-check-label ms-2" for="konfirmasi">
                                 <strong>Saya telah mengisi semua pertanyaan dengan jujur</strong>
+                                <span class="text-danger">*</span>
                             </label>
+                            @error('konfirmasi')
+                                <div class="invalid-feedback d-block mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button class="btn btn-primary btn-lg px-5" id="submit" wire:click.prevent="submit" disabled>
-                        <i class="me-2" data-feather="send"></i>
-                        Kirim Jawaban
+                    <button class="btn btn-primary btn-lg px-5" type="submit" wire:loading.attr="disabled" @disabled(!$konfirmasi)>
+                        <span wire:loading.remove wire:target="submit">
+                            <i class="me-2" data-feather="send"></i>
+                            Kirim Jawaban
+                        </span>
+                        <span wire:loading wire:target="submit">Mengirim...</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-@push('js')
-<script>
-    $(document).ready(function() {
-        $('#konfirmasi').on('change', function() {
-            if ($(this).is(':checked')) {
-                $('#submit').removeAttr('disabled');
-            } else {
-                $('#submit').attr('disabled', 'disabled');
-            }
-        });
-    });
-</script>
-@endpush

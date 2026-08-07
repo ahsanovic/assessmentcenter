@@ -14,6 +14,7 @@ class Index extends Component
     public $kuesioner;
     public $jawaban_responden = [];
     public $jawaban_esai = [];
+    public $konfirmasi = false;
 
     public function mount()
     {
@@ -21,7 +22,7 @@ class Index extends Component
         $jawaban = JawabanResponden::where('event_id', Auth::user()->event_id)
             ->where('peserta_id', Auth::user()->id)
             ->first();
-            
+
         if ($jawaban) {
             $kuesioner_id = explode(',', $jawaban->kuesioner_id);
             $skor = explode(',', $jawaban->skor);
@@ -32,7 +33,12 @@ class Index extends Component
             }
 
             if (!empty($jawaban->jawaban_esai)) {
-                $this->jawaban_responden[$item->id]['jawaban_esai'] = $jawaban->jawaban_esai;
+                foreach ($this->kuesioner as $item) {
+                    if ($item->is_esai === 't') {
+                        $this->jawaban_responden[$item->id]['jawaban_esai'] = $jawaban->jawaban_esai;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -42,8 +48,35 @@ class Index extends Component
         return view('livewire.peserta.kuesioner.index');
     }
 
+    public function setRating($kuesionerId, $skor)
+    {
+        $this->jawaban_responden[$kuesionerId]['skor'] = (int) $skor;
+        $this->resetErrorBag("jawaban_responden.{$kuesionerId}.skor");
+    }
+
     public function submit()
     {
+        $rules = [
+            'konfirmasi' => 'accepted',
+        ];
+        $messages = [
+            'konfirmasi.accepted' => 'Anda harus mengonfirmasi bahwa semua pertanyaan telah diisi dengan jujur.',
+        ];
+
+        foreach ($this->kuesioner as $item) {
+            if ($item->is_esai === 'f') {
+                $rules["jawaban_responden.{$item->id}.skor"] = 'required|integer|min:1|max:5';
+                $messages["jawaban_responden.{$item->id}.skor.required"] = 'Penilaian bintang wajib diisi.';
+                $messages["jawaban_responden.{$item->id}.skor.min"] = 'Penilaian bintang wajib diisi.';
+                $messages["jawaban_responden.{$item->id}.skor.max"] = 'Penilaian maksimal 5 bintang.';
+            } else {
+                $rules["jawaban_responden.{$item->id}.jawaban_esai"] = 'required|string|min:1';
+                $messages["jawaban_responden.{$item->id}.jawaban_esai.required"] = 'Jawaban esai wajib diisi.';
+            }
+        }
+
+        $this->validate($rules, $messages);
+
         try {
             $kuesioner_id = [];
             $skor = [];
@@ -51,7 +84,7 @@ class Index extends Component
             foreach ($this->kuesioner as $item) {
                 if ($item->is_esai === 'f') {
                     $kuesioner_id[] = $item->id;
-                    $skor[] = $this->jawaban_responden[$item->id]['skor'] ?? 0;
+                    $skor[] = $this->jawaban_responden[$item->id]['skor'];
                 }
             }
 
@@ -82,7 +115,6 @@ class Index extends Component
 
             $this->redirect(route('peserta.tes-potensi.hasil-nilai'), true);
         } catch (\Throwable $th) {
-            // throw $th;
             session()->flash('toast', [
                 'type' => 'error',
                 'message' => 'Gagal mengirimkan kuesioner'
