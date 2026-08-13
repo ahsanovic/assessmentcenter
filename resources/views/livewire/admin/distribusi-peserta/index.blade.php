@@ -7,10 +7,8 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
                                     <select wire:model.live="jabatan_diuji" class="form-select"
                                         id="jabatan-diuji">
@@ -40,21 +38,17 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div wire:ignore>
-                                        <select wire:model.live="event" class="form-select" id="event">
-                                            <option value="">event</option>
-                                            @foreach ($option_event as $key => $item)
-                                                <option value="{{ $key }}">{{ $item }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
+                                        <input wire:model.live.debounce.400ms="search" class="form-control" placeholder="Ketik nama event…" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
@@ -113,19 +107,3 @@
         <x-pagination :items="$data" />
     </div>
 </div>
-@push('js')
-    @script()
-        <script>
-            $(document).ready(function() {
-                $('#event').select2()
-                    .on('change', function(e) {
-                        @this.set('event', $(this).val());
-                    });
-                
-                Livewire.on('reset-select2', () => {
-                    $('#event').val(null).trigger('change');
-                });
-            })
-        </script>
-    @endscript
-@endpush

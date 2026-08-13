@@ -10,10 +10,8 @@
                     <!-- Button Tambah dengan style modern -->
                     <x-modal.btn-add text="Tambah Urutan Tes" icon="plus-circle" />
                     
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
                                     <select wire:model.live="alat_tes" class="form-select form-select-sm"
                                         id="alat-tes">
@@ -27,8 +25,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">

@@ -9,12 +9,11 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
-                    <div class="card mt-3 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-4">
-                                    <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control form-control-sm" placeholder="cari peserta berdasar nama / nip / jabatan / instansi" />
                                     </div>
                                 </div>
@@ -22,8 +21,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">

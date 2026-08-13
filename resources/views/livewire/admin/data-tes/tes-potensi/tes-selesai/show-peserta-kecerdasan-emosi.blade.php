@@ -1,32 +1,29 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.tes-selesai'), 'title' => 'Tes Potensi Selesai'],
+        ['url' => route('admin.tes-selesai'), 'title' => 'Hasil Tes Potensi'],
         ['url' => null, 'title' => 'Peserta Tes Kecerdasan Emosi']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title mb-0">Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.event-header :nama="$event->nama_event" />
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-4">
-                                    <div class="input-group" wire:ignore>
-                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
-                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta..." autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                        <table class="table ac-data-table table-hover align-middle" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
@@ -91,7 +88,7 @@
 
                                 @if($data->count() === 0)
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted py-4">
+                                        <td colspan="7" class="text-center text-muted py-5 ac-empty-state">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
                                         </td>

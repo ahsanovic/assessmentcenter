@@ -20,8 +20,6 @@ class Index extends Component
 
     public $selected_id;
 
-    public $event;
-
     #[Url(as: 'q')]
     public ?string $search = '';
 
@@ -40,7 +38,6 @@ class Index extends Component
         $this->reset(['level_pspk', 'tgl_mulai', 'search']);
         $this->resetPage();
         $this->render();
-        $this->dispatch('reset-select2');
     }
 
     public function render()
@@ -66,8 +63,8 @@ class Index extends Component
                     $query->where('metode_tes_id', $metode);
                 }
             })
-            ->when($this->event, function ($query) {
-                $query->where('id', $this->event);
+            ->when($this->search, function ($query) {
+                $query->where('nama_event', 'like', '%'.$this->search.'%');
             })
             ->when($this->tgl_mulai, function ($query) {
                 $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
@@ -77,8 +74,7 @@ class Index extends Component
             ->paginate(10);
 
         $option_level_pspk = RefLevelPspk::pluck('nama_pspk', 'id');
-        $option_event = Event::where('metode_tes_id', 5)->pluck('nama_event', 'id');
 
-        return view('livewire.admin.data-tes.tes-pspk.tes-selesai.index', compact('data', 'option_event', 'option_level_pspk'));
+        return view('livewire.admin.data-tes.tes-pspk.tes-selesai.index', compact('data', 'option_level_pspk'));
     }
 }

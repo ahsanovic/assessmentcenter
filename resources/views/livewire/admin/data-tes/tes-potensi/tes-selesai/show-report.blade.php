@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.tes-selesai'), 'title' => 'Data Tes Selesai'],
+        ['url' => route('admin.tes-selesai'), 'title' => 'Hasil Tes Potensi'],
         ['url' => route('admin.tes-selesai.show-peserta', ['idEvent' => $id_event]), 'title' => 'Peserta'],
         ['url' => null, 'title' => 'Report'],
     ]" />
@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
+                <div class="card ac-report-card">
                     <div class="card-body">
                         <h4 class="text-center mt-4 mb-4">LAPORAN PENILAIAN POTENSI INDIVIDU</h4>
                         <div class="d-flex justify-content-between mb-4 mx-3">

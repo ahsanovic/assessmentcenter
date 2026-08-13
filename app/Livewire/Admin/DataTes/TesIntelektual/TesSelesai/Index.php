@@ -17,7 +17,6 @@ class Index extends Component
     public $jabatan_diuji;
     public $tgl_mulai;
     public $selected_id;
-    public $event;
 
     #[Url(as: 'q')]
     public ?string $search =  '';
@@ -37,7 +36,6 @@ class Index extends Component
         $this->reset(['jabatan_diuji', 'tgl_mulai', 'search']);
         $this->resetPage();
         $this->render();
-        $this->dispatch('reset-select2');
     }
 
     public function render()
@@ -69,8 +67,8 @@ class Index extends Component
         ])
             ->whereIn('metode_tes_id', [1,2])
             // ->with(['peserta', 'hasilIntelektual'])
-            ->when($this->event, function ($query) {
-                $query->where('id', $this->event);
+            ->when($this->search, function ($query) {
+                $query->where('nama_event', 'like', '%'.$this->search.'%');
             })
             ->when($this->jabatan_diuji, function ($query) {
                 $query->where('jabatan_diuji_id', $this->jabatan_diuji);
@@ -83,8 +81,7 @@ class Index extends Component
             ->paginate(10);
 
         $option_jabatan_diuji = RefJabatanDiuji::pluck('jenis', 'id');
-        $option_event = Event::whereIn('metode_tes_id', [1,2])->pluck('nama_event', 'id');
 
-        return view('livewire.admin.data-tes.tes-intelektual.tes-selesai.index', compact('data', 'option_jabatan_diuji', 'option_event'));
+        return view('livewire.admin.data-tes.tes-intelektual.tes-selesai.index', compact('data', 'option_jabatan_diuji'));
     }
 }

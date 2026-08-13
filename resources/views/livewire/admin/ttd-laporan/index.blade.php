@@ -10,25 +10,21 @@
                     <!-- Button Tambah dengan style modern -->
                     <x-modal.btn-add text="Tambah TTD Laporan" icon="plus-circle" />
                     
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-2">
-                                    <div wire:ignore>
-                                        <select wire:model.live="is_active" id="is-active" class="form-select">
-                                            <option value="">pilih status</option>
-                                            <option value="t">Aktif</option>
-                                            <option value="f">Non Aktif</option>
-                                        </select>
-                                    </div>
+                                    <select wire:model.live="is_active" id="is-active" class="form-select">
+                                        <option value="">pilih status</option>
+                                        <option value="t">Aktif</option>
+                                        <option value="f">Non Aktif</option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-2">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">

@@ -1,21 +1,19 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.tes-selesai'), 'title' => 'Tes Potensi Selesai'],
+        ['url' => route('admin.tes-selesai'), 'title' => 'Hasil Tes Potensi'],
         ['url' => null, 'title' => 'Peserta Tes Potensi']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
-                                    <div class="input-group" wire:ignore>
-                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
-                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta...">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
+                                        <input wire:model.live.debounce="search" class="form-control" placeholder="cari peserta..." autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
@@ -40,35 +38,30 @@
                                 <div class="col-sm-1">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
-                                <div class="col-sm-6 mb-3 d-flex justify-content-end">
-                                    <div class="me-2">
-                                        <x-btn-download 
-                                            :route="'admin.tes-selesai.download-rekap'"
-                                            :params="[$event->id]"
-                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
-                                            text="Download Rekap Laporan (Excel)"
-                                            icon="download"
-                                            color="success"
-                                            :disabled="$data->isEmpty()"
-                                        />  
-                                    </div>
-                                    <div class="me-2">
-                                        <x-btn-download 
-                                            :route="'admin.tes-selesai.download-all-laporan'"
-                                            :params="[$event->id]"
-                                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
-                                            text="Download Semua Laporan PDF (.zip)"
-                                            icon="download"
-                                            color="dark"
-                                            :disabled="$data->isEmpty()"
-                                        />
-                                    </div>
-                                </div>
                             </div>
-                        </div>
+                    </x-monitoring.filter-panel>
+                    <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+                        <x-btn-download 
+                            :route="'admin.tes-selesai.download-rekap'"
+                            :params="[$event->id]"
+                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                            text="Download Rekap Laporan (Excel)"
+                            icon="download"
+                            color="success"
+                            :disabled="$data->isEmpty()"
+                        />
+                        <x-btn-download 
+                            :route="'admin.tes-selesai.download-all-laporan'"
+                            :params="[$event->id]"
+                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                            text="Download Semua Laporan PDF (.zip)"
+                            icon="download"
+                            color="dark"
+                            :disabled="$data->isEmpty()"
+                        />
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                        <table class="table ac-data-table table-hover align-middle" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
@@ -146,7 +139,7 @@
 
                                 @if($data->count() === 0)
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted py-4">
+                                        <td colspan="9" class="text-center text-muted py-5 ac-empty-state">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
                                         </td>

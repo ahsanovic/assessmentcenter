@@ -33,29 +33,27 @@
                         </div>
                     </div>
 
-                    <div class="card mt-2 mb-4 bg-light-subtle border-0 shadow-sm">
-                        <div class="card-body">
+                    <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">
                                 <div class="col-md-6 col-lg-5">
                                     <label class="form-label small text-muted mb-1">Cari Peserta</label>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:14px;height:14px;"></i></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce.300ms="search" class="form-control" placeholder="Nama atau NIP...">
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-lg-2">
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
-                                <div class="col-md-12 col-lg-5 text-lg-end">
-                                    <button wire:click="downloadExcel" wire:loading.attr="disabled"
-                                        class="btn btn-sm btn-success btn-icon-text">
-                                        <i class="btn-icon-prepend" data-feather="download"></i>
-                                        <span wire:loading.remove wire:target="downloadExcel">Download Excel</span>
-                                        <span wire:loading wire:target="downloadExcel">Mengunduh...</span>
-                                    </button>
-                                </div>
                             </div>
-                        </div>
+                    </x-monitoring.filter-panel>
+                    <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+                        <button wire:click="downloadExcel" wire:loading.attr="disabled"
+                            class="btn btn-sm btn-success btn-icon-text">
+                            <i class="btn-icon-prepend" data-feather="download"></i>
+                            <span wire:loading.remove wire:target="downloadExcel">Download Excel</span>
+                            <span wire:loading wire:target="downloadExcel">Mengunduh...</span>
+                        </button>
                     </div>
 
                     <div class="table-responsive">
@@ -92,10 +90,12 @@
                                         </td>
                                         <td class="text-center">
                                             <button type="button"
-                                                class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                                class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#modalJawaban{{ $ujian->id }}">
-                                                Lihat ({{ $terjawab }}/{{ $totalSoal }})
+                                                data-bs-target="#modalJawaban{{ $ujian->id }}"
+                                                title="Lihat jawaban ({{ $terjawab }}/{{ $totalSoal }})"
+                                                style="transition: background 0.2s;">
+                                                <i class="link-icon" data-feather="eye"></i>
                                             </button>
                                         </td>
                                     </tr>

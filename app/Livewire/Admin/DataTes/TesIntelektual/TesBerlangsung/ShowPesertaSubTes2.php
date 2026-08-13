@@ -13,7 +13,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Tes Berlangsung'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Monitoring Tes'])]
 class ShowPesertaSubTes2 extends Component
 {
     use WithPagination;
@@ -73,6 +73,7 @@ class ShowPesertaSubTes2 extends Component
 
     public function openModal($id)
     {
+        $this->dispatch('hide-tooltips');
         $this->showModalMassal = false;
         $this->waktuMassal = null;
         $this->selected_id = $id;
@@ -82,12 +83,14 @@ class ShowPesertaSubTes2 extends Component
 
     public function closeModal()
     {
+        $this->dispatch('hide-tooltips');
         $this->showModal = false;
         $this->waktu = null;
     }
 
     public function openModalMassal()
     {
+        $this->dispatch('hide-tooltips');
         $this->showModal = false;
         $this->waktu = null;
         $this->showModalMassal = true;
@@ -96,6 +99,7 @@ class ShowPesertaSubTes2 extends Component
 
     public function closeModalMassal()
     {
+        $this->dispatch('hide-tooltips');
         $this->showModalMassal = false;
         $this->waktuMassal = null;
     }

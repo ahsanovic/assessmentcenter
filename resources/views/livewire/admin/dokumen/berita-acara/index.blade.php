@@ -10,13 +10,11 @@
                 <div class="card-body">
                     <x-modal.btn-add text="Tambah Berita Acara" icon="plus-circle" />
 
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2 g-2 align-items-center">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
-                                    <div class="input-group" wire:ignore>
-                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari judul / event...">
                                     </div>
                                 </div>
@@ -34,8 +32,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">

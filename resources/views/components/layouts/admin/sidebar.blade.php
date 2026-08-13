@@ -333,11 +333,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.intelektual', false) ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.intelektual', false) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.intelektual') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.intelektual', false) ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.intelektual', false) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -353,11 +353,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung', false, $tesTypeSegments) ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung', false, $tesTypeSegments) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai', false, $tesTypeSegments) ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai', false, $tesTypeSegments) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.hasil-responden') }}" wire:navigate
@@ -381,11 +381,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.cakap-digital', false) ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.cakap-digital', false) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.cakap-digital', false) ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.cakap-digital', false) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-cakap-digital') }}" wire:navigate
@@ -405,11 +405,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.kompetensi-teknis', false) ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.kompetensi-teknis', false) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.kompetensi-teknis') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.kompetensi-teknis', false) ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.kompetensi-teknis', false) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-kompetensi-teknis') }}" wire:navigate
@@ -429,11 +429,11 @@
                         <ul class="nav sub-menu">
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-berlangsung.pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.pspk', false) ? 'active' : '' }}">Tes Berlangsung</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.pspk', false) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.tes-selesai.pspk') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.pspk', false) ? 'active' : '' }}">Tes Selesai</a>
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.pspk', false) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                             <li class="nav-item">
                             <a href="{{ route('admin.pelanggaran-tes-pspk') }}" wire:navigate

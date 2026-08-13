@@ -12,7 +12,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Tes Selesai'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Hasil Tes'])]
 class ShowPesertaSubTes3 extends Component
 {
     use WithPagination;

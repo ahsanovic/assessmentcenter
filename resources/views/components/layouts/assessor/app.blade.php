@@ -39,6 +39,8 @@
         <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
         <!-- End layout styles -->
 
+        <link rel="stylesheet" href="{{ asset('assets/css/admin-monitoring.css') }}">
+
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">

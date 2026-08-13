@@ -15,11 +15,7 @@
                         </div>
                     </div>
 
-                    <div class="card mt-2 mb-4 bg-light-subtle border-0 shadow-sm">
-                        <div class="card-body">
-                            <h6 class="text-danger mb-3" wire:ignore>
-                                <i class="link-icon" data-feather="filter"></i> Filter
-                            </h6>
+                    <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-6 col-md-3">
                                     <label class="form-label small text-muted mb-1">Level PSPK</label>
@@ -52,8 +48,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded mb-0">
@@ -86,12 +82,14 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <a class="btn btn-xs btn-primary btn-icon-text"
-                                                wire:navigate
-                                                href="{{ route('admin.jawaban-peserta.pspk.show', ['idEvent' => $item->id]) }}">
-                                                <i class="btn-icon-prepend" data-feather="eye"></i>
-                                                Lihat
-                                            </a>
+                                            <x-table.btn-link
+                                                :route="'admin.jawaban-peserta.pspk.show'"
+                                                :params="['idEvent' => $item->id]"
+                                                :icon="'eye'"
+                                                :tooltip="'Lihat'"
+                                                :color="'warning'"
+                                                :navigate="true"
+                                            />
                                         </td>
                                     </tr>
                                 @empty
@@ -112,22 +110,3 @@
         <x-pagination :items="$data" />
     </div>
 </div>
-
-@push('js')
-    @script()
-        <script>
-            $(document).ready(function() {
-                $('#event').select2({
-                    width: '100%',
-                    placeholder: 'Semua event'
-                }).on('change', function(e) {
-                    @this.set('event', $(this).val());
-                });
-
-                Livewire.on('reset-select2', () => {
-                    $('#event').val(null).trigger('change');
-                });
-            });
-        </script>
-    @endscript
-@endpush

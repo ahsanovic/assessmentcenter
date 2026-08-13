@@ -9,13 +9,11 @@
                 <div class="card-body">
                     <x-modal.btn-add text="Tambah Pegawai" icon="plus-circle" />
 
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger"><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-6">
-                                    <div class="input-group" wire:ignore>
-                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari nama atau NIP...">
                                     </div>
                                 </div>
@@ -23,8 +21,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
@@ -54,10 +52,10 @@
                                         </td>
                                         <td>
                                             <button type="button" wire:click="generateQrCode({{ $item->id }})" wire:loading.attr="disabled" wire:target="generateQrCode({{ $item->id }})"
-                                                class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate QR Code">
-                                                <i class="link-icon" data-feather="grid" style="width:14px;height:14px;"></i>
-                                                <span wire:loading.remove wire:target="generateQrCode({{ $item->id }})">QR</span>
-                                                <span wire:loading wire:target="generateQrCode({{ $item->id }})">...</span>
+                                                class="btn btn-sm btn-outline-primary btn-icon rounded-circle border-0 shadow-sm"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Generate QR Code"
+                                                style="transition: background 0.2s;">
+                                                <i class="link-icon" data-feather="grid"></i>
                                             </button>
                                             <x-table.btn-edit :id="$item->id" />
                                             <x-table.btn-delete :id="$item->id" :disabled="auth()->user()->role == 'user'" />

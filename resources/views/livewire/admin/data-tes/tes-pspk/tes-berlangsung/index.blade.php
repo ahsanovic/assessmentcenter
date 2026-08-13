@@ -1,14 +1,20 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Tes PSPK Berlangsung']
+        ['url' => null, 'title' => 'Monitoring Tes PSPK']
     ]" />
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
+                    <x-monitoring.page-header
+                        icon="activity"
+                        color="primary"
+                        title="Monitoring Tes PSPK"
+                        description="Pantau progres ujian PSPK setiap peserta secara langsung."
+                    />
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                        <table class="table ac-data-table table-hover align-middle" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
@@ -34,7 +40,7 @@
 
                                 @if ($data->count() === 0)
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted py-4">
+                                        <td colspan="9" class="text-center text-muted py-5 ac-empty-state">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data ujian PSPK berlangsung...</div>
                                         </td>

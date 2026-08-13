@@ -1,0 +1,575 @@
+/* ============================================================
+   Admin Monitoring & Hasil Ujian — Modern UI Theme
+   Scoped to body.ac-monitoring-theme
+   ============================================================ */
+
+.ac-monitoring-theme {
+    --ac-primary: #3b82f6;
+    --ac-primary-light: #eff6ff;
+    --ac-primary-dark: #2563eb;
+    --ac-success: #059669;
+    --ac-success-light: #ecfdf5;
+    --ac-warning: #d97706;
+    --ac-warning-light: #fffbeb;
+    --ac-danger: #dc2626;
+    --ac-danger-light: #fef2f2;
+    --ac-info: #0891b2;
+    --ac-surface: #ffffff;
+    --ac-border: #e2e8f0;
+    --ac-text: #1e293b;
+    --ac-text-muted: #64748b;
+    --ac-radius: 12px;
+    --ac-radius-sm: 8px;
+    --ac-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.04);
+    --ac-shadow-hover: 0 4px 12px rgba(59, 130, 246, 0.12);
+}
+
+/* ── Page Header ────────────────────────────────────────── */
+.ac-monitoring-theme .ac-page-header__icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.ac-monitoring-theme .ac-page-header__desc {
+    font-size: 0.875rem;
+    margin-top: 0.15rem;
+}
+
+/* ── Filter panel (semua halaman admin/assessor) ─────────── */
+.ac-filter-panel {
+    background-color: var(--bs-light-bg-subtle, #f8f9fa) !important;
+    border: 1px solid var(--ac-border, #e2e8f0) !important;
+    border-radius: var(--ac-radius-sm, 8px) !important;
+    box-shadow: none !important;
+}
+
+.ac-filter-panel > .card-body {
+    padding: 1rem 1.25rem !important;
+}
+
+.ac-filter-panel h6 {
+    color: var(--ac-text, #1e293b) !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+}
+
+.ac-filter-panel .rounded-circle svg {
+    stroke: var(--ac-danger, #dc2626) !important;
+    color: var(--ac-danger, #dc2626) !important;
+}
+
+.ac-filter-panel .form-control,
+.ac-filter-panel .form-select {
+    border-color: var(--ac-border, #e2e8f0);
+    border-radius: var(--ac-radius-sm, 8px);
+    font-size: 0.875rem;
+    min-height: 38px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ac-filter-panel .form-control:focus,
+.ac-filter-panel .form-select:focus {
+    border-color: var(--ac-primary, #3b82f6);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.ac-filter-panel .input-group-text {
+    border-color: var(--ac-border, #e2e8f0);
+    background: #fff;
+    color: var(--ac-text-muted, #64748b);
+}
+
+.ac-btn-reset,
+.ac-filter-panel .btn-inverse-danger {
+    background: #fff !important;
+    border: 1px solid var(--ac-border, #e2e8f0) !important;
+    color: var(--ac-text-muted, #64748b) !important;
+    border-radius: var(--ac-radius-sm, 8px) !important;
+    font-weight: 500;
+    min-height: 38px;
+    padding: 0.375rem 0.85rem;
+    transition: all 0.15s ease;
+}
+
+.ac-btn-reset:hover,
+.ac-filter-panel .btn-inverse-danger:hover {
+    background: var(--ac-danger-light, #fef2f2) !important;
+    border-color: rgba(220, 38, 38, 0.25) !important;
+    color: var(--ac-danger, #dc2626) !important;
+}
+
+.ac-btn-reset svg,
+.ac-filter-panel .btn-inverse-danger svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+}
+
+/* ── Progress answer ────────────────────────────────────── */
+.ac-monitoring-theme .ac-progress-answer .progress-bar {
+    transition: width 0.3s ease;
+}
+
+/* ── Breadcrumb (semua halaman admin/assessor) ───────────── */
+.page-breadcrumb {
+    margin-bottom: 1.25rem;
+}
+
+.page-breadcrumb .breadcrumb {
+    background: var(--ac-surface, #ffffff);
+    border: 1px solid var(--ac-border, #e2e8f0);
+    border-radius: var(--ac-radius-sm, 8px);
+    padding: 0.65rem 1rem;
+    margin-bottom: 0;
+    box-shadow: var(--ac-shadow, 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.04));
+}
+
+.page-breadcrumb .breadcrumb-item a {
+    color: var(--ac-primary, #3b82f6);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+}
+
+.page-breadcrumb .breadcrumb-item a:hover {
+    color: var(--ac-primary-dark, #2563eb);
+}
+
+.page-breadcrumb .breadcrumb-item.active {
+    color: var(--ac-text-muted, #64748b);
+    font-weight: 500;
+}
+
+.page-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: #cbd5e1;
+}
+
+/* ── Main Card ──────────────────────────────────────────── */
+.ac-monitoring-theme .grid-margin.stretch-card > .card {
+    border: 1px solid var(--ac-border);
+    border-radius: var(--ac-radius);
+    box-shadow: var(--ac-shadow);
+    overflow: hidden;
+}
+
+.ac-monitoring-theme .grid-margin.stretch-card > .card > .card-body {
+    padding: 1.5rem;
+}
+
+/* ── Event Header ───────────────────────────────────────── */
+.ac-monitoring-theme .ac-event-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.125rem;
+    background: linear-gradient(135deg, var(--ac-primary-light) 0%, #f0f9ff 100%);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: var(--ac-radius-sm);
+    margin-bottom: 1.25rem;
+}
+
+.ac-monitoring-theme .ac-event-header__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--ac-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ac-monitoring-theme .ac-event-header__icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.ac-monitoring-theme .ac-event-header__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ac-text-muted);
+    margin-bottom: 0.1rem;
+}
+
+.ac-monitoring-theme .ac-event-header__name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ac-text);
+    line-height: 1.3;
+}
+
+/* Legacy event header fallback */
+.ac-monitoring-theme h6.card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.125rem;
+    background: linear-gradient(135deg, var(--ac-primary-light) 0%, #f0f9ff 100%);
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: var(--ac-radius-sm);
+    margin-bottom: 1.25rem !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ac-text-muted);
+}
+
+.ac-monitoring-theme h6.card-title .badge {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    background: var(--ac-primary) !important;
+    color: #fff !important;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* ── Data Table ─────────────────────────────────────────── */
+.ac-monitoring-theme .table-responsive {
+    border-radius: var(--ac-radius-sm);
+    border: 1px solid var(--ac-border);
+    overflow: hidden;
+}
+
+.ac-monitoring-theme .ac-data-table,
+.ac-monitoring-theme .table-responsive > .table {
+    margin-bottom: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 0.875rem;
+}
+
+.ac-monitoring-theme .ac-data-table thead,
+.ac-monitoring-theme .table-responsive > .table thead {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.ac-monitoring-theme .ac-data-table thead th,
+.ac-monitoring-theme .table-responsive > .table thead th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ac-text-muted);
+    padding: 0.875rem 1rem;
+    border-bottom: 2px solid var(--ac-border) !important;
+    white-space: nowrap;
+}
+
+.ac-monitoring-theme .ac-data-table tbody td,
+.ac-monitoring-theme .table-responsive > .table tbody td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    border-color: #f1f5f9 !important;
+    color: var(--ac-text);
+}
+
+.ac-monitoring-theme .ac-data-table tbody tr,
+.ac-monitoring-theme .table-responsive > .table tbody tr {
+    transition: background-color 0.12s ease;
+}
+
+.ac-monitoring-theme .ac-data-table tbody tr:hover,
+.ac-monitoring-theme .table-responsive > .table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* ── Count Link Buttons ─────────────────────────────────── */
+.ac-monitoring-theme a.btn.btn-xs.btn-warning,
+.ac-monitoring-theme a.ac-count-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-width: 72px;
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    font-weight: 600;
+    color: var(--ac-primary-dark) !important;
+    background: var(--ac-primary-light) !important;
+    border: 1px solid rgba(79, 70, 229, 0.2) !important;
+    border-radius: 20px !important;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    box-shadow: none !important;
+}
+
+.ac-monitoring-theme a.btn.btn-xs.btn-warning:hover:not(.disabled),
+.ac-monitoring-theme a.ac-count-link:hover:not(.disabled) {
+    background: var(--ac-primary) !important;
+    color: #fff !important;
+    border-color: var(--ac-primary) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--ac-shadow-hover) !important;
+}
+
+.ac-monitoring-theme a.btn.btn-xs.btn-warning.disabled,
+.ac-monitoring-theme a.ac-count-link.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    background: #f1f5f9 !important;
+    color: var(--ac-text-muted) !important;
+    border-color: var(--ac-border) !important;
+}
+
+/* Detail link (pelanggaran) */
+.ac-monitoring-theme a.btn.btn-xs.btn-outline-warning {
+    font-size: 0.8rem !important;
+    font-weight: 600;
+    color: var(--ac-primary) !important;
+    border-color: rgba(79, 70, 229, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 0.35rem 1rem !important;
+    transition: all 0.18s ease;
+}
+
+.ac-monitoring-theme a.btn.btn-xs.btn-outline-warning:hover {
+    background: var(--ac-primary) !important;
+    color: #fff !important;
+    border-color: var(--ac-primary) !important;
+}
+
+/* ── Status Badges ──────────────────────────────────────── */
+.ac-monitoring-theme .badge.bg-danger {
+    background: var(--ac-danger-light) !important;
+    color: var(--ac-danger) !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(220, 38, 38, 0.15);
+}
+
+.ac-monitoring-theme .badge.bg-success {
+    background: var(--ac-success-light) !important;
+    color: var(--ac-success) !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(5, 150, 105, 0.15);
+}
+
+.ac-monitoring-theme .badge.bg-info-subtle {
+    background: #ecfeff !important;
+    color: #0e7490 !important;
+    border: 1px solid rgba(8, 145, 178, 0.15);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+}
+
+.ac-monitoring-theme .badge.bg-secondary-subtle {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid var(--ac-border);
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+.ac-monitoring-theme .badge.bg-light {
+    background: #f8fafc !important;
+    border-color: var(--ac-border) !important;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+/* ── Action Buttons ─────────────────────────────────────── */
+.ac-monitoring-theme .btn-outline-success.btn-icon,
+.ac-monitoring-theme .btn-outline-danger.btn-icon,
+.ac-monitoring-theme .btn-outline-warning.btn-icon,
+.ac-monitoring-theme .btn-outline-primary.btn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50% !important;
+    border: 0 !important;
+    background: var(--ac-surface);
+    transition: all 0.15s ease;
+}
+
+.ac-monitoring-theme .btn-outline-primary.btn-icon {
+    color: var(--ac-primary) !important;
+}
+
+.ac-monitoring-theme .btn-outline-primary.btn-icon svg {
+    stroke: var(--ac-primary) !important;
+}
+
+.ac-monitoring-theme .btn-outline-primary.btn-icon:hover {
+    background: var(--ac-primary-light) !important;
+    border-color: rgba(59, 130, 246, 0.35) !important;
+    color: var(--ac-primary) !important;
+}
+
+.ac-monitoring-theme .btn-outline-primary.btn-icon:hover svg {
+    stroke: var(--ac-primary) !important;
+}
+
+.ac-monitoring-theme .btn-outline-success.btn-icon:hover {
+    background: var(--ac-success-light) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    color: var(--ac-success) !important;
+}
+
+.ac-monitoring-theme .btn-outline-danger.btn-icon:hover {
+    background: var(--ac-danger-light) !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+    color: var(--ac-danger) !important;
+}
+
+.ac-monitoring-theme .btn-outline-warning.btn-icon:hover {
+    background: var(--ac-warning-light) !important;
+    border-color: rgba(217, 119, 6, 0.3) !important;
+    color: var(--ac-warning) !important;
+}
+
+.ac-monitoring-theme .btn-inverse-danger {
+    background: #fff !important;
+    border: 1px solid var(--ac-border) !important;
+    color: var(--ac-text-muted) !important;
+    border-radius: var(--ac-radius-sm) !important;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.ac-monitoring-theme .btn-inverse-danger:hover {
+    background: var(--ac-danger-light) !important;
+    border-color: rgba(220, 38, 38, 0.25) !important;
+    color: var(--ac-danger) !important;
+}
+
+/* ── Empty State ────────────────────────────────────────── */
+.ac-monitoring-theme .ac-empty-state {
+    padding: 3rem 1rem !important;
+}
+
+.ac-monitoring-theme .ac-empty-state svg,
+.ac-monitoring-theme .ac-empty-state .link-icon {
+    width: 40px !important;
+    height: 40px !important;
+    opacity: 0.35 !important;
+    color: var(--ac-text-muted);
+}
+
+.ac-monitoring-theme .ac-empty-state .mt-2 {
+    font-size: 0.9rem;
+    color: var(--ac-text-muted) !important;
+    font-weight: 500 !important;
+}
+
+/* ── Pagination ───────────────────────────────────────────── */
+.ac-monitoring-theme .page-pagination {
+    margin-top: 1rem;
+}
+
+.ac-monitoring-theme .page-pagination .pagination {
+    gap: 0.25rem;
+}
+
+.ac-monitoring-theme .page-pagination .page-link {
+    border-radius: 8px !important;
+    border-color: var(--ac-border);
+    color: var(--ac-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    transition: all 0.15s ease;
+}
+
+.ac-monitoring-theme .page-pagination .page-item.active .page-link {
+    background: var(--ac-primary);
+    border-color: var(--ac-primary);
+}
+
+.ac-monitoring-theme .page-pagination .page-link:hover {
+    background: var(--ac-primary-light);
+    border-color: rgba(79, 70, 229, 0.2);
+    color: var(--ac-primary);
+}
+
+/* ── Progress indicator (soal dijawab) ──────────────────── */
+.ac-monitoring-theme .ac-progress-text .answered {
+    color: var(--ac-success);
+    font-weight: 700;
+}
+
+.ac-monitoring-theme .ac-progress-text .total {
+    color: var(--ac-text);
+    font-weight: 600;
+}
+
+/* ── Report & Rekomendasi pages ─────────────────────────── */
+.ac-monitoring-theme .ac-report-card {
+    border: 1px solid var(--ac-border);
+    border-radius: var(--ac-radius);
+    box-shadow: var(--ac-shadow);
+}
+
+.ac-monitoring-theme .ac-report-card h4 {
+    color: var(--ac-text);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.ac-monitoring-theme .ac-report-card h6 {
+    color: var(--ac-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--ac-primary-light);
+    margin-bottom: 1rem;
+}
+
+.ac-monitoring-theme .ac-report-card .table td {
+    padding: 0.5rem 0.75rem;
+    border-color: #f1f5f9;
+}
+
+.ac-monitoring-theme .ac-report-card .table td:first-child {
+    font-weight: 600;
+    color: var(--ac-text-muted);
+    width: 200px;
+}
+
+/* ── Hasil Responden stat chip ──────────────────────────── */
+.ac-monitoring-theme .hasil-responden-total-stat {
+    border-radius: var(--ac-radius-sm) !important;
+}
+
+/* ── Download buttons row ───────────────────────────────── */
+.ac-monitoring-theme .btn-success.btn-icon-text,
+.ac-monitoring-theme .btn-dark.btn-icon-text {
+    border-radius: var(--ac-radius-sm);
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* ── Responsive tweaks ────────────────────────────────────── */
+@media (max-width: 768px) {
+    .ac-monitoring-theme .grid-margin.stretch-card > .card > .card-body {
+        padding: 1rem;
+    }
+
+    .ac-monitoring-theme .ac-data-table thead th,
+    .ac-monitoring-theme .table-responsive > .table thead th {
+        font-size: 0.7rem;
+        padding: 0.65rem 0.75rem;
+    }
+
+    .ac-monitoring-theme .ac-data-table tbody td,
+    .ac-monitoring-theme .table-responsive > .table tbody td {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.82rem;
+    }
+}

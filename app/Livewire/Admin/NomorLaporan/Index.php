@@ -180,7 +180,6 @@ class Index extends Component
     {
         $this->reset(['search', 'tanggal', 'event_id']);
         $this->resetPage();
-        $this->dispatch('reset-select2');
     }
 
     public function deleteConfirmation($id)

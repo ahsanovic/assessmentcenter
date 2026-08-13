@@ -10,19 +10,15 @@
                     <!-- Button Tambah dengan style modern -->
                     <x-modal.btn-add text="Tambah Assessor" icon="plus-circle" />
 
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
-                            <div class="row mt-2">
+                    <x-monitoring.filter-panel>
+                            <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
-                                    <div wire:ignore>
-                                        <select wire:model.live="event" class="form-select" id="event">
-                                            <option value="">event</option>
-                                            @foreach ($option_event as $key => $item)
-                                                <option value="{{ $key }}">{{ $item }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    <select wire:model.live="event" class="form-select" id="event">
+                                        <option value="">event</option>
+                                        @foreach ($option_event as $key => $item)
+                                            <option value="{{ $key }}">{{ $item }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-sm-2">
                                     <select wire:model.live="filter_is_active" class="form-select" id="status">
@@ -40,8 +36,8 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="input-group" wire:ignore>
-                                        <span class="input-group-text bg-white"><i data-feather="search"></i></span>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white"><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce="search" class="form-control" placeholder="cari assessor...">
                                     </div>
                                 </div>
@@ -49,8 +45,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
@@ -312,21 +308,4 @@
     const observer = new MutationObserver((mutations) => { let shouldUpdate = false; mutations.forEach((mutation) => { if (mutation.addedNodes.length > 0) { mutation.addedNodes.forEach((node) => { if (node.nodeType === 1 && (node.classList?.contains('modal') || node.querySelector?.('[data-feather]'))) { shouldUpdate = true; } }); } }); if (shouldUpdate) { requestAnimationFrame(() => { initFeatherIcons(); }); } });
     document.addEventListener('DOMContentLoaded', () => { observer.observe(document.body, { childList: true, subtree: true }); });
 </script>
-@endpush
-
-@push('js')
-    @script()
-        <script>
-            $(document).ready(function() {
-                $('#event').select2()
-                    .on('change', function(e) {
-                        @this.set('event', $(this).val());
-                    });
-                
-                Livewire.on('reset-select2', () => {
-                    $('#event').val(null).trigger('change');
-                });
-            })
-        </script>
-    @endscript
 @endpush

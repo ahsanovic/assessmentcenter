@@ -140,7 +140,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="button" wire:click="resetFilterEvent" class="btn btn-sm btn-inverse-danger">Reset</button>
+                            <button type="button" wire:click="resetFilterEvent" class="btn btn-sm btn-inverse-danger ac-btn-reset">Reset</button>
                         </div>
                     </div>
                     <div class="row">

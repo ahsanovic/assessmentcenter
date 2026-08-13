@@ -60,7 +60,6 @@ class Index extends Component
     {
         $this->reset(['search', 'event', 'filter_is_active', 'filter_is_asn']);
         $this->resetPage();
-        $this->dispatch('reset-select2');
     }
 
     protected function rules()

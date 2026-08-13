@@ -41,6 +41,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
     <!-- End layout styles -->
 
+    {{-- Scoped ke .ac-monitoring-theme; selalu dimuat agar tahan wire:navigate --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-monitoring.css') }}">
+
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
@@ -48,6 +51,12 @@
 </head>
 
 <body>
+    <script>
+        document.body.classList.toggle(
+            'ac-monitoring-theme',
+            /tes-berlangsung|tes-selesai|kt-ongoing|kt-finish|cd-ongoing|cd-finish|int-ongoing|int-finish|pspk-ongoing|pspk-finish|\/pelanggaran\/|hasil-responden/.test(location.pathname)
+        );
+    </script>
     <div class="main-wrapper">
         <x-layouts.admin.sidebar />
 
@@ -283,14 +292,38 @@
             initTooltips();
             
             // Re-initialize setiap kali Livewire selesai update
+            Livewire.on('hide-tooltips', () => {
+                hideAllTooltips();
+            });
+
             Livewire.hook('morph.updated', ({ el, component }) => {
+                hideAllTooltips();
                 feather.replace();
                 initTooltips();
             });
+
+            Livewire.hook('commit', () => {
+                hideAllTooltips();
+            });
         });
         
+        // Sembunyikan & bersihkan tooltip yang tertinggal (mis. setelah modal ditutup)
+        function hideAllTooltips() {
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(element) {
+                var tooltipInstance = bootstrap.Tooltip.getInstance(element);
+                if (tooltipInstance) {
+                    tooltipInstance.hide();
+                }
+            });
+            document.querySelectorAll('.tooltip.show').forEach(function(el) {
+                el.remove();
+            });
+        }
+
         // Function untuk initialize tooltips
         function initTooltips() {
+            hideAllTooltips();
+
             // Dispose semua tooltip yang sudah ada untuk menghindari duplikasi
             var existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             existingTooltips.forEach(function(element) {
@@ -306,6 +339,8 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         }
+
+        window.hideAllTooltips = hideAllTooltips;
     </script>
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -542,23 +577,37 @@
             }
         }
 
+        function isMonitoringPath(pathname) {
+            return /tes-berlangsung|tes-selesai|kt-ongoing|kt-finish|cd-ongoing|cd-finish|int-ongoing|int-finish|pspk-ongoing|pspk-finish|\/pelanggaran\/|hasil-responden/.test(pathname || '');
+        }
+
+        function syncMonitoringTheme() {
+            document.body.classList.toggle('ac-monitoring-theme', isMonitoringPath(window.location.pathname));
+        }
+
+        syncMonitoringTheme();
+
         if (!window.__adminNavigateInit) {
             window.__adminNavigateInit = true;
 
-            document.addEventListener('DOMContentLoaded', syncAdminSidebar);
+            document.addEventListener('DOMContentLoaded', () => {
+                syncMonitoringTheme();
+                syncAdminSidebar();
+            });
 
             document.addEventListener('livewire:navigated', () => {
+                syncMonitoringTheme();
                 requestAnimationFrame(() => syncAdminSidebar());
+
+                if (typeof hideAllTooltips === 'function') {
+                    hideAllTooltips();
+                }
 
                 if (typeof feather !== 'undefined') feather.replace();
 
-                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
-                    var instance = bootstrap.Tooltip.getInstance(el);
-                    if (instance) instance.dispose();
-                    new bootstrap.Tooltip(el);
-                });
-
-                initTooltips();
+                if (typeof initTooltips === 'function') {
+                    initTooltips();
+                }
             });
         }
     </script>

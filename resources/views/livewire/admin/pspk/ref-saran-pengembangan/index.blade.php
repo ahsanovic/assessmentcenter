@@ -9,9 +9,7 @@
             <div class="card">
                 <div class="card-body">
                     <x-modal.btn-add text="Tambah Referensi" icon="plus-circle" wire:click="openModal" />
-                    <div class="card mt-4 mb-4 bg-light-subtle">
-                        <div class="card-body">
-                            <h6 class="text-danger" wire:ignore><i class="link-icon" data-feather="filter"></i> Filter</h6>
+                    <x-monitoring.filter-panel>
                             <div class="row mt-2 align-items-center">
                                 <div class="col-sm-3">
                                     <select wire:model.live="filter_level_pspk" class="form-select" id="level-pspk">
@@ -23,7 +21,7 @@
                                 </div>
                                 <div class="col-sm-5">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-white" wire:ignore><i data-feather="search"></i></span>
+                                        <span class="input-group-text bg-white" wire:ignore><i data-feather="search" style="width:16px;height:16px;"></i></span>
                                         <input wire:model.live.debounce.300ms="search" class="form-control" placeholder="cari teks saran (semua aspek)...">
                                     </div>
                                 </div>
@@ -31,8 +29,8 @@
                                     <x-btn-reset :text="'Reset'" />
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        
+                    </x-monitoring.filter-panel>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
