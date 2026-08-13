@@ -182,7 +182,11 @@ class Index extends Component
         $this->downloadDari = $from->format('d-m-Y');
         $this->downloadSampai = $to->format('d-m-Y');
         $this->resetValidation('downloadKuesioner');
-        $this->dispatch('flatpickr-download-range-set', from: $this->downloadDari, to: $this->downloadSampai);
+        $this->dispatch(
+            'sync-hasil-responden-download-range',
+            from: $this->downloadDari,
+            to: $this->downloadSampai,
+        );
     }
 
     private function jawabanExportBaseQuery(): Builder
@@ -258,6 +262,6 @@ class Index extends Component
         $this->reset(['search', 'downloadDari', 'downloadSampai']);
         $this->resetValidation('downloadKuesioner');
         $this->resetPage();
-        $this->dispatch('flatpickr-download-range-clear');
+        $this->dispatch('sync-hasil-responden-download-range', from: null, to: null);
     }
 }

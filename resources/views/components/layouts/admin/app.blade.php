@@ -511,6 +511,166 @@
                 }
             });
         });
+    </script>
+    <script>
+        (function () {
+            let hasilRespondenPickerInstance = null;
+
+            const parseHasilRespondenDMY = (s) => {
+                const p = (s || '').split('-').map((n) => parseInt(n, 10));
+                if (p.length !== 3 || p.some((n) => Number.isNaN(n))) return null;
+                return new Date(p[2], p[1] - 1, p[0]);
+            };
+
+            const getHasilRespondenDownloadWrap = () => document.getElementById('flatpickr-download-range');
+
+            const getHasilRespondenDownloadInput = () => getHasilRespondenDownloadWrap()?.querySelector('[data-input]') ?? null;
+
+            const getHasilRespondenPicker = () => {
+                const input = getHasilRespondenDownloadInput();
+                if (input?._flatpickr && typeof input._flatpickr.clear === 'function') {
+                    return input._flatpickr;
+                }
+                if (hasilRespondenPickerInstance && typeof hasilRespondenPickerInstance.clear === 'function') {
+                    return hasilRespondenPickerInstance;
+                }
+                return null;
+            };
+
+            const destroyHasilRespondenPicker = () => {
+                const picker = getHasilRespondenPicker();
+                if (picker && typeof picker.destroy === 'function') {
+                    try {
+                        picker.destroy();
+                    } catch (e) {
+                        // abaikan jika instance sudah dihancurkan
+                    }
+                }
+
+                hasilRespondenPickerInstance = null;
+
+                const input = getHasilRespondenDownloadInput();
+                if (input) {
+                    delete input._flatpickr;
+                }
+            };
+
+            const getHasilRespondenWire = () => {
+                const wireId = getHasilRespondenDownloadWrap()?.closest('[wire\\:id]')?.getAttribute('wire:id');
+                return wireId ? Livewire.find(wireId) : null;
+            };
+
+            window.syncHasilRespondenDownloadRange = (payload = null) => {
+                const picker = getHasilRespondenPicker();
+                if (!picker) return;
+
+                let dari = null;
+                let sampai = null;
+
+                if (payload) {
+                    const data = Array.isArray(payload) ? payload[0] : payload;
+                    dari = data?.from ?? null;
+                    sampai = data?.to ?? null;
+                } else {
+                    const $wire = getHasilRespondenWire();
+                    if (!$wire?.get) return;
+                    dari = $wire.get('downloadDari');
+                    sampai = $wire.get('downloadSampai');
+                }
+
+                if (!dari || !sampai) {
+                    picker.clear();
+                    return;
+                }
+
+                const d1 = parseHasilRespondenDMY(dari);
+                const d2 = parseHasilRespondenDMY(sampai);
+                if (d1 && d2) {
+                    picker.setDate([d1, d2], false);
+                }
+            };
+
+            window.initHasilRespondenDownloadRange = () => {
+                const wrap = getHasilRespondenDownloadWrap();
+                if (!wrap) return;
+
+                if (getHasilRespondenPicker()) return;
+
+                destroyHasilRespondenPicker();
+
+                const dari = wrap.getAttribute('data-download-dari') || '';
+                const sampai = wrap.getAttribute('data-download-sampai') || '';
+                const d1 = parseHasilRespondenDMY(dari);
+                const d2 = parseHasilRespondenDMY(sampai);
+
+                hasilRespondenPickerInstance = flatpickr(wrap, {
+                    wrap: true,
+                    mode: 'range',
+                    dateFormat: 'd-m-Y',
+                    locale: { rangeSeparator: ' s.d. ' },
+                    allowInput: false,
+                    defaultDate: d1 && d2 ? [d1, d2] : undefined,
+                    onChange: (selectedDates, _dateStr, instance) => {
+                        const $wire = getHasilRespondenWire();
+                        if (!$wire) return;
+
+                        if (selectedDates.length === 2) {
+                            $wire.set('downloadDari', instance.formatDate(selectedDates[0], 'd-m-Y'));
+                            $wire.set('downloadSampai', instance.formatDate(selectedDates[1], 'd-m-Y'));
+                        } else if (selectedDates.length === 1) {
+                            const single = instance.formatDate(selectedDates[0], 'd-m-Y');
+                            $wire.set('downloadDari', single);
+                            $wire.set('downloadSampai', single);
+                        } else if (selectedDates.length === 0) {
+                            $wire.set('downloadDari', null);
+                            $wire.set('downloadSampai', null);
+                        }
+                    },
+                });
+
+                const clearBtn = wrap.querySelector('[data-clear-download-range]');
+                if (clearBtn && !clearBtn.dataset.bound) {
+                    clearBtn.dataset.bound = '1';
+                    clearBtn.addEventListener('click', () => {
+                        getHasilRespondenPicker()?.clear();
+                        const $wire = getHasilRespondenWire();
+                        if ($wire) {
+                            $wire.set('downloadDari', null);
+                            $wire.set('downloadSampai', null);
+                        }
+                    });
+                }
+            };
+
+            const bootHasilRespondenDownloadRange = () => {
+                if (!getHasilRespondenDownloadWrap()) return;
+                if (getHasilRespondenPicker()) return;
+                window.initHasilRespondenDownloadRange();
+            };
+
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('sync-hasil-responden-download-range', (payload) => {
+                    bootHasilRespondenDownloadRange();
+                    window.syncHasilRespondenDownloadRange(payload);
+                });
+
+                Livewire.hook('morph.added', ({ el }) => {
+                    if (el.id === 'flatpickr-download-range' || el.querySelector?.('#flatpickr-download-range')) {
+                        hasilRespondenPickerInstance = null;
+                        setTimeout(bootHasilRespondenDownloadRange, 0);
+                    }
+                });
+            });
+
+            document.addEventListener('livewire:navigated', () => {
+                hasilRespondenPickerInstance = null;
+                setTimeout(bootHasilRespondenDownloadRange, 100);
+            });
+
+            document.addEventListener('livewire:initialized', () => {
+                setTimeout(bootHasilRespondenDownloadRange, 50);
+            });
+        })();
     </script>  
     <script>
         function syncAdminSidebar() {

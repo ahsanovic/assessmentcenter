@@ -46,7 +46,7 @@
                                             data-download-sampai="{{ $downloadSampai }}">
                                             <input type="text" class="form-control flatpickr-input" placeholder="rentang tanggal unduhan"
                                                 data-input readonly="readonly">
-                                            <button type="button" class="input-group-text text-muted" id="btn-clear-download-range"
+                                            <button type="button" class="input-group-text text-muted" data-clear-download-range
                                                 title="Hapus tanggal terpilih">
                                                 <i data-feather="x" style="width:14px;height:14px;"></i>
                                             </button>
@@ -152,82 +152,3 @@
         <x-pagination :items="$data" />
     </div>
 </div>
-@push('js')
-    @script
-        <script>
-            (function () {
-                function parseDMY(s) {
-                    const p = (s || '').split('-').map((n) => parseInt(n, 10));
-                    if (p.length !== 3 || p.some((n) => Number.isNaN(n))) return null;
-                    return new Date(p[2], p[1] - 1, p[0]);
-                }
-
-                function initFlatpickrDownloadRange() {
-                    const wrap = document.getElementById('flatpickr-download-range');
-                    if (!wrap || wrap._flatpickr) return;
-
-                    const dari = wrap.getAttribute('data-download-dari') || '';
-                    const sampai = wrap.getAttribute('data-download-sampai') || '';
-                    const d1 = parseDMY(dari);
-                    const d2 = parseDMY(sampai);
-                    const defaultDate = d1 && d2 ? [d1, d2] : undefined;
-
-                    flatpickr(wrap, {
-                        wrap: true,
-                        mode: 'range',
-                        dateFormat: 'd-m-Y',
-                        locale: { rangeSeparator: ' s.d. ' },
-                        allowInput: false,
-                        defaultDate: defaultDate,
-                        onChange: (selectedDates, _dateStr, instance) => {
-                            if (selectedDates.length === 2) {
-                                $wire.set('downloadDari', instance.formatDate(selectedDates[0], 'd-m-Y'));
-                                $wire.set('downloadSampai', instance.formatDate(selectedDates[1], 'd-m-Y'));
-                            } else if (selectedDates.length === 1) {
-                                const singleDate = instance.formatDate(selectedDates[0], 'd-m-Y');
-                                $wire.set('downloadDari', singleDate);
-                                $wire.set('downloadSampai', singleDate);
-                            } else if (selectedDates.length === 0) {
-                                $wire.set('downloadDari', null);
-                                $wire.set('downloadSampai', null);
-                            }
-                        },
-                    });
-                }
-
-                document.addEventListener('DOMContentLoaded', initFlatpickrDownloadRange);
-                document.addEventListener('livewire:navigated', initFlatpickrDownloadRange);
-
-                document.addEventListener('livewire:initialized', () => {
-                    initFlatpickrDownloadRange();
-                    if (!window.__hasilRespondenDownloadRangeClearBound) {
-                        window.__hasilRespondenDownloadRangeClearBound = true;
-                        Livewire.on('flatpickr-download-range-clear', () => {
-                            document.getElementById('flatpickr-download-range')?._flatpickr?.clear();
-                        });
-                    }
-                    if (!window.__hasilRespondenDownloadRangeSetBound) {
-                        window.__hasilRespondenDownloadRangeSetBound = true;
-                        Livewire.on('flatpickr-download-range-set', (payload) => {
-                            const p = Array.isArray(payload) ? payload[0] : payload;
-                            const fromDate = parseDMY(p?.from);
-                            const toDate = parseDMY(p?.to);
-                            const picker = document.getElementById('flatpickr-download-range')?._flatpickr;
-                            if (picker && fromDate && toDate) {
-                                picker.setDate([fromDate, toDate], true);
-                            }
-                        });
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    const clearBtn = e.target.closest('#btn-clear-download-range');
-                    if (!clearBtn) return;
-                    document.getElementById('flatpickr-download-range')?._flatpickr?.clear();
-                    $wire.set('downloadDari', null);
-                    $wire.set('downloadSampai', null);
-                });
-            })();
-        </script>
-    @endscript
-@endpush
