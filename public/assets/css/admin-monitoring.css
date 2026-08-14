@@ -236,7 +236,9 @@
 .ac-monitoring-theme .table-responsive {
     border-radius: var(--ac-radius-sm);
     border: 1px solid var(--ac-border);
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
 }
 
 .ac-monitoring-theme .ac-data-table,
@@ -262,6 +264,50 @@
     padding: 0.875rem 1rem;
     border-bottom: 2px solid var(--ac-border) !important;
     white-space: nowrap;
+}
+
+.ac-monitoring-theme .ac-data-table thead th.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table thead th.ac-table-col-actions,
+.ac-monitoring-theme .ac-data-table tbody td.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table tbody td.ac-table-col-actions {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    background: #fff;
+    box-shadow: -6px 0 12px rgba(15, 23, 42, 0.06);
+    white-space: nowrap;
+}
+
+.ac-monitoring-theme .ac-data-table thead th.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table thead th.ac-table-col-actions {
+    z-index: 3;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.ac-monitoring-theme .ac-data-table tbody tr:hover td.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table tbody tr:hover td.ac-table-col-actions {
+    background: #f8fafc !important;
+}
+
+.ac-monitoring-theme .ac-data-table tbody tr.bg-body td.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table tbody tr.bg-body td.ac-table-col-actions {
+    background-color: var(--bs-body-bg, #fff);
+}
+
+.ac-monitoring-theme .ac-data-table tbody tr.bg-body:hover td.ac-table-col-actions,
+.ac-monitoring-theme .table-responsive > .table tbody tr.bg-body:hover td.ac-table-col-actions {
+    background: #f8fafc !important;
+}
+
+.ac-monitoring-theme .ac-data-table thead th.ac-table-col-wrap,
+.ac-monitoring-theme .table-responsive > .table thead th.ac-table-col-wrap,
+.ac-monitoring-theme .ac-data-table tbody td.ac-table-col-wrap,
+.ac-monitoring-theme .table-responsive > .table tbody td.ac-table-col-wrap {
+    min-width: 14rem;
+    max-width: 22rem;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
 .ac-monitoring-theme .ac-data-table tbody td,
