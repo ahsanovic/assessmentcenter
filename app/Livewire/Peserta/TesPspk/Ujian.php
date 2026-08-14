@@ -282,7 +282,7 @@ class Ujian extends Component
         ]);
     }
 
-    public function saveAndNext($nomor_soal)
+    public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $nomor_soal = (int) $nomor_soal;
         $this->refreshLv34SealFromDatabase();
@@ -293,7 +293,9 @@ class Ujian extends Component
             ->first();
 
         if (! $data) {
-            return $this->redirect(route('peserta.tes-pspk.home'), navigate: true);
+            $this->skipRender();
+
+            return null;
         }
 
         if ($this->isLevel34 && $this->jmlAnkas > 0
@@ -317,23 +319,202 @@ class Ujian extends Component
         }
 
         $index_array = $nomor_soal - 1;
-
         $soal_id = explode(',', $data->soal_id);
-
-        // update jawaban
         $jawaban_user = explode(',', $data->jawaban);
+        $jawaban_baru = $jawaban ?? ($this->jawaban_user[$index_array] ?? '0');
+        $jawaban_baru = ($jawaban_baru === '' || $jawaban_baru === null) ? '0' : $jawaban_baru;
 
-        $jawaban_user[$index_array] = $this->jawaban_user[$index_array] ?? '0';
-        $jawaban_user_str = implode(',', $jawaban_user);
-
-        // Simpan jawaban user
-        $data->jawaban = $jawaban_user_str;
+        $jawaban_user[$index_array] = $jawaban_baru;
+        $data->jawaban = implode(',', $jawaban_user);
         $data->save();
 
-        // Perbarui Livewire state
         $this->jawaban_user = $jawaban_user;
         $this->jawaban_kosong = collect($this->jawaban_user)->filter(fn ($j) => $j == '0')->count();
 
+        $this->recalculateScores($data, $soal_id, $jawaban_user);
+
+        if ($this->isLevel34 && $nomor_soal <= $this->jmlAnkas) {
+            $targetId = $nomor_soal < $this->jmlAnkas ? $nomor_soal + 1 : $nomor_soal;
+            $this->skipRender();
+            $payload = $this->soalPayload($targetId);
+
+            if ($nomor_soal === $this->jmlAnkas) {
+                $payload = array_merge($payload, $this->ankasTerakhirPromptPayload($jawaban_user));
+            }
+
+            return $payload;
+        }
+
+        $target = $nomor_soal < $this->jml_soal ? $nomor_soal + 1 : $nomor_soal;
+        $this->skipRender();
+        $payload = $this->soalPayload($target);
+
+        if ($nomor_soal === $this->jml_soal) {
+            $phaseStats = $this->computePhaseStats($jawaban_user, $target);
+            $payload['prompt_soal_terakhir'] = true;
+            $payload['semua_terjawab'] = (int) $phaseStats['phase_kosong'] === 0;
+            $payload['jawaban_kosong'] = (int) $phaseStats['phase_kosong'];
+            $payload['soal_belum_dijawab'] = $this->indeksPertamaBelumDijawabDalamFase($jawaban_user, $target);
+        }
+
+        return $payload;
+    }
+
+    public function navigate($id)
+    {
+        $id = (int) $id;
+        $this->refreshLv34SealFromDatabase();
+
+        if ($id < 1 || $id > $this->jml_soal) {
+            $this->skipRender();
+
+            return null;
+        }
+
+        if ($redirect = $this->enforceLevel34PhaseUrl($id)) {
+            return $redirect;
+        }
+
+        $this->refreshJawabanUserFromDatabase();
+        $this->skipRender();
+
+        return $this->soalPayload($id);
+    }
+
+    private function soalPayload(int $id): array
+    {
+        $this->id_soal = $id;
+        $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$id - 1]);
+
+        if ($this->isLevel34 && $id > $this->jmlAnkas && $this->lv34SjtEntered) {
+            Session::put(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $id]);
+        }
+
+        $jawaban = (string) ($this->jawaban_user[$id - 1] ?? '');
+        $selected = ($jawaban !== '' && $jawaban !== '0') ? $jawaban : '';
+        $stats = $this->computePhaseStats($this->jawaban_user, $id);
+
+        return [
+            'nomor' => $id,
+            'phase_nomor' => $stats['phase_nomor'],
+            'phase_jml_soal' => $stats['phase_jml_soal'],
+            'jawaban_kosong' => $stats['phase_kosong'],
+            'all_ankas_answered' => $stats['all_ankas_answered'],
+            'is_ankas_phase' => $stats['is_ankas_phase'],
+            'teks' => $this->soal?->soal,
+            'opsi_a' => $this->soal?->opsi_a,
+            'opsi_b' => $this->soal?->opsi_b,
+            'opsi_c' => $this->soal?->opsi_c,
+            'opsi_d' => $this->soal?->opsi_d,
+            'opsi_e' => $this->soal?->opsi_e,
+            'selected' => $selected,
+            'jawaban_user' => array_values($this->jawaban_user),
+            'url' => route('peserta.tes-pspk.ujian', ['id' => $id]),
+        ];
+    }
+
+    private function computePhaseStats(array $jawabanUser, int $idSoal): array
+    {
+        $isAnkasPhase = false;
+        $allAnkasAnswered = true;
+        $phaseJmlSoal = $this->jml_soal;
+        $phaseKosong = 0;
+        $phaseNomor = $idSoal;
+
+        if ($this->isLevel34 && $this->jmlAnkas > 0) {
+            $isAnkasPhase = $idSoal <= $this->jmlAnkas;
+
+            $ankasKosong = 0;
+            for ($i = 0; $i < $this->jmlAnkas; $i++) {
+                if (($jawabanUser[$i] ?? '0') == '0') {
+                    $ankasKosong++;
+                    $allAnkasAnswered = false;
+                }
+            }
+
+            if ($isAnkasPhase) {
+                $phaseJmlSoal = $this->jmlAnkas;
+                $phaseKosong = $ankasKosong;
+                $phaseNomor = $idSoal;
+            } else {
+                $sjtKosong = 0;
+                for ($i = $this->jmlAnkas; $i < $this->jml_soal; $i++) {
+                    if (($jawabanUser[$i] ?? '0') == '0') {
+                        $sjtKosong++;
+                    }
+                }
+                $phaseJmlSoal = $this->jml_soal - $this->jmlAnkas;
+                $phaseKosong = $sjtKosong;
+                $phaseNomor = $idSoal - $this->jmlAnkas;
+            }
+        } else {
+            for ($i = 0; $i < $this->jml_soal; $i++) {
+                if (($jawabanUser[$i] ?? '0') == '0') {
+                    $phaseKosong++;
+                }
+            }
+        }
+
+        return [
+            'is_ankas_phase' => $isAnkasPhase,
+            'all_ankas_answered' => $allAnkasAnswered,
+            'phase_jml_soal' => $phaseJmlSoal,
+            'phase_kosong' => $phaseKosong,
+            'phase_nomor' => $phaseNomor,
+        ];
+    }
+
+    private function ankasTerakhirPromptPayload(array $jawabanUser): array
+    {
+        $ankasKosong = 0;
+        for ($i = 0; $i < $this->jmlAnkas; $i++) {
+            if (($jawabanUser[$i] ?? '0') == '0') {
+                $ankasKosong++;
+            }
+        }
+
+        return [
+            'prompt_ankas_terakhir' => true,
+            'semua_terjawab' => $ankasKosong === 0,
+            'jawaban_kosong' => $ankasKosong,
+            'soal_belum_dijawab' => $this->indeksPertamaAnkasBelumTerjawabFrom($jawabanUser),
+        ];
+    }
+
+    private function indeksPertamaBelumDijawabDalamFase(array $jawabanUser, int $idSoal): int
+    {
+        if ($this->isLevel34 && $this->jmlAnkas > 0 && $idSoal > $this->jmlAnkas) {
+            for ($i = $this->jmlAnkas; $i < $this->jml_soal; $i++) {
+                if (($jawabanUser[$i] ?? '0') == '0') {
+                    return $i + 1;
+                }
+            }
+
+            return $this->jmlAnkas + 1;
+        }
+
+        foreach ($jawabanUser as $idx => $jawaban) {
+            if ((string) $jawaban === '0' || $jawaban === '' || $jawaban === null) {
+                return $idx + 1;
+            }
+        }
+
+        return 1;
+    }
+
+    private function indeksPertamaAnkasBelumTerjawabFrom(array $jawabanUser): int
+    {
+        for ($i = 0; $i < $this->jmlAnkas; $i++) {
+            if (($jawabanUser[$i] ?? '0') == '0') {
+                return $i + 1;
+            }
+        }
+
+        return max(1, $this->jmlAnkas);
+    }
+
+    private function recalculateScores(UjianPspk $data, array $soal_id, array $jawaban_user): void
+    {
         $skor_aspek = $data->skor_aspek ?? [];
         $aspek_list = RefAspekPspk::pluck('kode_aspek')->toArray();
         foreach ($aspek_list as $a) {
@@ -342,11 +523,10 @@ class Ujian extends Component
             }
         }
 
-        // Hitung ulang total skor berdasarkan semua jawaban
-        // tapi tetap update ke struktur skor_aspek lama agar tidak hilang
         $updated_skor = array_fill_keys($aspek_list, 0);
+        $metode_tes_id = (int) auth()->guard('peserta')->user()->event->metode_tes_id;
 
-        if (auth()->guard('peserta')->user()->event->metode_tes_id == 5) { // pspk level 1
+        if ($metode_tes_id === 5) {
             foreach ($soal_id as $i => $sid) {
                 $jawaban = $jawaban_user[$i] ?? null;
                 $soal = SoalPspk::find($sid);
@@ -370,7 +550,7 @@ class Ujian extends Component
                     $updated_skor[$aspek_kode] += $skor_opsi;
                 }
             }
-        } elseif (auth()->guard('peserta')->user()->event->metode_tes_id == 6) { // pspk level 2
+        } elseif ($metode_tes_id === 6) {
             foreach ($soal_id as $i => $sid) {
                 $jawaban = $jawaban_user[$i] ?? null;
                 $soal = SoalPspk::find($sid);
@@ -384,7 +564,7 @@ class Ujian extends Component
                     $updated_skor[$aspek_kode] += ($soal->kunci_jawaban == $jawaban) ? 5 : 1;
                 }
             }
-        } elseif (in_array((int) auth()->guard('peserta')->user()->event->metode_tes_id, [7, 8])) { // pspk level 3 dan 4
+        } elseif (in_array($metode_tes_id, [7, 8], true)) {
             foreach ($soal_id as $i => $sid) {
                 $jawaban = $jawaban_user[$i] ?? null;
                 $soal = SoalPspk::find($sid);
@@ -395,7 +575,6 @@ class Ujian extends Component
                         $updated_skor[$aspek_kode] = 0;
                     }
 
-                    // Untuk level 3/4, skor mengikuti bobot masing-masing opsi jawaban.
                     $skor_opsi = match (strtoupper($jawaban)) {
                         'A' => (int) ($soal->poin_opsi_a ?? 0),
                         'B' => (int) ($soal->poin_opsi_b ?? 0),
@@ -410,66 +589,13 @@ class Ujian extends Component
             }
         }
 
-        // Gabungkan nilai baru ke dalam skor lama agar tidak overwrite
         foreach ($updated_skor as $key => $val) {
-            $skor_aspek[$key] = $val; // update nilainya, tapi kuncinya tetap lengkap
+            $skor_aspek[$key] = $val;
         }
 
-        // simpan skor per aspek
         $data->skor_aspek = $skor_aspek;
         $data->nilai_total = array_sum($updated_skor);
         $data->save();
-
-        if ($this->isLevel34 && $nomor_soal <= $this->jmlAnkas) {
-            $targetId = $nomor_soal < $this->jmlAnkas ? $nomor_soal + 1 : $nomor_soal;
-            $this->navigateAnkasInPlace($targetId);
-
-            return;
-        } elseif ($nomor_soal < $this->jml_soal) {
-            $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $nomor_soal + 1]), navigate: true);
-        } else {
-            $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $nomor_soal]), navigate: true);
-        }
-    }
-
-    public function navigate($id)
-    {
-        $id = (int) $id;
-        $this->refreshLv34SealFromDatabase();
-
-        if ($id < 1 || $id > $this->jml_soal) {
-            return;
-        }
-
-        if ($redirect = $this->enforceLevel34PhaseUrl($id)) {
-            return $redirect;
-        }
-
-        $this->refreshJawabanUserFromDatabase();
-
-        $this->id_soal = $id;
-        $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$id - 1]);
-
-        if ($this->isLevel34 && $id > $this->jmlAnkas && $this->lv34SjtEntered) {
-            Session::put(['pspk_lv34_last_sjt_nomor_'.$this->id_ujian => $id]);
-        }
-
-        if ($this->isLevel34 && $id <= $this->jmlAnkas && ! $this->lv34SjtEntered) {
-            $this->navigateAnkasInPlace($id);
-
-            return;
-        }
-
-        $this->redirect(route('peserta.tes-pspk.ujian', ['id' => $id]), navigate: true);
-    }
-
-    private function navigateAnkasInPlace(int $targetId): void
-    {
-        $this->id_soal = $targetId;
-        $this->soal = SoalPspk::with('kasusLampiran')->find($this->nomor_soal[$targetId - 1]);
-
-        $url = route('peserta.tes-pspk.ujian', ['id' => $targetId]);
-        $this->js('window.history.replaceState({}, \'\', '.json_encode($url).')');
     }
 
     public function lanjutKeSjt()
@@ -541,13 +667,7 @@ class Ujian extends Component
 
     private function indeksPertamaAnkasBelumTerjawab(): int
     {
-        for ($i = 0; $i < $this->jmlAnkas; $i++) {
-            if (($this->jawaban_user[$i] ?? '0') == '0') {
-                return $i + 1;
-            }
-        }
-
-        return max(1, $this->jmlAnkas);
+        return $this->indeksPertamaAnkasBelumTerjawabFrom($this->jawaban_user);
     }
 
     private function enforceLevel34PhaseUrl(int $requestedId)

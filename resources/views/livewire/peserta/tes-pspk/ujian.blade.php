@@ -64,6 +64,47 @@
         font-weight: 600;
         letter-spacing: 0.5px;
     }
+    .swal2-popup button.swal2-deny.ujian-semua-terjawab-deny-btn {
+        background-color: #2563eb !important;
+        color: #fff !important;
+    }
+    .swal2-popup button.swal2-confirm.ujian-semua-terjawab-confirm-btn {
+        background-color: #059669 !important;
+    }
+    .btn-pspk-selesai {
+        --pspk-from: #6f42c1;
+        --pspk-to: #a18cd1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.25rem;
+        border: 0;
+        border-radius: 999px;
+        color: #fff !important;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        background: linear-gradient(135deg, var(--pspk-from) 0%, var(--pspk-to) 100%);
+        box-shadow: 0 8px 18px rgba(111, 66, 193, 0.35);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+    .btn-pspk-selesai:hover,
+    .btn-pspk-selesai:focus {
+        color: #fff !important;
+        filter: brightness(1.05);
+        box-shadow: 0 10px 22px rgba(161, 140, 209, 0.4);
+        transform: translateY(-1px);
+    }
+    .btn-pspk-selesai:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+    }
+    .btn-pspk-selesai svg,
+    .btn-pspk-selesai i {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2.25;
+    }
 
     /* ═══════════════════════════════════════════════
        ANKAS FULLSCREEN IMMERSIVE LAYOUT (Level 3/4)
@@ -263,81 +304,92 @@
 </style>
 @endpush
 
-{{-- <div x-data
-x-init="
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            $wire.laporPelanggaran();
-        }
-    });
+@php
+    $jawabanSaatIni = (string) ($jawaban[$nomor_sekarang - 1] ?? '');
+    $selectedAwal = ($jawabanSaatIni !== '' && $jawabanSaatIni !== '0') ? $jawabanSaatIni : '';
+    $navStart = $isLevel34 ? ($jmlAnkas + 1) : 1;
+    $navEnd = $isLevel34 ? $totalSoalAll : $jml_soal;
+@endphp
 
-    Livewire.on('toast', e => {
-        toastr.options = {
-            positionClass: 'toast-top-center',
-            closeButton: true,
-            timeOut: 0,
-            extendedTimeOut: 0,
-        };
-        toastr[e.type](e.message);
-    });
-"> --}}
 <div>
     @if($isLevel34 && $isAnkasPhase)
-    {{-- ══════════════════════════════════════════════════════════════
-         IMMERSIVE FULLSCREEN ANKAS (Level 3/4 - Tahap 1)
-         PDF lebih lebar 62%, navigasi terintegrasi
-         ══════════════════════════════════════════════════════════════ --}}
-    <div class="ankas-fs" x-data="{ showNav: false }">
-        {{-- Top Bar --}}
+    <div
+        wire:ignore
+        x-data="tesPspkUjian({
+            mode: 'ankas',
+            nomor: {{ (int) $nomor_sekarang }},
+            jml: {{ (int) $jmlAnkas }},
+            jmlAnkas: {{ (int) $jmlAnkas }},
+            phaseNomor: {{ (int) $phaseNomor }},
+            phaseJml: {{ (int) $jml_soal }},
+            jawabanKosong: {{ (int) ($jawaban_kosong ?? 0) }},
+            allAnkasAnswered: @js($allAnkasAnswered),
+            jawabanUser: @js(array_values($jawaban)),
+            selected: @js($selectedAwal),
+            teks: @js($soal->soal),
+            opsiA: @js($soal->opsi_a),
+            opsiB: @js($soal->opsi_b),
+            opsiC: @js($soal->opsi_c),
+            opsiD: @js($soal->opsi_d),
+            opsiE: @js($soal->opsi_e),
+            flagged: {}
+        })"
+        x-init="
+            loadFlags();
+            $nextTick(() => {
+                initAnkasTooltips();
+                if (typeof feather !== 'undefined') feather.replace();
+            });
+        "
+        class="ankas-fs"
+    >
         <div class="ankas-fs-topbar">
             <div class="d-flex align-items-center gap-2">
                 <span class="badge bg-pspk-subtle text-pspk px-2 py-1 phase-badge">
-                    <span wire:ignore><i data-feather="layers" style="width:13px;height:13px" class="me-1"></i></span>
+                    <span><i data-feather="layers" style="width:13px;height:13px" class="me-1"></i></span>
                     Tahap 1: Ankas
                 </span>
                 <span class="badge text-white px-2 py-1" style="background:#6f42c1;font-size:0.78rem;">
-                    Soal {{ $phaseNomor }} / {{ $jml_soal }}
+                    Soal <span x-text="phaseNomor"></span> / <span x-text="phaseJml"></span>
                 </span>
             </div>
 
-            <div class="ankas-fs-timer-pill" wire:ignore.self>
-                <span wire:ignore><i data-feather="clock" style="width:15px;height:15px"></i></span>
+            <div class="ankas-fs-timer-pill">
+                <span><i data-feather="clock" style="width:15px;height:15px"></i></span>
                 <strong class="time timer-badge"></strong>
             </div>
 
             <div class="d-flex align-items-center gap-2">
                 <span class="ankas-fs-stat bg-success bg-opacity-10 text-success" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Sudah dijawab">
-                    <span wire:ignore><i data-feather="check" style="width:12px;height:12px"></i></span>
-                    {{ $jml_soal - $jawaban_kosong }}
+                    <span><i data-feather="check" style="width:12px;height:12px"></i></span>
+                    <span x-text="phaseJml - jawabanKosong"></span>
                 </span>
                 <span class="ankas-fs-stat bg-danger bg-opacity-10 text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Belum dijawab">
-                    <span wire:ignore><i data-feather="x" style="width:12px;height:12px"></i></span>
-                    {{ $jawaban_kosong ?? 0 }}
+                    <span><i data-feather="x" style="width:12px;height:12px"></i></span>
+                    <span x-text="jawabanKosong"></span>
                 </span>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1"
                     @click="showNav = !showNav"
                     :class="{ 'btn-pspk text-white border-0': showNav }"
                     data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Navigasi Soal">
-                    <span wire:ignore><i data-feather="grid" style="width:15px;height:15px"></i></span>
+                    <span><i data-feather="grid" style="width:15px;height:15px"></i></span>
                 </button>
-                <button class="btn btn-sm btn-pspk rounded-pill px-3"
-                    wire:click="lanjutKeSjt"
-                    @if(!$allAnkasAnswered) disabled @endif>
+                <button type="button" class="btn btn-sm btn-pspk rounded-pill px-3"
+                    @click="$wire.lanjutKeSjt()"
+                    :disabled="!allAnkasAnswered">
                     Lanjut SJT
-                    <span wire:ignore><i data-feather="arrow-right" style="width:14px;height:14px" class="ms-1"></i></span>
+                    <span><i data-feather="arrow-right" style="width:14px;height:14px" class="ms-1"></i></span>
                 </button>
             </div>
         </div>
 
-        {{-- Split Content Area --}}
         <div class="ankas-fs-content">
-            {{-- PDF Panel (62%) --}}
             <div class="ankas-fs-pdf">
                 <div class="ankas-fs-pdf-header">
-                    <span wire:ignore><i data-feather="file-text" style="width:15px;height:15px" class="text-pspk me-2"></i></span>
+                    <span><i data-feather="file-text" style="width:15px;height:15px" class="text-pspk me-2"></i></span>
                     <small class="fw-semibold text-muted">Lampiran PDF Analisa Kasus</small>
                 </div>
-                <div wire:ignore style="flex:1;display:flex;flex-direction:column;">
+                <div style="flex:1;display:flex;flex-direction:column;">
                     @if($soal->kasusLampiran?->lampiran_pdf_path)
                         <iframe
                             src="{{ route('peserta.tes-pspk.lampiran-baca', ['soal' => $soal->id]) }}"
@@ -359,74 +411,51 @@ x-init="
 
             <div class="ankas-fs-divider"></div>
 
-            {{-- Soal Panel --}}
             <div class="ankas-fs-soal">
-                {{-- Soal Header --}}
                 <div class="ankas-fs-soal-head">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge text-white px-3 py-2" style="font-size:0.9rem;background:#6f42c1;">
-                                Soal {{ $phaseNomor }}
+                                Soal <span x-text="phaseNomor"></span>
                             </span>
-                            @if(isset($flagged[$nomor_sekarang]))
-                                <span class="badge bg-warning text-dark px-2 py-1">🔖 Ditandai</span>
-                            @endif
+                            <span class="badge bg-warning text-dark px-2 py-1" x-show="isFlagged(nomor)" x-cloak>🔖 Ditandai</span>
                         </div>
-                        <small class="text-muted">{{ $phaseNomor }} dari {{ $jml_soal }}</small>
+                        <small class="text-muted"><span x-text="phaseNomor"></span> dari <span x-text="phaseJml"></span></small>
                     </div>
                 </div>
 
-                {{-- Soal Body (scrollable) --}}
                 <div class="ankas-fs-soal-body">
                     <div class="mb-4">
-                        <p class="mb-0 lh-base" style="font-size:1.05rem;">{{ $soal->soal }}</p>
+                        <p class="mb-0 lh-base" style="font-size:1.05rem;" x-text="teks"></p>
                     </div>
 
-                    <div class="d-flex flex-column gap-2" wire:key="ankas-opsi-block-{{ $nomor_sekarang }}">
-                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-A" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
-                            <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi-{{ $nomor_sekarang }}-A">
-                            <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
-                        </label>
-                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-B" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
-                            <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi-{{ $nomor_sekarang }}-B">
-                            <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
-                        </label>
-                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-C" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
-                            <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi-{{ $nomor_sekarang }}-C">
-                            <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
-                        </label>
-                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-D" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
-                            <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi-{{ $nomor_sekarang }}-D">
-                            <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
-                        </label>
-                        <label wire:key="ankas-opsi-{{ $nomor_sekarang }}-E" class="ankas-fs-option {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
-                            <input class="form-check-input me-3" type="radio"
-                                wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi-{{ $nomor_sekarang }}-E">
-                            <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
-                        </label>
+                    <div class="d-flex flex-column gap-2">
+                        <template x-for="opsi in opsiList" :key="'ankas-' + nomor + '-' + opsi.value">
+                            <label class="ankas-fs-option" :class="{ 'selected': selected === opsi.value }">
+                                <input class="form-check-input me-3" type="radio"
+                                    :name="'jawaban-ankas-' + nomor"
+                                    :value="opsi.value"
+                                    x-model="selected">
+                                <span><strong class="me-2" x-text="opsi.value + '.'"></strong> <span x-text="opsi.label"></span></span>
+                            </label>
+                        </template>
                     </div>
                 </div>
 
-                {{-- Navigation Drawer (collapsible) --}}
                 <div class="ankas-fs-nav-panel" x-show="showNav" x-collapse>
                     <div class="d-flex flex-wrap gap-1 mb-2">
-                        @for ($i = 1; $i <= $jmlAnkas; $i++)
-                            <button wire:click="navigate({{ $i }})"
-                                class="btn ankas-fs-nav-btn btn-sm
-                                    {{ ($jawaban_tersimpan[$i - 1] ?? '0') === '0' ? 'btn-outline-danger' : 'btn-success' }}
-                                    {{ isset($flagged[$i]) ? 'flagged-btn' : '' }}"
-                                style="{{ $i == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111,66,193,0.5);' : '' }}"
+                        <template x-for="n in nomorList" :key="'ankas-nav-' + n">
+                            <button type="button"
+                                class="btn ankas-fs-nav-btn btn-sm"
+                                :class="navButtonClass(n)"
+                                :style="n === nomor ? 'box-shadow: 0 0 0 3px rgba(111,66,193,0.5);' : ''"
+                                @click="navigate(n)"
+                                :disabled="saving"
                             >
-                                {{ $i }}
-                                @if(isset($flagged[$i]))
-                                    <span class="flag-icon" style="font-size:11px;top:-4px;right:-4px;">🔖</span>
-                                @endif
+                                <span x-text="n"></span>
+                                <span class="flag-icon" style="font-size:11px;top:-4px;right:-4px;" x-show="isFlagged(n)" x-cloak>🔖</span>
                             </button>
-                        @endfor
+                        </template>
                     </div>
                     <div class="ankas-fs-nav-legend">
                         <div class="ankas-fs-nav-legend-item">
@@ -444,24 +473,25 @@ x-init="
                     </div>
                 </div>
 
-                {{-- Fixed Action Bar --}}
                 <div class="ankas-fs-actions">
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-secondary btn-sm px-3"
-                            wire:click="navigate({{ $nomor_sekarang - 1 }})"
-                            @if ($nomor_sekarang == 1) disabled @endif>
-                            <span wire:ignore><i data-feather="chevron-left" style="width:16px;height:16px"></i></span>
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-3"
+                            @click="navigate(nomor - 1)"
+                            :disabled="nomor === 1 || saving">
+                            <span><i data-feather="chevron-left" style="width:16px;height:16px"></i></span>
                             <span class="d-none d-xl-inline ms-1">Sebelumnya</span>
                         </button>
-                        <button class="btn btn-pspk btn-sm flex-fill"
-                            wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan"
-                            @if(($jawaban[$nomor_sekarang - 1] ?? '0') === '0') disabled @endif>
-                            Simpan & Lanjut
-                            <span wire:ignore><i data-feather="chevron-right" style="width:16px;height:16px" class="ms-1"></i></span>
+                        <button type="button" class="btn btn-pspk btn-sm flex-fill"
+                            @click="saveAndNext()"
+                            :disabled="!isAnswered(selected) || saving">
+                            <span x-show="!saving">Simpan & Lanjut</span>
+                            <span x-show="saving" x-cloak>Menyimpan...</span>
+                            <span><i data-feather="chevron-right" style="width:16px;height:16px" class="ms-1"></i></span>
                         </button>
-                        <button class="btn btn-sm px-3 {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}"
-                            wire:click="toggleFlag({{ $nomor_sekarang }})"
-                            data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}">
+                        <button type="button" class="btn btn-sm px-3"
+                            :class="isFlagged(nomor) ? 'btn-warning' : 'btn-outline-warning'"
+                            @click.stop="toggleFlag()"
+                            data-bs-toggle="tooltip" data-bs-placement="bottom" :data-bs-title="isFlagged(nomor) ? 'Batalkan Tanda' : 'Tandai Soal'">
                             🔖
                         </button>
                     </div>
@@ -471,16 +501,40 @@ x-init="
     </div>
 
     @else
-    {{-- ══════════════════════════════════════════════
-         STANDARD LAYOUT (Level 1/2, atau SJT phase)
-         ══════════════════════════════════════════════ --}}
-
+    <div
+        wire:ignore
+        x-data="tesPspkUjian({
+            mode: 'std',
+            nomor: {{ (int) $nomor_sekarang }},
+            jml: {{ (int) $jml_soal }},
+            jmlAnkas: {{ (int) $jmlAnkas }},
+            totalSoalAll: {{ (int) $totalSoalAll }},
+            isLevel34: @js($isLevel34),
+            navStart: {{ (int) $navStart }},
+            navEnd: {{ (int) $navEnd }},
+            phaseNomor: {{ (int) $phaseNomor }},
+            jawabanKosong: {{ (int) ($jawaban_kosong ?? 0) }},
+            jawabanUser: @js(array_values($jawaban)),
+            selected: @js($selectedAwal),
+            teks: @js($soal->soal),
+            opsiA: @js($soal->opsi_a),
+            opsiB: @js($soal->opsi_b),
+            opsiC: @js($soal->opsi_c),
+            opsiD: @js($soal->opsi_d),
+            opsiE: @js($soal->opsi_e),
+            flagged: {}
+        })"
+        x-init="
+            loadFlags();
+            $nextTick(() => { if (typeof feather !== 'undefined') feather.replace(); });
+        "
+    >
     <!-- Header Card -->
     <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
         <div class="card-body p-4 text-white">
             <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
                 <div class="d-flex align-items-center mb-3 mb-md-0">
-                    <div class="rounded-circle bg-white bg-opacity-25 p-2 me-3" wire:ignore>
+                    <div class="rounded-circle bg-white bg-opacity-25 p-2 me-3">
                         <i data-feather="award" style="width: 28px; height: 28px;"></i>
                     </div>
                     <div>
@@ -497,37 +551,37 @@ x-init="
         <div class="card-body py-3">
             @if($isLevel34)
             <div class="mb-2">
-                <span class="badge phase-badge {{ $isAnkasPhase ? 'bg-pspk-subtle text-pspk' : 'bg-info bg-opacity-10 text-info' }} px-3 py-2">
-                    {{ $isAnkasPhase ? 'Tahap 1: Analisa Kasus (Ankas)' : 'Tahap 2: Situational Judgment Test (SJT)' }}
+                <span class="badge phase-badge bg-info bg-opacity-10 text-info px-3 py-2">
+                    Tahap 2: Situational Judgment Test (SJT)
                 </span>
             </div>
             @endif
             <div class="row align-items-center g-3">
                 <div class="col-6 col-md-3">
                     <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-success bg-opacity-10 p-2 me-2" wire:ignore>
+                        <div class="rounded-circle bg-success bg-opacity-10 p-2 me-2">
                             <i class="text-success" data-feather="check-circle" style="width: 20px; height: 20px;"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Dijawab</small>
-                            <strong class="text-success">{{ $jml_soal - $jawaban_kosong }}</strong>
+                            <strong class="text-success" x-text="jml - jawabanKosong"></strong>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-2" wire:ignore>
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-2 me-2">
                             <i class="text-danger" data-feather="x-circle" style="width: 20px; height: 20px;"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Belum Dijawab</small>
-                            <strong class="text-danger">{{ $jawaban_kosong ?? 0 }}</strong>
+                            <strong class="text-danger" x-text="jawabanKosong"></strong>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-pspk-subtle p-2 me-2" wire:ignore>
+                        <div class="rounded-circle bg-pspk-subtle p-2 me-2">
                             <i class="text-pspk" data-feather="clock" style="width: 20px; height: 20px;"></i>
                         </div>
                         <div>
@@ -537,30 +591,22 @@ x-init="
                     </div>
                 </div>
                 <div class="col-6 col-md-3 text-md-end">
-                    @if($isLevel34 && $isAnkasPhase)
-                        <button class="btn btn-pspk" wire:click="lanjutKeSjt" @if(!$allAnkasAnswered) disabled @endif>
-                            <span wire:ignore><i data-feather="arrow-right-circle" style="width: 18px; height: 18px;" class="me-1"></i></span>
-                            Lanjut Tes Berikutnya
-                        </button>
-                    @else
-                        <button class="btn btn-warning"
-                            x-data
-                            @click="Swal.fire({
-                                title: 'Apakah Anda yakin mengakhiri tes?',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Akhiri Tes!',
-                                cancelButtonText: 'Batal',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $wire.finish();
-                                }
-                            })"
-                        >
-                            <span wire:ignore><i data-feather="log-out" style="width: 18px; height: 18px;" class="me-1"></i></span>
-                            Selesai
-                        </button>
-                    @endif
+                    <button type="button" class="btn btn-pspk-selesai"
+                        @click="Swal.fire({
+                            title: 'Apakah Anda yakin mengakhiri tes?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Akhiri Tes!',
+                            cancelButtonText: 'Batal',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $wire.finish();
+                            }
+                        })"
+                    >
+                        <i data-feather="check-circle"></i>
+                        <span>Selesai</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -572,74 +618,51 @@ x-init="
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <span class="badge text-white me-3 px-3 py-2" style="font-size: 1rem; background-color: #6f42c1;">
-                        Soal {{ $isLevel34 ? $phaseNomor : $nomor_sekarang }}
+                        Soal <span x-text="isLevel34 ? phaseNomor : nomor"></span>
                     </span>
-                    @if(isset($flagged[$nomor_sekarang]))
-                        <span class="badge bg-warning text-dark">🔖 Ditandai</span>
-                    @endif
+                    <span class="badge bg-warning text-dark" x-show="isFlagged(nomor)" x-cloak>🔖 Ditandai</span>
                 </div>
-                <small class="text-muted">{{ $isLevel34 ? $phaseNomor : $nomor_sekarang }} dari {{ $jml_soal }} soal</small>
+                <small class="text-muted">
+                    <span x-text="isLevel34 ? phaseNomor : nomor"></span> dari <span x-text="jml"></span> soal
+                </small>
             </div>
         </div>
         <div class="card-body p-4">
             <div class="mb-4">
-                <p class="fs-5 mb-0">{{ $soal->soal }}</p>
+                <p class="fs-5 mb-0" x-text="teks"></p>
             </div>
 
-            <div class="row g-3 mb-4" wire:key="std-opsi-block-{{ $nomor_sekarang }}">
-                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-A">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'A' ? 'selected' : '' }}">
-                        <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="A" id="opsi-{{ $nomor_sekarang }}-A">
-                        <span><strong class="me-2">A.</strong> {{ $soal->opsi_a }}</span>
-                    </label>
-                </div>
-                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-B">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'B' ? 'selected' : '' }}">
-                        <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="B" id="opsi-{{ $nomor_sekarang }}-B">
-                        <span><strong class="me-2">B.</strong> {{ $soal->opsi_b }}</span>
-                    </label>
-                </div>
-                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-C">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'C' ? 'selected' : '' }}">
-                        <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="C" id="opsi-{{ $nomor_sekarang }}-C">
-                        <span><strong class="me-2">C.</strong> {{ $soal->opsi_c }}</span>
-                    </label>
-                </div>
-                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-D">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'D' ? 'selected' : '' }}">
-                        <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="D" id="opsi-{{ $nomor_sekarang }}-D">
-                        <span><strong class="me-2">D.</strong> {{ $soal->opsi_d }}</span>
-                    </label>
-                </div>
-                <div class="col-12" wire:key="std-opsi-col-{{ $nomor_sekarang }}-E">
-                    <label class="option-card d-flex align-items-center w-100 {{ ($jawaban[$nomor_sekarang - 1] ?? '') == 'E' ? 'selected' : '' }}">
-                        <input class="form-check-input me-3" type="radio"
-                            wire:model="jawaban_user.{{ $nomor_sekarang - 1 }}" value="E" id="opsi-{{ $nomor_sekarang }}-E">
-                        <span><strong class="me-2">E.</strong> {{ $soal->opsi_e }}</span>
-                    </label>
-                </div>
+            <div class="row g-3 mb-4">
+                <template x-for="opsi in opsiList" :key="'std-' + nomor + '-' + opsi.value">
+                    <div class="col-12" x-show="opsi.show">
+                        <label class="option-card d-flex align-items-center w-100" :class="{ 'selected': selected === opsi.value }">
+                            <input class="form-check-input me-3" type="radio"
+                                :name="'jawaban-std-' + nomor"
+                                :value="opsi.value"
+                                x-model="selected">
+                            <span><strong class="me-2" x-text="opsi.value + '.'"></strong> <span x-text="opsi.label"></span></span>
+                        </label>
+                    </div>
+                </template>
             </div>
 
             <div class="d-flex flex-wrap gap-2">
-                @php
-                    $prevMin = $isLevel34 ? ($jmlAnkas + 1) : 1;
-                @endphp
-                <button class="btn btn-outline-secondary" wire:click="navigate({{ $nomor_sekarang - 1 }})"
-                    @if ($nomor_sekarang == $prevMin) disabled @endif>
-                    <span wire:ignore><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
+                <button type="button" class="btn btn-outline-secondary"
+                    @click="navigate(nomor - 1)"
+                    :disabled="nomor === prevMin || saving">
+                    <span><i data-feather="chevron-left" style="width: 18px; height: 18px;"></i></span>
                     Sebelumnya
                 </button>
-                <button class="btn btn-pspk" wire:click="saveAndNext({{ $nomor_sekarang }})" id="btn-simpan"
-                    @if(($jawaban[$nomor_sekarang - 1] ?? '0') === '0') disabled @endif>
-                    Simpan & Lanjutkan
-                    <span wire:ignore><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
+                <button type="button" class="btn btn-pspk" @click="saveAndNext()"
+                    :disabled="!isAnswered(selected) || saving">
+                    <span x-show="!saving">Simpan & Lanjutkan</span>
+                    <span x-show="saving" x-cloak>Menyimpan...</span>
+                    <span><i data-feather="chevron-right" style="width: 18px; height: 18px;"></i></span>
                 </button>
-                <button class="btn {{ isset($flagged[$nomor_sekarang]) ? 'btn-warning' : 'btn-outline-warning' }}" wire:click="toggleFlag({{ $nomor_sekarang }})">
-                    🔖 {{ isset($flagged[$nomor_sekarang]) ? 'Batalkan Tanda' : 'Tandai Soal' }}
+                <button type="button" class="btn"
+                    :class="isFlagged(nomor) ? 'btn-warning' : 'btn-outline-warning'"
+                    @click.stop="toggleFlag()">
+                    <span x-text="isFlagged(nomor) ? '🔖 Batalkan Tanda' : '🔖 Tandai Soal'"></span>
                 </button>
             </div>
         </div>
@@ -649,29 +672,24 @@ x-init="
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-0 py-3">
             <h6 class="mb-0">
-                <span wire:ignore><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
-                Navigasi Soal{{ $isLevel34 ? ' SJT' : '' }}
+                <span><i data-feather="grid" style="width: 18px; height: 18px;" class="me-2"></i></span>
+                Navigasi Soal<span x-show="isLevel34"> SJT</span>
             </h6>
         </div>
         <div class="card-body p-4">
-            @php
-                $navStart = $isLevel34 ? ($jmlAnkas + 1) : 1;
-                $navEnd = $isLevel34 ? $totalSoalAll : $jml_soal;
-                $nomor_display = 1;
-            @endphp
             <div class="d-flex flex-wrap gap-2">
-                @for ($idx = $navStart; $idx <= $navEnd; $idx++)
-                    <button wire:click="navigate({{ $idx }})"
-                        class="btn nav-btn btn-sm {{ ($jawaban_tersimpan[$idx - 1] ?? '0') === '0' ? 'btn-outline-danger' : 'btn-success' }} {{ isset($flagged[$idx]) ? 'flagged-btn' : '' }}"
-                        style="{{ $idx == $nomor_sekarang ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : '' }}"
+                <template x-for="n in navList" :key="'std-nav-' + n">
+                    <button type="button"
+                        class="btn nav-btn btn-sm"
+                        :class="navButtonClass(n)"
+                        :style="n === nomor ? 'box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.5);' : ''"
+                        @click="navigate(n)"
+                        :disabled="saving"
                     >
-                        {{ $isLevel34 ? $nomor_display : $idx }}
-                        @if(isset($flagged[$idx]))
-                            <span class="flag-icon">🔖</span>
-                        @endif
+                        <span x-text="navDisplayNumber(n)"></span>
+                        <span class="flag-icon" x-show="isFlagged(n)" x-cloak>🔖</span>
                     </button>
-                    @php $nomor_display++; @endphp
-                @endfor
+                </template>
             </div>
             <div class="mt-4 d-flex flex-wrap gap-3">
                 <div class="d-flex align-items-center">
@@ -689,6 +707,7 @@ x-init="
             </div>
         </div>
     </div>
+    </div>
 
     @endif
 </div>
@@ -703,49 +722,319 @@ x-init="
         });
     }
 
-    document.addEventListener('livewire:initialized', function () {
-        initAnkasTooltips();
-        Livewire.hook('morph.updated', function () {
-            initAnkasTooltips();
-        });
-    });
+    window.tesPspkUjian = function (initial) {
+        return {
+            mode: initial.mode || 'std',
+            nomor: initial.nomor,
+            jml: initial.jml,
+            jmlAnkas: initial.jmlAnkas || 0,
+            totalSoalAll: initial.totalSoalAll || initial.jml,
+            isLevel34: !!initial.isLevel34,
+            navStart: initial.navStart || 1,
+            navEnd: initial.navEnd || initial.jml,
+            phaseNomor: initial.phaseNomor || initial.nomor,
+            phaseJml: initial.phaseJml || initial.jml,
+            jawabanKosong: initial.jawabanKosong,
+            allAnkasAnswered: !!initial.allAnkasAnswered,
+            jawabanUser: initial.jawabanUser || [],
+            selected: initial.selected || '',
+            teks: initial.teks || '',
+            opsiA: initial.opsiA || '',
+            opsiB: initial.opsiB || '',
+            opsiC: initial.opsiC || '',
+            opsiD: initial.opsiD || '',
+            opsiE: initial.opsiE || '',
+            flagged: initial.flagged || {},
+            saving: false,
+            showNav: false,
+
+            get nomorList() {
+                const count = this.mode === 'ankas' ? this.jmlAnkas : this.jml;
+                return Array.from({ length: count }, (_, i) => i + 1);
+            },
+
+            get navList() {
+                const start = this.navStart || 1;
+                const end = this.navEnd || this.jml;
+                const list = [];
+                for (let i = start; i <= end; i++) list.push(i);
+                return list;
+            },
+
+            get prevMin() {
+                return this.isLevel34 ? (this.jmlAnkas + 1) : 1;
+            },
+
+            get opsiList() {
+                return [
+                    { value: 'A', label: this.opsiA, show: true },
+                    { value: 'B', label: this.opsiB, show: true },
+                    { value: 'C', label: this.opsiC, show: true },
+                    { value: 'D', label: this.opsiD, show: true },
+                    { value: 'E', label: this.opsiE, show: !!this.opsiE },
+                ];
+            },
+
+            isAnswered(value) {
+                return ['A', 'B', 'C', 'D', 'E'].includes(String(value || ''));
+            },
+
+            isFlagged(n) {
+                const key = String(n);
+                return !!(this.flagged[key] || this.flagged[n]);
+            },
+
+            navButtonClass(n) {
+                if (this.isFlagged(n)) return 'flagged-btn';
+                return this.isAnswered(this.jawabanUser[n - 1]) ? 'btn-success' : 'btn-outline-danger';
+            },
+
+            navDisplayNumber(n) {
+                return this.isLevel34 ? (n - this.jmlAnkas) : n;
+            },
+
+            loadFlags() {
+                try {
+                    const raw = JSON.parse(localStorage.getItem('flags_soal') || '{}') || {};
+                    const normalized = {};
+                    Object.keys(raw).forEach((key) => {
+                        if (raw[key]) normalized[String(key)] = true;
+                    });
+                    this.flagged = normalized;
+                } catch (e) {
+                    this.flagged = {};
+                }
+            },
+
+            persistFlags() {
+                localStorage.setItem('flags_soal', JSON.stringify(this.flagged));
+            },
+
+            applyPayload(payload) {
+                if (!payload) return;
+
+                this.nomor = payload.nomor;
+                this.phaseNomor = payload.phase_nomor ?? this.nomor;
+                this.jawabanKosong = payload.jawaban_kosong ?? this.jawabanKosong;
+                this.allAnkasAnswered = !!payload.all_ankas_answered;
+
+                if (this.mode === 'ankas') {
+                    this.phaseJml = payload.phase_jml_soal ?? this.phaseJml;
+                } else {
+                    this.jml = payload.phase_jml_soal ?? this.jml;
+                }
+
+                this.teks = payload.teks || '';
+                this.opsiA = payload.opsi_a || '';
+                this.opsiB = payload.opsi_b || '';
+                this.opsiC = payload.opsi_c || '';
+                this.opsiD = payload.opsi_d || '';
+                this.opsiE = payload.opsi_e || '';
+                this.selected = this.isAnswered(payload.selected) ? payload.selected : '';
+                this.jawabanUser = Array.isArray(payload.jawaban_user)
+                    ? payload.jawaban_user.slice()
+                    : this.jawabanUser;
+
+                if (payload.url) {
+                    history.replaceState({}, '', payload.url);
+                }
+
+                this.$nextTick(() => {
+                    if (typeof feather !== 'undefined') feather.replace();
+                    if (this.mode === 'ankas') initAnkasTooltips();
+                });
+            },
+
+            showAnkasTerakhirPrompt(payload) {
+                if (typeof Swal === 'undefined') return;
+
+                const kosong = payload?.jawaban_kosong ?? this.jawabanKosong;
+                const targetTinjau = payload?.soal_belum_dijawab || 1;
+
+                if (payload?.semua_terjawab) {
+                    Swal.fire({
+                        title: 'Semua soal Ankas telah dijawab',
+                        text: 'Anda berada di soal terakhir tahap Ankas. Anda dapat melanjutkan ke bagian SJT atau meninjau kembali soal-soal sebelumnya.',
+                        icon: 'info',
+                        showCancelButton: true,
+                        showDenyButton: true,
+                        confirmButtonText: 'Lanjut ke SJT',
+                        denyButtonText: 'Tinjau Soal',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#059669',
+                        denyButtonColor: '#2563eb',
+                        customClass: {
+                            denyButton: 'ujian-semua-terjawab-deny-btn',
+                            confirmButton: 'ujian-semua-terjawab-confirm-btn',
+                        },
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.$wire.lanjutKeSjt();
+                        } else if (result.isDenied) {
+                            this.navigate(1);
+                        }
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Masih ada soal belum dijawab',
+                    text: `Anda berada di soal terakhir tahap Ankas, tetapi masih ada ${kosong} soal yang belum dijawab. Selesaikan semua soal Ankas sebelum melanjutkan ke bagian SJT.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    showConfirmButton: false,
+                    denyButtonText: 'Tinjau Soal',
+                    cancelButtonText: 'Batal',
+                    denyButtonColor: '#2563eb',
+                    customClass: {
+                        denyButton: 'ujian-semua-terjawab-deny-btn',
+                    },
+                }).then((result) => {
+                    if (result.isDenied) {
+                        this.navigate(targetTinjau);
+                    }
+                });
+            },
+
+            showSemuaTerjawabPrompt() {
+                if (typeof Swal === 'undefined') return;
+
+                Swal.fire({
+                    title: 'Semua soal telah dijawab',
+                    text: 'Anda berada di soal terakhir. Anda dapat mengakhiri ujian atau meninjau kembali soal-soal sebelumnya.',
+                    icon: 'info',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'Selesai Ujian',
+                    denyButtonText: 'Tinjau Soal',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#059669',
+                    denyButtonColor: '#2563eb',
+                    customClass: {
+                        denyButton: 'ujian-semua-terjawab-deny-btn',
+                        confirmButton: 'ujian-semua-terjawab-confirm-btn',
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.$wire.finish();
+                    } else if (result.isDenied) {
+                        this.navigate(this.prevMin);
+                    }
+                });
+            },
+
+            showBelumSelesaiPrompt(payload) {
+                if (typeof Swal === 'undefined') return;
+
+                const kosong = payload?.jawaban_kosong ?? this.jawabanKosong;
+                const targetTinjau = payload?.soal_belum_dijawab || this.prevMin;
+
+                Swal.fire({
+                    title: 'Masih ada soal belum dijawab',
+                    text: `Anda berada di soal terakhir, tetapi masih ada ${kosong} soal yang belum dijawab. Soal yang belum dijawab akan dikosongkan jika Anda mengakhiri ujian.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'Selesai Ujian',
+                    denyButtonText: 'Tinjau Soal',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#059669',
+                    denyButtonColor: '#2563eb',
+                    customClass: {
+                        denyButton: 'ujian-semua-terjawab-deny-btn',
+                        confirmButton: 'ujian-semua-terjawab-confirm-btn',
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.$wire.finish();
+                    } else if (result.isDenied) {
+                        this.navigate(targetTinjau);
+                    }
+                });
+            },
+
+            showSoalTerakhirPrompt(payload) {
+                if (payload?.semua_terjawab) {
+                    this.showSemuaTerjawabPrompt();
+                    return;
+                }
+                this.showBelumSelesaiPrompt(payload);
+            },
+
+            toggleFlag() {
+                const key = String(this.nomor);
+                const currentSelected = this.selected;
+                const next = { ...this.flagged };
+
+                if (next[key]) {
+                    delete next[key];
+                } else {
+                    next[key] = true;
+                }
+
+                this.flagged = next;
+                this.persistFlags();
+
+                this.$nextTick(() => {
+                    this.selected = currentSelected;
+                });
+            },
+
+            async saveAndNext() {
+                if (!this.isAnswered(this.selected) || this.saving) return;
+
+                this.saving = true;
+                try {
+                    const payload = await this.$wire.saveAndNext(this.nomor, this.selected);
+                    this.applyPayload(payload);
+
+                    if (payload?.prompt_ankas_terakhir) {
+                        this.showAnkasTerakhirPrompt(payload);
+                    } else if (payload?.prompt_soal_terakhir) {
+                        this.showSoalTerakhirPrompt(payload);
+                    }
+                } finally {
+                    this.saving = false;
+                }
+            },
+
+            async navigate(target) {
+                if (this.saving) return;
+
+                const min = this.mode === 'ankas' ? 1 : this.prevMin;
+                const max = this.mode === 'ankas' ? this.jmlAnkas : this.navEnd;
+
+                if (target < min || target > max || target === this.nomor) return;
+
+                this.saving = true;
+                try {
+                    const payload = await this.$wire.navigate(target);
+                    this.applyPayload(payload);
+                } finally {
+                    this.saving = false;
+                }
+            },
+        };
+    };
 
     document.addEventListener('livewire:init', () => {
-        Livewire.on('load-flags-from-browser', () => {
-            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
-            Livewire.dispatch('updateFlagsFromBrowser', { flags });
-        });
-
-        Livewire.on('toggle-flag-in-browser', (data) => {
-            let nomor = data.nomor;
-            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
-            if (flags[nomor]) {
-                delete flags[nomor];
-            } else {
-                flags[nomor] = true;
-            }
-            localStorage.setItem('flags_soal', JSON.stringify(flags));
-        });
-
-        Livewire.on('request-flags-sync', () => {
-            let flags = JSON.parse(localStorage.getItem('flags_soal') || '{}');
-            Livewire.dispatch('updateFlagsFromBrowser', { flags });
-        });
-
         Livewire.on('clear-flags-browser', () => {
             localStorage.removeItem('flags_soal');
         });
     });
 </script>
 <script>
-    $(document).on('change', '.form-check-input', function() {
-        $('#btn-simpan').removeAttr('disabled');
-    });
+    (function () {
+        if (window.__pspkTimerStarted) {
+            return;
+        }
+        window.__pspkTimerStarted = true;
 
-    var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
-    var isShow = false;
+        var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
+        var isShow = false;
 
-    var x = setInterval(function() {
+        var x = setInterval(function() {
         var now = new Date().getTime();
         var distance = waktuBerakhir - now;
 
@@ -778,5 +1067,6 @@ x-init="
             $('.time').html(('0' + hours).slice(-2) + " : " + ('0' + minutes).slice(-2) + " : " + ('0' + seconds).slice(-2));
         }
     }, 1000);
+    })();
 </script>
 @endpush
