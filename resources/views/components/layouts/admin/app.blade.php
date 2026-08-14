@@ -41,7 +41,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/demo1/style.css') }}">
     <!-- End layout styles -->
 
-    {{-- Scoped ke .ac-monitoring-theme; selalu dimuat agar tahan wire:navigate --}}
+    {{-- Tema UI admin (card, tabel, breadcrumb); selalu dimuat agar tahan wire:navigate --}}
     <link rel="stylesheet" href="{{ asset('assets/css/admin-monitoring.css') }}">
 
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
@@ -50,13 +50,7 @@
     @stack('styles')
 </head>
 
-<body>
-    <script>
-        document.body.classList.toggle(
-            'ac-monitoring-theme',
-            /tes-berlangsung|tes-selesai|kt-ongoing|kt-finish|cd-ongoing|cd-finish|int-ongoing|int-finish|pspk-ongoing|pspk-finish|\/pelanggaran\/|hasil-responden/.test(location.pathname)
-        );
-    </script>
+<body class="ac-monitoring-theme">
     <div class="main-wrapper">
         <x-layouts.admin.sidebar />
 
@@ -737,26 +731,14 @@
             }
         }
 
-        function isMonitoringPath(pathname) {
-            return /tes-berlangsung|tes-selesai|kt-ongoing|kt-finish|cd-ongoing|cd-finish|int-ongoing|int-finish|pspk-ongoing|pspk-finish|\/pelanggaran\/|hasil-responden/.test(pathname || '');
-        }
-
-        function syncMonitoringTheme() {
-            document.body.classList.toggle('ac-monitoring-theme', isMonitoringPath(window.location.pathname));
-        }
-
-        syncMonitoringTheme();
-
         if (!window.__adminNavigateInit) {
             window.__adminNavigateInit = true;
 
             document.addEventListener('DOMContentLoaded', () => {
-                syncMonitoringTheme();
                 syncAdminSidebar();
             });
 
             document.addEventListener('livewire:navigated', () => {
-                syncMonitoringTheme();
                 requestAnimationFrame(() => syncAdminSidebar());
 
                 if (typeof hideAllTooltips === 'function') {
