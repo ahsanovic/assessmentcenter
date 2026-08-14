@@ -15,13 +15,14 @@ class PortofolioAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $metode_tes = auth()->guard('peserta')->user()->event->metode_tes_id;
+        $peserta = activePeserta();
+        $metode_tes = $peserta?->event?->metode_tes_id;
 
         if ($metode_tes !== 1) {
             return redirect()->route('peserta.dashboard');
         }
 
-        if (auth()->guard('peserta')->user()->event->is_open == 'false') {
+        if ($peserta->event->is_open == 'false') {
             return redirect()->route('peserta.dashboard');
         }
 

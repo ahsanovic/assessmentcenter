@@ -52,8 +52,8 @@ class KecerdasanEmosi extends Component
         $this->id_soal = $id;
 
         $data = UjianKecerdasanEmosi::select('id', 'soal_id', 'jawaban', 'created_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if ($data->is_finished == 'true') {
@@ -98,8 +98,8 @@ class KecerdasanEmosi extends Component
     public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $index_array = $nomor_soal - 1;
-        $data = UjianKecerdasanEmosi::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianKecerdasanEmosi::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 
@@ -408,8 +408,8 @@ class KecerdasanEmosi extends Component
 
             $skor = HasilKecerdasanEmosi::updateOrCreate(
                 [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'ujian_id' => $data->id,
                 ],
                 [

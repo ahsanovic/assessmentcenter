@@ -100,8 +100,8 @@ class KarirForm extends Component
                 }
 
                 RwKarir::create([
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'bulan_mulai' => $this->form->bulan_mulai,
                     'bulan_selesai' => $this->form->bulan_selesai,
                     'tahun_mulai' => $this->form->tahun_mulai,

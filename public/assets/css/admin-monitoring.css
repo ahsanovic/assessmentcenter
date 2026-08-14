@@ -304,6 +304,7 @@
 .ac-monitoring-theme .ac-data-table tbody td.ac-table-col-wrap,
 .ac-monitoring-theme .table-responsive > .table tbody td.ac-table-col-wrap {
     min-width: 11rem;
+    width: 11rem;
     max-width: 17rem;
     white-space: normal !important;
     word-wrap: break-word;

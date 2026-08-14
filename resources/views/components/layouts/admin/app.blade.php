@@ -42,7 +42,7 @@
     <!-- End layout styles -->
 
     {{-- Tema UI admin (card, tabel, breadcrumb); selalu dimuat agar tahan wire:navigate --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/admin-monitoring.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-monitoring.css') }}?v={{ filemtime(public_path('assets/css/admin-monitoring.css')) }}">
 
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 

@@ -26,7 +26,7 @@ class Index extends Component
     {
         // $this->validate();
         try {
-            $pin = Event::whereId(Auth::user()->event_id)
+            $pin = Event::whereId(activeEventId())
                 ->whereIsFinished('false')
                 ->value('pin_ujian');
 

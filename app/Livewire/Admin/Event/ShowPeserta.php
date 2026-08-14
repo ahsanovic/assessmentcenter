@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Event;
 use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\RefJenisPeserta;
+use App\Services\EventGroupPesertaSyncService;
 use App\Services\EventPesertaSpreadsheetImportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
@@ -163,7 +164,7 @@ class ShowPeserta extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::findOrFail($this->id_event);
+        $this->event = Event::with('eventGroup')->findOrFail($this->id_event);
     }
 
     public function render()
@@ -310,6 +311,8 @@ class ShowPeserta extends Component
             if ($this->isUpdate) {
                 $data = Peserta::findOrFail($this->selected_id);
                 $old_data = $data->getOriginal();
+                $matchNip = $data->nip;
+                $matchNik = $data->nik;
 
                 $data->nama = $parsedNama['nama'];
                 $data->gelar_depan = $parsedNama['gelar_depan'];
@@ -346,7 +349,14 @@ class ShowPeserta extends Component
 
                 activity_log($data, 'update', 'peserta', $old_data);
 
-                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil ubah data peserta']);
+                $syncService = app(EventGroupPesertaSyncService::class);
+                $updated = $syncService->syncUpdateFromPeserta($data, $matchNip, $matchNik);
+                $message = 'berhasil ubah data peserta';
+                if ($updated > 0) {
+                    $message .= " (+{$updated} event lain dalam grup diperbarui)";
+                }
+
+                $this->dispatch('toast', ['type' => 'success', 'message' => $message]);
             } else {
                 $data = Peserta::create([
                     'nama' => $parsedNama['nama'],
@@ -365,7 +375,13 @@ class ShowPeserta extends Component
 
                 activity_log($data, 'create', 'peserta');
 
-                $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil tambah data peserta']);
+                $synced = app(EventGroupPesertaSyncService::class)->replicateFromPeserta($data);
+                $message = 'berhasil tambah data peserta';
+                if ($synced > 0) {
+                    $message .= " (+{$synced} event lain dalam grup)";
+                }
+
+                $this->dispatch('toast', ['type' => 'success', 'message' => $message]);
             }
 
             $this->resetForm();
@@ -387,12 +403,22 @@ class ShowPeserta extends Component
         try {
             $data = Peserta::find($this->selected_id);
             $old_data = $data->getOriginal();
+            $matchNip = $data->nip;
+            $matchNik = $data->nik;
+
+            $syncService = app(EventGroupPesertaSyncService::class);
+            $deletedSiblings = $syncService->syncDeleteFromPeserta($data, $matchNip, $matchNik);
 
             activity_log($data, 'delete', 'peserta', $old_data);
 
             $data->delete();
 
-            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil menghapus data peserta']);
+            $message = 'berhasil menghapus data peserta';
+            if ($deletedSiblings > 0) {
+                $message .= " (+{$deletedSiblings} event lain dalam grup)";
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => $message]);
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data peserta']);
         }
@@ -409,6 +435,8 @@ class ShowPeserta extends Component
     {
         try {
             $data = Peserta::find($this->selected_id);
+            $matchNip = $data->nip;
+            $matchNik = $data->nik;
 
             if ($data->is_active == 'true') {
                 $data->update(['is_active' => 'false']);
@@ -416,7 +444,16 @@ class ShowPeserta extends Component
                 $data->update(['is_active' => 'true']);
             }
 
-            $this->dispatch('toast', ['type' => 'success', 'message' => 'berhasil merubah status peserta']);
+            $data->refresh();
+
+            $updated = app(EventGroupPesertaSyncService::class)->syncUpdateFromPeserta($data, $matchNip, $matchNik);
+
+            $message = 'berhasil merubah status peserta';
+            if ($updated > 0) {
+                $message .= " (+{$updated} event lain dalam grup)";
+            }
+
+            $this->dispatch('toast', ['type' => 'success', 'message' => $message]);
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal merubah status peserta']);
         }
@@ -531,25 +568,28 @@ class ShowPeserta extends Component
         }
 
         $imported = (int) ($payload['imported'] ?? 0);
+        $synced = (int) ($payload['synced'] ?? 0);
         $errors = $payload['errors'] ?? [];
         $failed = (int) ($payload['failed'] ?? count($errors));
+        $syncedSuffix = $synced > 0 ? " (+{$synced} salinan ke event lain dalam grup)" : '';
 
         if ($failed > 0) {
             $errorSummary = EventPesertaSpreadsheetImportService::categorizeImportErrors($errors);
             $this->dispatch('toast', [
                 'type' => 'warning',
-                'message' => "Import selesai: $imported berhasil, $failed gagal.",
+                'message' => "Import selesai: $imported berhasil{$syncedSuffix}, $failed gagal.",
             ]);
             $this->dispatch('show-import-errors',
                 errors: $errors,
                 summary: $errorSummary,
                 imported: $imported,
+                synced: $synced,
                 failed: $failed
             );
         } else {
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => "Berhasil import $imported peserta",
+                'message' => "Berhasil import $imported peserta{$syncedSuffix}",
             ]);
         }
     }
@@ -605,6 +645,7 @@ class ShowPeserta extends Component
 
                     cache()->put($cacheKey, [
                         'imported' => $result['imported'],
+                        'synced' => $result['synced'] ?? 0,
                         'errors' => $errors,
                         'failed' => $errorCount,
                         'fatal' => null,

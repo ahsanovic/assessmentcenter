@@ -17,8 +17,8 @@ class Pelatihan extends Component
     public function render()
     {
         $pelatihan = RwPelatihan::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByRaw('YEAR(tgl_selesai) IS NULL, YEAR(tgl_selesai) DESC')
             ->get();

@@ -71,8 +71,8 @@ class Ujian extends Component
         $this->dispatch('load-flags-from-browser');
 
         $data = UjianPspk::select('id', 'soal_id', 'jawaban', 'created_at', 'pspk_lv34_entered_sjt_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if (! $data) {
@@ -287,8 +287,8 @@ class Ujian extends Component
         $nomor_soal = (int) $nomor_soal;
         $this->refreshLv34SealFromDatabase();
 
-        $data = UjianPspk::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianPspk::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 

@@ -50,6 +50,12 @@
                             color="success"
                             :disabled="$data->isEmpty()"
                         />
+                        @if($event->event_group_id)
+                            <x-btn-download-rekap-gabungan
+                                :event-id="$event->id"
+                                :tanggal-tes="$tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : ''"
+                            />
+                        @endif
                         <x-btn-download 
                             :route="'admin.tes-selesai.download-all-laporan'"
                             :params="[$event->id]"

@@ -60,11 +60,15 @@
                     </x-monitoring.filter-panel>
 
                     <div wire:key="events-table" wire:ignore.self class="table-responsive">
-                        <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
+                        <table class="table ac-data-table table-hover align-middle">
+                            <colgroup>
+                                <col style="width: 45px">
+                                <col style="width: 11rem; min-width: 11rem">
+                            </colgroup>
                             <thead class="table-light border-bottom">
                                 <tr>
-                                    <th class="text-center" style="width: 45px;">#</th>
-                                    <th>Nama Event</th>
+                                    <th class="text-center">#</th>
+                                    <th class="ac-table-col-wrap">Nama Event</th>
                                     <th>Tgl Pelaksanaan</th>
                                     <th>Jabatan yg Diujikan<br><small class="text-muted">Metode Tes</small></th>
                                     <th>Jumlah Peserta</th>
@@ -72,14 +76,19 @@
                                     <th>Assessor</th>
                                     <th>Portofolio</th>
                                     <th>Status Event</th>
-                                    <th></th>
+                                    <th class="ac-table-col-actions text-end">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
-                                        <td class="text-wrap fw-medium">{{ $item->nama_event }}</td>
+                                        <td class="ac-table-col-wrap text-wrap fw-medium">
+                                            {{ $item->nama_event }}
+                                            @if($item->eventGroup)
+                                                <br><span class="badge bg-info-subtle text-info mt-1">{{ $item->eventGroup->nama }}</span>
+                                            @endif
+                                        </td>
                                         <td class="text-wrap">
                                             @if ($item->tgl_mulai == $item->tgl_selesai)
                                                 {{ $item->tgl_mulai }}
@@ -134,7 +143,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td class="ac-table-col-actions text-end text-nowrap">
                                             @php
                                                 $canPrintAbsensi = $item->peserta_count > 0;
                                             @endphp
@@ -217,6 +226,44 @@
                             placeholder="Masukkan nama event"
                             :required="true"
                         />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="link-icon me-2" data-feather="layers"></i>
+                                Grup Assessment (multi-tes) <span class="text-danger">*</span>
+                            </label>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input @error('event_group_mode') is-invalid @enderror" wire:model.live="event_group_mode" id="groupNone" value="none">
+                                    <label class="form-check-label" for="groupNone">Tidak digabung (tes tunggal)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input @error('event_group_mode') is-invalid @enderror" wire:model.live="event_group_mode" id="groupNew" value="new" @disabled($isUpdate)>
+                                    <label class="form-check-label" for="groupNew">Buat grup baru</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input @error('event_group_mode') is-invalid @enderror" wire:model.live="event_group_mode" id="groupExisting" value="existing">
+                                    <label class="form-check-label" for="groupExisting">Gabung ke grup yang ada</label>
+                                </div>
+                            </div>
+                            @error('event_group_mode')
+                            <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                            @enderror
+                            @if($event_group_mode === 'existing')
+                                <select wire:model="event_group_id" class="form-select mt-2 @error('event_group_id') is-invalid @enderror">
+                                    <option value="">- Pilih grup -</option>
+                                    @foreach ($option_event_group as $key => $item)
+                                        <option value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                @error('event_group_id')
+                                <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                                @enderror
+                                <small class="text-muted d-block mt-1">Event dengan metode tes berbeda dalam grup yang sama dapat diikuti peserta tanpa logout.</small>
+                            @elseif($event_group_mode === 'new')
+                                <small class="text-muted d-block mt-1">Grup baru dibuat otomatis. Event berikutnya dengan metode berbeda bisa digabung ke grup ini.</small>
+                            @endif
+                        </div>
 
                         <div class="row">
                             <div class="col-md-6">

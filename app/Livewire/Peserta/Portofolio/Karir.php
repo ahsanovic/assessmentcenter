@@ -17,8 +17,8 @@ class Karir extends Component
     public function render()
     {
         $karir = RwKarir::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByDesc('tahun_selesai')
             ->get();

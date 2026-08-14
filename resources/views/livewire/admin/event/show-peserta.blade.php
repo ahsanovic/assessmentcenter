@@ -236,6 +236,17 @@
                 <!-- Modal Body -->
                 <div class="modal-body" style="padding: 32px; background: #f8f9fa; max-height: 70vh; overflow-y: auto;">
                     <form wire:submit="save">
+                        @if($event->event_group_id)
+                            <div class="alert alert-info py-2 mb-3" style="border-radius: 10px; border: none;">
+                                <small>
+                                    @if($isUpdate)
+                                        Perubahan data (termasuk password dan status) akan disinkronkan ke event lain dalam grup <strong>{{ $event->eventGroup?->nama }}</strong>.
+                                    @else
+                                        Peserta akan otomatis disalin ke event lain dalam grup <strong>{{ $event->eventGroup?->nama }}</strong>.
+                                    @endif
+                                </small>
+                            </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -405,6 +416,9 @@
                                     <li>Gelar depan dan belakang akan terdeteksi otomatis</li>
                                     <li>Upload file yang sudah diisi</li>
                                     <li>Impor ulang file yang sama: baris dengan NIP/NIK yang sudah ada di event ini akan <strong>ditolak</strong> (bukan menimpa data lama); hanya peserta baru yang ditambahkan</li>
+                                    @if($event->event_group_id)
+                                        <li>Event ini dalam grup <strong>{{ $event->eventGroup?->nama }}</strong> — peserta baru otomatis disalin ke event lain dalam grup yang sama</li>
+                                    @endif
                                 </ol>
                             </small>
                         </div>
@@ -478,7 +492,13 @@
                                 <div class="col-md-3">
                                     <div class="text-center p-3 border rounded bg-success-subtle" style="border-radius: 10px !important;">
                                         <h4 class="text-success mb-1" id="successCount">0</h4>
-                                        <small class="text-muted">Berhasil</small>
+                                        <small class="text-muted">Berhasil (event ini)</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 border rounded bg-info-subtle" style="border-radius: 10px !important;">
+                                        <h4 class="text-info mb-1" id="syncedCount">0</h4>
+                                        <small class="text-muted">Salinan ke grup</small>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -487,7 +507,7 @@
                                         <small class="text-muted">Gagal</small>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="p-2 border rounded bg-light" style="border-radius: 10px !important;">
                                         <small><strong>Kategori Error:</strong></small>
                                         <ul class="list-unstyled mb-0 mt-2" id="errorCategories" style="font-size: 0.875rem;">
@@ -638,13 +658,15 @@
 
             // Function untuk menampilkan error import dengan detail
             window.showImportErrors = function(data) {
-                const { errors, summary, imported, failed } = data;
+                const { errors, summary, imported, synced, failed } = data;
                 
                 const updateModalContent = function() {
                     const successCountEl = document.getElementById('successCount');
+                    const syncedCountEl = document.getElementById('syncedCount');
                     const failedCountEl = document.getElementById('failedCount');
                     
                     if (successCountEl) successCountEl.textContent = imported || 0;
+                    if (syncedCountEl) syncedCountEl.textContent = synced || 0;
                     if (failedCountEl) failedCountEl.textContent = failed || 0;
                     
                     const categoriesEl = document.getElementById('errorCategories');
@@ -750,7 +772,9 @@
             $wire.on('show-delete-confirmation', () => {
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: "Data peserta akan dihapus permanen!",
+                    text: @json($event->event_group_id
+                        ? 'Peserta akan dihapus dari event ini dan semua event dalam grup assessment yang sama.'
+                        : 'Data peserta akan dihapus permanen!'),
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
@@ -767,7 +791,9 @@
             $wire.on('change-status-peserta-confirmation', () => {
                 Swal.fire({
                     title: 'Ubah Status Peserta?',
-                    text: "Status peserta akan diubah",
+                    text: @json($event->event_group_id
+                        ? 'Status akan diubah di event ini dan disinkronkan ke event lain dalam grup yang sama.'
+                        : 'Status peserta akan diubah'),
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',

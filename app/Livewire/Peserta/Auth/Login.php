@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Peserta\Auth;
 
-use App\Models\Event;
 use App\Models\Peserta;
+use App\Services\PesertaParticipationService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ class Login extends Component
     public $id_number;
     public $password;
 
-    public function login()
+    public function login(PesertaParticipationService $participationService)
     {
         $this->validate([
             'id_number' => 'required|numeric',
@@ -29,16 +29,14 @@ class Login extends Component
         $length = strlen($this->id_number);
 
         if ($length === 18) {
-            // Cek apakah peserta ASN
-            $peserta = Peserta::where('jenis_peserta_id', 1)->where('nip', $this->id_number)->first(['id']);
-            if (!$peserta) {
+            $exists = Peserta::where('jenis_peserta_id', 1)->where('nip', $this->id_number)->exists();
+            if (!$exists) {
                 $this->addError('id_number', 'NIP tidak ditemukan atau bukan peserta ASN.');
                 return;
             }
         } elseif ($length === 16) {
-            // Cek apakah peserta Non-ASN
-            $peserta = Peserta::where('jenis_peserta_id', 2)->where('nik', $this->id_number)->first(['id']);
-            if (!$peserta) {
+            $exists = Peserta::where('jenis_peserta_id', 2)->where('nik', $this->id_number)->exists();
+            if (!$exists) {
                 $this->addError('id_number', 'NIK tidak ditemukan atau bukan peserta Non-ASN.');
                 return;
             }
@@ -47,73 +45,32 @@ class Login extends Component
             return;
         }
 
-        // Cari event yang belum selesai
-        // $event = Event::where('is_finished', 'false')->first();
+        $participations = $participationService->findActiveParticipationsByIdNumber($this->id_number);
 
-        // if (!$event) {
-        //     $this->addError('id_number', 'Tidak ada event yang sedang berlangsung.');
-        //     return;
-        // }
+        if ($participations->isEmpty()) {
+            $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
+            return;
+        }
 
-        $peserta = Peserta::where(function ($query) {
-            $query->where(function ($q) {
-                $q->where('jenis_peserta_id', 1)
-                    ->where('nip', $this->id_number);
-            })->orWhere(function ($q) {
-                $q->where('jenis_peserta_id', 2)
-                    ->where('nik', $this->id_number);
-            });
-        })
-            ->whereHas('event', function ($query) {
-                $query->where('is_finished', 'false');
-            })
-            ->where('is_active', 'true')
-            ->orderByDesc('event_id')
-            ->first();
+        $matchedParticipations = $participationService->participationsMatchingPassword($participations, $this->password);
+
+        if ($matchedParticipations->isEmpty()) {
+            $this->addError('id_number', 'NIP/NIK atau password salah.');
+            return;
+        }
+
+        $peserta = $participationService->resolveLoginParticipation($matchedParticipations);
 
         if (!$peserta) {
             $this->addError('id_number', 'Tes sudah selesai / akun tidak ditemukan.');
             return;
         }
 
-        // cek password manual
-        if (!Hash::check($this->password, $peserta->password)) {
-            $this->addError('id_number', 'Password salah.');
-            return;
-        }
-
-        // login pakai peserta hasil query (event terbaru aktif)
         Auth::guard('peserta')->login($peserta);
 
         request()->session()->regenerate();
 
         return $this->redirect(route('peserta.dashboard'));
-
-        // if ($peserta) {
-        //     $credentials = [
-        //         'password' => $this->password,
-        //     ];
-
-        //     if ($peserta->jenis_peserta_id == 1) {
-        //         // ASN
-        //         $credentials['nip'] = $this->id_number;
-        //     } elseif ($peserta->jenis_peserta_id == 2) {
-        //         // Non-ASN
-        //         $credentials['nik'] = $this->id_number;
-        //     }
-
-        //     if (auth()->guard('peserta')->attempt($credentials)) {
-        //         request()->session()->regenerate();
-        //         return $this->redirect(route('peserta.dashboard'));
-        //     }
-        // }
-
-        // if ($peserta && auth()->guard('peserta')->attempt($this->only('nip', 'nik', 'password'))) {
-        //     request()->session()->regenerate();
-        //     return $this->redirect(route('peserta.dashboard'), navigate: true);
-        // }
-
-        $this->addError('id_number', 'NIP/NIK atau password salah.');
     }
 
     public function render()

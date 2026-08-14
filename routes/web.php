@@ -42,10 +42,12 @@ Route::prefix('bkdac')->group(function () {
 
         // event
         Route::get('event', \App\Livewire\Admin\Event\Index::class)->name('admin.event');
+        Route::get('event-group', \App\Livewire\Admin\EventGroup\Index::class)->name('admin.event-group');
         Route::get('event/{idEvent}/show-peserta', \App\Livewire\Admin\Event\ShowPeserta::class)->name('admin.event.show-peserta');
         Route::get('event/{idEvent}/portofolio/download-zip', [DownloadPortofolioController::class, 'downloadZip'])->name('admin.event.portofolio-download-zip');
         Route::get('event/{idEvent}/peserta/{pesertaId}/portofolio/download-pdf', [DownloadPortofolioController::class, 'downloadPdf'])->name('admin.event.portofolio-download-pdf');
         Route::get('event/{idEvent}/show-assessor', \App\Livewire\Admin\Event\ShowAssessor::class)->name('admin.event.show-assessor');
+        Route::get('event/{idEvent}/download-rekap-gabungan', [DownloadRekapController::class, 'downloadRekapGabungan'])->name('admin.event.download-rekap-gabungan');
 
         // nomor laporan
         Route::get('nomor-laporan', \App\Livewire\Admin\NomorLaporan\Index::class)->name('admin.nomor-laporan');

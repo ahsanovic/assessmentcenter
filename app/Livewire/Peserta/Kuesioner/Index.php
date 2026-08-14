@@ -19,7 +19,7 @@ class Index extends Component
     public function mount()
     {
         $this->kuesioner = Kuesioner::where('is_active', 't')->get();
-        $jawaban = JawabanResponden::where('event_id', Auth::user()->event_id)
+        $jawaban = JawabanResponden::where('event_id', activeEventId())
             ->where('peserta_id', Auth::user()->id)
             ->first();
 
@@ -98,7 +98,7 @@ class Index extends Component
 
             JawabanResponden::updateOrCreate(
                 [
-                    'event_id' => Auth::user()->event_id,
+                    'event_id' => activeEventId(),
                     'peserta_id' => Auth::user()->id,
                 ],
                 [

@@ -1,83 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Rekap;
 
-use App\Http\Controllers\Controller;
 use App\Models\Peserta;
 use App\Models\RefAspekPspk;
-use App\Services\Rekap\RekapGabunganExportService;
-use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Collection;
 
-class DownloadRekapController extends Controller
+class EventRekapRowBuilder
 {
-    public function downloadRekap($idEvent)
+    public function buildPotensiRows(Collection $pesertaList): Collection
     {
-        $tanggal = request()->query('tanggalTes');
-
-        $all_peserta = Peserta::with([
-            'event',
-            'hasilInterpersonal',
-            'hasilKesadaranDiri',
-            'hasilBerpikirKritis',
-            'hasilPengembanganDiri',
-            'hasilProblemSolving',
-            'hasilKecerdasanEmosi',
-            'hasilMotivasiKomitmen',
-            'nilaiJpm'
-        ])
-            ->where('event_id', $idEvent)
-            ->when($tanggal, function ($query) use ($tanggal) {
-                $query->whereDate('test_started_at', $tanggal);
-            })
-            ->whereHas('ujianInterpersonal', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKesadaranDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianBerpikirKritis', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianPengembanganDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianProblemSolving', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKecerdasanEmosi', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianMotivasiKomitmen', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->get();
-
         $export_data = collect();
 
-        foreach ($all_peserta as $peserta) {
-            // Helper function for formatting array of lines
-            $formatLines = function(array $lines) {
-                $nonEmpty = array_filter($lines, function($desc) {
-                    return !empty($desc) && $desc !== '-';
+        foreach ($pesertaList as $peserta) {
+            $formatLines = function (array $lines) {
+                $nonEmpty = array_filter($lines, function ($desc) {
+                    return ! empty($desc) && $desc !== '-';
                 });
                 if (count($nonEmpty) > 1) {
-                    return implode("\n", array_map(function($line) {
+                    return implode("\n", array_map(function ($line) {
                         return '- ' . trim($line);
                     }, $lines));
                 }
-                // Single or all dash, still with "- " if not empty (per instruction, else just show what was there)
                 if (isset($lines[0])) {
-                    if (!empty($lines[0]) && $lines[0] != '-') {
+                    if (! empty($lines[0]) && $lines[0] != '-') {
                         return '- ' . trim($lines[0]);
-                    } else {
-                        return '-';
                     }
+
+                    return '-';
                 }
+
                 return '-';
             };
 
-            // Berpikir Kritis & Strategis
-            if (!empty($peserta->hasilBerpikirKritis->uraian_potensi)) {
+            if (! empty($peserta->hasilBerpikirKritis->uraian_potensi)) {
                 $deskripsiBerpikir = '- ' . trim($peserta->hasilBerpikirKritis->uraian_potensi ?? '-');
             } else {
                 $lines = [];
@@ -89,8 +45,7 @@ class DownloadRekapController extends Controller
                 $deskripsiBerpikir = $formatLines($lines);
             }
 
-            // Problem Solving
-            if (!empty($peserta->hasilProblemSolving->uraian_potensi)) {
+            if (! empty($peserta->hasilProblemSolving->uraian_potensi)) {
                 $deskripsiProblem = '- ' . trim($peserta->hasilProblemSolving->uraian_potensi ?? '-');
             } else {
                 $lines = [];
@@ -102,8 +57,7 @@ class DownloadRekapController extends Controller
                 $deskripsiProblem = $formatLines($lines);
             }
 
-            // Interpersonal
-            if (!empty($peserta->hasilInterpersonal->uraian_potensi)) {
+            if (! empty($peserta->hasilInterpersonal->uraian_potensi)) {
                 $uraian = json_decode($peserta->hasilInterpersonal->uraian_potensi)->uraian_potensi ?? '-';
                 $deskripsiInterpersonal = '- ' . trim($uraian);
             } else {
@@ -116,8 +70,7 @@ class DownloadRekapController extends Controller
                 $deskripsiInterpersonal = $formatLines($lines);
             }
 
-            // Kesadaran Diri
-            if (!empty($peserta->hasilKesadaranDiri->uraian_potensi)) {
+            if (! empty($peserta->hasilKesadaranDiri->uraian_potensi)) {
                 $uraian = json_decode($peserta->hasilKesadaranDiri->uraian_potensi)->uraian_potensi ?? '-';
                 $deskripsiKesadaran = '- ' . trim($uraian);
             } else {
@@ -130,8 +83,7 @@ class DownloadRekapController extends Controller
                 $deskripsiKesadaran = $formatLines($lines);
             }
 
-            // EQ
-            if (!empty($peserta->hasilKecerdasanEmosi->uraian_potensi)) {
+            if (! empty($peserta->hasilKecerdasanEmosi->uraian_potensi)) {
                 $uraian = json_decode($peserta->hasilKecerdasanEmosi->uraian_potensi)->uraian_potensi ?? '-';
                 $deskripsiEQ = '- ' . trim($uraian);
             } else {
@@ -144,8 +96,7 @@ class DownloadRekapController extends Controller
                 $deskripsiEQ = $formatLines($lines);
             }
 
-            // Belajar Cepat & Pengembangan Diri
-            if (!empty($peserta->hasilPengembanganDiri->uraian_potensi)) {
+            if (! empty($peserta->hasilPengembanganDiri->uraian_potensi)) {
                 $uraian = json_decode($peserta->hasilPengembanganDiri->uraian_potensi)->uraian_potensi ?? '-';
                 $deskripsiPengembangan = '- ' . trim($uraian);
             } else {
@@ -158,22 +109,26 @@ class DownloadRekapController extends Controller
                 $deskripsiPengembangan = $formatLines($lines);
             }
 
-            // Deskripsi Intelektual
             $deskripsiIntelektual = [];
             if (
-                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_1) ||
-                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_2) ||
-                !empty($peserta->hasilIntelektual->uraian_potensi_subtes_3)
+                ! empty($peserta->hasilIntelektual->uraian_potensi_subtes_1) ||
+                ! empty($peserta->hasilIntelektual->uraian_potensi_subtes_2) ||
+                ! empty($peserta->hasilIntelektual->uraian_potensi_subtes_3)
             ) {
-                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_1))
+                if (! empty($peserta->hasilIntelektual->uraian_potensi_subtes_1)) {
                     $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_1;
-                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_2))
+                }
+                if (! empty($peserta->hasilIntelektual->uraian_potensi_subtes_2)) {
                     $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_2;
-                if (!empty($peserta->hasilIntelektual->uraian_potensi_subtes_3))
+                }
+                if (! empty($peserta->hasilIntelektual->uraian_potensi_subtes_3)) {
                     $deskripsiIntelektual[] = $peserta->hasilIntelektual->uraian_potensi_subtes_3;
+                }
             }
             if (count($deskripsiIntelektual) > 1) {
-                $deskripsiIntelektualFormatted = implode("\n", array_map(function($desc) {return '- ' . trim($desc);}, $deskripsiIntelektual));
+                $deskripsiIntelektualFormatted = implode("\n", array_map(function ($desc) {
+                    return '- ' . trim($desc);
+                }, $deskripsiIntelektual));
             } elseif (count($deskripsiIntelektual) === 1) {
                 $deskripsiIntelektualFormatted = '- ' . trim($deskripsiIntelektual[0]);
             } else {
@@ -185,15 +140,7 @@ class DownloadRekapController extends Controller
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan Saat Ini' => $peserta->jabatan,
                 'OPD' => $peserta->instansi . ' - ' . $peserta->unit_kerja,
-                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-                // 'Intelektual' => $peserta->hasilIntelektual->level ?? '-',
-                // 'Interpersonal' => $peserta->hasilInterpersonal->level_total ?? '-',
-                // 'Kesadaran Diri' => $peserta->hasilKesadaranDiri->level_total ?? '-',
-                // 'Berpikir Kritis dan Strategis' => $peserta->hasilBerpikirKritis->level_total ?? '-',
-                // 'Problem Solving' => $peserta->hasilProblemSolving->level_total ?? '-',
-                // 'EQ' => $peserta->hasilKecerdasanEmosi->level_total ?? '-',
-                // 'Belajar Cepat dan Pengembangan Diri' => $peserta->hasilPengembanganDiri->level_total ?? '-',
-                // 'Motivasi Komitmen' => $peserta->hasilMotivasiKomitmen->level_total ?? '-',
+                'Tanggal Tes' => $peserta->test_started_at ? \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y') : '-',
                 'Intelektual (Capaian Level)' => capaianLevel(optional($peserta->hasilIntelektual)->level) ?? '-',
                 'Interpersonal (Capaian Level)' => capaianLevel($peserta->hasilInterpersonal->level_total) ?? '-',
                 'Kesadaran Diri (Capaian Level)' => capaianLevel($peserta->hasilKesadaranDiri->level_total) ?? '-',
@@ -202,7 +149,7 @@ class DownloadRekapController extends Controller
                 'EQ (Capaian Level)' => capaianLevel($peserta->hasilKecerdasanEmosi->level_total) ?? '-',
                 'Belajar Cepat dan Pengembangan Diri (Capaian Level)' => capaianLevel($peserta->hasilPengembanganDiri->level_total) ?? '-',
                 'Motivasi Komitmen (Capaian Level)' => capaianLevel($peserta->hasilMotivasiKomitmen->level_total) ?? '-',
-                'JPM Potensi' => $peserta->nilaiJpm?->jpm . '%' ?? '-',
+                'JPM Potensi' => $peserta->nilaiJpm?->jpm !== null ? $peserta->nilaiJpm->jpm . '%' : '-',
                 'Kesimpulan' => $peserta->nilaiJpm?->kategori ?? '-',
                 'Deskripsi Intelektual' => $deskripsiIntelektualFormatted,
                 'Deskripsi Interpersonal' => $deskripsiInterpersonal,
@@ -211,107 +158,56 @@ class DownloadRekapController extends Controller
                 'Deskripsi Problem Solving' => $deskripsiProblem,
                 'Deskripsi EQ' => $deskripsiEQ,
                 'Deskripsi Belajar Cepat dan Pengembangan Diri' => $deskripsiPengembangan,
-                'Deskripsi Motivasi Komitmen' => !empty($peserta->hasilMotivasiKomitmen->deskripsi) ? '- ' . trim($peserta->hasilMotivasiKomitmen->deskripsi) : '-',
+                'Deskripsi Motivasi Komitmen' => ! empty($peserta->hasilMotivasiKomitmen->deskripsi) ? '- ' . trim($peserta->hasilMotivasiKomitmen->deskripsi) : '-',
             ]);
         }
 
-        return (new FastExcel($export_data))->download('rekap-laporan.xlsx');
+        return $export_data;
     }
 
-    public function downloadRekapCakapDigital($idEvent)
+    public function buildCakapDigitalRows(Collection $pesertaList): Collection
     {
-        $tanggal = request()->query('tanggalTes');
-
-        $all_peserta = Peserta::with(['event', 'hasilCakapDigital'])
-            ->where('event_id', $idEvent)
-            ->when($tanggal, function ($query) use ($tanggal) {
-                $query->whereDate('test_started_at', $tanggal);
-            })
-            ->whereHas('ujianCakapDigital', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->get();
-
-        $export_data = collect();
-
-        foreach ($all_peserta as $peserta) {
-            $export_data->push([
+        return $pesertaList->map(function (Peserta $peserta) {
+            return [
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan' => $peserta->jabatan,
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
-                'JPM LD' => $peserta->hasilCakapDigital?->jpm_literasi . '%' ?? '',
+                'JPM LD' => $peserta->hasilCakapDigital?->jpm_literasi !== null ? $peserta->hasilCakapDigital->jpm_literasi . '%' : '',
                 'Kategori LD' => $peserta->hasilCakapDigital?->kesimpulan_literasi ?? '',
                 'Deskripsi LD' => $peserta->hasilCakapDigital?->deskripsi_literasi ?? '',
-                'JPM ES' => $peserta->hasilCakapDigital?->jpm_emerging . '%' ?? '',
+                'JPM ES' => $peserta->hasilCakapDigital?->jpm_emerging !== null ? $peserta->hasilCakapDigital->jpm_emerging . '%' : '',
                 'Kategori ES' => $peserta->hasilCakapDigital?->kesimpulan_emerging ?? '',
                 'Deskripsi ES' => $peserta->hasilCakapDigital?->deskripsi_emerging ?? '',
-                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-            ]);
-        }
-
-        return (new FastExcel($export_data))->download('rekap-laporan-cakap-digital.xlsx');
+                'Tanggal Tes' => $peserta->test_started_at ? \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y') : '-',
+            ];
+        });
     }
 
-    public function downloadRekapKompetensiTeknis($idEvent)
+    public function buildKompetensiTeknisRows(Collection $pesertaList): Collection
     {
-        $tanggal = request()->query('tanggalTes');
-
-        $all_peserta = Peserta::with([
-            'event',
-            'hasilKompetensiTeknis',
-        ])
-            ->where('event_id', $idEvent)
-            ->when($tanggal, function ($query) use ($tanggal) {
-                $query->whereDate('test_started_at', $tanggal);
-            })
-            ->whereHas('ujianKompetensiTeknis', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->get();
-
-        $export_data = collect();
-
-        foreach ($all_peserta as $peserta) {
-            $export_data->push([
+        return $pesertaList->map(function (Peserta $peserta) {
+            return [
                 'Nama Peserta' => $peserta->nama,
                 'NIP/NIK' => $peserta->nip ?: $peserta->nik,
                 'Jabatan' => $peserta->jabatan,
                 'Unit Kerja' => $peserta->unit_kerja,
                 'Instansi' => $peserta->instansi,
-                'Tanggal Tes' => \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y'),
-                'JPM' => $peserta->hasilKompetensiTeknis?->jpm . '%' ?? '',
+                'Tanggal Tes' => $peserta->test_started_at ? \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y') : '-',
+                'JPM' => $peserta->hasilKompetensiTeknis?->jpm !== null ? $peserta->hasilKompetensiTeknis->jpm . '%' : '',
                 'Kategori' => $peserta->hasilKompetensiTeknis?->kategori ?? '',
-                'Deskripsi' => $peserta->hasilKompetensiTeknis?->deskripsi ?? ''
-            ]);
-        }
-
-        return (new FastExcel($export_data))->download('rekap-laporan-kompetensi-teknis.xlsx');
+                'Deskripsi' => $peserta->hasilKompetensiTeknis?->deskripsi ?? '',
+            ];
+        });
     }
 
-    public function downloadRekapPspk($idEvent)
+    public function buildPspkRows(Collection $pesertaList): Collection
     {
-        $tanggal = request()->query('tanggalTes');
-
         $aspek_potensi = RefAspekPspk::all();
-
-        $all_peserta = Peserta::with([
-            'event',
-            'hasilPspk',
-        ])
-            ->where('event_id', $idEvent)
-            ->when($tanggal, function ($query) use ($tanggal) {
-                $query->whereDate('test_started_at', $tanggal);
-            })
-            ->whereHas('ujianPspk', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->get();
-
         $export_data = collect();
 
-        foreach ($all_peserta as $peserta) {
+        foreach ($pesertaList as $peserta) {
             $nilaiCapaian = $peserta->hasilPspk?->nilai_capaian ?? [];
 
             $row = [
@@ -327,20 +223,38 @@ class DownloadRekapController extends Controller
                 $row[$item->nama_aspek] = $nilai !== null && $nilai !== '' ? $nilai : '';
             }
 
-            $row['JPM'] = $peserta->hasilPspk?->jpm . '%' ?? '';
+            $row['JPM'] = $peserta->hasilPspk?->jpm !== null ? $peserta->hasilPspk->jpm . '%' : '';
             $row['Kategori'] = $peserta->hasilPspk?->kategori ?? '';
-            $row['Tanggal Tes'] = \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y');
+            $row['Tanggal Tes'] = $peserta->test_started_at ? \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y') : '-';
 
             $export_data->push($row);
         }
 
-        return (new FastExcel($export_data))->download('rekap-laporan-pspk.xlsx');
+        return $export_data;
     }
 
-    public function downloadRekapGabungan(int $idEvent, RekapGabunganExportService $exportService)
+    public function buildSummarySnippet(Peserta $peserta, int $metodeTesId): array
     {
-        $tanggal = request()->query('tanggalTes');
-
-        return $exportService->downloadFromEvent($idEvent, $tanggal ?: null);
+        return match ($metodeTesId) {
+            2 => [
+                'JPM Potensi' => $peserta->nilaiJpm?->jpm !== null ? $peserta->nilaiJpm->jpm . '%' : '',
+                'Kesimpulan Potensi' => $peserta->nilaiJpm?->kategori ?? '',
+            ],
+            3 => [
+                'JPM Literasi Digital' => $peserta->hasilCakapDigital?->jpm_literasi !== null ? $peserta->hasilCakapDigital->jpm_literasi . '%' : '',
+                'Kategori Literasi Digital' => $peserta->hasilCakapDigital?->kesimpulan_literasi ?? '',
+                'JPM Emerging Skill' => $peserta->hasilCakapDigital?->jpm_emerging !== null ? $peserta->hasilCakapDigital->jpm_emerging . '%' : '',
+                'Kategori Emerging Skill' => $peserta->hasilCakapDigital?->kesimpulan_emerging ?? '',
+            ],
+            4 => [
+                'JPM Kompetensi Teknis' => $peserta->hasilKompetensiTeknis?->jpm !== null ? $peserta->hasilKompetensiTeknis->jpm . '%' : '',
+                'Kesimpulan Kompetensi Teknis' => $peserta->hasilKompetensiTeknis?->kategori ?? '',
+            ],
+            5, 6, 7, 8 => [
+                'JPM PSPK' => $peserta->hasilPspk?->jpm !== null ? $peserta->hasilPspk->jpm . '%' : '',
+                'Kesimpulan PSPK' => $peserta->hasilPspk?->kategori ?? '',
+            ],
+            default => [],
+        };
     }
 }

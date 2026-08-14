@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Event;
 use App\Models\AbsensiEvent;
 use App\Models\Assessor;
 use App\Models\Event;
+use App\Models\EventGroup;
 use App\Models\RefJabatanDiuji;
 use App\Models\RefMetodeTes;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,8 @@ class Index extends Component
     public $pin_ujian;
     public $is_open;
     public $is_finished;
+    public $event_group_mode = 'none';
+    public $event_group_id;
     public $attendance_event_id;
 
     public $attendance_event_nama;
@@ -112,6 +115,8 @@ class Index extends Component
             'form_tgl_selesai' => ['required', 'date_format:d-m-Y', 'after_or_equal:form_tgl_mulai'],
             'jumlah_peserta' => ['required', 'numeric'],
             'pin_ujian' => ['required', 'min:4', 'max:4', 'regex:/^[A-Za-z0-9]+$/'],
+            'event_group_mode' => ['required', 'in:none,new,existing'],
+            'event_group_id' => ['required_if:event_group_mode,existing', 'nullable', 'exists:event_group,id'],
         ];
 
         // Assessor dan Portofolio hanya wajib jika metode tes = Assessment Center (id: 1)
@@ -142,6 +147,8 @@ class Index extends Component
             'pin_ujian.max' => 'maksimal 4 digit',
             'pin_ujian.regex' => 'pin hanya boleh terdiri dari huruf kecil, huruf besar, dan angka',
             'is_open.required' => 'harus dipilih',
+            'event_group_mode.required' => 'harus dipilih',
+            'event_group_id.required_if' => 'grup event harus dipilih',
         ];
     }
 
@@ -170,7 +177,7 @@ class Index extends Component
                 $tgl_mulai = date('Y-m-d', strtotime($this->tgl_mulai));
                 $query->where('tgl_mulai', $tgl_mulai);
             })
-            ->with(['peserta', 'alatTes', 'metodeTes'])
+            ->with(['peserta', 'alatTes', 'metodeTes', 'eventGroup'])
             ->orderByDesc('id')
             ->paginate(10);
     }
@@ -183,13 +190,14 @@ class Index extends Component
             'option_jabatan_diuji' => RefJabatanDiuji::pluck('jenis', 'id'),
             'option_metode_tes' => RefMetodeTes::pluck('metode_tes', 'id'),
             'option_assessor' => Assessor::pluck('nama', 'id'),
+            'option_event_group' => EventGroup::where('is_active', 'true')->orderByDesc('id')->pluck('nama', 'id'),
         ]);
     }
 
     public function openModal()
     {
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'editId', 'isUpdate']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate']);
         $this->showModal = true;
         $this->dispatch('modalOpened');
     }
@@ -198,7 +206,7 @@ class Index extends Component
     {
         $this->showModal = false;
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'editId', 'isUpdate']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate']);
     }
 
     public function openAttendanceModal(int $id): void
@@ -544,6 +552,8 @@ class Index extends Component
             $this->is_finished = $data->is_finished;
             $this->is_open = $data->is_open;
             $this->pin_ujian = $data->pin_ujian;
+            $this->event_group_id = $data->event_group_id;
+            $this->event_group_mode = $data->event_group_id ? 'existing' : 'none';
             $this->isUpdate = true;
             $this->showModal = true;
             $this->resetValidation();
@@ -572,6 +582,7 @@ class Index extends Component
                     'jumlah_peserta' => $this->jumlah_peserta,
                     'pin_ujian' => $this->pin_ujian,
                     'is_finished' => $this->is_finished,
+                    'event_group_id' => $this->resolveEventGroupId(),
                 ];
 
                 // is_open hanya untuk Assessment Center
@@ -602,6 +613,7 @@ class Index extends Component
                     'tgl_selesai' => $this->form_tgl_selesai,
                     'jumlah_peserta' => $this->jumlah_peserta,
                     'pin_ujian' => $this->pin_ujian,
+                    'event_group_id' => $this->resolveEventGroupId(),
                 ];
 
                 // is_open hanya untuk Assessment Center
@@ -699,5 +711,24 @@ class Index extends Component
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
         }
+    }
+
+    private function resolveEventGroupId(): ?int
+    {
+        if ($this->event_group_mode === 'none') {
+            return null;
+        }
+
+        if ($this->event_group_mode === 'existing') {
+            return (int) $this->event_group_id;
+        }
+
+        $group = EventGroup::create([
+            'nama' => $this->nama_event,
+            'periode' => $this->form_tgl_mulai . ' - ' . $this->form_tgl_selesai,
+            'is_active' => 'true',
+        ]);
+
+        return $group->id;
     }
 }

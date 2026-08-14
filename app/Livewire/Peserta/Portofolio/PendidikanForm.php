@@ -66,8 +66,8 @@ class PendidikanForm extends Component
                 $this->redirect(route('peserta.pendidikan'), true);
             } else {
                 RwPendidikan::create([
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'jenjang_pendidikan_id' => $this->form->jenjang_pendidikan_id,
                     'nama_sekolah' => $this->form->nama_sekolah,
                     'thn_masuk' => $this->form->thn_masuk,

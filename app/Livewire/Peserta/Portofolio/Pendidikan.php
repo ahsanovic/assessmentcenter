@@ -17,8 +17,8 @@ class Pendidikan extends Component
     public function render()
     {
         $pendidikan = RwPendidikan::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByDesc('thn_lulus')
             ->get();

@@ -10,8 +10,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class EventPesertaSpreadsheetImportService
 {
+    public function __construct(
+        private readonly EventGroupPesertaSyncService $groupSyncService,
+    ) {}
+
     /**
-     * @return array{imported: int, errors: string[]}
+     * @return array{imported: int, synced: int, errors: string[]}
      */
     public function import(int $eventId, string $absoluteFilePath): array
     {
@@ -20,6 +24,7 @@ class EventPesertaSpreadsheetImportService
         $highestRow = (int) $sheet->getHighestDataRow();
 
         $imported = 0;
+        $synced = 0;
         $errors = [];
         $importedNips = [];
         $importedNiks = [];
@@ -147,10 +152,12 @@ class EventPesertaSpreadsheetImportService
 
             activity_log($data, 'create', 'peserta (import)');
             $imported++;
+            $synced += $this->groupSyncService->replicateFromPeserta($data);
         }
 
         return [
             'imported' => $imported,
+            'synced' => $synced,
             'errors' => $errors,
         ];
     }

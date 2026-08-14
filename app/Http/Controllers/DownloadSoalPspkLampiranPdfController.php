@@ -39,7 +39,7 @@ class DownloadSoalPspkLampiranPdfController extends Controller
         }
 
         /** @var Peserta $peserta */
-        $peserta = Auth::guard('peserta')->user();
+        $peserta = activePeserta() ?? Auth::guard('peserta')->user();
 
         if (! $this->pesertaPunyaAksesSoal($peserta, (int) $soal->id)) {
             abort(403);

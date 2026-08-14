@@ -56,6 +56,11 @@ class Event extends Model
         return date('d-m-Y', strtotime($value));
     }
 
+    public function eventGroup()
+    {
+        return $this->belongsTo(EventGroup::class, 'event_group_id', 'id');
+    }
+
     public function metodeTes()
     {
         return $this->hasOne(RefMetodeTes::class, 'id', 'metode_tes_id');

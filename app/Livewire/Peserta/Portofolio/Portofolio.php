@@ -20,42 +20,42 @@ class Portofolio extends Component
     public function render()
     {
         $biodata = Peserta::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->first();
 
         $pendidikan = RwPendidikan::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByDesc('thn_lulus')
             ->get();
 
         $pelatihan = RwPelatihan::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByRaw('YEAR(tgl_selesai) IS NULL, YEAR(tgl_selesai) DESC')
             ->get();
 
         $karir = RwKarir::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->orderByDesc('tahun_selesai')
             ->get();
 
         $pertanyaan = RefPertanyaanPengalaman::with(['jawaban' => function ($query) {
-            $query->where('peserta_id', Auth::guard('peserta')->user()->id)
-                ->where('event_id', Auth::guard('peserta')->user()->event_id);
+            $query->where('peserta_id', activePesertaId())
+                ->where('event_id', activeEventId());
         }])
             ->orderBy('urutan', 'asc')
             ->get();
 
         $penilaian = RefPertanyaanPenilaian::with(['jawaban' => function ($query) {
-            $query->where('peserta_id', Auth::guard('peserta')->user()->id)
-                ->where('event_id', Auth::guard('peserta')->user()->event_id);
+            $query->where('peserta_id', activePesertaId())
+                ->where('event_id', activeEventId());
         }])
             ->orderBy('urutan', 'asc')
             ->get();

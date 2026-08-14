@@ -281,6 +281,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.event-group') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.event-group') ? 'active' : '' }}">
+                        <i class="link-icon" data-feather="layers"></i>
+                        <span class="link-title">Grup Assessment</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.assessor') }}" wire:navigate class="nav-link {{ isActiveRoute('admin.assessor') ? 'active' : '' }}">
                         <i class="link-icon" data-feather="user-check"></i>
                         <span class="link-title">Data Assessor</span>

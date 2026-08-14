@@ -102,8 +102,8 @@ class PelatihanForm extends Component
                 }
 
                 RwPelatihan::create([
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'nama_institusi' => $this->form->nama_institusi,
                     'tgl_mulai' => $this->form->tgl_mulai,
                     'tgl_selesai' => $this->form->tgl_selesai,

@@ -23,8 +23,8 @@ class Dashboard extends Component
             $test_started->save();
         }
 
-        $ujian_selesai = UjianIntelektualSubTes1::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianIntelektualSubTes1::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -36,8 +36,8 @@ class Dashboard extends Component
             return $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
         }
 
-        $ujian_berlangsung = UjianIntelektualSubTes1::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianIntelektualSubTes1::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -54,8 +54,8 @@ class Dashboard extends Component
             $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
 
             $ujian = new UjianIntelektualSubTes1();
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+            $ujian->event_id = activeEventId();
+            $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->kunci_jawaban = $soal->implode('kunci_jawaban', ',');
@@ -75,8 +75,8 @@ class Dashboard extends Component
             $test_started->save();
         }
 
-        $ujian_selesai = UjianIntelektualSubTes2::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianIntelektualSubTes2::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -84,8 +84,8 @@ class Dashboard extends Component
             return $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
         }
 
-        $ujian_berlangsung = UjianIntelektualSubTes2::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianIntelektualSubTes2::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -102,8 +102,8 @@ class Dashboard extends Component
             $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
 
             $ujian = new UjianIntelektualSubTes2();
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+            $ujian->event_id = activeEventId();
+            $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->kunci_jawaban = $soal->implode('kunci_jawaban', ',');
@@ -123,8 +123,8 @@ class Dashboard extends Component
             $test_started->save();
         }
 
-        $ujian_selesai = UjianIntelektualSubTes3::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianIntelektualSubTes3::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -132,8 +132,8 @@ class Dashboard extends Component
             return $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
         }
 
-        $ujian_berlangsung = UjianIntelektualSubTes3::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianIntelektualSubTes3::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -150,8 +150,8 @@ class Dashboard extends Component
             $waktu_tes_berakhir = now()->addMinutes($durasi_tes->waktu);
 
             $ujian = new UjianIntelektualSubTes3();
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+            $ujian->event_id = activeEventId();
+            $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->kunci_jawaban = $soal->implode('kunci_jawaban', ',');

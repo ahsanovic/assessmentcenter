@@ -22,8 +22,8 @@ class Penilaian extends Component
 
         // Ambil data jawaban pengguna saat ini
         $jawabanData = JawabanPenilaian::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
             ->get();
 
@@ -63,8 +63,8 @@ class Penilaian extends Component
                 // Update atau simpan jawaban peserta
                 JawabanPenilaian::updateOrCreate(
                     [
-                        'event_id' => Auth::guard('peserta')->user()->event_id,
-                        'peserta_id' => Auth::guard('peserta')->user()->id,
+                        'event_id' => activeEventId(),
+                        'peserta_id' => activePesertaId(),
                         'pertanyaan_id' => $pertanyaan_id,
                     ],
                     [

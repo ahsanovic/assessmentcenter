@@ -19,7 +19,7 @@ class HasilNilai extends Component
 
     public function mount()
     {
-        $this->peserta = Peserta::where('id', Auth::guard('peserta')->user()->id)->firstOrFail();
+        $this->peserta = Peserta::where('id', activePesertaId())->firstOrFail();
         $idEvent = $this->peserta->event_id;
         $peserta = $this->peserta;
 

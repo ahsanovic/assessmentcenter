@@ -49,8 +49,8 @@ class UjianSubTes1 extends Component
         $this->id_soal = $id;
 
         $data = UjianIntelektualSubTes1::select('id', 'soal_id', 'jawaban', 'created_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if (!$data) {
@@ -90,8 +90,8 @@ class UjianSubTes1 extends Component
     public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $index_array = $nomor_soal - 1;
-        $data = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianIntelektualSubTes1::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 
@@ -228,8 +228,8 @@ class UjianSubTes1 extends Component
 
             HasilIntelektual::updateOrCreate(
                 [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                 ],
                 [
                     'nilai_subtes_1' => $data->nilai,

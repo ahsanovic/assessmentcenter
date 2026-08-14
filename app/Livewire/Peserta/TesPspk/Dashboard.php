@@ -22,8 +22,8 @@ class Dashboard extends Component
             $test_started->save();
         }
 
-        $ujian_selesai = UjianPspk::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianPspk::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -36,8 +36,8 @@ class Dashboard extends Component
             return $this->redirect(route('peserta.tes-pspk.home'), navigate: true);
         }
 
-        $ujian_berlangsung = UjianPspk::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianPspk::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -97,8 +97,8 @@ class Dashboard extends Component
             $skor_awal = array_fill_keys($aspek_list, 0);
 
             $ujian = new UjianPspk;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+            $ujian->event_id = activeEventId();
+            $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->kunci_jawaban = in_array($level_pspk, [3, 4]) ? null : $soal->implode('kunci_jawaban', ',');

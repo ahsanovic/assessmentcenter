@@ -528,3 +528,31 @@ if (! function_exists('parse_nama_gelar')) {
         ];
     }
 }
+
+if (! function_exists('pesertaParticipationService')) {
+    function pesertaParticipationService(): \App\Services\PesertaParticipationService
+    {
+        return app(\App\Services\PesertaParticipationService::class);
+    }
+}
+
+if (! function_exists('activePeserta')) {
+    function activePeserta(): ?\App\Models\Peserta
+    {
+        return pesertaParticipationService()->activePeserta();
+    }
+}
+
+if (! function_exists('activeEventId')) {
+    function activeEventId(): int
+    {
+        return pesertaParticipationService()->activeEventId();
+    }
+}
+
+if (! function_exists('activePesertaId')) {
+    function activePesertaId(): int
+    {
+        return pesertaParticipationService()->activePesertaId();
+    }
+}

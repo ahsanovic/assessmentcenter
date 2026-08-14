@@ -50,8 +50,8 @@ class PengembanganDiri extends Component
     {
         $this->dispatch('load-flags-from-browser');
         $this->id_soal = $id;
-        // $count_peserta = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-        //     ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        // $count_peserta = UjianPengembanganDiri::where('peserta_id', activePesertaId())
+        //     ->where('event_id', activeEventId())
         //     ->where('is_finished', 'false')
         //     ->count();
 
@@ -60,8 +60,8 @@ class PengembanganDiri extends Component
         // }
 
         $data = UjianPengembanganDiri::select('id', 'soal_id', 'jawaban', 'created_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if ($data->is_finished == 'true') {
@@ -106,8 +106,8 @@ class PengembanganDiri extends Component
     public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $index_array = $nomor_soal - 1;
-        $data = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianPengembanganDiri::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 
@@ -395,8 +395,8 @@ class PengembanganDiri extends Component
 
             $skor = HasilPengembanganDiri::updateOrCreate(
                 [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'ujian_id' => $data->id,
                 ],
                 [

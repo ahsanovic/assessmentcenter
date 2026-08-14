@@ -52,8 +52,8 @@ class KesadaranDiri extends Component
         $this->id_soal = $id;
 
         $data = UjianKesadaranDiri::select('id', 'soal_id', 'jawaban', 'created_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if ($data->is_finished == 'true') {
@@ -98,8 +98,8 @@ class KesadaranDiri extends Component
     public function saveAndNext($nomor_soal, $jawaban = null)
     {
         $index_array = $nomor_soal - 1;
-        $data = UjianKesadaranDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianKesadaranDiri::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 
@@ -408,8 +408,8 @@ class KesadaranDiri extends Component
 
             $skor = HasilKesadaranDiri::updateOrCreate(
                 [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'ujian_id' => $data->id,
                 ],
                 [

@@ -44,8 +44,8 @@ class Biodata extends Component
     public function render()
     {
         $biodata = Peserta::wherePesertaEvent(
-            Auth::guard('peserta')->user()->id,
-            Auth::guard('peserta')->user()->event_id
+            activePesertaId(),
+            activeEventId()
         )
         ->first();
         
@@ -97,7 +97,7 @@ class Biodata extends Component
             // Simpan path baru sebagai path lama untuk penghapusan selanjutnya
             $this->old_foto_path = $path;
 
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'foto' => 'foto/' . basename($path),
             ]);
 
@@ -117,7 +117,7 @@ class Biodata extends Component
     public function updatedGelarDepan($value)
     {
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'gelar_depan' => $value,
             ]);
 
@@ -137,7 +137,7 @@ class Biodata extends Component
     public function updatedGelarBelakang($value)
     {
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'gelar_belakang' => $value,
             ]);
 
@@ -163,7 +163,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'alamat' => $value,
             ]);
 
@@ -191,7 +191,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'no_hp' => $value,
             ]);
 
@@ -219,7 +219,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'nik' => $value,
             ]);
 
@@ -245,7 +245,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'tempat_lahir' => $value,
             ]);
 
@@ -272,7 +272,7 @@ class Biodata extends Component
         ]);
 
         try {
-            $data = Peserta::whereId(Auth::guard('peserta')->user()->id)->first();
+            $data = Peserta::whereId(activePesertaId())->first();
             $data->tgl_lahir = $value;
             $data->save();
 
@@ -299,7 +299,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'agama_id' => $value,
             ]);
 
@@ -326,7 +326,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'gol_pangkat_id' => $value,
             ]);
 
@@ -352,7 +352,7 @@ class Biodata extends Component
         ]);
 
         try {
-            Peserta::whereId(Auth::guard('peserta')->user()->id)->update([
+            Peserta::whereId(activePesertaId())->update([
                 'jk' => $value,
             ]);
 

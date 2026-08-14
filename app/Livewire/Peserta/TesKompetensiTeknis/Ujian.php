@@ -49,8 +49,8 @@ class Ujian extends Component
         $this->id_soal = $id;
 
         $data = UjianKompetensiTeknis::select('id', 'soal_id', 'jawaban', 'created_at')
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
 
         if (!$data) {
@@ -93,8 +93,8 @@ class Ujian extends Component
     public function saveAndNext($nomor_soal)
     {
         $index_array = $nomor_soal - 1;
-        $data = UjianKompetensiTeknis::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $data = UjianKompetensiTeknis::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->where('is_finished', 'false')
             ->first();
 
@@ -168,8 +168,8 @@ class Ujian extends Component
 
             HasilKompetensiTeknis::updateOrCreate(
                 [
-                    'event_id' => Auth::guard('peserta')->user()->event_id,
-                    'peserta_id' => Auth::guard('peserta')->user()->id,
+                    'event_id' => activeEventId(),
+                    'peserta_id' => activePesertaId(),
                     'ujian_id' => $data->id,
                 ],
                 [
