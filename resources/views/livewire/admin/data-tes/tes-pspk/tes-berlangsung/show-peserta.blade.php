@@ -97,6 +97,19 @@
                                             >
                                                 <i class="link-icon" data-feather="check-circle"></i>
                                             </button>
+                                            @if (in_array((int) $event->metode_tes_id, [7, 8], true) && filled($item->pspk_lv34_entered_sjt_at))
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-secondary btn-icon rounded-circle border-0 shadow-sm"
+                                                wire:click="kembalikanAnkasConfirmation('{{ $item->ujian_pspk_id }}')"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Kembalikan ke analisa kasus"
+                                                style="transition: background 0.2s;"
+                                            >
+                                                <i class="link-icon" data-feather="rotate-ccw"></i>
+                                            </button>
+                                            @endif
                                             <x-table.btn-delete :id="$item->ujian_pspk_id" />
                                             @endif
                                         </td>

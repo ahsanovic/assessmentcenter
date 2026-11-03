@@ -34,23 +34,28 @@ class Dashboard extends Component
 
     public function start()
     {
-        if ($this->first_test) {
-            // session(['current_test' => $this->first_test->alat_tes_id]);
-            $this->first_test->load('alatTes');
+        $test_started = Peserta::where('id', activePesertaId())->first(['id', 'test_started_at']);
 
-            $test_started = Peserta::where('id', activePesertaId())->first(['id']);
+        if ($test_started && ! $test_started->test_started_at) {
+            $test_started->test_started_at = now();
+            $test_started->save();
+        }
 
-            if ($test_started) {
-                $test_started->test_started_at = now();
-                $test_started->save();
-            }
+        $ringkasan = collect($this->ringkasanSubtesPotensi());
+        $target = $ringkasan->firstWhere('status', 'berlangsung')
+            ?? $ringkasan->firstWhere('status', 'belum');
 
-            $this->startTest($this->first_test->alatTes->alat_tes, $this->first_test->urutan);
+        if ($target) {
+            $this->bukaSubtes((int) $target['urutan']);
         }
     }
 
     public function render()
     {
-        return view('livewire..peserta.tes-potensi.dashboard');
+        $subtes = $this->ringkasanSubtesPotensi();
+
+        return view('livewire..peserta.tes-potensi.dashboard', [
+            'ada_progres' => collect($subtes)->contains(fn ($item) => $item['status'] !== 'belum'),
+        ]);
     }
 }

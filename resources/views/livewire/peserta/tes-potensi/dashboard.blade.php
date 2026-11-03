@@ -112,10 +112,10 @@
                             class="btn btn-danger btn-lg"
                             x-data
                             @click="Swal.fire({
-                                title: 'Apakah Anda yakin memulai tes?',
+                                title: '{{ $ada_progres ? 'Lanjutkan tes potensi?' : 'Apakah Anda yakin memulai tes?' }}',
                                 icon: 'warning',
                                 showCancelButton: true,
-                                confirmButtonText: 'Mulai Tes!',
+                                confirmButtonText: '{{ $ada_progres ? 'Lanjutkan' : 'Mulai Tes!' }}',
                                 cancelButtonText: 'Batal',
                             }).then((result) => {
                                 if (result.isConfirmed) {
@@ -125,7 +125,7 @@
                             @disabled($finished_all_test)
                         >
                             <i class="me-2" data-feather="{{ $finished_all_test ? 'check-circle' : 'play-circle' }}"></i>
-                            {{ $finished_all_test ? 'Tes Sudah Selesai' : 'Mulai Tes Sekarang' }}
+                            {{ $finished_all_test ? 'Tes Sudah Selesai' : ($ada_progres ? 'Lanjutkan Tes' : 'Mulai Tes Sekarang') }}
                         </button>
                     </div>
                 </div>

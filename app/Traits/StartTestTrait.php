@@ -16,6 +16,7 @@ use App\Models\PengembanganDiri\SoalPengembanganDiri;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\SoalProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
+use App\Models\Settings;
 use App\Models\SettingWaktuTes;
 
 trait StartTestTrait
@@ -391,5 +392,92 @@ trait StartTestTrait
 
             return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]));
         }
+    }
+
+    protected function ringkasanSubtesPotensi(): array
+    {
+        $peta = $this->petaSubtesPotensi();
+        $settings = Settings::with('alatTes')->orderBy('urutan')->get();
+        $items = [];
+
+        foreach ($settings as $setting) {
+            $nama = $setting->alatTes->alat_tes ?? '';
+            if (! isset($peta[$nama])) {
+                continue;
+            }
+
+            $ujian = $peta[$nama]::query()
+                ->where('event_id', activeEventId())
+                ->where('peserta_id', activePesertaId())
+                ->first(['id', 'is_finished', 'jawaban']);
+
+            $selesai = $ujian && $this->ujianDitandaiSelesai($ujian->is_finished);
+            $kosong = 0;
+            if ($ujian) {
+                foreach (explode(',', (string) $ujian->jawaban) as $jawaban) {
+                    if ($jawaban === '0' || $jawaban === '' || $jawaban === null) {
+                        $kosong++;
+                    }
+                }
+            }
+
+            $items[] = [
+                'urutan' => (int) $setting->urutan,
+                'nama' => $nama,
+                'status' => ! $ujian ? 'belum' : ($selesai ? 'selesai' : 'berlangsung'),
+                'jawaban_kosong' => $kosong,
+            ];
+        }
+
+        return $items;
+    }
+
+    protected function bukaSubtes(int $urutan): void
+    {
+        if ($this->tesPotensiSelesaiSemua()) {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Semua subtes sudah selesai.',
+            ]);
+
+            return;
+        }
+
+        $setting = Settings::with('alatTes')->where('urutan', $urutan)->first();
+        if (! $setting?->alatTes) {
+            return;
+        }
+
+        $this->startTest($setting->alatTes->alat_tes, (int) $setting->urutan);
+    }
+
+    protected function subtesPotensiTerkunci($ujian): bool
+    {
+        return $this->ujianDitandaiSelesai($ujian->is_finished);
+    }
+
+    protected function tesPotensiSelesaiSemua(): bool
+    {
+        $status = getFinishedTes();
+
+        return count(array_filter($status)) === count($status);
+    }
+
+    protected function ujianDitandaiSelesai(mixed $nilai): bool
+    {
+        return in_array($nilai, ['true', true, 1, '1'], true);
+    }
+
+    protected function petaSubtesPotensi(): array
+    {
+        return [
+            'Kemampuan Interpersonal' => UjianInterpersonal::class,
+            'Kesadaran Diri' => UjianKesadaranDiri::class,
+            'Berpikir Kritis dan Strategis' => UjianBerpikirKritis::class,
+            'Problem Solving' => UjianProblemSolving::class,
+            'Kecerdasan Emosi' => UjianKecerdasanEmosi::class,
+            'Belajar Cepat dan Pengembangan Diri' => UjianPengembanganDiri::class,
+            'Motivasi dan Komitmen' => UjianMotivasiKomitmen::class,
+        ];
     }
 }

@@ -61,7 +61,7 @@ class ShowPeserta extends Component
         $data = Peserta::join('ujian_pspk', 'ujian_pspk.peserta_id', '=', 'peserta.id')
             ->whereIn('peserta.id', $this->event->pesertaIdTesPspk->pluck('peserta_id'))
             ->where('ujian_pspk.event_id', $this->id_event)
-            ->select('peserta.*', 'ujian_pspk.is_finished', 'ujian_pspk.id as ujian_pspk_id', 'ujian_pspk.created_at as mulai_tes')
+            ->select('peserta.*', 'ujian_pspk.is_finished', 'ujian_pspk.id as ujian_pspk_id', 'ujian_pspk.created_at as mulai_tes', 'ujian_pspk.pspk_lv34_entered_sjt_at')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%'.$this->search.'%')
@@ -272,6 +272,54 @@ class ShowPeserta extends Component
     {
         $this->selected_id = $id;
         $this->dispatch('show-paksa-akhiri-confirmation');
+    }
+
+    public function kembalikanAnkasConfirmation($id)
+    {
+        $this->selected_id = $id;
+        $this->dispatch('show-kembalikan-ankas-confirmation');
+    }
+
+    #[On('kembalikan-ankas')]
+    public function kembalikanAnkas()
+    {
+        try {
+            if (! in_array((int) $this->event->metode_tes_id, [7, 8], true)) {
+                $this->dispatch('toast', [
+                    'type' => 'error',
+                    'message' => 'Kembali ke analisa kasus hanya untuk PSPK level 3 dan 4.',
+                ]);
+
+                return;
+            }
+
+            $ujian = UjianPspk::query()
+                ->whereKey($this->selected_id)
+                ->where('event_id', $this->id_event)
+                ->first();
+
+            if (! $ujian || in_array($ujian->is_finished, ['true', true, 1, '1'], true) || blank($ujian->pspk_lv34_entered_sjt_at)) {
+                $this->dispatch('toast', [
+                    'type' => 'error',
+                    'message' => 'Peserta ini tidak sedang berada di tahap SJT.',
+                ]);
+
+                return;
+            }
+
+            $ujian->pspk_lv34_entered_sjt_at = null;
+            $ujian->save();
+
+            $this->dispatch('toast', [
+                'type' => 'success',
+                'message' => 'Peserta dapat kembali ke analisa kasus. Jawaban yang sudah tersimpan tetap ada.',
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Gagal mengembalikan peserta ke analisa kasus.',
+            ]);
+        }
     }
 
     #[On('paksaAkhiri')]

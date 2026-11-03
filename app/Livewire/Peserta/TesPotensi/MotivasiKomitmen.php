@@ -66,7 +66,7 @@ class MotivasiKomitmen extends Component
             return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
         }
 
-        if ($data->is_finished == 'true') {
+        if ($this->subtesPotensiTerkunci($data)) {
             session()->flash('toast', [
                 'type' => 'error',
                 'message' => 'Anda sudah menyelesaikan tes ini.'
@@ -189,6 +189,49 @@ class MotivasiKomitmen extends Component
         return $payload;
     }
 
+    private function masihAdaJawabanKosong(): bool
+    {
+        $ujian = UjianMotivasiKomitmen::query()
+            ->whereKey($this->id_ujian)
+            ->where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
+            ->first();
+
+        if (! $ujian) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Data ujian tidak ditemukan.',
+            ]);
+
+            return true;
+        }
+
+        $tersimpan = explode(',', (string) $ujian->jawaban);
+        $jumlah = count(array_filter(explode(',', (string) $ujian->soal_id), fn ($id) => $id !== ''));
+        $kosong = 0;
+
+        for ($i = 0; $i < $jumlah; $i++) {
+            $jawaban = $tersimpan[$i] ?? '0';
+            if ($jawaban === '0' || $jawaban === '' || $jawaban === null) {
+                $kosong++;
+            }
+        }
+
+        $this->jawaban_user = $tersimpan;
+        $this->jawaban_kosong = $kosong;
+
+        if ($kosong > 0) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'Semua soal harus dijawab sebelum melanjutkan ke subtes berikutnya.',
+            ]);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private function indeksPertamaBelumDijawab(): int
     {
         foreach ($this->jawaban_user as $idx => $jawaban) {
@@ -237,6 +280,10 @@ class MotivasiKomitmen extends Component
 
     public function finish()
     {
+        if ($this->masihAdaJawabanKosong()) {
+            return;
+        }
+
         try {
             $data = UjianMotivasiKomitmen::findOrFail($this->id_ujian);
 

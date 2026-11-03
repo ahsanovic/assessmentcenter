@@ -156,6 +156,40 @@
             });
         });
 
+        window.addEventListener('show-kembalikan-subtes-confirmation', () => {
+            Swal.fire({
+                title: 'Kembalikan peserta ke subtes ini?',
+                text: 'Status subtes menjadi belum selesai. Jawaban yang sudah tersimpan tetap ada. Peserta harus mengisi soal yang kosong sebelum lanjut.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f0ad4e',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Kembalikan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('kembalikan-subtes');
+                }
+            });
+        });
+
+        window.addEventListener('show-kembalikan-ankas-confirmation', () => {
+            Swal.fire({
+                title: 'Kembalikan peserta ke analisa kasus?',
+                text: 'Peserta keluar dari tahap SJT. Jawaban analisa kasus dan SJT yang sudah tersimpan tetap ada.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f0ad4e',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Kembalikan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('kembalikan-ankas');
+                }
+            });
+        });
+
         window.addEventListener('show-paksa-akhiri-confirmation', data => {
             Swal.fire({
                 title: 'Paksa akhiri ujian?',

@@ -496,25 +496,21 @@
                 const kosong = payload?.jawaban_kosong ?? this.jawabanKosong;
                 const targetTinjau = payload?.soal_belum_dijawab || 1;
 
+                const lanjutLabel = this.currentSequence === 7
+                    ? 'mengakhiri ujian'
+                    : 'melanjutkan ke subtes berikutnya';
+
                 Swal.fire({
                     title: 'Masih ada soal belum dijawab',
-                    text: `Anda berada di soal terakhir, tetapi masih ada ${kosong} soal yang belum dijawab. Soal yang belum dijawab akan dikosongkan jika Anda mengakhiri ujian.`,
+                    text: `Anda berada di soal terakhir, tetapi masih ada ${kosong} soal yang belum dijawab. Semua soal harus diisi sebelum ${lanjutLabel}.`,
                     icon: 'warning',
                     showCancelButton: true,
-                    showDenyButton: true,
-                    confirmButtonText: this.lastSoalConfirmButton,
-                    denyButtonText: 'Tinjau Soal',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#059669',
-                    denyButtonColor: '#2563eb',
-                    customClass: {
-                        denyButton: 'ujian-semua-terjawab-deny-btn',
-                        confirmButton: 'ujian-semua-terjawab-confirm-btn',
-                    },
+                    confirmButtonText: 'Tinjau Soal',
+                    cancelButtonText: 'Tutup',
+                    confirmButtonColor: '#2563eb',
+                    allowOutsideClick: false,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        this.$wire.finish();
-                    } else if (result.isDenied) {
                         this.navigate(targetTinjau);
                     }
                 });

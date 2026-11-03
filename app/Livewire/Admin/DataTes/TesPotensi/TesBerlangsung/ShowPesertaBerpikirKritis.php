@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\DataTes\TesPotensi\TesBerlangsung;
 use App\Models\Event;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\Peserta;
+use App\Traits\KembalikanSubtesPotensi;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 #[Layout('components.layouts.admin.app', ['title' => 'Monitoring Tes'])]
 class ShowPesertaBerpikirKritis extends Component
 {
-    use WithPagination;
+    use KembalikanSubtesPotensi, WithPagination;
 
     public $event;
     public $id_event;
@@ -106,5 +107,10 @@ class ShowPesertaBerpikirKritis extends Component
             // throw $th;
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
         }
+    }
+
+    protected function kelasUjian(): string
+    {
+        return UjianBerpikirKritis::class;
     }
 }

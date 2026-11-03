@@ -102,6 +102,18 @@
                                         <td class="text-center">
                                             @if ($item->is_finished == 'false')
                                                 <x-table.btn-delete :id="$item->ujian_kecerdasan_emosi_id" />
+                                            @else
+                                                <button
+                                                    type="button"
+                                                    wire:click="kembalikanConfirmation('{{ $item->ujian_kecerdasan_emosi_id }}')"
+                                                    class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Kembalikan ke subtes ini"
+                                                    style="transition: background 0.2s;"
+                                                >
+                                                    <i class="link-icon" data-feather="rotate-ccw"></i>
+                                                </button>
                                             @endif
                                         </td>
                                     </tr>
