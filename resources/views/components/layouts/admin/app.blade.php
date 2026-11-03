@@ -516,16 +516,31 @@
 
             Livewire.on('set-flatpickr', (payload) => {
                 const data = Array.isArray(payload) ? payload[0] : payload;
-                const input = document.querySelector(`[data-flatpickr][data-model="${data.model}"]`);
-                if (input?._flatpickr && data.value) {
-                    input._flatpickr.setDate(data.value, true, 'd-m-Y');
+                if (!data?.model) {
+                    return;
                 }
 
+                const input = document.querySelector(`[data-flatpickr][data-model="${data.model}"]`);
                 const hiddenInput = input
                     ?.closest('.mb-4')
                     ?.querySelector(`input[type="hidden"][wire\\:model="${data.model}"]`);
 
-                if (hiddenInput && data.value) {
+                if (!data.value) {
+                    input?._flatpickr?.clear(false);
+                    if (input) {
+                        input.value = '';
+                    }
+                    if (hiddenInput) {
+                        hiddenInput.value = '';
+                    }
+                    return;
+                }
+
+                if (input?._flatpickr) {
+                    input._flatpickr.setDate(data.value, true, 'd-m-Y');
+                }
+
+                if (hiddenInput) {
                     hiddenInput.value = data.value;
                     hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
                 }

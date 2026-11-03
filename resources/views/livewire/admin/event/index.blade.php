@@ -250,7 +250,7 @@
                             <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
                             @enderror
                             @if($event_group_mode === 'existing')
-                                <select wire:model="event_group_id" class="form-select mt-2 @error('event_group_id') is-invalid @enderror">
+                                <select wire:model.live="event_group_id" class="form-select mt-2 @error('event_group_id') is-invalid @enderror">
                                     <option value="">- Pilih grup -</option>
                                     @foreach ($option_event_group as $key => $item)
                                         <option value="{{ $key }}">{{ $item }}</option>
@@ -260,6 +260,15 @@
                                 <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
                                 @enderror
                                 <small class="text-muted d-block mt-1">Event dengan metode tes berbeda dalam grup yang sama dapat diikuti peserta tanpa logout.</small>
+                                @if($eventGroupMetodeTerpakai)
+                                    <small class="text-muted d-block mt-1">Metode yang sudah ada di grup ini: {{ implode(', ', $eventGroupMetodeTerpakai) }}.</small>
+                                @endif
+                                @if($eventGroupAutofillNotice)
+                                    <small class="d-block mt-1" style="color: #4338ca;">{{ $eventGroupAutofillNotice }}</small>
+                                @endif
+                                @if($eventGroupAutofillWarning)
+                                    <div class="alert alert-warning py-2 px-3 mt-2 mb-0" style="font-size: 0.875rem;">{{ $eventGroupAutofillWarning }}</div>
+                                @endif
                             @elseif($event_group_mode === 'new')
                                 <small class="text-muted d-block mt-1">Grup baru dibuat otomatis. Event berikutnya dengan metode berbeda bisa digabung ke grup ini.</small>
                             @endif
@@ -272,7 +281,7 @@
                                         <i class="link-icon me-2" data-feather="clipboard"></i>
                                         Metode Tes <span class="text-danger">*</span>
                                     </label>
-                                    <select wire:model.live="metode_tes_id" class="form-select @error('metode_tes_id') is-invalid @enderror">
+                                    <select wire:model.live="metode_tes_id" class="form-select @error('metode_tes_id') is-invalid @enderror @if($eventGroupMetodeConflict) is-invalid @endif">
                                         <option value="">- Pilih -</option>
                                         @foreach ($option_metode_tes as $key => $item)
                                             <option value="{{ $key }}">{{ $item }}</option>
@@ -280,6 +289,10 @@
                                     </select>
                                     @error('metode_tes_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
+                                    @else
+                                        @if($eventGroupMetodeConflict)
+                                        <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $eventGroupMetodeConflict }}</div>
+                                        @endif
                                     @enderror
                                 </div>
                             </div>

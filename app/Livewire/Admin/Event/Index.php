@@ -44,6 +44,18 @@ class Index extends Component
     public $is_finished;
     public $event_group_mode = 'none';
     public $event_group_id;
+
+    public ?string $eventGroupAutofillNotice = null;
+
+    public ?string $eventGroupAutofillWarning = null;
+
+    public ?string $eventGroupMetodeConflict = null;
+
+    /** @var array<int, string> */
+    public array $eventGroupMetodeTerpakai = [];
+
+    /** @var array<string, string>|null */
+    public ?array $groupAutofillSnapshot = null;
     public $attendance_event_id;
 
     public $attendance_event_nama;
@@ -103,13 +115,66 @@ class Index extends Component
             $this->is_open = null;
         }
         $this->resetValidation(['assessor', 'is_open']);
+        $this->refreshMetodeGroupConflict();
+    }
+
+    public function updatedEventGroupMode(): void
+    {
+        if ($this->event_group_mode !== 'existing') {
+            if (! $this->isUpdate) {
+                $this->clearAutofilledGroupFields();
+                $this->event_group_id = null;
+            }
+
+            $this->eventGroupAutofillNotice = null;
+            $this->eventGroupAutofillWarning = null;
+            $this->loadGroupMetodeTerpakai(null);
+            $this->refreshMetodeGroupConflict();
+
+            return;
+        }
+
+        $this->loadGroupMetodeTerpakai(blank($this->event_group_id) ? null : (int) $this->event_group_id);
+        $this->refreshMetodeGroupConflict();
+    }
+
+    public function updatedEventGroupId(): void
+    {
+        if ($this->event_group_mode !== 'existing' || blank($this->event_group_id)) {
+            if (! $this->isUpdate) {
+                $this->clearAutofilledGroupFields();
+                $this->eventGroupAutofillNotice = null;
+                $this->eventGroupAutofillWarning = null;
+            }
+
+            $this->loadGroupMetodeTerpakai(null);
+            $this->refreshMetodeGroupConflict();
+
+            return;
+        }
+
+        $groupId = (int) $this->event_group_id;
+
+        if (! $this->isUpdate) {
+            $this->applyGroupAutofill($groupId);
+        }
+
+        $this->loadGroupMetodeTerpakai($groupId);
+        $this->refreshMetodeGroupConflict();
     }
 
     protected function rules()
     {
         $rules = [
             'nama_event' => ['required'],
-            'metode_tes_id' => ['required'],
+            'metode_tes_id' => [
+                'required',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if ($this->duplicateMetodeInSelectedGroup($value)) {
+                        $fail('metode tes ini sudah dipakai event lain dalam grup yang sama');
+                    }
+                },
+            ],
             'jabatan_diuji_id' => ['required'],
             'form_tgl_mulai' => ['required', 'date_format:d-m-Y'],
             'form_tgl_selesai' => ['required', 'date_format:d-m-Y', 'after_or_equal:form_tgl_mulai'],
@@ -197,7 +262,7 @@ class Index extends Component
     public function openModal()
     {
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
         $this->showModal = true;
         $this->dispatch('modalOpened');
     }
@@ -206,7 +271,7 @@ class Index extends Component
     {
         $this->showModal = false;
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
     }
 
     public function openAttendanceModal(int $id): void
@@ -555,6 +620,11 @@ class Index extends Component
             $this->event_group_id = $data->event_group_id;
             $this->event_group_mode = $data->event_group_id ? 'existing' : 'none';
             $this->isUpdate = true;
+            $this->groupAutofillSnapshot = null;
+            $this->eventGroupAutofillNotice = null;
+            $this->eventGroupAutofillWarning = null;
+            $this->loadGroupMetodeTerpakai($data->event_group_id ? (int) $data->event_group_id : null);
+            $this->refreshMetodeGroupConflict();
             $this->showModal = true;
             $this->resetValidation();
             $this->dispatch('modalOpened');
@@ -730,5 +800,129 @@ class Index extends Component
         ]);
 
         return $group->id;
+    }
+
+    private function applyGroupAutofill(int $groupId): void
+    {
+        $events = Event::query()
+            ->where('event_group_id', $groupId)
+            ->orderBy('id')
+            ->get();
+
+        $anchor = $events->first();
+
+        if (! $anchor) {
+            $this->clearAutofilledGroupFields();
+            $this->eventGroupAutofillNotice = null;
+            $this->eventGroupAutofillWarning = 'Grup ini belum memiliki event, jadi tidak ada data yang bisa disalin.';
+
+            return;
+        }
+
+        $this->jabatan_diuji_id = $anchor->jabatan_diuji_id;
+        $this->form_tgl_mulai = $anchor->tgl_mulai;
+        $this->form_tgl_selesai = $anchor->tgl_selesai;
+        $this->jumlah_peserta = $anchor->jumlah_peserta;
+        $this->pin_ujian = $anchor->pin_ujian;
+
+        $this->groupAutofillSnapshot = [
+            'jabatan_diuji_id' => (string) $anchor->jabatan_diuji_id,
+            'form_tgl_mulai' => (string) $anchor->tgl_mulai,
+            'form_tgl_selesai' => (string) $anchor->tgl_selesai,
+            'jumlah_peserta' => (string) $anchor->jumlah_peserta,
+            'pin_ujian' => (string) $anchor->pin_ujian,
+        ];
+
+        $this->eventGroupAutofillNotice = 'Jabatan, tanggal, jumlah peserta, dan PIN disalin dari event lain di grup ini. Metode tes tetap dipilih manual.';
+
+        $divergent = $events->contains(function (Event $event) use ($anchor) {
+            return (string) $event->jabatan_diuji_id !== (string) $anchor->jabatan_diuji_id
+                || (string) $event->tgl_mulai !== (string) $anchor->tgl_mulai
+                || (string) $event->tgl_selesai !== (string) $anchor->tgl_selesai
+                || (string) $event->jumlah_peserta !== (string) $anchor->jumlah_peserta
+                || (string) $event->pin_ujian !== (string) $anchor->pin_ujian;
+        });
+
+        $this->eventGroupAutofillWarning = $divergent
+            ? 'Nilai jabatan, tanggal, jumlah peserta, atau PIN tidak sama di semua event grup ini. Yang disalin berasal dari event paling awal: '.$anchor->nama_event.'.'
+            : null;
+
+        $this->dispatch('set-flatpickr', [
+            'model' => 'form_tgl_mulai',
+            'value' => $this->form_tgl_mulai,
+        ]);
+        $this->dispatch('set-flatpickr', [
+            'model' => 'form_tgl_selesai',
+            'value' => $this->form_tgl_selesai,
+        ]);
+    }
+
+    private function clearAutofilledGroupFields(): void
+    {
+        if ($this->groupAutofillSnapshot === null) {
+            return;
+        }
+
+        $clearedDates = [];
+
+        foreach ($this->groupAutofillSnapshot as $field => $value) {
+            if ((string) $this->{$field} === (string) $value) {
+                $this->{$field} = null;
+
+                if (in_array($field, ['form_tgl_mulai', 'form_tgl_selesai'], true)) {
+                    $clearedDates[] = $field;
+                }
+            }
+        }
+
+        $this->groupAutofillSnapshot = null;
+
+        foreach ($clearedDates as $field) {
+            $this->dispatch('set-flatpickr', [
+                'model' => $field,
+                'value' => '',
+            ]);
+        }
+    }
+
+    private function loadGroupMetodeTerpakai(?int $groupId): void
+    {
+        if (! $groupId) {
+            $this->eventGroupMetodeTerpakai = [];
+
+            return;
+        }
+
+        $this->eventGroupMetodeTerpakai = Event::query()
+            ->with('metodeTes')
+            ->where('event_group_id', $groupId)
+            ->when($this->isUpdate, fn ($query) => $query->where('id', '!=', $this->editId))
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Event $event) => $event->metodeTes?->metode_tes)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function refreshMetodeGroupConflict(): void
+    {
+        $this->eventGroupMetodeConflict = $this->duplicateMetodeInSelectedGroup($this->metode_tes_id)
+            ? 'Metode tes ini sudah dipakai event lain dalam grup yang sama.'
+            : null;
+    }
+
+    private function duplicateMetodeInSelectedGroup(mixed $metodeTesId): bool
+    {
+        if ($this->event_group_mode !== 'existing' || blank($this->event_group_id) || blank($metodeTesId)) {
+            return false;
+        }
+
+        return Event::query()
+            ->where('event_group_id', $this->event_group_id)
+            ->where('metode_tes_id', $metodeTesId)
+            ->when($this->isUpdate, fn ($query) => $query->where('id', '!=', $this->editId))
+            ->exists();
     }
 }
