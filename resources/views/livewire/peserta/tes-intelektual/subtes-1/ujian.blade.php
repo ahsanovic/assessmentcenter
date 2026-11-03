@@ -407,7 +407,7 @@
                     showCancelButton: true,
                     showDenyButton: true,
                     confirmButtonText: 'Selesai Ujian',
-                    denyButtonText: 'Lanjut Ujian',
+                    denyButtonText: 'Tinjau Kembali',
                     cancelButtonText: 'Batal',
                     confirmButtonColor: '#059669',
                     denyButtonColor: '#2563eb',

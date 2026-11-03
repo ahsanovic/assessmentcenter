@@ -471,7 +471,7 @@
                     showCancelButton: true,
                     showDenyButton: true,
                     confirmButtonText: this.lastSoalConfirmButton,
-                    denyButtonText: 'Lanjut Ujian',
+                    denyButtonText: 'Tinjau Kembali',
                     cancelButtonText: 'Batal',
                     confirmButtonColor: '#059669',
                     denyButtonColor: '#2563eb',
