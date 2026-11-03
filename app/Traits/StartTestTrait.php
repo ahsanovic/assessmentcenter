@@ -17,7 +17,6 @@ use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\SoalProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use App\Models\SettingWaktuTes;
-use Illuminate\Support\Facades\Auth;
 
 trait StartTestTrait
 {
@@ -50,8 +49,8 @@ trait StartTestTrait
 
     protected function _startTesInterpersonal($urutan_tes)
     {
-        $ujian_selesai = UjianInterpersonal::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianInterpersonal::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -59,8 +58,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.interpersonal', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianInterpersonal::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianInterpersonal::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -80,8 +79,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianInterpersonal();
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
+            $ujian->event_id = activeEventId();
+            $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_ke = 0;
@@ -99,8 +98,8 @@ trait StartTestTrait
 
     protected function _startTesPengembanganDiri($urutan_tes)
     {
-        $ujian_selesai = UjianPengembanganDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianPengembanganDiri::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -108,8 +107,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.pengembangan-diri', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianPengembanganDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianPengembanganDiri::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -129,8 +128,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianPengembanganDiri();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_mb = 0;
@@ -148,8 +147,8 @@ trait StartTestTrait
 
     protected function _startTesKecerdasanEmosi($urutan_tes)
     {
-        $ujian_selesai = UjianKecerdasanEmosi::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianKecerdasanEmosi::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -157,8 +156,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.kecerdasan-emosi', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianKecerdasanEmosi::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianKecerdasanEmosi::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -178,8 +177,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianKecerdasanEmosi();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_kd = 0;
@@ -196,8 +195,8 @@ trait StartTestTrait
 
     protected function _startTesMotivasiKomitmen($urutan_tes)
     {
-        $ujian_selesai = UjianMotivasiKomitmen::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianMotivasiKomitmen::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -205,8 +204,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.motivasi-komitmen', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianMotivasiKomitmen::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianMotivasiKomitmen::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -226,8 +225,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianMotivasiKomitmen();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_1 = 0;
@@ -245,8 +244,8 @@ trait StartTestTrait
 
     protected function _startTesBerpikirKritis($urutan_tes)
     {
-        $ujian_selesai = UjianBerpikirKritis::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianBerpikirKritis::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -254,8 +253,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.berpikir-kritis', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianBerpikirKritis::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianBerpikirKritis::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -275,8 +274,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianBerpikirKritis();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_1 = 0;
@@ -297,8 +296,8 @@ trait StartTestTrait
 
     protected function _startTesProblemSolving($urutan_tes)
     {
-        $ujian_selesai = UjianProblemSolving::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianProblemSolving::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -306,8 +305,8 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.problem-solving', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianProblemSolving::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_berlangsung = UjianProblemSolving::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'false')
             ->count();
 
@@ -327,8 +326,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianProblemSolving();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_1 = 0;
@@ -349,8 +348,8 @@ trait StartTestTrait
 
     protected function _startTesKesadaranDiri($urutan_tes)
     {
-        $ujian_selesai = UjianKesadaranDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
+        $ujian_selesai = UjianKesadaranDiri::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
             ->where('is_finished', 'true')
             ->count();
 
@@ -358,9 +357,9 @@ trait StartTestTrait
             return $this->redirect(route('peserta.tes-potensi.kesadaran-diri', ['id' => 1]), navigate: true);
         }
 
-        $ujian_berlangsung = UjianKesadaranDiri::where('event_id', Auth::guard('peserta')->user()->event_id)
-            ->where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('is_finished', 'true')
+        $ujian_berlangsung = UjianKesadaranDiri::where('event_id', activeEventId())
+            ->where('peserta_id', activePesertaId())
+            ->where('is_finished', 'false')
             ->count();
 
         if ($ujian_berlangsung) {
@@ -379,8 +378,8 @@ trait StartTestTrait
             }
 
             $ujian = new UjianKesadaranDiri();
-            $ujian->peserta_id = Auth::guard('peserta')->user()->id;
-            $ujian->event_id = Auth::guard('peserta')->user()->event_id;
+            $ujian->peserta_id = activePesertaId();
+            $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
             $ujian->jawaban = $jawaban_kosong;
             $ujian->nilai_indikator_1 = 0;

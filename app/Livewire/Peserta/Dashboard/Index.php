@@ -26,7 +26,7 @@ class Index extends Component
         $participationService->setActivePesertaContext($pesertaId);
 
         return $this->redirect(
-            $participationService->routeForMetodeTes($participation->event->metode_tes_id),
+            $participationService->routeForParticipation($participation),
             navigate: true
         );
     }

@@ -15,10 +15,11 @@ use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use App\Models\Pspk\UjianPspk;
-use Illuminate\Support\Facades\Auth;
 
 trait TimerTrait
 {
+    public $waktu_tes_berakhir;
+
     public function timerTest($nama_tes)
     {
         switch ($nama_tes) {
@@ -64,146 +65,130 @@ trait TimerTrait
         }
     }
 
+    protected function applyTimerFromTest(?object $test): void
+    {
+        if (! $test?->waktu_tes_berakhir) {
+            return;
+        }
+
+        $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
+        $this->timer = $this->waktu_tes_berakhir->timestamp;
+    }
+
     protected function _timerIntelektualSubTes1()
     {
-        $test = UjianIntelektualSubTes1::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianIntelektualSubTes1::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerIntelektualSubTes2()
     {
-        $test = UjianIntelektualSubTes2::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianIntelektualSubTes2::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerIntelektualSubTes3()
     {
-        $test = UjianIntelektualSubTes3::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianIntelektualSubTes3::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerCakapDigital()
     {
-        $test = UjianCakapDigital::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianCakapDigital::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerKompetensiTeknis()
     {
-        $test = UjianKompetensiTeknis::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianKompetensiTeknis::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerPspk()
     {
-        $test = UjianPspk::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianPspk::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($test) {
-            $this->waktu_tes_berakhir = $test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerInterpersonal()
     {
-        $first_test = UjianInterpersonal::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianInterpersonal::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerPengembanganDiri()
     {
-        $first_test = UjianPengembanganDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianPengembanganDiri::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerKecerdasanEmosi()
     {
-        $first_test = UjianKecerdasanEmosi::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianKecerdasanEmosi::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerMotivasiKomitmen()
     {
-        $first_test = UjianMotivasiKomitmen::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianMotivasiKomitmen::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerBerpikirKritis()
     {
-        $first_test = UjianBerpikirKritis::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianBerpikirKritis::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerProblemSolving()
     {
-        $first_test = UjianProblemSolving::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianProblemSolving::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 
     protected function _timerKesadaranDiri()
     {
-        $first_test = UjianKesadaranDiri::where('peserta_id', Auth::guard('peserta')->user()->id)
-            ->where('event_id', Auth::guard('peserta')->user()->event_id)
+        $test = UjianKesadaranDiri::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
             ->first();
-        if ($first_test) {
-            $this->waktu_tes_berakhir = $first_test->waktu_tes_berakhir;
-        }
-        $this->timer = $this->waktu_tes_berakhir->timestamp;
+
+        $this->applyTimerFromTest($test);
     }
 }

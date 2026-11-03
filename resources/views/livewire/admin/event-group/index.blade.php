@@ -37,6 +37,7 @@
                                     <th>Nama Grup</th>
                                     <th>Periode</th>
                                     <th>Jumlah Event</th>
+                                    <th>Metode Tes</th>
                                     <th>Status</th>
                                     <th class="text-end">Aksi</th>
                                 </tr>
@@ -48,6 +49,20 @@
                                         <td class="fw-medium">{{ $group->nama }}</td>
                                         <td>{{ $group->periode ?? '-' }}</td>
                                         <td><span class="badge bg-primary-subtle text-primary">{{ $group->events_count }} event</span></td>
+                                        <td>
+                                            @php
+                                                $metodeTesList = $group->events
+                                                    ->map(fn ($event) => $event->metodeTes)
+                                                    ->filter()
+                                                    ->unique('id')
+                                                    ->sortBy('metode_tes');
+                                            @endphp
+                                            @forelse($metodeTesList as $metode)
+                                                <span class="badge bg-dark me-1 mb-1">{{ $metode->metode_tes }}</span>
+                                            @empty
+                                                <span class="text-muted">-</span>
+                                            @endforelse
+                                        </td>
                                         <td>
                                             @if($group->is_active === 'true')
                                                 <span class="badge bg-success">Aktif</span>
@@ -65,7 +80,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">Belum ada grup assessment.</td>
+                                        <td colspan="7" class="text-center text-muted py-4">Belum ada grup assessment.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

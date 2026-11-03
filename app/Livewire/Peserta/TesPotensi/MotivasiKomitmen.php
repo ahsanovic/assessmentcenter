@@ -52,10 +52,19 @@ class MotivasiKomitmen extends Component
         $this->dispatch('load-flags-from-browser');
         $this->id_soal = $id;
 
-        $data = UjianMotivasiKomitmen::select('id', 'soal_id', 'jawaban', 'created_at')
+        $data = UjianMotivasiKomitmen::select('id', 'soal_id', 'jawaban', 'created_at', 'is_finished')
             ->where('peserta_id', activePesertaId())
             ->where('event_id', activeEventId())
             ->first();
+
+        if (! $data) {
+            session()->flash('toast', [
+                'type' => 'error',
+                'message' => 'Data ujian tidak ditemukan. Silakan mulai tes terlebih dahulu.',
+            ]);
+
+            return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
+        }
 
         if ($data->is_finished == 'true') {
             session()->flash('toast', [

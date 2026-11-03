@@ -32,6 +32,7 @@ class Index extends Component
     {
         $groups = EventGroup::query()
             ->withCount('events')
+            ->with(['events.metodeTes'])
             ->when($this->search, fn ($q) => $q->where('nama', 'like', '%' . $this->search . '%'))
             ->orderByDesc('id')
             ->paginate(10);

@@ -17,7 +17,7 @@ class Dashboard extends Component
 {
     public function startSubTes1()
     {
-        $test_started = Peserta::where('id', auth()->guard('peserta')->user()->id)->first(['id']);
+        $test_started = Peserta::where('id', activePesertaId())->first(['id']);
         if ($test_started) {
             $test_started->test_started_at = now();
             $test_started->save();
@@ -69,7 +69,7 @@ class Dashboard extends Component
 
     public function startSubTes2()
     {
-        $test_started = Peserta::where('id', auth()->guard('peserta')->user()->id)->first(['id']);
+        $test_started = Peserta::where('id', activePesertaId())->first(['id']);
         if ($test_started) {
             $test_started->test_started_at = now();
             $test_started->save();
@@ -117,7 +117,7 @@ class Dashboard extends Component
 
     public function startSubTes3()
     {
-        $test_started = Peserta::where('id', auth()->guard('peserta')->user()->id)->first(['id']);
+        $test_started = Peserta::where('id', activePesertaId())->first(['id']);
         if ($test_started) {
             $test_started->test_started_at = now();
             $test_started->save();

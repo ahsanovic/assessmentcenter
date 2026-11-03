@@ -25,14 +25,30 @@ class PesertaParticipationService
 
     public function findActiveParticipationsByIdNumber(string $idNumber): Collection
     {
+        return $this->findParticipationsByIdNumber($idNumber, onlyOngoingEvents: true);
+    }
+
+    /**
+     * Semua partisipasi aktif peserta (termasuk event admin status Selesai) — untuk dashboard.
+     */
+    public function findParticipationsByIdNumberForDisplay(string $idNumber): Collection
+    {
+        return $this->findParticipationsByIdNumber($idNumber, onlyOngoingEvents: false);
+    }
+
+    private function findParticipationsByIdNumber(string $idNumber, bool $onlyOngoingEvents): Collection
+    {
         $length = strlen($idNumber);
 
         $query = Peserta::query()
             ->with(['event.metodeTes', 'event.eventGroup'])
-            ->where('is_active', 'true')
-            ->whereHas('event', function ($query) {
+            ->where('is_active', 'true');
+
+        if ($onlyOngoingEvents) {
+            $query->whereHas('event', function ($query) {
                 $query->where('is_finished', 'false');
             });
+        }
 
         if ($length === 18) {
             $query->where('jenis_peserta_id', 1)->where('nip', $idNumber);
@@ -42,7 +58,7 @@ class PesertaParticipationService
             return collect();
         }
 
-        return $query->orderByDesc('event_id')->get();
+        return $query->orderBy('event_id')->get()->sortBy(fn (Peserta $p) => $p->event->metode_tes_id)->values();
     }
 
     public function participationsMatchingPassword(Collection $participations, string $password): Collection
@@ -84,7 +100,7 @@ class PesertaParticipationService
 
         $idNumber = $authPeserta->nip ?: $authPeserta->nik;
 
-        $participations = $this->findActiveParticipationsByIdNumber($idNumber);
+        $participations = $this->findParticipationsByIdNumberForDisplay($idNumber);
 
         return $this->filterByGroupKey($participations, $groupKey);
     }
@@ -167,6 +183,43 @@ class PesertaParticipationService
         };
     }
 
+    public function routeForParticipation(Peserta $peserta): string
+    {
+        $metodeTesId = (int) $peserta->event->metode_tes_id;
+        $eventId = $peserta->event_id;
+        $pesertaId = $peserta->id;
+
+        if ($metodeTesId === 2) {
+            $intelektualSelesai = collect(getFinishedTesIntelektual($eventId, $pesertaId))
+                ->every(fn ($selesai) => $selesai === true);
+
+            if (! $intelektualSelesai) {
+                return session()->has('exam_pin')
+                    ? route('peserta.tes-intelektual.home')
+                    : route('peserta.tes-intelektual');
+            }
+
+            $potensiSelesai = collect(getFinishedTes($eventId, $pesertaId))
+                ->every(fn ($selesai) => $selesai === true);
+
+            if (! $potensiSelesai) {
+                return session()->has('exam_pin')
+                    ? route('peserta.tes-potensi.home')
+                    : route('peserta.tes-potensi');
+            }
+
+            return route('peserta.dashboard');
+        }
+
+        return $this->routeForMetodeTes($metodeTesId);
+    }
+
+    public function intelektualSelesai(?int $eventId = null, ?int $pesertaId = null): bool
+    {
+        return collect(getFinishedTesIntelektual($eventId, $pesertaId))
+            ->every(fn ($selesai) => $selesai === true);
+    }
+
     public function metodeTesLabel(int $metodeTesId): string
     {
         return match ($metodeTesId) {
@@ -211,7 +264,62 @@ class PesertaParticipationService
             return false;
         }
 
+        if ((int) $peserta->event->metode_tes_id === 1 && $peserta->event->is_open === 'false') {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * State tombol kartu dashboard (tanpa urutan antar tes).
+     *
+     * @return array{type: string, label: string, hint: ?string, btn_class: string}
+     */
+    public function dashboardButtonState(Peserta $peserta): array
+    {
+        if ($this->isTestFinished($peserta)) {
+            return [
+                'type' => 'finished',
+                'label' => 'Sudah Selesai',
+                'hint' => null,
+                'btn_class' => 'btn-success',
+            ];
+        }
+
+        if ($peserta->event->is_finished === 'true') {
+            return [
+                'type' => 'event_closed',
+                'label' => 'Tes Tidak Dapat Dimulai',
+                'hint' => 'Event assessment ini sudah ditutup oleh admin. Anda tidak dapat memulai atau melanjutkan tes ini.',
+                'btn_class' => 'btn-secondary',
+            ];
+        }
+
+        if ((int) $peserta->event->metode_tes_id === 1 && $peserta->event->is_open === 'false') {
+            return [
+                'type' => 'portofolio_closed',
+                'label' => 'Portofolio Ditutup',
+                'hint' => 'Pengisian portofolio untuk event ini sedang ditutup. Silakan hubungi panitia jika memerlukan bantuan.',
+                'btn_class' => 'btn-info',
+            ];
+        }
+
+        if ($this->canStartTest($peserta)) {
+            return [
+                'type' => 'start',
+                'label' => 'Mulai Tes',
+                'hint' => null,
+                'btn_class' => 'btn-primary',
+            ];
+        }
+
+        return [
+            'type' => 'unavailable',
+            'label' => 'Tidak Tersedia',
+            'hint' => 'Tes belum dapat diakses saat ini.',
+            'btn_class' => 'btn-secondary',
+        ];
     }
 
     public function createGroupForEvent(string $nama, ?string $periode = null): EventGroup

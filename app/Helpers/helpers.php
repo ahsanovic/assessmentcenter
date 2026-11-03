@@ -166,8 +166,11 @@ if (! function_exists('capaianLevel')) {
 }
 
 if (! function_exists('getFinishedTes')) {
-    function getFinishedTes($event_id, $peserta_id)
+    function getFinishedTes(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_interpersonal' => UjianInterpersonal::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -202,8 +205,11 @@ if (! function_exists('getFinishedTes')) {
 }
 
 if (! function_exists('getFinishedTesCakapDigital')) {
-    function getFinishedTesCakapDigital($event_id, $peserta_id)
+    function getFinishedTesCakapDigital(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_cakap_digital' => UjianCakapDigital::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -214,8 +220,11 @@ if (! function_exists('getFinishedTesCakapDigital')) {
 }
 
 if (! function_exists('getFinishedTesKompetensiTeknis')) {
-    function getFinishedTesKompetensiTeknis($event_id, $peserta_id)
+    function getFinishedTesKompetensiTeknis(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_kompetensi_teknis' => UjianKompetensiTeknis::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -226,8 +235,11 @@ if (! function_exists('getFinishedTesKompetensiTeknis')) {
 }
 
 if (! function_exists('getFinishedTesPspk')) {
-    function getFinishedTesPspk($event_id, $peserta_id)
+    function getFinishedTesPspk(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_pspk' => UjianPspk::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -238,8 +250,11 @@ if (! function_exists('getFinishedTesPspk')) {
 }
 
 if (! function_exists('getFinishedTesPspkLv3')) {
-    function getFinishedTesPspkLv3($event_id, $peserta_id)
+    function getFinishedTesPspkLv3(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_pspk_lv3' => UjianPspk::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -250,8 +265,11 @@ if (! function_exists('getFinishedTesPspkLv3')) {
 }
 
 if (! function_exists('getFinishedTesPspkLv4')) {
-    function getFinishedTesPspkLv4($event_id, $peserta_id)
+    function getFinishedTesPspkLv4(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
         return [
             'tes_pspk_lv4' => UjianPspk::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
@@ -262,20 +280,24 @@ if (! function_exists('getFinishedTesPspkLv4')) {
 }
 
 if (! function_exists('getFinishedTesIntelektual')) {
-    function getFinishedTesIntelektual($event_id, $peserta_id)
+    function getFinishedTesIntelektual(?int $event_id = null, ?int $peserta_id = null)
     {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+        $selesai = ['true', '1', 1, true];
+
         return [
             'sub_tes_1' => UjianIntelektualSubTes1::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
-                ->where('is_finished', 'true')
+                ->whereIn('is_finished', $selesai)
                 ->exists(),
             'sub_tes_2' => UjianIntelektualSubTes2::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
-                ->where('is_finished', 'true')
+                ->whereIn('is_finished', $selesai)
                 ->exists(),
             'sub_tes_3' => UjianIntelektualSubTes3::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
-                ->where('is_finished', 'true')
+                ->whereIn('is_finished', $selesai)
                 ->exists(),
         ];
     }

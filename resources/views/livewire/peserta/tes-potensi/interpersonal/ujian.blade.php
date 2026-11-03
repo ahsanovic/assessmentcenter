@@ -362,7 +362,7 @@
             },
 
             get lastSoalConfirmButton() {
-                return this.currentSequence === 7 ? 'Selesai Ujian' : 'Lanjut Tes';
+                return this.currentSequence === 7 ? 'Selesai Ujian' : 'Lanjut Tes Berikutnya';
             },
 
             get opsiList() {

@@ -15,8 +15,20 @@ class Dashboard extends Component
 
     public $first_test;
 
-    public function mount()
+    public function mount(): void
     {
+        if (activePeserta()?->event->metode_tes_id === 2
+            && ! pesertaParticipationService()->intelektualSelesai()) {
+            session()->flash('toast', [
+                'type' => 'warning',
+                'message' => 'Selesaikan Tes Intelektual terlebih dahulu.',
+            ]);
+
+            $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
+
+            return;
+        }
+
         $this->first_test = Settings::where('urutan', 1)->first();
     }
 
@@ -26,7 +38,7 @@ class Dashboard extends Component
             // session(['current_test' => $this->first_test->alat_tes_id]);
             $this->first_test->load('alatTes');
 
-            $test_started = Peserta::where('id', auth()->guard('peserta')->user()->id)->first(['id']);
+            $test_started = Peserta::where('id', activePesertaId())->first(['id']);
 
             if ($test_started) {
                 $test_started->test_started_at = now();

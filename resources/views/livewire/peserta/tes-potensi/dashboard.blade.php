@@ -1,8 +1,6 @@
 <div>
     @php
-        $event_id = auth()->guard('peserta')->user()->event_id;
-        $peserta_id = auth()->guard('peserta')->user()->id;
-        $data = getFinishedTes($event_id, $peserta_id);
+        $data = getFinishedTes();
         $finished_all_test = count(array_filter($data)) === count($data);
     @endphp
 

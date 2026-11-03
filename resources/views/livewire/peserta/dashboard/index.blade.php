@@ -38,15 +38,15 @@
         </div>
     </div>
 
-  <!-- Menu Tes Section -->
+    <!-- Menu Tes Section -->
     <div class="row mb-3">
         <div class="col-12">
             <h5 class="text-muted mb-0">
                 <i class="me-2" data-feather="clipboard"></i>
-                Menu Tes Tersedia
+                Menu Tes
             </h5>
             @if($isMultiTest)
-                <p class="text-muted small mt-1 mb-0">Selesaikan semua tes di bawah tanpa perlu logout. Kembali ke dashboard setelah setiap tes selesai.</p>
+                <p class="text-muted small mt-1 mb-0">Setiap kartu mewakili satu jenis tes. Anda dapat pindah antar tes tanpa logout selama event masih berlangsung.</p>
             @endif
         </div>
     </div>
@@ -56,65 +56,67 @@
             @php
                 $event = $participation->event;
                 $metodeTesId = $event->metode_tes_id;
-                $finished = $participationService->isTestFinished($participation);
-                $canStart = $participationService->canStartTest($participation);
-                $eventClosed = $event->is_finished === 'true';
                 $label = $participationService->metodeTesLabel($metodeTesId);
+                $button = $participationService->dashboardButtonState($participation);
+                $eventOngoing = $event->is_finished !== 'true';
+                $finished = $button['type'] === 'finished';
             @endphp
 
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm {{ $finished ? 'opacity-75' : 'card-hover' }}">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-circle {{ $finished ? 'bg-success-subtle' : 'bg-primary-subtle' }} p-3 me-3">
-                                <i class="{{ $finished ? 'text-success' : 'text-primary' }}" data-feather="{{ $finished ? 'check-circle' : 'layers' }}" style="width: 24px; height: 24px;"></i>
+                <div class="card h-100 border-0 shadow-sm {{ $finished ? 'opacity-75' : ($button['type'] === 'start' ? 'card-hover' : '') }}">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle {{ $finished ? 'bg-success-subtle' : 'bg-primary-subtle' }} p-3 me-3">
+                                    <i class="{{ $finished ? 'text-success' : 'text-primary' }}" data-feather="{{ $finished ? 'check-circle' : 'layers' }}" style="width: 24px; height: 24px;"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0">{{ $label }}</h5>
+                                    <small class="text-muted">{{ $event->metodeTes->metode_tes ?? 'Tes' }}</small>
+                                </div>
                             </div>
-                            <div>
-                                <h5 class="card-title mb-0">{{ $label }}</h5>
-                                <small class="text-muted">{{ $event->metodeTes->metode_tes ?? 'Tes' }}</small>
-                            </div>
+                            @if($eventOngoing)
+                                <span class="badge bg-success-subtle text-success text-nowrap">Berlangsung</span>
+                            @else
+                                <span class="badge bg-secondary-subtle text-secondary text-nowrap">Selesai</span>
+                            @endif
                         </div>
 
                         @if($isMultiTest)
-                            <p class="card-text text-muted small mb-2">
+                            <p class="card-text text-muted small mb-3">
                                 Event: {{ $event->nama_event }}
                             </p>
                         @endif
 
-                        @if($finished)
-                            <button class="btn btn-success w-100" disabled>
-                                <i class="me-2" data-feather="check"></i>
-                                Sudah Selesai
-                            </button>
-                        @elseif($eventClosed)
-                            <button class="btn btn-secondary w-100" disabled>
-                                <i class="me-2" data-feather="lock"></i>
-                                Event Ditutup Admin
-                            </button>
-                        @elseif($metodeTesId === 1 && $event->is_open == 'false')
-                            <button class="btn btn-info w-100 disabled" disabled>
-                                <i class="me-2" data-feather="lock"></i>
-                                Portofolio Ditutup
-                            </button>
-                        @elseif($canStart)
-                            <button type="button" class="btn btn-primary w-100" wire:click="startTest({{ $participation->id }})" wire:loading.attr="disabled">
-                                <span wire:loading.remove wire:target="startTest({{ $participation->id }})">
-                                    <i class="me-2" data-feather="play"></i>
-                                    Mulai Tes
-                                </span>
-                                <span wire:loading wire:target="startTest({{ $participation->id }})">Membuka...</span>
-                            </button>
-                        @else
-                            <button class="btn btn-secondary w-100" disabled>
-                                Tidak Tersedia
-                            </button>
-                        @endif
+                        <div class="mt-auto">
+                            @if($button['type'] === 'start')
+                                <button type="button" class="btn {{ $button['btn_class'] }} w-100" wire:click="startTest({{ $participation->id }})" wire:loading.attr="disabled">
+                                    <span wire:loading.remove wire:target="startTest({{ $participation->id }})">
+                                        <i class="me-2" data-feather="play"></i>
+                                        {{ $button['label'] }}
+                                    </span>
+                                    <span wire:loading wire:target="startTest({{ $participation->id }})">Membuka...</span>
+                                </button>
+                            @else
+                                <button type="button" class="btn {{ $button['btn_class'] }} w-100 py-2" disabled>
+                                    @if($button['type'] === 'finished')
+                                        <span wire:ignore><i class="me-2" data-feather="check"></i></span>
+                                    @else
+                                        <span wire:ignore><i class="me-2" data-feather="info"></i></span>
+                                    @endif
+                                    {{ $button['label'] }}
+                                </button>
+                                @if(! empty($button['hint']))
+                                    <p class="text-muted small mb-0 mt-2">{{ $button['hint'] }}</p>
+                                @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-warning">Tidak ada tes aktif untuk akun Anda.</div>
+                <div class="alert alert-warning">Tidak ada tes terdaftar untuk akun Anda pada program ini.</div>
             </div>
         @endforelse
     </div>
@@ -132,12 +134,12 @@
                             <h6 class="mb-2">Petunjuk Pengerjaan Tes</h6>
                             <ul class="mb-0 ps-3 text-muted">
                                 <li>Pastikan koneksi internet Anda stabil sebelum memulai tes</li>
-                                <li>Tes yang sudah dimulai tidak dapat diulang kembali</li>
+                                <li>Tes yang sudah selesai ditandai dengan tombol hijau &quot;Sudah Selesai&quot;</li>
                                 @if($isMultiTest)
                                     <li>Anda dapat melanjutkan ke tes lain dari dashboard tanpa logout</li>
                                 @endif
+                                <li>Tes dengan status event &quot;Selesai&quot; tidak dapat dimulai meskipun belum pernah dikerjakan</li>
                                 <li>Jawab setiap pertanyaan dengan teliti dan jujur</li>
-                                <li>Perhatikan waktu pengerjaan pada setiap tes</li>
                             </ul>
                         </div>
                     </div>
@@ -164,6 +166,9 @@
     }
     .bg-info-subtle {
         background-color: rgba(13, 202, 240, 0.15) !important;
+    }
+    .bg-secondary-subtle {
+        background-color: rgba(108, 117, 125, 0.15) !important;
     }
 </style>
 @endpush

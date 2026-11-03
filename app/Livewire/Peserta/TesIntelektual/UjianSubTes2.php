@@ -220,7 +220,7 @@ class UjianSubTes2 extends Component
             );
 
             // change status ujian to true (finish)
-            $data->is_finished = true;
+            $data->is_finished = 'true';
             $data->save();
 
             // Bersihkan localStorage via JS

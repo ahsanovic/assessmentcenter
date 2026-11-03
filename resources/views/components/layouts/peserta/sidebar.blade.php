@@ -20,7 +20,7 @@
                         <span class="link-title">Dashboard</span>
                     </a>
                 </li>
-                    @if (auth()->guard('peserta')->user()->event->metode_tes_id === 1)
+                    @if ($metodeTesId === 1)
                     <li class="nav-item" style="{{ session('exam_pin') ? 'pointer-events: none; opacity: 0.6;' : '' }}">
                         <a href="{{ route('peserta.portofolio') }}" class="nav-link" wire:navigate>
                             <i class="link-icon" data-feather="info"></i>
@@ -31,32 +31,37 @@
                 @endif
                 <li class="nav-item nav-category">Menu Tes</li>
                 @php
-                    $event_id = auth()->guard('peserta')->user()->event_id;
-                    $peserta_id = auth()->guard('peserta')->user()->id;
+                    $activePeserta = activePeserta();
+                    $metodeTesId = $activePeserta?->event->metode_tes_id;
+                    $event_id = activeEventId();
+                    $peserta_id = activePesertaId();
+                    $intelektualSelesai = pesertaParticipationService()->intelektualSelesai($event_id, $peserta_id);
                 @endphp
-                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 2)
+                @if ($metodeTesId === 2)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesIntelektual($event_id, $peserta_id);
                         $test_intelektual_started = collect($data)->contains(true);
                     @endphp
-                    <a href="{{ route('peserta.tes-intelektual') }}" class="nav-link" wire:navigate style="{{ $test_intelektual_started ? 'pointer-events: none;' : '' }}">
+                    <a href="{{ route('peserta.tes-intelektual.home') }}" class="nav-link" wire:navigate style="{{ $test_intelektual_started ? 'pointer-events: none;' : '' }}">
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Intelektual</span>
                     </a>
                 </li>
+                @if ($intelektualSelesai)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTes($event_id, $peserta_id);
                         $test_potensi_started = collect($data)->contains(true);
                     @endphp
-                    <a href="{{ route('peserta.tes-potensi') }}" class="nav-link" wire:navigate style="{{ $test_potensi_started ? 'pointer-events: none;' : '' }}">
+                    <a href="{{ route('peserta.tes-potensi.home') }}" class="nav-link" wire:navigate style="{{ $test_potensi_started ? 'pointer-events: none;' : '' }}">
                         <i class="link-icon" data-feather="info"></i>
                         <span class="link-title">Tes Potensi</span>
                     </a>
                 </li>
                 @endif
-                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 3)
+                @endif
+                @if ($metodeTesId === 3)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesCakapDigital($event_id, $peserta_id);
@@ -68,7 +73,7 @@
                     </a>
                 </li>
                 @endif
-                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 4)
+                @if ($metodeTesId === 4)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesKompetensiTeknis($event_id, $peserta_id);
@@ -80,7 +85,7 @@
                     </a>
                 </li>
                 @endif
-                @if (auth()->guard('peserta')->user()->event->metode_tes_id === 5)
+                @if ($metodeTesId === 5)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesPspk($event_id, $peserta_id);
@@ -91,7 +96,7 @@
                         <span class="link-title">Tes PSPK Level 1</span>
                     </a>
                 </li>
-                @elseif (auth()->guard('peserta')->user()->event->metode_tes_id === 6)
+                @elseif ($metodeTesId === 6)
                 <li class="nav-item">
                     @php
                         $data = getFinishedTesPspk($event_id, $peserta_id);

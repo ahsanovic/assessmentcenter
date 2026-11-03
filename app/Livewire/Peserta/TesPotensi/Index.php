@@ -17,6 +17,19 @@ class Index extends Component
     //     'pin_ujian.required' => 'harus diisi',
     // ])]
 
+    public function mount(): void
+    {
+        if (activePeserta()?->event->metode_tes_id === 2
+            && ! pesertaParticipationService()->intelektualSelesai()) {
+            session()->flash('toast', [
+                'type' => 'warning',
+                'message' => 'Selesaikan Tes Intelektual terlebih dahulu.',
+            ]);
+
+            $this->redirect(route('peserta.tes-intelektual.home'), navigate: true);
+        }
+    }
+
     public function render()
     {
         return view('livewire..peserta.tes-potensi.index');

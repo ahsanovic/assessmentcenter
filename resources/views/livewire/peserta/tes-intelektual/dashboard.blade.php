@@ -1,8 +1,6 @@
 <div>
     @php
-        $event_id = auth()->guard('peserta')->user()->event_id;
-        $peserta_id = auth()->guard('peserta')->user()->id;
-        $data = getFinishedTesIntelektual($event_id, $peserta_id);
+        $data = getFinishedTesIntelektual();
         $finished_all_test = count(array_filter($data)) === count($data);
     @endphp
 
@@ -21,7 +19,11 @@
                                 <p class="mb-0 text-muted">Selamat! Silahkan lanjutkan ke Tes Potensi.</p>
                             </div>
                         </div>
-                        <a href="{{ route('peserta.dashboard') }}" class="btn btn-primary" wire:navigate>
+                        <a href="{{ route('peserta.tes-potensi.home') }}" class="btn btn-primary me-2" wire:navigate>
+                            <span wire:ignore><i data-feather="arrow-right" style="width: 18px; height: 18px;" class="me-2"></i></span>
+                            Lanjut Tes Potensi
+                        </a>
+                        <a href="{{ route('peserta.dashboard') }}" class="btn btn-outline-primary" wire:navigate>
                             <span wire:ignore><i data-feather="home" style="width: 18px; height: 18px;" class="me-2"></i></span>
                             Kembali ke Dashboard
                         </a>
