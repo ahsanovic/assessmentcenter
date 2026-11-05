@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\DownloadAbsensiEventController;
 use App\Http\Controllers\DownloadBeritaAcaraController;
 use App\Http\Controllers\DownloadLaporanCakapDigitalController;
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
-use App\Http\Controllers\DownloadAbsensiEventController;
 use App\Http\Controllers\DownloadPegawaiQrCodeController;
 use App\Http\Controllers\DownloadPortofolioController;
 use App\Http\Controllers\DownloadPspkKasusLampiranAdminController;
@@ -151,6 +151,10 @@ Route::prefix('bkdac')->group(function () {
         // jawaban peserta
         Route::get('jawaban-peserta/pspk', \App\Livewire\Admin\JawabanPeserta\Pspk\Index::class)->name('admin.jawaban-peserta.pspk');
         Route::get('jawaban-peserta/pspk/{idEvent}', \App\Livewire\Admin\JawabanPeserta\Pspk\Show::class)->name('admin.jawaban-peserta.pspk.show');
+        Route::get('jawaban-peserta/literasi-digital', \App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Index::class)->name('admin.jawaban-peserta.literasi-digital');
+        Route::get('jawaban-peserta/literasi-digital/{idEvent}', \App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Show::class)
+            ->whereNumber('idEvent')
+            ->name('admin.jawaban-peserta.literasi-digital.show');
 
         // log pelanggaran tes potensi
         Route::get('pelanggaran/tes-potensi', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Index::class)->name('admin.pelanggaran-tes');
