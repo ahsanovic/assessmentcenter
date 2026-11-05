@@ -9,6 +9,7 @@ use App\Models\EventGroup;
 use App\Models\RefJabatanDiuji;
 use App\Models\RefMetodeTes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -44,6 +45,7 @@ class Index extends Component
     public $is_finished;
     public $event_group_mode = 'none';
     public $event_group_id;
+    public ?string $nama_grup = null;
 
     public ?string $eventGroupAutofillNotice = null;
 
@@ -120,6 +122,8 @@ class Index extends Component
 
     public function updatedEventGroupMode(): void
     {
+        $this->resetValidation('nama_grup');
+
         if ($this->event_group_mode !== 'existing') {
             if (! $this->isUpdate) {
                 $this->clearAutofilledGroupFields();
@@ -180,9 +184,18 @@ class Index extends Component
             'form_tgl_selesai' => ['required', 'date_format:d-m-Y', 'after_or_equal:form_tgl_mulai'],
             'jumlah_peserta' => ['required', 'numeric'],
             'pin_ujian' => ['required', 'min:4', 'max:4', 'regex:/^[A-Za-z0-9]+$/'],
-            'event_group_mode' => ['required', 'in:none,new,existing'],
+            'event_group_mode' => ['required', Rule::in($this->isUpdate ? ['none', 'existing'] : ['none', 'new', 'existing'])],
             'event_group_id' => ['required_if:event_group_mode,existing', 'nullable', 'exists:event_group,id'],
         ];
+
+        if ($this->event_group_mode === 'new') {
+            $rules['nama_grup'] = [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('event_group', 'nama'),
+            ];
+        }
 
         // Assessor dan Portofolio hanya wajib jika metode tes = Assessment Center (id: 1)
         if ($this->metode_tes_id == 1) {
@@ -213,7 +226,12 @@ class Index extends Component
             'pin_ujian.regex' => 'pin hanya boleh terdiri dari huruf kecil, huruf besar, dan angka',
             'is_open.required' => 'harus dipilih',
             'event_group_mode.required' => 'harus dipilih',
+            'event_group_mode.in' => 'pilihan grup tidak valid',
             'event_group_id.required_if' => 'grup event harus dipilih',
+            'nama_grup.required' => 'nama grup harus diisi',
+            'nama_grup.string' => 'nama grup tidak valid',
+            'nama_grup.max' => 'maksimal 255 karakter',
+            'nama_grup.unique' => 'nama grup sudah digunakan',
         ];
     }
 
@@ -262,7 +280,7 @@ class Index extends Component
     public function openModal()
     {
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'nama_grup', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
         $this->showModal = true;
         $this->dispatch('modalOpened');
     }
@@ -271,7 +289,7 @@ class Index extends Component
     {
         $this->showModal = false;
         $this->resetValidation();
-        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
+        $this->reset(['nama_event', 'metode_tes_id', 'jabatan_diuji_id', 'form_tgl_mulai', 'form_tgl_selesai', 'jumlah_peserta', 'assessor', 'pin_ujian', 'is_open', 'is_finished', 'event_group_mode', 'event_group_id', 'nama_grup', 'editId', 'isUpdate', 'eventGroupAutofillNotice', 'eventGroupAutofillWarning', 'eventGroupMetodeConflict', 'eventGroupMetodeTerpakai', 'groupAutofillSnapshot']);
     }
 
     public function openAttendanceModal(int $id): void
@@ -619,6 +637,7 @@ class Index extends Component
             $this->pin_ujian = $data->pin_ujian;
             $this->event_group_id = $data->event_group_id;
             $this->event_group_mode = $data->event_group_id ? 'existing' : 'none';
+            $this->nama_grup = null;
             $this->isUpdate = true;
             $this->groupAutofillSnapshot = null;
             $this->eventGroupAutofillNotice = null;
@@ -635,6 +654,10 @@ class Index extends Component
 
     public function save()
     {
+        if (is_string($this->nama_grup)) {
+            $this->nama_grup = trim($this->nama_grup);
+        }
+
         $this->validate();
         try {
             DB::beginTransaction();
@@ -794,7 +817,7 @@ class Index extends Component
         }
 
         $group = EventGroup::create([
-            'nama' => $this->nama_event,
+            'nama' => $this->nama_grup,
             'periode' => $this->form_tgl_mulai . ' - ' . $this->form_tgl_selesai,
             'is_active' => 'true',
         ]);

@@ -270,7 +270,22 @@
                                     <div class="alert alert-warning py-2 px-3 mt-2 mb-0" style="font-size: 0.875rem;">{{ $eventGroupAutofillWarning }}</div>
                                 @endif
                             @elseif($event_group_mode === 'new')
-                                <small class="text-muted d-block mt-1">Grup baru dibuat otomatis. Event berikutnya dengan metode berbeda bisa digabung ke grup ini.</small>
+                                <div class="mt-2" wire:key="nama-grup-field">
+                                    <label class="form-label fw-semibold mb-1" for="namaGrup">Nama Grup <span class="text-danger">*</span></label>
+                                    <input
+                                        id="namaGrup"
+                                        type="text"
+                                        wire:model="nama_grup"
+                                        maxlength="255"
+                                        autocomplete="off"
+                                        class="form-control @error('nama_grup') is-invalid @enderror"
+                                        placeholder="Assessment Eselon II 2026"
+                                    >
+                                    @error('nama_grup')
+                                    <div class="text-danger mt-1" style="font-size: 0.875rem;">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted d-block mt-1">Event berikutnya dengan metode berbeda bisa digabung ke grup ini.</small>
+                                </div>
                             @endif
                         </div>
 
