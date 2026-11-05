@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
 use App\Models\Intelektual\UjianIntelektualSubTes3;
@@ -46,6 +47,9 @@ trait TimerTrait
                 break;
             case 'Cakap Digital':
                 $this->_timerCakapDigital();
+                break;
+            case 'Literasi Digital':
+                $this->_timerLiterasiDigital();
                 break;
             case 'Intelektual Sub Tes 1':
                 $this->_timerIntelektualSubTes1();
@@ -105,6 +109,15 @@ trait TimerTrait
     protected function _timerCakapDigital()
     {
         $test = UjianCakapDigital::where('peserta_id', activePesertaId())
+            ->where('event_id', activeEventId())
+            ->first();
+
+        $this->applyTimerFromTest($test);
+    }
+
+    protected function _timerLiterasiDigital()
+    {
+        $test = UjianLiterasiDigital::where('peserta_id', activePesertaId())
             ->where('event_id', activeEventId())
             ->first();
 

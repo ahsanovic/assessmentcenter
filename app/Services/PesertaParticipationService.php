@@ -176,7 +176,7 @@ class PesertaParticipationService
         return match ($metodeTesId) {
             1 => route('peserta.portofolio'),
             2 => route('peserta.tes-intelektual'),
-            3 => route('peserta.tes-cakap-digital'),
+            3 => route('peserta.tes-literasi-digital'),
             4 => route('peserta.tes-kompetensi-teknis'),
             5, 6, 7, 8 => route('peserta.tes-pspk'),
             default => route('peserta.dashboard'),
@@ -225,7 +225,7 @@ class PesertaParticipationService
         return match ($metodeTesId) {
             1 => 'Assessment Center (Portofolio)',
             2 => 'Tes Potensi Online',
-            3 => 'Tes Cakap Digital',
+            3 => 'Tes Literasi Digital',
             4 => 'Tes Kompetensi Teknis',
             5 => 'Tes PSPK Level 1',
             6 => 'Tes PSPK Level 2',
@@ -245,7 +245,7 @@ class PesertaParticipationService
             1 => false,
             2 => collect(getFinishedTesIntelektual($eventId, $pesertaId))->every(fn ($v) => $v === true)
                 && collect(getFinishedTes($eventId, $pesertaId))->every(fn ($v) => $v === true),
-            3 => collect(getFinishedTesCakapDigital($eventId, $pesertaId))->contains(true),
+            3 => collect(getFinishedTesLiterasiDigital($eventId, $pesertaId))->contains(true),
             4 => collect(getFinishedTesKompetensiTeknis($eventId, $pesertaId))->contains(true),
             5, 6 => collect(getFinishedTesPspk($eventId, $pesertaId))->contains(true),
             7 => collect(getFinishedTesPspkLv3($eventId, $pesertaId))->contains(true),

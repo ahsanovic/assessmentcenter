@@ -283,7 +283,7 @@ class Index extends Component
         $metodeGroups = [
             'Assessment Center' => [1],
             'Tes Potensi' => [2],
-            'Cakap Digital' => [3],
+            'Literasi Digital' => [3],
             'Kompetensi Teknis' => [4],
             'PSPK' => [5, 6, 7, 8],
         ];
@@ -369,9 +369,12 @@ class Index extends Component
             'Motivasi & Komitmen' => $countIn('hasil_motivasi_komitmen'),
             'Kecerdasan Emosi' => $countIn('hasil_kecerdasan_emosi'),
             'Pengembangan Diri' => $countIn('hasil_pengembangan_diri'),
-            'Cakap Digital' => $countIn('hasil_cakap_digital'),
             'PSPK' => $countIn('hasil_pspk'),
         ];
+
+        if (Schema::hasTable('hasil_literasi_digital')) {
+            $penyelesaian['Literasi Digital'] = $countIn('hasil_literasi_digital');
+        }
 
         if (Schema::hasTable('hasil_kompetensi_teknis')) {
             $penyelesaian['Kompetensi Teknis'] = $countIn('hasil_kompetensi_teknis');
@@ -396,14 +399,13 @@ class Index extends Component
             'PSPK' => $avgIn('hasil_pspk', 'jpm'),
         ];
 
-        if ($eventIds !== []) {
-            $cakap = DB::table('hasil_cakap_digital')
+        if ($eventIds !== [] && Schema::hasTable('hasil_literasi_digital')) {
+            $literasi = DB::table('hasil_literasi_digital')
                 ->whereIn('event_id', $eventIds)
-                ->selectRaw('AVG((COALESCE(jpm_literasi, 0) + COALESCE(jpm_emerging, 0)) / 2) as rata')
-                ->value('rata');
-            $rataSkor['Cakap Digital'] = $cakap !== null ? round((float) $cakap, 2) : null;
+                ->avg('jpm');
+            $rataSkor['Literasi Digital'] = $literasi !== null ? round((float) $literasi, 2) : null;
         } else {
-            $rataSkor['Cakap Digital'] = null;
+            $rataSkor['Literasi Digital'] = null;
         }
 
         if (Schema::hasTable('hasil_kompetensi_teknis')) {

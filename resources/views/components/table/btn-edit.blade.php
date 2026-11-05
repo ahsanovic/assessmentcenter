@@ -13,5 +13,7 @@
     title="{{ $tooltip }}"
     style="transition: background 0.2s;"
 >
-    <i class="link-icon" data-feather="{{ $icon }}"></i>
+    <span wire:ignore class="d-inline-flex align-items-center justify-content-center">
+        <i class="link-icon" data-feather="{{ $icon }}"></i>
+    </span>
 </button>

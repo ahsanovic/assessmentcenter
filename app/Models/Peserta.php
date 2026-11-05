@@ -6,6 +6,8 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\HasilCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\LiterasiDigital\HasilLiterasiDigital;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\HasilIntelektual;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
@@ -146,6 +148,11 @@ class Peserta extends Model implements AuthenticatableContract
         return $this->hasOne(UjianCakapDigital::class, 'peserta_id');
     }
 
+    public function ujianLiterasiDigital()
+    {
+        return $this->hasOne(UjianLiterasiDigital::class, 'peserta_id');
+    }
+
     public function ujianIntelektualSubTes1()
     {
         return $this->hasOne(UjianIntelektualSubTes1::class, 'peserta_id');
@@ -209,6 +216,11 @@ class Peserta extends Model implements AuthenticatableContract
     public function hasilCakapDigital()
     {
         return $this->hasOne(HasilCakapDigital::class, 'peserta_id');
+    }
+
+    public function hasilLiterasiDigital()
+    {
+        return $this->hasOne(HasilLiterasiDigital::class, 'peserta_id');
     }
 
     public function hasilInterpersonal()

@@ -165,6 +165,33 @@ class EventRekapRowBuilder
         return $export_data;
     }
 
+    public function buildLiterasiDigitalRows(Collection $pesertaList): Collection
+    {
+        return $pesertaList->map(function (Peserta $peserta) {
+            $hasil = $peserta->hasilLiterasiDigital;
+
+            return [
+                'Nama Peserta' => $peserta->nama,
+                'NIP/NIK' => $peserta->nip ?: $peserta->nik,
+                'Jabatan' => $peserta->jabatan,
+                'Unit Kerja' => $peserta->unit_kerja,
+                'Instansi' => $peserta->instansi,
+                'Skor Budaya Digital' => $hasil?->skor_budaya ?? '',
+                'Level Budaya Digital' => $hasil?->level_budaya ?? '',
+                'Skor Cakap Digital' => $hasil?->skor_cakap ?? '',
+                'Level Cakap Digital' => $hasil?->level_cakap ?? '',
+                'Skor Keamanan dan Keselamatan Digital' => $hasil?->skor_keamanan ?? '',
+                'Level Keamanan dan Keselamatan Digital' => $hasil?->level_keamanan ?? '',
+                'Skor Etika Digital' => $hasil?->skor_etika ?? '',
+                'Level Etika Digital' => $hasil?->level_etika ?? '',
+                'Skor Total' => $hasil?->skor_total ?? '',
+                'JPM' => $hasil?->jpm !== null ? $hasil->jpm.'%' : '',
+                'Kategori' => $hasil?->kategori ?? '',
+                'Tanggal Tes' => $peserta->test_started_at ? \Carbon\Carbon::parse($peserta->test_started_at)->format('d/m/Y') : '-',
+            ];
+        });
+    }
+
     public function buildCakapDigitalRows(Collection $pesertaList): Collection
     {
         return $pesertaList->map(function (Peserta $peserta) {
@@ -241,10 +268,17 @@ class EventRekapRowBuilder
                 'Kesimpulan Potensi' => $peserta->nilaiJpm?->kategori ?? '',
             ],
             3 => [
-                'JPM Literasi Digital' => $peserta->hasilCakapDigital?->jpm_literasi !== null ? $peserta->hasilCakapDigital->jpm_literasi . '%' : '',
-                'Kategori Literasi Digital' => $peserta->hasilCakapDigital?->kesimpulan_literasi ?? '',
-                'JPM Emerging Skill' => $peserta->hasilCakapDigital?->jpm_emerging !== null ? $peserta->hasilCakapDigital->jpm_emerging . '%' : '',
-                'Kategori Emerging Skill' => $peserta->hasilCakapDigital?->kesimpulan_emerging ?? '',
+                'Skor Budaya Digital' => $peserta->hasilLiterasiDigital?->skor_budaya ?? '',
+                'Level Budaya Digital' => $peserta->hasilLiterasiDigital?->level_budaya ?? '',
+                'Skor Cakap Digital' => $peserta->hasilLiterasiDigital?->skor_cakap ?? '',
+                'Level Cakap Digital' => $peserta->hasilLiterasiDigital?->level_cakap ?? '',
+                'Skor Keamanan dan Keselamatan Digital' => $peserta->hasilLiterasiDigital?->skor_keamanan ?? '',
+                'Level Keamanan dan Keselamatan Digital' => $peserta->hasilLiterasiDigital?->level_keamanan ?? '',
+                'Skor Etika Digital' => $peserta->hasilLiterasiDigital?->skor_etika ?? '',
+                'Level Etika Digital' => $peserta->hasilLiterasiDigital?->level_etika ?? '',
+                'Skor Total Literasi Digital' => $peserta->hasilLiterasiDigital?->skor_total ?? '',
+                'JPM Literasi Digital' => $peserta->hasilLiterasiDigital?->jpm !== null ? $peserta->hasilLiterasiDigital->jpm.'%' : '',
+                'Kategori Literasi Digital' => $peserta->hasilLiterasiDigital?->kategori ?? '',
             ],
             4 => [
                 'JPM Kompetensi Teknis' => $peserta->hasilKompetensiTeknis?->jpm !== null ? $peserta->hasilKompetensiTeknis->jpm . '%' : '',

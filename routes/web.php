@@ -98,6 +98,14 @@ Route::prefix('bkdac')->group(function () {
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-all', [DownloadLaporanKompetensiTeknisController::class, 'downloadAll'])->name('admin.tes-selesai.kompetensi-teknis.download-all-laporan');
         Route::get('kompetensi-teknis/kt-finish/{idEvent}/download-rekap', [DownloadRekapController::class, 'downloadRekapKompetensiTeknis'])->name('admin.tes-selesai.kompetensi-teknis.download-rekap');
 
+        // data tes literasi digital berlangsung
+        Route::get('literasi-digital/ld-ongoing/', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.literasi-digital');
+        Route::get('literasi-digital/ld-ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.literasi-digital.show-peserta');
+
+        // data tes literasi digital selesai
+        Route::get('literasi-digital/ld-finish', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesSelesai\Index::class)->name('admin.tes-selesai.literasi-digital');
+        Route::get('literasi-digital/ld-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.literasi-digital.show-peserta');
+
         // data tes cakap digital berlangsung
         Route::get('cakap-digital/cd-ongoing/', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.cakap-digital');
         Route::get('cakap-digital/cd-ongoing/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\ShowPeserta::class)->name('admin.tes-berlangsung.cakap-digital.show-peserta');
@@ -147,6 +155,10 @@ Route::prefix('bkdac')->group(function () {
         // log pelanggaran tes potensi
         Route::get('pelanggaran/tes-potensi', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Index::class)->name('admin.pelanggaran-tes');
         Route::get('pelanggaran/tes-potensi/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Show::class)->name('admin.pelanggaran-tes.show');
+
+        // log pelanggaran tes literasi digital
+        Route::get('pelanggaran/tes-literasi-digital', \App\Livewire\Admin\PelanggaranTes\TesLiterasiDigital\Index::class)->name('admin.pelanggaran-tes-literasi-digital');
+        Route::get('pelanggaran/tes-literasi-digital/{idEvent}', \App\Livewire\Admin\PelanggaranTes\TesLiterasiDigital\Show::class)->name('admin.pelanggaran-tes-literasi-digital.show');
 
         // log pelanggaran tes cakap digital
         Route::get('pelanggaran/tes-cakap-digital', \App\Livewire\Admin\PelanggaranTes\TesCakapDigital\Index::class)->name('admin.pelanggaran-tes-cakap-digital');
@@ -233,6 +245,10 @@ Route::prefix('bkdac')->group(function () {
 
         // referensi kesadaran diri
         Route::get('ref-kesadaran-diri', \App\Livewire\Admin\KesadaranDiri\RefKesadaranDiri\Index::class)->name('admin.ref-kesadaran-diri');
+
+        // soal literasi digital
+        Route::get('ref-pilar-literasi-digital', \App\Livewire\Admin\LiterasiDigital\RefPilar\Index::class)->name('admin.ref-pilar-literasi-digital');
+        Route::get('soal-literasi-digital', \App\Livewire\Admin\LiterasiDigital\Soal\Index::class)->name('admin.soal-literasi-digital');
 
         // soal cakap digital
         Route::get('soal-cakap-digital', \App\Livewire\Admin\CakapDigital\SoalCakapDigital\Index::class)->name('admin.soal-cakap-digital');
@@ -325,6 +341,14 @@ Route::middleware(['auth:peserta'])->group(function () {
         Route::get('subtes1/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes1::class)->name('peserta.tes-intelektual.subtes1')->middleware(CheckExamPin::class);
         Route::get('subtes2/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes2::class)->name('peserta.tes-intelektual.subtes2')->middleware(CheckExamPin::class);
         Route::get('subtes3/ujian/{id}', \App\Livewire\Peserta\TesIntelektual\UjianSubTes3::class)->name('peserta.tes-intelektual.subtes3')->middleware(CheckExamPin::class);
+    });
+
+    // tes literasi digital
+    Route::prefix('tes-literasi-digital')->group(function () {
+        Route::get('/', \App\Livewire\Peserta\TesLiterasiDigital\Index::class)->name('peserta.tes-literasi-digital')->middleware(CheckExamPin::class);
+        Route::get('home', \App\Livewire\Peserta\TesLiterasiDigital\Dashboard::class)->name('peserta.tes-literasi-digital.home')->middleware(CheckExamPin::class);
+        Route::get('ujian/{id}', \App\Livewire\Peserta\TesLiterasiDigital\Ujian::class)->name('peserta.tes-literasi-digital.ujian')->middleware(CheckExamPin::class);
+        Route::get('hasil', \App\Livewire\Peserta\TesLiterasiDigital\Hasil::class)->name('peserta.tes-literasi-digital.hasil')->middleware(CheckExamPin::class);
     });
 
     // tes cakap digital

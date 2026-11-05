@@ -1,6 +1,6 @@
 <div>
     @php
-        $tesTypeSegments = ['intelektual', 'cakap-digital', 'kompetensi-teknis', 'pspk'];
+        $tesTypeSegments = ['intelektual', 'cakap-digital', 'literasi-digital', 'kompetensi-teknis', 'pspk'];
 
         if (! function_exists('adminRouteMatches')) {
             function adminRouteMatches(?string $current, string $routeName, array $excludeSegmentsAfter = []): bool
@@ -68,11 +68,11 @@
                     'admin.pelanggaran-tes',
                 ]
             ],
-            'data-tes-cakap-digital' => [
+            'data-tes-literasi-digital' => [
                 'routes' => [
-                    'admin.tes-berlangsung.cakap-digital',
-                    'admin.tes-selesai.cakap-digital',
-                    'admin.pelanggaran-tes-cakap-digital',
+                    'admin.tes-berlangsung.literasi-digital',
+                    'admin.tes-selesai.literasi-digital',
+                    'admin.pelanggaran-tes-literasi-digital',
                 ]
             ],
             'data-tes-kompetensi-teknis' => [
@@ -142,9 +142,10 @@
                     'admin.soal-kesadaran-diri',
                 ]
             ],
-            'cakap-digital' => [
+            'literasi-digital' => [
                 'routes' => [
-                    'admin.soal-cakap-digital',
+                    'admin.ref-pilar-literasi-digital',
+                    'admin.soal-literasi-digital',
                 ]
             ],
             'kompetensi-teknis' => [
@@ -377,25 +378,25 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ isset($activeCollapse['data-tes-cakap-digital']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#data-tes-cakap-digital" role="button"
-                        aria-expanded="{{ isset($activeCollapse['data-tes-cakap-digital']) ? 'true' : 'false' }}" aria-controls="data-tes-cakap-digital">
+                    <a class="nav-link {{ isset($activeCollapse['data-tes-literasi-digital']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#data-tes-literasi-digital" role="button"
+                        aria-expanded="{{ isset($activeCollapse['data-tes-literasi-digital']) ? 'true' : 'false' }}" aria-controls="data-tes-literasi-digital">
                         <i class="link-icon" data-feather="smartphone"></i>
-                        <span class="link-title">Tes Cakap Digital</span>
+                        <span class="link-title">Tes Literasi Digital</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
-                    <div class="collapse{{ isset($activeCollapse['data-tes-cakap-digital']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="data-tes-cakap-digital">
+                    <div class="collapse{{ isset($activeCollapse['data-tes-literasi-digital']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="data-tes-literasi-digital">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="{{ route('admin.tes-berlangsung.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.cakap-digital', false) ? 'active' : '' }}">Monitoring Tes</a>
+                                <a href="{{ route('admin.tes-berlangsung.literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.tes-berlangsung.literasi-digital', false) ? 'active' : '' }}">Monitoring Tes</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.tes-selesai.cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.cakap-digital', false) ? 'active' : '' }}">Hasil Tes</a>
+                                <a href="{{ route('admin.tes-selesai.literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.tes-selesai.literasi-digital', false) ? 'active' : '' }}">Hasil Tes</a>
                             </li>
                             <li class="nav-item">
-                            <a href="{{ route('admin.pelanggaran-tes-cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-cakap-digital', false) ? 'active' : '' }}">Pelanggaran Tes</a>
+                            <a href="{{ route('admin.pelanggaran-tes-literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.pelanggaran-tes-literasi-digital', false) ? 'active' : '' }}">Pelanggaran Tes</a>
                             </li>
                         </ul>
                     </div>
@@ -649,17 +650,21 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ isset($activeCollapse['cakap-digital']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#cakap-digital" role="button"
-                        aria-expanded="{{ isset($activeCollapse['cakap-digital']) ? 'true' : 'false' }}" aria-controls="cakap-digital">
+                    <a class="nav-link {{ isset($activeCollapse['literasi-digital']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#literasi-digital" role="button"
+                        aria-expanded="{{ isset($activeCollapse['literasi-digital']) ? 'true' : 'false' }}" aria-controls="literasi-digital">
                         <i class="link-icon" data-feather="wifi"></i>
-                        <span class="link-title">Cakap Digital</span>
+                        <span class="link-title">Literasi Digital</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
-                    <div class="collapse{{ isset($activeCollapse['cakap-digital']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="cakap-digital">
+                    <div class="collapse{{ isset($activeCollapse['literasi-digital']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="literasi-digital">
                         <ul class="nav sub-menu">
                             <li class="nav-item">
-                                <a href="{{ route('admin.soal-cakap-digital') }}" wire:navigate
-                                    class="nav-link {{ isActiveRoute('admin.soal-cakap-digital', false) ? 'active' : '' }}">Soal</a>
+                                <a href="{{ route('admin.ref-pilar-literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.ref-pilar-literasi-digital', false) ? 'active' : '' }}">Referensi Pilar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.soal-literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.soal-literasi-digital', false) ? 'active' : '' }}">Soal</a>
                             </li>
                         </ul>
                     </div>

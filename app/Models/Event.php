@@ -6,6 +6,8 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\HasilCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\LiterasiDigital\HasilLiterasiDigital;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\HasilIntelektual;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
@@ -185,6 +187,16 @@ class Event extends Model
     public function pesertaIdTesCakapDigital()
     {
         return $this->ujianCakapDigital()->select('peserta_id')->distinct();
+    }
+
+    public function ujianLiterasiDigital()
+    {
+        return $this->hasMany(UjianLiterasiDigital::class, 'event_id', 'id');
+    }
+
+    public function hasilLiterasiDigital()
+    {
+        return $this->hasMany(HasilLiterasiDigital::class, 'event_id', 'id');
     }
 
     // ujian intelektual subtes 1

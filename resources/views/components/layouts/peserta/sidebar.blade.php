@@ -64,12 +64,12 @@
                 @if ($metodeTesId === 3)
                 <li class="nav-item">
                     @php
-                        $data = getFinishedTesCakapDigital($event_id, $peserta_id);
-                        $test_cakap_digital_started = collect($data)->contains(true);
+                        $data = getFinishedTesLiterasiDigital($event_id, $peserta_id);
+                        $test_literasi_digital_started = collect($data)->contains(true);
                     @endphp
-                    <a href="{{ route('peserta.tes-cakap-digital') }}" class="nav-link" wire:navigate style="{{ $test_cakap_digital_started ? 'pointer-events: none;' : '' }}">
+                    <a href="{{ route('peserta.tes-literasi-digital') }}" class="nav-link" wire:navigate style="{{ $test_literasi_digital_started ? 'pointer-events: none;' : '' }}">
                         <i class="link-icon" data-feather="info"></i>
-                        <span class="link-title">Tes Cakap Digital</span>
+                        <span class="link-title">Tes Literasi Digital</span>
                     </a>
                 </li>
                 @endif

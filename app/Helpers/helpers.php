@@ -3,6 +3,7 @@
 use App\Models\ActivityLog;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\UjianCakapDigital;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
 use App\Models\Intelektual\UjianIntelektualSubTes3;
@@ -212,6 +213,21 @@ if (! function_exists('getFinishedTesCakapDigital')) {
 
         return [
             'tes_cakap_digital' => UjianCakapDigital::where('event_id', $event_id)
+                ->where('peserta_id', $peserta_id)
+                ->where('is_finished', 'true')
+                ->exists(),
+        ];
+    }
+}
+
+if (! function_exists('getFinishedTesLiterasiDigital')) {
+    function getFinishedTesLiterasiDigital(?int $event_id = null, ?int $peserta_id = null)
+    {
+        $event_id ??= activeEventId();
+        $peserta_id ??= activePesertaId();
+
+        return [
+            'tes_literasi_digital' => UjianLiterasiDigital::where('event_id', $event_id)
                 ->where('peserta_id', $peserta_id)
                 ->where('is_finished', 'true')
                 ->exists(),

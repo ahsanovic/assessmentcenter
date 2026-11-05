@@ -37,7 +37,7 @@ class RekapPesertaQueryService
                 'hasilMotivasiKomitmen',
                 'nilaiJpm',
             ],
-            3 => ['event', 'hasilCakapDigital'],
+            3 => ['event', 'hasilLiterasiDigital'],
             4 => ['event', 'hasilKompetensiTeknis'],
             5, 6, 7, 8 => ['event', 'hasilPspk'],
             default => ['event'],
@@ -55,7 +55,7 @@ class RekapPesertaQueryService
                 ->whereHas('ujianProblemSolving', fn ($q) => $q->where('is_finished', 'true'))
                 ->whereHas('ujianKecerdasanEmosi', fn ($q) => $q->where('is_finished', 'true'))
                 ->whereHas('ujianMotivasiKomitmen', fn ($q) => $q->where('is_finished', 'true')),
-            3 => $query->whereHas('ujianCakapDigital', fn ($q) => $q->where('is_finished', 'true')),
+            3 => $query->whereHas('ujianLiterasiDigital', fn ($q) => $q->where('is_finished', 'true')),
             4 => $query->whereHas('ujianKompetensiTeknis', fn ($q) => $q->where('is_finished', 'true')),
             5, 6, 7, 8 => $query->whereHas('ujianPspk', fn ($q) => $q->where('is_finished', 'true')),
             default => $query,

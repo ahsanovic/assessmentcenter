@@ -106,7 +106,7 @@ class RekapGabunganExportService
     {
         return match ((int) $event->metode_tes_id) {
             2 => $this->rowBuilder->buildPotensiRows($pesertaList),
-            3 => $this->rowBuilder->buildCakapDigitalRows($pesertaList),
+            3 => $this->rowBuilder->buildLiterasiDigitalRows($pesertaList),
             4 => $this->rowBuilder->buildKompetensiTeknisRows($pesertaList),
             5, 6, 7, 8 => $this->rowBuilder->buildPspkRows($pesertaList),
             default => collect(),
@@ -150,7 +150,7 @@ class RekapGabunganExportService
     {
         return match ($metodeTesId) {
             2 => 'Potensi',
-            3 => 'Cakap Digital',
+            3 => 'Literasi Digital',
             4 => 'Kompetensi Teknis',
             5 => 'PSPK L1',
             6 => 'PSPK L2',

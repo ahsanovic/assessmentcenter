@@ -68,7 +68,7 @@
             <div class="card mb-3 border-start border-4 border-danger">
                 <div class="card-body py-3">
                     <h6 class="card-title text-secondary mb-1">Total Pelanggaran Tes</h6>
-                    <p class="text-muted mb-1" style="font-size: 11px;">Semua instrumen (potensi, PSPK, cakap digital, dll.)</p>
+                    <p class="text-muted mb-1" style="font-size: 11px;">Semua instrumen (potensi, PSPK, literasi digital, dll.)</p>
                     <h3 class="mb-0">{{ number_format($total_pelanggaran) }}</h3>
                 </div>
             </div>
