@@ -48,11 +48,40 @@ class ShowPeserta extends Component
 
     public function render()
     {
-        $data = Peserta::join('hasil_literasi_digital', 'hasil_literasi_digital.peserta_id', '=', 'peserta.id')
-            ->join('ujian_literasi_digital', 'ujian_literasi_digital.id', '=', 'hasil_literasi_digital.ujian_id')
+        // Satu peserta bisa punya lebih dari satu baris hasil (ujian lama tidak terhapus).
+        // Join tanpa dipilih satu baris membuat peserta itu mengisi dua slot paginasi,
+        // sehingga peserta selesai yang lain terdorong keluar halaman. Pencarian tetap
+        // menemukannya karena hasilnya muat di satu halaman.
+        $hasilTerbaru = HasilLiterasiDigital::query()
+            ->selectRaw('MAX(hasil_literasi_digital.id) as id')
+            ->join('ujian_literasi_digital as ujian_hasil', function ($join) {
+                $join->on('ujian_hasil.id', '=', 'hasil_literasi_digital.ujian_id')
+                    ->where('ujian_hasil.event_id', $this->id_event);
+            })
             ->where('hasil_literasi_digital.event_id', $this->id_event)
+            ->groupBy('hasil_literasi_digital.peserta_id');
+
+        $data = Peserta::query()
+            ->join('hasil_literasi_digital', 'hasil_literasi_digital.peserta_id', '=', 'peserta.id')
+            ->whereIn('hasil_literasi_digital.id', $hasilTerbaru)
+            ->join('ujian_literasi_digital', function ($join) {
+                $join->on('ujian_literasi_digital.id', '=', 'hasil_literasi_digital.ujian_id')
+                    ->where('ujian_literasi_digital.event_id', $this->id_event);
+            })
+            ->where('hasil_literasi_digital.event_id', $this->id_event)
+            ->where('peserta.event_id', $this->id_event)
             ->select(
-                'peserta.*',
+                'peserta.id',
+                'peserta.jenis_peserta_id',
+                'peserta.nama',
+                'peserta.gelar_depan',
+                'peserta.gelar_belakang',
+                'peserta.nip',
+                'peserta.nik',
+                'peserta.gol_pangkat_id',
+                'peserta.jabatan',
+                'peserta.unit_kerja',
+                'peserta.instansi',
                 'hasil_literasi_digital.id as hasil_literasi_digital_id',
                 'hasil_literasi_digital.skor_budaya',
                 'hasil_literasi_digital.level_budaya',
@@ -71,17 +100,19 @@ class ShowPeserta extends Component
                 'ujian_literasi_digital.is_finished',
             )
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('nama', 'like', '%'.$this->search.'%')
-                        ->orWhere('nip', 'like', '%'.$this->search.'%')
-                        ->orWhere('nik', 'like', '%'.$this->search.'%')
-                        ->orWhere('jabatan', 'like', '%'.$this->search.'%')
-                        ->orWhere('instansi', 'like', '%'.$this->search.'%');
+                $term = '%'.$this->search.'%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('peserta.nama', 'like', $term)
+                        ->orWhere('peserta.nip', 'like', $term)
+                        ->orWhere('peserta.nik', 'like', $term)
+                        ->orWhere('peserta.jabatan', 'like', $term)
+                        ->orWhere('peserta.instansi', 'like', $term);
                 });
             })
             ->when($this->tanggal_tes, function ($query) {
-                $query->whereDate('test_started_at', date('Y-m-d', strtotime($this->tanggal_tes)));
+                $query->whereDate('peserta.test_started_at', date('Y-m-d', strtotime($this->tanggal_tes)));
             })
+            ->orderBy('peserta.id')
             ->paginate(10);
 
         return view('livewire.admin.data-tes.tes-literasi-digital.tes-selesai.show-peserta', [

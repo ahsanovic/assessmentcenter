@@ -75,7 +75,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                    <tr wire:key="hasil-literasi-{{ $item->hasil_literasi_digital_id }}" class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
                                             <span class="fw-medium">{{ $item->nama }}</span><br>

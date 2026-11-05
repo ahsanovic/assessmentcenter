@@ -95,14 +95,29 @@ class LiterasiDigitalUjianService
             $ujian->is_finished = 'true';
             $ujian->save();
 
-            return HasilLiterasiDigital::updateOrCreate(
-                ['ujian_id' => $ujian->id],
-                array_merge($agregat, [
-                    'event_id' => $ujian->event_id,
-                    'peserta_id' => $ujian->peserta_id,
-                ])
-            );
+            return $this->simpanHasil($ujian, $agregat);
         });
+    }
+
+    /**
+     * Satu peserta pada satu event hanya boleh punya satu baris hasil.
+     * Baris lain (ujian lama) dihapus dulu supaya tidak menumpuk di daftar hasil.
+     */
+    private function simpanHasil(UjianLiterasiDigital $ujian, array $agregat): HasilLiterasiDigital
+    {
+        HasilLiterasiDigital::query()
+            ->where('event_id', $ujian->event_id)
+            ->where('peserta_id', $ujian->peserta_id)
+            ->where('ujian_id', '!=', $ujian->id)
+            ->delete();
+
+        return HasilLiterasiDigital::updateOrCreate(
+            ['ujian_id' => $ujian->id],
+            array_merge($agregat, [
+                'event_id' => $ujian->event_id,
+                'peserta_id' => $ujian->peserta_id,
+            ])
+        );
     }
 
     public function durasiMenit(): int
@@ -171,13 +186,7 @@ class LiterasiDigitalUjianService
             $ujian->fill($agregat);
             $ujian->save();
 
-            $hasil = HasilLiterasiDigital::updateOrCreate(
-                ['ujian_id' => $ujian->id],
-                array_merge($agregat, [
-                    'event_id' => $ujian->event_id,
-                    'peserta_id' => $ujian->peserta_id,
-                ])
-            );
+            $hasil = $this->simpanHasil($ujian, $agregat);
 
             return [
                 'berubah' => $this->agregatBerubah($sebelum, $agregat),

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\DataTes\TesLiterasiDigital\TesSelesai;
 
 use App\Models\Event;
 use App\Models\RefJabatanDiuji;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -39,7 +40,12 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::withCount(['peserta', 'hasilLiterasiDigital'])
+        $data = Event::withCount([
+            'peserta',
+            'hasilLiterasiDigital as hasil_literasi_digital_count' => function ($query) {
+                $query->select(DB::raw('count(distinct hasil_literasi_digital.peserta_id)'));
+            },
+        ])
             ->where('metode_tes_id', 3)
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%'.$this->search.'%');
