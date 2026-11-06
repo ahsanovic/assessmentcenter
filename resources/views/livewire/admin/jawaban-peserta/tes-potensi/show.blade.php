@@ -57,152 +57,11 @@
                         </button>
                     </div>
 
-                    <h6 class="fw-semibold mb-2">Kesimpulan uji butir — {{ $subtesLabel }}</h6>
-
-                    @if ($conclusion['n_uji'] < 3)
-                        <div class="alert alert-danger py-2 small mb-3">
-                            Belum cukup peserta yang menjawab seluruh butir subtes. Reliabilitas dan keputusan butir belum dapat dihitung.
-                        </div>
-                    @elseif ($conclusion['indikatif'])
-                        <div class="alert alert-danger py-2 small mb-3">
-                            N uji = {{ $conclusion['n_uji'] }}, di bawah 30. Angka reliabilitas dan keputusan butir bersifat indikatif, belum stabil untuk menggugurkan soal.
-                        </div>
-                    @endif
-
-                    <div class="row g-2 mb-3" wire:key="kesimpulan-{{ $subtes }}">
-                        <div class="col-6 col-lg-3">
-                            <div class="border rounded bg-white h-100 p-3">
-                                <div class="small text-muted text-uppercase fw-semibold">Reliabilitas</div>
-                                <div class="fs-3 fw-semibold lh-sm mt-1">
-                                    {{ $conclusion['alpha'] !== null ? number_format($conclusion['alpha'], 2) : '–' }}
-                                </div>
-                                <span class="badge mt-2 {{ match ($conclusion['reliabilitas_key']) {
-                                    'reliabel' => 'bg-success',
-                                    'cukup' => 'bg-primary',
-                                    'rendah' => 'bg-danger',
-                                    default => 'bg-secondary',
-                                } }}">{{ $conclusion['reliabilitas_label'] }}</span>
-                                <div class="small text-muted mt-2">
-                                    Cronbach's α
-                                    @if ($conclusion['r_tabel'] !== null)
-                                        · r tabel {{ number_format($conclusion['r_tabel'], 3) }}
-                                    @endif
-                                    · N uji {{ $conclusion['n_uji'] }}
-                                </div>
-                            </div>
-                        </div>
-                        @foreach ([
-                            'layak' => ['label' => 'Layak', 'hint' => 'Dipertahankan', 'tone' => 'success'],
-                            'ditinjau' => ['label' => 'Ditinjau', 'hint' => 'Perlu dicek', 'tone' => 'warning'],
-                            'lemah' => ['label' => 'Lemah', 'hint' => 'Prioritas revisi', 'tone' => 'danger'],
-                        ] as $key => $meta)
-                            <div class="col-6 col-lg-3" wire:key="kartu-{{ $subtes }}-{{ $key }}">
-                                <button type="button"
-                                    class="btn text-start border rounded bg-white h-100 p-3 w-100 {{ $filterKeputusan === $key ? 'border-'.$meta['tone'].' border-2' : '' }}"
-                                    wire:click="setFilterKeputusan('{{ $key }}')">
-                                    <div class="small text-muted text-uppercase fw-semibold">{{ $meta['label'] }}</div>
-                                    <div class="fs-3 fw-semibold lh-sm mt-1 {{ $meta['tone'] === 'warning' ? 'text-warning-emphasis' : 'text-'.$meta['tone'] }}">{{ $conclusion['counts'][$key] }}</div>
-                                    <div class="small text-muted mt-2">{{ $meta['hint'] }} · dari {{ $conclusion['n_butir'] }} butir</div>
-                                </button>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <p class="mb-1">{{ $conclusion['kalimat'] }}</p>
-                    <p class="text-muted small mb-3">
-                        Layak bila r ≥ 0,30 dan r lebih besar dari r tabel. Ditinjau bila daya beda sedang atau belum signifikan. Lemah bila r di bawah 0,20, termasuk korelasi negatif.
-                        r dan keputusan memakai peserta yang menjawab semua butir.
-                    </p>
-
-                    <div class="d-flex flex-wrap gap-2 mb-3">
-                        @foreach (['semua' => 'Semua butir', 'layak' => 'Layak', 'ditinjau' => 'Ditinjau', 'lemah' => 'Lemah'] as $key => $label)
-                            <button type="button"
-                                class="btn btn-sm {{ $filterKeputusan === $key ? 'btn-dark' : 'btn-outline-secondary' }}"
-                                wire:click="setFilterKeputusan('{{ $key }}')">
-                                {{ $label }}
-                            </button>
-                        @endforeach
-                    </div>
-
-                    <h6 class="fw-semibold mb-2">Analisa butir — {{ $subtesLabel }}</h6>
-
-                    @php
-                        $rowsAnalisa = collect($itemAnalysis);
-                        if ($filterKeputusan !== 'semua') {
-                            $rowsAnalisa = $rowsAnalisa->where('keputusan_key', $filterKeputusan)->values();
-                        }
-                    @endphp
-
-                    <div class="table-responsive mb-4">
-                        <table class="table table-sm table-hover align-middle shadow-sm border rounded mb-0">
-                            <thead class="table-light border-bottom">
-                                <tr>
-                                    <th class="text-center" style="width: 40px;">#</th>
-                                    <th style="min-width: 160px;">Indikator</th>
-                                    <th style="min-width: 280px;">Soal</th>
-                                    <th style="min-width: 120px;">Skor opsi</th>
-                                    <th class="text-center">N</th>
-                                    <th class="text-center">Terjawab</th>
-                                    @foreach ($optionLetters as $letter)
-                                        <th class="text-center" style="width: 52px;">% {{ $letter }}</th>
-                                    @endforeach
-                                    <th class="text-center">Rata</th>
-                                    <th class="text-center">Max</th>
-                                    <th class="text-center">r</th>
-                                    <th class="text-center" style="min-width: 120px;">Keputusan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($rowsAnalisa as $item)
-                                    <tr wire:key="analisa-{{ $subtes }}-{{ $item['soal_id'] }}">
-                                        <td class="text-center fw-bold text-secondary">{{ $item['nomor'] }}</td>
-                                        <td class="small">{{ Str::limit($item['indikator'], 80) }}</td>
-                                        <td class="small text-wrap">{{ Str::limit($item['pertanyaan'], 120) }}</td>
-                                        <td class="small">{{ $item['opsi_skor'] }}</td>
-                                        <td class="text-center">{{ $item['n_peserta'] }}</td>
-                                        <td class="text-center">{{ $item['n_terjawab'] }}</td>
-                                        @foreach ($optionLetters as $letter)
-                                            <td class="text-center small">
-                                                {{ $item['percentages'][$letter] ?? 0 }}%
-                                            </td>
-                                        @endforeach
-                                        <td class="text-center">{{ $item['rata_poin'] ?? '-' }}</td>
-                                        <td class="text-center">{{ $item['poin_max'] ?? '-' }}</td>
-                                        <td class="text-center font-monospace small {{ match ($item['keputusan_key']) {
-                                            'layak' => 'text-success fw-semibold',
-                                            'ditinjau' => 'text-warning-emphasis fw-semibold',
-                                            'lemah' => 'text-danger fw-semibold',
-                                            default => 'text-muted',
-                                        } }}">
-                                            @if ($item['r_item_total'] !== null)
-                                                {{ number_format($item['r_item_total'], 3) }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge {{ match ($item['keputusan_key']) {
-                                                'layak' => 'bg-success',
-                                                'ditinjau' => 'bg-warning text-dark',
-                                                'lemah' => 'bg-danger',
-                                                default => 'bg-secondary',
-                                            } }}">{{ $item['keputusan_label'] }}</span>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="{{ 10 + count($optionLetters) }}" class="text-center text-muted py-4">
-                                            @if ($filterKeputusan !== 'semua')
-                                                Tidak ada butir dengan status ini.
-                                            @else
-                                                Belum ada data ujian untuk subtes ini.
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    <div wire:loading.delay.short wire:target="setSubtes" class="text-muted small mb-2">Memuat analisa subtes...</div>
+                    <livewire:admin.jawaban-peserta.tes-potensi.analisa
+                        :event-id="$id_event"
+                        :subtes="$subtes"
+                        :key="'analisa-potensi-'.$id_event.'-'.$subtes" />
 
                     <h6 class="fw-semibold mb-2">Jawaban per peserta</h6>
 
@@ -262,8 +121,9 @@
                                         <td class="text-center">
                                             <button type="button"
                                                 class="btn btn-sm btn-outline-warning btn-icon rounded-circle border-0 shadow-sm"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#modalJawabanPotensi{{ $ujian->id }}"
+                                                wire:click="bukaJawaban({{ $ujian->id }})"
+                                                wire:loading.attr="disabled"
+                                                wire:target="bukaJawaban"
                                                 title="Lihat jawaban subtes">
                                                 <i class="link-icon" data-feather="eye"></i>
                                             </button>
@@ -281,38 +141,28 @@
                         </table>
                     </div>
 
-                    @foreach ($data as $ujian)
-                        @php
-                            $peserta = $ujian->peserta;
-                            $rows = $jawabanByUjian[$ujian->id] ?? [];
-                        @endphp
-                        <div class="modal fade" id="modalJawabanPotensi{{ $ujian->id }}" tabindex="-1"
-                            aria-labelledby="modalJawabanPotensiLabel{{ $ujian->id }}" aria-hidden="true" wire:ignore.self
-                            wire:key="modal-potensi-{{ $subtes }}-{{ $ujian->id }}">
+                    @if ($detailUjianId)
+                        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(15, 23, 42, .45);" wire:click.self="tutupJawaban" wire:key="detail-potensi-{{ $subtes }}-{{ $detailUjianId }}">
                             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header border-bottom">
                                         <div>
-                                            <h5 class="modal-title mb-1" id="modalJawabanPotensiLabel{{ $ujian->id }}">
-                                                {{ $peserta?->nama ?? '-' }}
-                                            </h5>
+                                            <h5 class="modal-title mb-1">{{ $detailPeserta?->nama ?? '-' }}</h5>
                                             <div class="small text-muted">
-                                                {{ $subtesLabel }} · NIP: <span class="font-monospace">{{ $peserta?->nip ?? '-' }}</span>
+                                                {{ $subtesLabel }} · NIP: <span class="font-monospace">{{ $detailPeserta?->nip ?? '-' }}</span>
                                             </div>
                                         </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                        <button type="button" class="btn-close" wire:click="tutupJawaban" aria-label="Tutup"></button>
                                     </div>
                                     <div class="modal-body bg-body-tertiary">
                                         @if ($useCardLayout)
-                                            @forelse ($rows as $row)
+                                            @forelse ($detailRows as $row)
                                                 <div class="card mb-3 border shadow-sm bg-white">
                                                     <div class="card-body">
                                                         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
                                                             <span class="badge bg-dark rounded-pill">Soal {{ $row['nomor'] }}</span>
                                                             @if ($row['poin'] !== null && $row['poin_max'] !== null)
-                                                                <span class="badge bg-primary-subtle text-primary border">
-                                                                    Poin: {{ $row['poin'] }}/{{ $row['poin_max'] }}
-                                                                </span>
+                                                                <span class="badge bg-primary-subtle text-primary border">Poin: {{ $row['poin'] }}/{{ $row['poin_max'] }}</span>
                                                             @elseif ($row['status'] === 'unanswered')
                                                                 <span class="badge bg-secondary">Belum dijawab</span>
                                                             @endif
@@ -341,18 +191,12 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @forelse ($rows as $row)
+                                                        @forelse ($detailRows as $row)
                                                             <tr>
                                                                 <td class="text-center">{{ $row['nomor'] }}</td>
                                                                 <td class="small">{{ Str::limit($row['indikator'], 60) }}</td>
                                                                 <td class="small">{{ $row['jawaban_peserta'] }}</td>
-                                                                <td class="text-center">
-                                                                    @if ($row['poin'] !== null)
-                                                                        {{ $row['poin'] }}
-                                                                    @else
-                                                                        -
-                                                                    @endif
-                                                                </td>
+                                                                <td class="text-center">{{ $row['poin'] !== null ? $row['poin'] : '-' }}</td>
                                                             </tr>
                                                         @empty
                                                             <tr>
@@ -365,15 +209,12 @@
                                         @endif
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary btn-icon-text" data-bs-dismiss="modal">
-                                            <i class="btn-icon-prepend" data-feather="x"></i>
-                                            Tutup
-                                        </button>
+                                        <button type="button" class="btn btn-sm btn-secondary" wire:click="tutupJawaban">Tutup</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @endif
                 </div>
             </div>
         </div>

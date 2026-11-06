@@ -21,6 +21,7 @@ use App\Models\ProblemSolving\UjianProblemSolving;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -175,10 +176,39 @@ class TesPotensiJawabanService
         $with = $def['soal_with'] ?? [];
 
         return $soalModel::query()
-            ->with($with)
+            ->with($this->eagerSoalRelations($with))
             ->orderBy('id')
             ->get()
             ->keyBy('id');
+    }
+
+    /**
+     * @param  array<int, string>  $relations
+     * @return array<string, callable>
+     */
+    private function eagerSoalRelations(array $relations): array
+    {
+        $eager = [];
+
+        foreach ($relations as $relation) {
+            $columns = $relation === 'aspek' ? ['id', 'aspek'] : ['id', 'indikator_nama'];
+            $eager[$relation] = fn ($query) => $query->select($columns);
+        }
+
+        return $eager;
+    }
+
+    /**
+     * @return array<int, true>
+     */
+    public function validSoalIdSet(string $subtestKey): array
+    {
+        $model = $this->definition($subtestKey)['soal_model'];
+
+        return array_fill_keys(
+            $model::query()->orderBy('id')->pluck('id')->map(fn ($id) => (int) $id)->all(),
+            true
+        );
     }
 
     /**
@@ -344,14 +374,16 @@ class TesPotensiJawabanService
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function buildParticipantProgressRows(Collection $ujianList, string $subtestKey, Collection $soalMap): array
+    public function buildParticipantProgressRows(Collection $ujianList, string $subtestKey, ?Collection $soalMap = null): array
     {
-        $totalSoal = $soalMap->count();
+        $valid = $soalMap
+            ? array_fill_keys($soalMap->keys()->map(fn ($id) => (int) $id)->all(), true)
+            : $this->validSoalIdSet($subtestKey);
+        $totalSoal = count($valid);
         $rows = [];
 
         foreach ($ujianList as $ujian) {
-            $pairs = $this->answerPairsFromUjian($ujian, $soalMap);
-            $terjawab = collect($pairs)->filter(fn ($v) => $this->normalizeLetter($v) !== null)->count();
+            $terjawab = $this->countAnswered($ujian, $valid);
 
             $rows[$ujian->id] = [
                 'ujian_id' => $ujian->id,
@@ -363,6 +395,55 @@ class TesPotensiJawabanService
         }
 
         return $rows;
+    }
+
+    /**
+     * @param  array<int, true>  $validIds
+     */
+    private function countAnswered(object $ujian, array $validIds): int
+    {
+        $ids = explode(',', (string) ($ujian->soal_id ?? ''));
+        $answers = explode(',', (string) ($ujian->jawaban ?? ''));
+        $terjawab = 0;
+
+        foreach ($ids as $index => $id) {
+            $id = (int) $id;
+            if ($id === 0 || ! isset($validIds[$id])) {
+                continue;
+            }
+
+            if ($this->normalizeLetter($answers[$index] ?? '0') !== null) {
+                $terjawab++;
+            }
+        }
+
+        return $terjawab;
+    }
+
+    private function dataStamp(int $eventId, string $subtestKey): string
+    {
+        $def = $this->definition($subtestKey);
+        /** @var class-string<Model> $ujianModel */
+        $ujianModel = $def['ujian_model'];
+        /** @var class-string<Model> $soalModel */
+        $soalModel = $def['soal_model'];
+
+        $ujian = $ujianModel::query()
+            ->where('event_id', $eventId)
+            ->toBase()
+            ->selectRaw('COUNT(*) as aggregate, MAX(updated_at) as latest')
+            ->first();
+        $soal = $soalModel::query()
+            ->toBase()
+            ->selectRaw('COUNT(*) as aggregate, MAX(updated_at) as latest')
+            ->first();
+
+        return implode('|', [
+            (int) ($ujian->aggregate ?? 0),
+            (string) ($ujian->latest ?? ''),
+            (int) ($soal->aggregate ?? 0),
+            (string) ($soal->latest ?? ''),
+        ]);
     }
 
     /**
@@ -416,11 +497,32 @@ class TesPotensiJawabanService
      */
     public function analyzeSubtest(int $eventId, string $subtestKey): array
     {
+        $stamp = $this->dataStamp($eventId, $subtestKey);
+
+        return Cache::remember(
+            'potensi-butir:v1:'.$eventId.':'.$subtestKey.':'.$stamp,
+            now()->addMinutes(10),
+            fn () => $this->computeSubtestAnalysis($eventId, $subtestKey)
+        );
+    }
+
+    /**
+     * @return array{items: array<int, array<string, mixed>>, conclusion: array<string, mixed>}
+     */
+    private function computeSubtestAnalysis(int $eventId, string $subtestKey): array
+    {
         $def = $this->definition($subtestKey);
         $letters = $def['letters'];
         $soalMap = $this->loadSoalMap($subtestKey);
         $order = $this->canonicalSoalOrder($soalMap);
-        $ujianList = $this->ujianForEvent($eventId, $subtestKey);
+        /** @var class-string<Model> $ujianModel */
+        $ujianModel = $def['ujian_model'];
+        $ujianList = $ujianModel::query()
+            ->select(['id', 'soal_id', 'jawaban'])
+            ->where('event_id', $eventId)
+            ->whereHas('peserta')
+            ->orderBy('id')
+            ->get();
         $nPeserta = $ujianList->count();
 
         $answersByUjian = [];
@@ -968,23 +1070,45 @@ class TesPotensiJawabanService
      */
     private function itemsThatLowerAlpha(array $matrix, array $rows, ?float $alpha): array
     {
-        if ($alpha === null || count($matrix) < 3 || count($rows) < 3) {
+        $n = count($matrix);
+        $k = count($matrix[0] ?? []);
+        if ($alpha === null || $n < 3 || $k < 3 || count($rows) < 3) {
             return [];
         }
 
-        $k = count($matrix[0] ?? []);
+        $columns = array_fill(0, $k, []);
+        $totals = [];
+        foreach ($matrix as $row) {
+            $sum = 0.0;
+            foreach ($row as $index => $value) {
+                $columns[$index][] = (float) $value;
+                $sum += (float) $value;
+            }
+            $totals[] = $sum;
+        }
+
+        $itemVars = [];
+        $sumItemVar = 0.0;
+        for ($j = 0; $j < $k; $j++) {
+            $itemVars[$j] = $this->variance($columns[$j]);
+            $sumItemVar += $itemVars[$j];
+        }
+
         $drops = [];
+        $factor = ($k - 1) / ($k - 2);
 
         for ($j = 0; $j < $k; $j++) {
-            $reduced = [];
-            foreach ($matrix as $row) {
-                $copy = $row;
-                array_splice($copy, $j, 1);
-                $reduced[] = $copy;
+            $rest = [];
+            foreach ($totals as $index => $total) {
+                $rest[] = $total - $columns[$j][$index];
+            }
+            $restVar = $this->variance($rest);
+            if ($restVar <= 0.0) {
+                continue;
             }
 
-            $without = $this->cronbachAlpha($reduced);
-            if ($without !== null && ($without - $alpha) >= 0.01) {
+            $without = $factor * (1 - (($sumItemVar - $itemVars[$j]) / $restVar));
+            if (($without - $alpha) >= 0.01) {
                 $drops[] = ['nomor' => (int) ($rows[$j]['nomor'] ?? ($j + 1)), 'delta' => $without - $alpha];
             }
         }

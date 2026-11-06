@@ -26,7 +26,7 @@ class Show extends Component
     #[Url(as: 'q')]
     public ?string $search = '';
 
-    public string $filterKeputusan = 'semua';
+    public ?int $detailUjianId = null;
 
     public function updatedSearch(): void
     {
@@ -39,7 +39,7 @@ class Show extends Component
             $this->subtes = 'interpersonal';
         }
 
-        $this->filterKeputusan = 'semua';
+        $this->detailUjianId = null;
         $this->resetPage();
     }
 
@@ -73,18 +73,18 @@ class Show extends Component
         }
 
         $this->subtes = $key;
-        $this->filterKeputusan = 'semua';
+        $this->detailUjianId = null;
         $this->resetPage();
     }
 
-    public function setFilterKeputusan(string $key): void
+    public function bukaJawaban(int $ujianId): void
     {
-        $allowed = ['semua', 'layak', 'ditinjau', 'lemah'];
-        if (! in_array($key, $allowed, true)) {
-            return;
-        }
+        $this->detailUjianId = $ujianId;
+    }
 
-        $this->filterKeputusan = $key;
+    public function tutupJawaban(): void
+    {
+        $this->detailUjianId = null;
     }
 
     public function downloadExcelSubtes()
@@ -164,13 +164,12 @@ class Show extends Component
     {
         $service = app(TesPotensiJawabanService::class);
         $def = $service->definition($this->subtes);
-        $soalMap = $service->loadSoalMap($this->subtes);
 
         /** @var class-string<\Illuminate\Database\Eloquent\Model> $ujianModel */
         $ujianModel = $def['ujian_model'];
 
         $data = $ujianModel::query()
-            ->with('peserta')
+            ->with('peserta:id,nip,nama')
             ->where('event_id', $this->id_event)
             ->whereHas('peserta')
             ->when(filled($this->search), function ($query) {
@@ -185,16 +184,29 @@ class Show extends Component
             ->orderBy('id')
             ->paginate(10);
 
-        $progressByUjian = $service->buildParticipantProgressRows($data->getCollection(), $this->subtes, $soalMap);
+        $progressByUjian = $service->buildParticipantProgressRows($data->getCollection(), $this->subtes);
 
-        $jawabanByUjian = [];
-        foreach ($data as $ujian) {
-            $jawabanByUjian[$ujian->id] = $service->buildDetailRowsForUjian($ujian, $this->subtes, $soalMap);
+        $detailRows = [];
+        $detailPeserta = null;
+        if ($this->detailUjianId) {
+            $detailUjian = $ujianModel::query()
+                ->with('peserta:id,nip,nama')
+                ->where('event_id', $this->id_event)
+                ->whereKey($this->detailUjianId)
+                ->first();
+
+            if ($detailUjian) {
+                $detailPeserta = $detailUjian->peserta;
+                $detailRows = $service->buildDetailRowsForUjian(
+                    $detailUjian,
+                    $this->subtes,
+                    $service->loadSoalMap($this->subtes)
+                );
+            } else {
+                $this->detailUjianId = null;
+            }
         }
 
-        $analysis = $service->analyzeSubtest($this->id_event, $this->subtes);
-        $itemAnalysis = $analysis['items'];
-        $conclusion = $analysis['conclusion'];
         $subtestTabs = collect($service->subtestDefinitions())
             ->map(fn ($item, $key) => ['key' => $key, 'label' => $item['label']])
             ->values()
@@ -205,12 +217,10 @@ class Show extends Component
         return view('livewire.admin.jawaban-peserta.tes-potensi.show', [
             'data' => $data,
             'progressByUjian' => $progressByUjian,
-            'jawabanByUjian' => $jawabanByUjian,
-            'itemAnalysis' => $itemAnalysis,
-            'conclusion' => $conclusion,
+            'detailRows' => $detailRows,
+            'detailPeserta' => $detailPeserta,
             'subtestTabs' => $subtestTabs,
             'subtesLabel' => $def['label'],
-            'optionLetters' => $def['letters'],
             'useCardLayout' => $useCardLayout,
         ]);
     }
