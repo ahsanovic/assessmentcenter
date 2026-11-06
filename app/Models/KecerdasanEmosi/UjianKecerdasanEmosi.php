@@ -2,6 +2,7 @@
 
 namespace App\Models\KecerdasanEmosi;
 
+use App\Models\Peserta;
 use Illuminate\Database\Eloquent\Model;
 
 class UjianKecerdasanEmosi extends Model
@@ -9,4 +10,9 @@ class UjianKecerdasanEmosi extends Model
     protected $table = 'ujian_kecerdasan_emosi';
     protected $guarded = ['id'];
     protected $casts = ['waktu_tes_berakhir' => 'datetime'];
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class, 'peserta_id', 'id');
+    }
 }

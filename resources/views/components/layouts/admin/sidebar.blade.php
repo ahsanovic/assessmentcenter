@@ -165,6 +165,8 @@
                 'routes' => [
                     'admin.jawaban-peserta.pspk',
                     'admin.jawaban-peserta.literasi-digital',
+                    'admin.jawaban-peserta.tes-potensi',
+                    'admin.jawaban-peserta.tes-potensi.show',
                 ]
             ],
             'dokumen' => [
@@ -468,6 +470,10 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.jawaban-peserta.literasi-digital') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.jawaban-peserta.literasi-digital', false) ? 'active' : '' }}">Tes Literasi Digital</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.jawaban-peserta.tes-potensi') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.jawaban-peserta.tes-potensi', false) ? 'active' : '' }}">Tes Potensi</a>
                             </li>
                         </ul>
                     </div>

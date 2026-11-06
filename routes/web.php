@@ -155,6 +155,10 @@ Route::prefix('bkdac')->group(function () {
         Route::get('jawaban-peserta/literasi-digital/{idEvent}', \App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Show::class)
             ->whereNumber('idEvent')
             ->name('admin.jawaban-peserta.literasi-digital.show');
+        Route::get('jawaban-peserta/tes-potensi', \App\Livewire\Admin\JawabanPeserta\TesPotensi\Index::class)->name('admin.jawaban-peserta.tes-potensi');
+        Route::get('jawaban-peserta/tes-potensi/{idEvent}', \App\Livewire\Admin\JawabanPeserta\TesPotensi\Show::class)
+            ->whereNumber('idEvent')
+            ->name('admin.jawaban-peserta.tes-potensi.show');
 
         // log pelanggaran tes potensi
         Route::get('pelanggaran/tes-potensi', \App\Livewire\Admin\PelanggaranTes\TesPotensi\Index::class)->name('admin.pelanggaran-tes');

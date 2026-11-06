@@ -1,0 +1,94 @@
+<div>
+    <x-breadcrumb :breadcrumbs="[
+        ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
+        ['url' => null, 'title' => 'Jawaban Peserta — Tes Potensi']
+    ]" />
+
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div>
+                            <h5 class="card-title mb-1">Jawaban Peserta — Tes Potensi</h5>
+                            <p class="text-muted small mb-0">Pilih event untuk analisa butir soal dan jawaban peserta per subtes.</p>
+                        </div>
+                    </div>
+
+                    <x-monitoring.filter-panel>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-sm-6 col-md-3">
+                                <label class="form-label small text-muted mb-1">Tanggal Tes</label>
+                                <div class="input-group input-group-sm flatpickr" data-filter-model="tgl_mulai">
+                                    <input type="text"
+                                        class="form-control flatpickr-input" placeholder="Pilih tanggal"
+                                        data-input="" readonly="readonly">
+                                    <span class="input-group-text input-group-addon" data-toggle="">
+                                        <i data-feather="calendar" style="width:14px;height:14px;"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-4">
+                                <label class="form-label small text-muted mb-1">Cari Event</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-white"><i data-feather="search" style="width:14px;height:14px;"></i></span>
+                                    <input wire:model.live.debounce.300ms="search" class="form-control" placeholder="Nama event..." autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-auto">
+                                <x-btn-reset :text="'Reset'" />
+                            </div>
+                        </div>
+                    </x-monitoring.filter-panel>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle shadow-sm border rounded mb-0">
+                            <thead class="table-light border-bottom">
+                                <tr>
+                                    <th class="text-center" style="width: 45px;">#</th>
+                                    <th>Nama Event</th>
+                                    <th>Tanggal Tes</th>
+                                    <th class="text-center">Peserta</th>
+                                    <th class="text-center" style="width: 120px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($data as $index => $item)
+                                    <tr wire:key="event-potensi-{{ $item->id }}">
+                                        <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
+                                        <td class="text-wrap fw-medium">{{ $item->nama_event }}</td>
+                                        <td class="text-nowrap">{{ $item->tgl_mulai }}</td>
+                                        <td class="text-center">
+                                            <span class="badge rounded-pill bg-secondary-subtle text-dark border">
+                                                {{ $pesertaCounts[$item->id] ?? 0 }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <x-table.btn-link
+                                                :route="'admin.jawaban-peserta.tes-potensi.show'"
+                                                :params="['idEvent' => $item->id]"
+                                                :icon="'eye'"
+                                                :tooltip="'Lihat'"
+                                                :color="'warning'"
+                                                :navigate="true"
+                                            />
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5">
+                                            <i class="link-icon" data-feather="inbox" style="font-size: 28px; opacity: 0.6;"></i>
+                                            <div class="mt-2 fw-semibold">Tidak ada event dengan data jawaban.</div>
+                                            <div class="small">Coba ubah filter atau pastikan peserta sudah mengerjakan tes potensi.</div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <x-pagination :items="$data" />
+    </div>
+</div>

@@ -2,6 +2,7 @@
 
 namespace App\Models\BerpikirKritis;
 
+use App\Models\Peserta;
 use Illuminate\Database\Eloquent\Model;
 
 class UjianBerpikirKritis extends Model
@@ -9,4 +10,9 @@ class UjianBerpikirKritis extends Model
     protected $table = 'ujian_berpikir_kritis';
     protected $guarded = ['id'];
     protected $casts = ['waktu_tes_berakhir' => 'datetime'];
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class, 'peserta_id', 'id');
+    }
 }
