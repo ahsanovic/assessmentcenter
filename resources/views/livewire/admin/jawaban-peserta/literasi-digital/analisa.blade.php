@@ -121,17 +121,19 @@
                     <th class="text-center" style="width: 40px;">#</th>
                     <th style="min-width: 260px;">Soal</th>
                     <th style="min-width: 140px;">Kunci</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Terjawab</th>
-                    <th class="text-center" title="Peserta yang masuk hitungan r">N uji</th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="N" kolom="n-butir" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="Terjawab" kolom="terjawab" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="N uji" kolom="n-uji-pilar" /></th>
                     @foreach ($optionLetters as $letter)
-                        <th class="text-center" style="width: 52px;">% {{ $letter }}</th>
+                        <th class="text-center" style="width: 72px;">
+                            <x-analisa.kolom-bantuan :label="'% '.$letter" kolom="persen-kunci" :huruf="$letter" />
+                        </th>
                     @endforeach
-                    <th class="text-center">P</th>
-                    <th class="text-center">Kesukaran</th>
-                    <th class="text-center">r</th>
-                    <th class="text-center">r tabel</th>
-                    <th class="text-center" style="min-width: 120px;">Keputusan</th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="P" kolom="p-benar" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="Kesukaran" kolom="kesukaran" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="r" kolom="r-pilar" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="r tabel" kolom="r-tabel" /></th>
+                    <th class="text-center" style="min-width: 140px;"><x-analisa.kolom-bantuan label="Keputusan" kolom="keputusan" /></th>
                 </tr>
             </thead>
             <tbody>

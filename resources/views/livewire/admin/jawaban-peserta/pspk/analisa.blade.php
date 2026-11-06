@@ -139,17 +139,26 @@
                         @if ($showJenis)
                             <th class="text-center">Jenis</th>
                         @endif
-                        <th class="text-center">N</th>
-                        <th class="text-center">Terjawab</th>
-                        <th class="text-center" title="Peserta yang masuk hitungan r">N uji</th>
+                        <th class="text-center"><x-analisa.kolom-bantuan label="N" kolom="n-butir" /></th>
+                        <th class="text-center"><x-analisa.kolom-bantuan label="Terjawab" kolom="terjawab" /></th>
+                        <th class="text-center"><x-analisa.kolom-bantuan label="N uji" kolom="n-uji-aspek" /></th>
                         @foreach ($optionLetters as $letter)
-                            <th class="text-center" style="width: 52px;">% {{ $letter }}</th>
+                            <th class="text-center" style="width: 72px;">
+                                <x-analisa.kolom-bantuan
+                                    :label="'% '.$letter"
+                                    :kolom="$skorModel === 'kunci_jawaban' ? 'persen-kunci' : 'persen-tertinggi'"
+                                    :huruf="$letter" />
+                            </th>
                         @endforeach
-                        <th class="text-center">P</th>
-                        <th class="text-center">Kesukaran</th>
-                        <th class="text-center">r</th>
-                        <th class="text-center">r tabel</th>
-                        <th class="text-center" style="min-width: 120px;">Keputusan</th>
+                        <th class="text-center">
+                            <x-analisa.kolom-bantuan label="P" :kolom="$skorModel === 'kunci_jawaban' ? 'p-benar' : 'p-poin'" />
+                        </th>
+                        <th class="text-center"><x-analisa.kolom-bantuan label="Kesukaran" kolom="kesukaran" /></th>
+                        <th class="text-center">
+                            <x-analisa.kolom-bantuan label="r" :kolom="$skorModel === 'kunci_jawaban' ? 'r-aspek-benar' : 'r-aspek-poin'" />
+                        </th>
+                        <th class="text-center"><x-analisa.kolom-bantuan label="r tabel" kolom="r-tabel" /></th>
+                        <th class="text-center" style="min-width: 140px;"><x-analisa.kolom-bantuan label="Keputusan" kolom="keputusan" /></th>
                     </tr>
                 </thead>
                 <tbody>

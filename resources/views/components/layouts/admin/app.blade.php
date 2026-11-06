@@ -370,6 +370,135 @@
 
         window.hideAllTooltips = hideAllTooltips;
     </script>
+    <style>
+        .butir-kolom-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 15px;
+            height: 15px;
+            margin: 0;
+            padding: 0;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--bs-secondary-color, #6c757d);
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+
+        .butir-kolom-help:hover,
+        .butir-kolom-help[aria-expanded="true"] {
+            color: var(--bs-primary, #6571ff);
+        }
+
+        .butir-kolom-help-panel {
+            position: fixed;
+            z-index: 2000;
+            width: min(320px, calc(100vw - 16px));
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #1f2937;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: left;
+            white-space: normal;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+        }
+    </style>
+    <script>
+        (function () {
+            let tombolTerbuka = null;
+            let panel = null;
+
+            function tutupPenjelasanKolom() {
+                if (panel) {
+                    panel.remove();
+                    panel = null;
+                }
+
+                if (tombolTerbuka) {
+                    tombolTerbuka.setAttribute('aria-expanded', 'false');
+                    tombolTerbuka = null;
+                }
+            }
+
+            function tempatkanPenjelasanKolom() {
+                if (!tombolTerbuka || !panel || !tombolTerbuka.isConnected) {
+                    tutupPenjelasanKolom();
+                    return;
+                }
+
+                const batas = tombolTerbuka.getBoundingClientRect();
+                const jarak = 8;
+                const lebar = panel.offsetWidth;
+                const tinggi = panel.offsetHeight;
+                let kiri = batas.left + (batas.width / 2) - (lebar / 2);
+                kiri = Math.max(8, Math.min(kiri, window.innerWidth - lebar - 8));
+
+                let atas = batas.bottom + jarak;
+                if (atas + tinggi > window.innerHeight - 8 && batas.top - jarak - tinggi > 8) {
+                    atas = batas.top - jarak - tinggi;
+                }
+
+                panel.style.left = kiri + 'px';
+                panel.style.top = atas + 'px';
+            }
+
+            function bukaPenjelasanKolom(tombol) {
+                if (tombolTerbuka === tombol) {
+                    tutupPenjelasanKolom();
+                    return;
+                }
+
+                tutupPenjelasanKolom();
+                tombolTerbuka = tombol;
+                tombol.setAttribute('aria-expanded', 'true');
+
+                panel = document.createElement('div');
+                panel.className = 'butir-kolom-help-panel';
+                panel.setAttribute('role', 'note');
+                panel.textContent = tombol.getAttribute('data-butir-help') || '';
+                document.body.appendChild(panel);
+                tempatkanPenjelasanKolom();
+            }
+
+            document.addEventListener('click', function (event) {
+                const tombol = event.target.closest('[data-butir-help]');
+                if (tombol) {
+                    event.preventDefault();
+                    bukaPenjelasanKolom(tombol);
+                    return;
+                }
+
+                if (panel && panel.contains(event.target)) {
+                    return;
+                }
+
+                tutupPenjelasanKolom();
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    tutupPenjelasanKolom();
+                }
+            });
+
+            window.addEventListener('resize', tempatkanPenjelasanKolom);
+            window.addEventListener('scroll', tempatkanPenjelasanKolom, true);
+
+            document.addEventListener('livewire:init', function () {
+                Livewire.hook('commit', function ({ succeed }) {
+                    succeed(tutupPenjelasanKolom);
+                });
+            });
+        })();
+    </script>
     <script>
         document.addEventListener('livewire:initialized', () => {
 

@@ -78,15 +78,17 @@
                     <th style="min-width: 160px;">Indikator</th>
                     <th style="min-width: 280px;">Soal</th>
                     <th style="min-width: 120px;">Skor opsi</th>
-                    <th class="text-center">N</th>
-                    <th class="text-center">Terjawab</th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="N" kolom="n-subtes" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="Terjawab" kolom="terjawab" /></th>
                     @foreach ($optionLetters as $letter)
-                        <th class="text-center" style="width: 52px;">% {{ $letter }}</th>
+                        <th class="text-center" style="width: 72px;">
+                            <x-analisa.kolom-bantuan :label="'% '.$letter" kolom="persen" :huruf="$letter" />
+                        </th>
                     @endforeach
-                    <th class="text-center">Rata</th>
-                    <th class="text-center">Max</th>
-                    <th class="text-center">r</th>
-                    <th class="text-center" style="min-width: 120px;">Keputusan</th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="Rata" kolom="rata" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="Max" kolom="max" /></th>
+                    <th class="text-center"><x-analisa.kolom-bantuan label="r" kolom="r-subtes" /></th>
+                    <th class="text-center" style="min-width: 140px;"><x-analisa.kolom-bantuan label="Keputusan" kolom="keputusan" /></th>
                 </tr>
             </thead>
             <tbody>
