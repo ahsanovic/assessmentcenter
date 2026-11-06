@@ -23,13 +23,8 @@ class Show extends Component
 
     public int $id_event;
 
-    #[Url(as: 'pilar')]
-    public string $pilar = 'budaya';
-
     #[Url(as: 'q')]
     public ?string $search = '';
-
-    public string $filterKeputusan = 'semua';
 
     public function updatedSearch(): void
     {
@@ -50,30 +45,6 @@ class Show extends Component
         if ((int) $this->event->metode_tes_id !== LiterasiDigitalJawabanService::METODE_TES_ID) {
             abort(404);
         }
-
-        $this->normalizePilar();
-    }
-
-    public function updatedPilar(): void
-    {
-        $this->normalizePilar();
-        $this->filterKeputusan = 'semua';
-    }
-
-    public function setPilar(string $kode): void
-    {
-        $this->pilar = $kode;
-        $this->normalizePilar();
-        $this->filterKeputusan = 'semua';
-    }
-
-    public function setFilterKeputusan(string $key): void
-    {
-        if (! in_array($key, ['semua', 'layak', 'ditinjau', 'lemah'], true)) {
-            return;
-        }
-
-        $this->filterKeputusan = $key;
     }
 
     public function downloadExcel()
@@ -137,30 +108,10 @@ class Show extends Component
             $jawabanByUjian[$ujian->id] = $service->buildRows($ujian->jawaban);
         }
 
-        $bundle = app(LiterasiDigitalButirService::class)->analyzeEvent($this->id_event);
-        $activePillar = $bundle['pillars'][$this->pilar] ?? $bundle['pillars']['budaya'];
-
         return view('livewire.admin.jawaban-peserta.literasi-digital.show', [
             'data' => $data,
             'jawabanByUjian' => $jawabanByUjian,
-            'pillarTabs' => collect(LiterasiDigitalButirService::PILAR)
-                ->map(fn (string $label, string $kode) => [
-                    'kode' => $kode,
-                    'label' => $bundle['pillars'][$kode]['label'] ?? $label,
-                ])
-                ->values()
-                ->all(),
-            'activePillar' => $activePillar,
-            'stratified' => $bundle['stratified'],
-            'optionLetters' => LiterasiDigitalButirService::LETTERS,
         ]);
-    }
-
-    private function normalizePilar(): void
-    {
-        if (! array_key_exists($this->pilar, LiterasiDigitalButirService::PILAR)) {
-            $this->pilar = 'budaya';
-        }
     }
 
     private function ujianQuery(): Builder

@@ -2,8 +2,8 @@
 
 namespace App\Services\LiterasiDigital;
 
-use App\Models\LiterasiDigital\JawabanLiterasiDigital;
-use App\Models\LiterasiDigital\RefPilarLiterasiDigital;
+use App\Models\LiterasiDigital\SoalLiterasiDigital;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -39,6 +39,9 @@ class LiterasiDigitalButirService
         'etika' => 'Analisa Etika',
     ];
 
+    /** @var array<int, float|null> */
+    private array $criticalRByN = [];
+
     /**
      * @param  array<string, array{label?: string, participants?: array<int, array{ujian_id?: int, items?: array<int, array<string, mixed>>}>}>  $pillars
      * @return array{pillars: array<string, array<string, mixed>>, stratified: array<string, mixed>}
@@ -70,32 +73,78 @@ class LiterasiDigitalButirService
      */
     public function analyzeEvent(int $eventId): array
     {
-        $names = RefPilarLiterasiDigital::query()
-            ->whereIn('kode', array_keys(self::PILAR))
-            ->pluck('nama', 'kode');
+        $ujianIds = DB::table('ujian_literasi_digital as ujian')
+            ->join('peserta', 'peserta.id', '=', 'ujian.peserta_id')
+            ->where('ujian.event_id', $eventId)
+            ->pluck('ujian.id');
 
-        $jawaban = JawabanLiterasiDigital::query()
-            ->with(['soal', 'pilar'])
-            ->whereHas('ujian', function ($query) use ($eventId) {
-                $query->where('event_id', $eventId)->whereHas('peserta');
-            })
-            ->get();
+        if ($ujianIds->isEmpty()) {
+            return $this->analyze([]);
+        }
+
+        $answers = DB::table('jawaban_literasi_digital as jawaban')
+            ->join('ref_pilar_literasi_digital as pilar', 'pilar.id', '=', 'jawaban.pilar_id')
+            ->whereIn('jawaban.ujian_id', $ujianIds->all())
+            ->whereIn('pilar.kode', array_keys(self::PILAR))
+            ->get([
+                'jawaban.ujian_id',
+                'jawaban.soal_id',
+                'jawaban.jawaban',
+                'pilar.kode',
+                'pilar.nama',
+            ]);
+
+        $soalIds = $answers->pluck('soal_id')->unique()->filter()->values();
+        $soalById = $soalIds->isEmpty()
+            ? collect()
+            : DB::table('soal_literasi_digital')
+                ->whereIn('id', $soalIds->all())
+                ->get(['id', 'soal', 'kunci_jawaban', 'opsi_a', 'opsi_b', 'opsi_c', 'opsi_d', 'opsi_e'])
+                ->keyBy('id');
 
         $formatter = new LiterasiDigitalJawabanService;
+        $soalCache = [];
         $grouped = [];
+        $names = [];
 
-        foreach ($jawaban as $baris) {
-            $kode = $baris->pilar?->kode;
-            if (! is_string($kode) || ! array_key_exists($kode, self::PILAR) || $baris->soal === null) {
+        foreach ($answers as $baris) {
+            $kode = (string) $baris->kode;
+            if (! array_key_exists($kode, self::PILAR)) {
                 continue;
             }
 
-            $kunci = $this->normalizeLetter($baris->soal->kunci_jawaban);
+            $soalId = (int) $baris->soal_id;
+            $soal = $soalById->get($soalId);
+            if ($soal === null) {
+                continue;
+            }
+
+            if (! isset($soalCache[$soalId])) {
+                $model = new SoalLiterasiDigital;
+                $model->forceFill([
+                    'soal' => $soal->soal,
+                    'kunci_jawaban' => $soal->kunci_jawaban,
+                    'opsi_a' => $soal->opsi_a,
+                    'opsi_b' => $soal->opsi_b,
+                    'opsi_c' => $soal->opsi_c,
+                    'opsi_d' => $soal->opsi_d,
+                    'opsi_e' => $soal->opsi_e,
+                ]);
+                $kunci = $this->normalizeLetter($soal->kunci_jawaban);
+                $soalCache[$soalId] = [
+                    'soal' => (string) $soal->soal,
+                    'kunci' => $kunci,
+                    'kunci_teks' => $kunci ? $formatter->formatJawaban($model, $kunci) : null,
+                ];
+            }
+
+            $names[$kode] = (string) $baris->nama;
+            $cached = $soalCache[$soalId];
             $grouped[$kode][(int) $baris->ujian_id][] = [
-                'soal_id' => (int) $baris->soal_id,
-                'soal' => (string) $baris->soal->soal,
-                'kunci' => $kunci,
-                'kunci_teks' => $kunci ? $formatter->formatJawaban($baris->soal, $kunci) : null,
+                'soal_id' => $soalId,
+                'soal' => $cached['soal'],
+                'kunci' => $cached['kunci'],
+                'kunci_teks' => $cached['kunci_teks'],
                 'letter' => $this->normalizeLetter($baris->jawaban),
             ];
         }
@@ -111,7 +160,7 @@ class LiterasiDigitalButirService
             }
 
             $input[$kode] = [
-                'label' => filled($names[$kode] ?? null) ? (string) $names[$kode] : $label,
+                'label' => filled($names[$kode] ?? null) ? $names[$kode] : $label,
                 'participants' => $participants,
             ];
         }
@@ -141,14 +190,18 @@ class LiterasiDigitalButirService
 
     public function criticalR(int $n): ?float
     {
+        if (array_key_exists($n, $this->criticalRByN)) {
+            return $this->criticalRByN[$n];
+        }
+
         $df = $n - 2;
         if ($df < 1) {
-            return null;
+            return $this->criticalRByN[$n] = null;
         }
 
         $t = $this->tCritical($df);
 
-        return $t / sqrt(($t * $t) + $df);
+        return $this->criticalRByN[$n] = $t / sqrt(($t * $t) + $df);
     }
 
     /**

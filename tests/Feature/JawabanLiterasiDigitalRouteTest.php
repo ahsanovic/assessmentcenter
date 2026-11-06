@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Analisa;
 use App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Show;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -36,11 +37,23 @@ class JawabanLiterasiDigitalRouteTest extends TestCase
         $show->assertSee('Reliabilitas pilar');
         $show->assertSee('analisa-budaya-', false);
 
-        $show->call('setFilterKeputusan', 'lemah')->assertSet('filterKeputusan', 'lemah');
-        $show->call('setPilar', 'etika')->assertSet('pilar', 'etika')->assertSet('filterKeputusan', 'semua');
-        $show->assertSee('analisa-etika-', false);
-        $show->call('setPilar', 'bukan-pilar')->assertSet('pilar', 'budaya');
-        $show->call('setFilterKeputusan', 'selain-daftar')->assertSet('filterKeputusan', 'semua');
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $analisa = Livewire::test(Analisa::class, ['eventId' => (int) $eventId]);
+        $analisa->assertOk();
+        $analisa->call('setFilterKeputusan', 'lemah')->assertSet('filterKeputusan', 'lemah');
+        $analisa->call('setPilar', 'etika')->assertSet('pilar', 'etika')->assertSet('filterKeputusan', 'semua');
+        $analisa->assertSee('analisa-etika-', false);
+        $analisa->call('setPilar', 'bukan-pilar')->assertSet('pilar', 'budaya');
+        $analisa->call('setFilterKeputusan', 'selain-daftar')->assertSet('filterKeputusan', 'semua');
+
+        $queries = collect(DB::getQueryLog())->pluck('query');
+        $this->assertNotEmpty($queries);
+        foreach ($queries as $sql) {
+            $normalized = strtolower(preg_replace('/\s+/', ' ', $sql) ?? '');
+            $this->assertStringNotContainsString('select *', $normalized);
+            $this->assertStringNotContainsString(' exists ', $normalized);
+        }
 
         $show->call('downloadExcel')->assertFileDownloaded();
         $content = base64_decode((string) data_get($show->effects, 'download.content'));
