@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Jawaban Peserta — Tes Potensi']
+        ['url' => null, 'title' => 'Analisis Jawaban — Tes Potensi']
     ]" />
 
     <div class="row">
@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                         <div>
-                            <h5 class="card-title mb-1">Jawaban Peserta — Tes Potensi</h5>
+                            <h5 class="card-title mb-1">Analisis Jawaban — Tes Potensi</h5>
                             <p class="text-muted small mb-0">Pilih event untuk analisa butir soal dan jawaban peserta per subtes.</p>
                         </div>
                     </div>

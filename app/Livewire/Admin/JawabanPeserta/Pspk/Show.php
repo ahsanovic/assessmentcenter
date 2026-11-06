@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\JawabanPeserta\Pspk;
 use App\Models\Event;
 use App\Models\Pspk\SoalPspk;
 use App\Models\Pspk\UjianPspk;
+use App\Services\Pspk\PspkButirService;
 use App\Services\PspkJawabanService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
@@ -18,7 +19,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Jawaban Peserta — Tes PSPK'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Analisis Jawaban — Tes PSPK'])]
 class Show extends Component
 {
     use WithPagination;
@@ -77,7 +78,11 @@ class Show extends Component
             ->orderBy('id')
             ->get();
 
-        if ($ujianList->isEmpty()) {
+        $butir = app(PspkButirService::class);
+        $bundle = $butir->analyzeEvent($this->id_event, $this->levelPspk);
+        $adaAnalisa = collect($bundle['aspek'])->contains(fn (array $aspek) => ($aspek['items'] ?? []) !== []);
+
+        if ($ujianList->isEmpty() && ! $adaAnalisa) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'Tidak ada data jawaban untuk diunduh.',
@@ -162,7 +167,10 @@ class Show extends Component
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
+        $butir->addAnalysisSheets($spreadsheet, (string) ($this->event->nama_event ?? 'Event'), $bundle);
+
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->setPreCalculateFormulas(false);
         $filename = 'jawaban-pspk-'.Str::slug($this->event->nama_event ?? 'event').'-'.date('Y-m-d').'.xlsx';
         $path = storage_path('app/'.Str::uuid().'.xlsx');
         $writer->save($path);

@@ -11,7 +11,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Jawaban Peserta — Tes Potensi'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Analisis Jawaban — Tes Potensi'])]
 class Show extends Component
 {
     use WithPagination;

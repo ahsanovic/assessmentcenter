@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.jawaban-peserta.pspk'), 'title' => 'Jawaban Peserta — Tes PSPK'],
+        ['url' => route('admin.jawaban-peserta.pspk'), 'title' => 'Analisis Jawaban — Tes PSPK'],
         ['url' => null, 'title' => 'Detail Event']
     ]" />
 
@@ -32,6 +32,14 @@
                             </span>
                         </div>
                     </div>
+
+                    <livewire:admin.jawaban-peserta.pspk.analisa
+                        :event-id="$id_event"
+                        :level-pspk="$levelPspk"
+                        :key="'analisa-pspk-'.$id_event" />
+
+                    <h6 class="fw-semibold mb-2">Jawaban per peserta</h6>
+                    <p class="text-muted small">Analisa butir memakai seluruh peserta event. Lembar jawaban pada Excel mengikuti pencarian yang sedang aktif.</p>
 
                     <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">

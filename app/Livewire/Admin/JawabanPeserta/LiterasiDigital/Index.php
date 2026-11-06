@@ -10,7 +10,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layouts.admin.app', ['title' => 'Jawaban Peserta — Tes Literasi Digital'])]
+#[Layout('components.layouts.admin.app', ['title' => 'Analisis Jawaban — Tes Literasi Digital'])]
 class Index extends Component
 {
     use WithPagination;

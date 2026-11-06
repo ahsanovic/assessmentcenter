@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Jawaban Peserta — Tes PSPK']
+        ['url' => null, 'title' => 'Analisis Jawaban — Tes PSPK']
     ]" />
 
     <div class="row">
@@ -10,8 +10,8 @@
                 <div class="card-body">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                         <div>
-                            <h5 class="card-title mb-1">Jawaban Peserta — Tes PSPK</h5>
-                            <p class="text-muted small mb-0">Pilih event untuk melihat detail jawaban setiap peserta.</p>
+                            <h5 class="card-title mb-1">Analisis Jawaban — Tes PSPK</h5>
+                            <p class="text-muted small mb-0">Pilih event untuk melihat jawaban peserta dan uji validitas butir.</p>
                         </div>
                     </div>
 

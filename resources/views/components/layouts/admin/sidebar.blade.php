@@ -453,12 +453,12 @@
                     </div>
                 </li>
 
-                <li class="nav-item nav-category">Jawaban Peserta</li>
+                <li class="nav-item nav-category">Analisis Jawaban</li>
                 <li class="nav-item">
                     <a class="nav-link {{ isset($activeCollapse['jawaban-peserta']) ? '' : 'collapsed' }}" data-bs-toggle="collapse" href="#jawaban-peserta" role="button"
                         aria-expanded="{{ isset($activeCollapse['jawaban-peserta']) ? 'true' : 'false' }}" aria-controls="jawaban-peserta">
                         <i class="link-icon" data-feather="file-text"></i>
-                        <span class="link-title">Jawaban Peserta</span>
+                        <span class="link-title">Analisis Jawaban</span>
                         <i class="link-arrow" data-feather="chevron-down"></i>
                     </a>
                     <div class="collapse{{ isset($activeCollapse['jawaban-peserta']) ? ' show' : '' }}" data-bs-parent="#sidebarNav" id="jawaban-peserta">

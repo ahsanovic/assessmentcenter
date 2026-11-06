@@ -150,7 +150,9 @@ Route::prefix('bkdac')->group(function () {
 
         // jawaban peserta
         Route::get('jawaban-peserta/pspk', \App\Livewire\Admin\JawabanPeserta\Pspk\Index::class)->name('admin.jawaban-peserta.pspk');
-        Route::get('jawaban-peserta/pspk/{idEvent}', \App\Livewire\Admin\JawabanPeserta\Pspk\Show::class)->name('admin.jawaban-peserta.pspk.show');
+        Route::get('jawaban-peserta/pspk/{idEvent}', \App\Livewire\Admin\JawabanPeserta\Pspk\Show::class)
+            ->whereNumber('idEvent')
+            ->name('admin.jawaban-peserta.pspk.show');
         Route::get('jawaban-peserta/literasi-digital', \App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Index::class)->name('admin.jawaban-peserta.literasi-digital');
         Route::get('jawaban-peserta/literasi-digital/{idEvent}', \App\Livewire\Admin\JawabanPeserta\LiterasiDigital\Show::class)
             ->whereNumber('idEvent')

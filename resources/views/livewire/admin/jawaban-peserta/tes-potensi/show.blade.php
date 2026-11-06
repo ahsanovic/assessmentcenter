@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => route('admin.jawaban-peserta.tes-potensi'), 'title' => 'Jawaban Peserta — Tes Potensi'],
+        ['url' => route('admin.jawaban-peserta.tes-potensi'), 'title' => 'Analisis Jawaban — Tes Potensi'],
         ['url' => null, 'title' => 'Detail Event']
     ]" />
 

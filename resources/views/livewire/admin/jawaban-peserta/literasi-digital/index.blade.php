@@ -1,7 +1,7 @@
 <div>
     <x-breadcrumb :breadcrumbs="[
         ['url' => route('admin.dashboard'), 'title' => 'Dashboard'],
-        ['url' => null, 'title' => 'Jawaban Peserta — Tes Literasi Digital']
+        ['url' => null, 'title' => 'Analisis Jawaban — Tes Literasi Digital']
     ]" />
 
     <div class="row">
@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                         <div>
-                            <h5 class="card-title mb-1">Jawaban Peserta — Tes Literasi Digital</h5>
+                            <h5 class="card-title mb-1">Analisis Jawaban — Tes Literasi Digital</h5>
                             <p class="text-muted small mb-0">Pilih event untuk melihat dan mengunduh detail jawaban setiap peserta.</p>
                         </div>
                     </div>
