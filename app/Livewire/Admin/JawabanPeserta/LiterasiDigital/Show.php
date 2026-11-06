@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\JawabanPeserta\LiterasiDigital;
 
 use App\Models\Event;
 use App\Models\LiterasiDigital\UjianLiterasiDigital;
+use App\Services\LiterasiDigital\LiterasiDigitalButirService;
 use App\Services\LiterasiDigital\LiterasiDigitalJawabanService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -22,8 +23,13 @@ class Show extends Component
 
     public int $id_event;
 
+    #[Url(as: 'pilar')]
+    public string $pilar = 'budaya';
+
     #[Url(as: 'q')]
     public ?string $search = '';
+
+    public string $filterKeputusan = 'semua';
 
     public function updatedSearch(): void
     {
@@ -44,14 +50,41 @@ class Show extends Component
         if ((int) $this->event->metode_tes_id !== LiterasiDigitalJawabanService::METODE_TES_ID) {
             abort(404);
         }
+
+        $this->normalizePilar();
+    }
+
+    public function updatedPilar(): void
+    {
+        $this->normalizePilar();
+        $this->filterKeputusan = 'semua';
+    }
+
+    public function setPilar(string $kode): void
+    {
+        $this->pilar = $kode;
+        $this->normalizePilar();
+        $this->filterKeputusan = 'semua';
+    }
+
+    public function setFilterKeputusan(string $key): void
+    {
+        if (! in_array($key, ['semua', 'layak', 'ditinjau', 'lemah'], true)) {
+            return;
+        }
+
+        $this->filterKeputusan = $key;
     }
 
     public function downloadExcel()
     {
         $service = app(LiterasiDigitalJawabanService::class);
+        $butir = app(LiterasiDigitalButirService::class);
         $rows = $service->exportRows($this->ujianQuery()->get());
+        $bundle = $butir->analyzeEvent($this->id_event);
+        $adaAnalisa = collect($bundle['pillars'])->contains(fn (array $pillar) => ($pillar['items'] ?? []) !== []);
 
-        if ($rows === []) {
+        if ($rows === [] && ! $adaAnalisa) {
             $this->dispatch('toast', [
                 'type' => 'error',
                 'message' => 'Tidak ada data jawaban untuk diunduh.',
@@ -60,11 +93,13 @@ class Show extends Component
             return null;
         }
 
-        $spreadsheet = $service->makeSpreadsheet((string) ($this->event->nama_event ?? 'Event'), $rows);
+        $eventName = (string) ($this->event->nama_event ?? 'Event');
+        $spreadsheet = $service->makeSpreadsheet($eventName, $rows);
+        $butir->addAnalysisSheets($spreadsheet, $eventName, $bundle);
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->setPreCalculateFormulas(false);
 
-        $filename = $service->filename((string) ($this->event->nama_event ?? 'Event'));
+        $filename = $service->filename($eventName);
         $path = storage_path('app/'.Str::uuid().'.xlsx');
 
         try {
@@ -102,10 +137,30 @@ class Show extends Component
             $jawabanByUjian[$ujian->id] = $service->buildRows($ujian->jawaban);
         }
 
+        $bundle = app(LiterasiDigitalButirService::class)->analyzeEvent($this->id_event);
+        $activePillar = $bundle['pillars'][$this->pilar] ?? $bundle['pillars']['budaya'];
+
         return view('livewire.admin.jawaban-peserta.literasi-digital.show', [
             'data' => $data,
             'jawabanByUjian' => $jawabanByUjian,
+            'pillarTabs' => collect(LiterasiDigitalButirService::PILAR)
+                ->map(fn (string $label, string $kode) => [
+                    'kode' => $kode,
+                    'label' => $bundle['pillars'][$kode]['label'] ?? $label,
+                ])
+                ->values()
+                ->all(),
+            'activePillar' => $activePillar,
+            'stratified' => $bundle['stratified'],
+            'optionLetters' => LiterasiDigitalButirService::LETTERS,
         ]);
+    }
+
+    private function normalizePilar(): void
+    {
+        if (! array_key_exists($this->pilar, LiterasiDigitalButirService::PILAR)) {
+            $this->pilar = 'budaya';
+        }
     }
 
     private function ujianQuery(): Builder
