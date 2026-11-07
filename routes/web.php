@@ -4,6 +4,7 @@ use App\Http\Controllers\DownloadAbsensiEventController;
 use App\Http\Controllers\DownloadBeritaAcaraController;
 use App\Http\Controllers\DownloadLaporanCakapDigitalController;
 use App\Http\Controllers\DownloadLaporanKompetensiTeknisController;
+use App\Http\Controllers\DownloadLaporanLiterasiDigitalController;
 use App\Http\Controllers\DownloadLaporanPenilaianController;
 use App\Http\Controllers\DownloadLaporanPspkController;
 use App\Http\Controllers\DownloadPegawaiQrCodeController;
@@ -105,6 +106,8 @@ Route::prefix('bkdac')->group(function () {
         // data tes literasi digital selesai
         Route::get('literasi-digital/ld-finish', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesSelesai\Index::class)->name('admin.tes-selesai.literasi-digital');
         Route::get('literasi-digital/ld-finish/{idEvent}/show-peserta', \App\Livewire\Admin\DataTes\TesLiterasiDigital\TesSelesai\ShowPeserta::class)->name('admin.tes-selesai.literasi-digital.show-peserta');
+        Route::get('literasi-digital/ld-finish/{idEvent}/{identifier}/download', [DownloadLaporanLiterasiDigitalController::class, 'createPdf'])->name('admin.tes-selesai.literasi-digital.download');
+        Route::get('literasi-digital/ld-finish/{idEvent}/download-all', [DownloadLaporanLiterasiDigitalController::class, 'downloadAll'])->name('admin.tes-selesai.literasi-digital.download-all-laporan');
 
         // data tes cakap digital berlangsung
         Route::get('cakap-digital/cd-ongoing/', \App\Livewire\Admin\DataTes\TesCakapDigital\TesBerlangsung\Index::class)->name('admin.tes-berlangsung.cakap-digital');

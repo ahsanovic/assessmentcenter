@@ -42,6 +42,15 @@
                             </div>
                     </x-monitoring.filter-panel>
                     <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
+                        <x-btn-download
+                            :route="'admin.tes-selesai.literasi-digital.download-all-laporan'"
+                            :params="[$event->id]"
+                            :query="['tanggalTes' => $tanggal_tes ? \Carbon\Carbon::parse($tanggal_tes)->format('Y-m-d') : '']"
+                            text="Laporan PDF (.zip)"
+                            icon="download"
+                            color="dark"
+                            :disabled="$data->isEmpty()"
+                        />
                         <button type="button" class="btn btn-sm btn-icon-text btn-primary" wire:click="hitungUlangMassalConfirmation">
                             <span wire:ignore>
                                 <i class="btn-icon-prepend" data-feather="repeat"></i>
@@ -152,6 +161,16 @@
                                                     <i class="link-icon" data-feather="refresh-cw"></i>
                                                 </button>
                                                 <x-table.btn-delete :id="$item->hasil_literasi_digital_id" />
+                                                @if ($item->nip || $item->nik)
+                                                    <x-table.btn-link
+                                                        :route="'admin.tes-selesai.literasi-digital.download'"
+                                                        :params="['idEvent' => $event->id, 'identifier' => $item->nip ?: $item->nik]"
+                                                        :icon="'download'"
+                                                        :tooltip="'Download Pdf'"
+                                                        :color="'success'"
+                                                        :target="'_blank'"
+                                                    />
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
