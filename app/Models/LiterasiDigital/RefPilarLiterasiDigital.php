@@ -15,4 +15,14 @@ class RefPilarLiterasiDigital extends Model
     {
         return $this->hasMany(SoalLiterasiDigital::class, 'pilar_id');
     }
+
+    public function deskripsiLevel(): HasMany
+    {
+        return $this->hasMany(RefDeskripsiLevelLiterasiDigital::class, 'pilar_id');
+    }
+
+    public function saranPengembangan(): HasMany
+    {
+        return $this->hasMany(RefSaranPengembanganLiterasiDigital::class, 'pilar_id');
+    }
 }

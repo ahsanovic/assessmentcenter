@@ -22,6 +22,19 @@ class LiterasiDigitalUjianService
 
     public const KODE_PILAR = ['budaya', 'cakap', 'keamanan', 'etika'];
 
+    /**
+     * Batas skor benar per pilar (15 butir) untuk level 1–5.
+     *
+     * @var array<int, array{0: int, 1: int}>
+     */
+    public const RENTANG_LEVEL = [
+        1 => [0, 3],
+        2 => [4, 6],
+        3 => [7, 9],
+        4 => [10, 12],
+        5 => [13, 15],
+    ];
+
     private const KOLOM_SKOR = [
         'budaya' => 'skor_budaya',
         'cakap' => 'skor_cakap',
@@ -111,13 +124,18 @@ class LiterasiDigitalUjianService
             ->where('ujian_id', '!=', $ujian->id)
             ->delete();
 
-        return HasilLiterasiDigital::updateOrCreate(
+        $hasil = HasilLiterasiDigital::updateOrCreate(
             ['ujian_id' => $ujian->id],
             array_merge($agregat, [
                 'event_id' => $ujian->event_id,
                 'peserta_id' => $ujian->peserta_id,
             ])
         );
+
+        app(SaranPengembanganLiterasiDigitalService::class)->kunciUntukEvent((int) $ujian->event_id);
+        app(DeskripsiLevelLiterasiDigitalService::class)->kunciUntukEvent((int) $ujian->event_id);
+
+        return $hasil;
     }
 
     public function durasiMenit(): int
@@ -287,15 +305,31 @@ class LiterasiDigitalUjianService
         return 'Kurang Optimal';
     }
 
+    public static function levelDariSkor(int $skor): int
+    {
+        foreach (self::RENTANG_LEVEL as $level => [$bawah, $atas]) {
+            if ($skor >= $bawah && $skor <= $atas) {
+                return (int) $level;
+            }
+        }
+
+        return $skor > 12 ? 5 : 1;
+    }
+
+    public static function labelRentang(int $level): string
+    {
+        $rentang = self::RENTANG_LEVEL[$level] ?? null;
+
+        if ($rentang === null) {
+            return '-';
+        }
+
+        return $rentang[0].'–'.$rentang[1];
+    }
+
     private function levelPilar(int $skor): int
     {
-        return match (true) {
-            $skor <= 3 => 1,
-            $skor <= 6 => 2,
-            $skor <= 9 => 3,
-            $skor <= 12 => 4,
-            default => 5,
-        };
+        return self::levelDariSkor($skor);
     }
 
     private function skorBenar(?string $jawaban, ?string $kunci): int

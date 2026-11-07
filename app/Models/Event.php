@@ -6,8 +6,6 @@ use App\Models\BerpikirKritis\HasilBerpikirKritis;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\HasilCakapDigital;
 use App\Models\CakapDigital\UjianCakapDigital;
-use App\Models\LiterasiDigital\HasilLiterasiDigital;
-use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\HasilIntelektual;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
@@ -20,6 +18,10 @@ use App\Models\KesadaranDiri\HasilKesadaranDiri;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\KompetensiTeknis\HasilKompetensiTeknis;
 use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
+use App\Models\LiterasiDigital\HasilLiterasiDigital;
+use App\Models\LiterasiDigital\RefDeskripsiLiterasiDigitalTerbitan;
+use App\Models\LiterasiDigital\RefSaranLiterasiDigitalTerbitan;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\MotivasiKomitmen\HasilMotivasiKomitmen;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\HasilPengembanganDiri;
@@ -33,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $table = 'event';
+
     protected $guarded = ['id'];
 
     /** ID metode tes di `ref_metode_tes`; kuesioner responden hanya dipakai event dengan metode ini (biasanya teks kolom metode_tes = "Lainnya"). */
@@ -197,6 +200,16 @@ class Event extends Model
     public function hasilLiterasiDigital()
     {
         return $this->hasMany(HasilLiterasiDigital::class, 'event_id', 'id');
+    }
+
+    public function saranLiterasiDigitalTerbitan()
+    {
+        return $this->belongsTo(RefSaranLiterasiDigitalTerbitan::class, 'saran_literasi_digital_terbitan_id');
+    }
+
+    public function deskripsiLiterasiDigitalTerbitan()
+    {
+        return $this->belongsTo(RefDeskripsiLiterasiDigitalTerbitan::class, 'deskripsi_literasi_digital_terbitan_id');
     }
 
     // ujian intelektual subtes 1

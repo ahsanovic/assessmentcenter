@@ -258,6 +258,8 @@ Route::prefix('bkdac')->group(function () {
 
         // soal literasi digital
         Route::get('ref-pilar-literasi-digital', \App\Livewire\Admin\LiterasiDigital\RefPilar\Index::class)->name('admin.ref-pilar-literasi-digital');
+        Route::get('ref-deskripsi-literasi-digital', \App\Livewire\Admin\LiterasiDigital\RefDeskripsiLevel\Index::class)->name('admin.ref-deskripsi-literasi-digital');
+        Route::get('ref-saran-literasi-digital', \App\Livewire\Admin\LiterasiDigital\RefSaranPengembangan\Index::class)->name('admin.ref-saran-literasi-digital');
         Route::get('soal-literasi-digital', \App\Livewire\Admin\LiterasiDigital\Soal\Index::class)->name('admin.soal-literasi-digital');
 
         // soal cakap digital

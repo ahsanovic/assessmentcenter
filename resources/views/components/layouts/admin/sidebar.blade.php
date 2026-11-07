@@ -145,6 +145,8 @@
             'literasi-digital' => [
                 'routes' => [
                     'admin.ref-pilar-literasi-digital',
+                    'admin.ref-deskripsi-literasi-digital',
+                    'admin.ref-saran-literasi-digital',
                     'admin.soal-literasi-digital',
                 ]
             ],
@@ -672,6 +674,14 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.ref-pilar-literasi-digital') }}" wire:navigate
                                     class="nav-link {{ isActiveRoute('admin.ref-pilar-literasi-digital', false) ? 'active' : '' }}">Referensi Pilar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-deskripsi-literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.ref-deskripsi-literasi-digital', false) ? 'active' : '' }}">Referensi Deskripsi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.ref-saran-literasi-digital') }}" wire:navigate
+                                    class="nav-link {{ isActiveRoute('admin.ref-saran-literasi-digital', false) ? 'active' : '' }}">Referensi Sarpeng</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.soal-literasi-digital') }}" wire:navigate
