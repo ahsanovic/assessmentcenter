@@ -76,7 +76,7 @@
     @if($showModal)
     <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
          wire:key="modal-edit-saran-{{ $editId }}"
-         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+         x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); window.bootSaranMarkdownEditors && window.bootSaranMarkdownEditors(); }, 50); } }"
          x-init="init()">
         <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out;">
             <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
@@ -157,10 +157,11 @@
     @endif
 </div>
 
-@push('styles')
+@assets
     <link rel="stylesheet" href="{{ asset('assets/vendors/easymde/easymde.min.css') }}">
     <style>
         .EasyMDEContainer .CodeMirror {
+            min-height: 220px;
             border-radius: 10px;
             border: 2px solid #e0e0e0;
             font-size: 0.95rem;
@@ -171,86 +172,124 @@
             border-bottom: none;
         }
     </style>
-@endpush
-
-@push('js')
     <script src="{{ asset('assets/vendors/easymde/easymde.min.js') }}"></script>
-@endpush
+@endassets
 
-@push('js')
-    @script
-        <script>
-            const markdownEditors = {};
+@script
+    <script>
+        const markdownEditors = {};
+        let markdownRetryTimer = null;
 
-            function initMarkdownEditors() {
-                if (typeof EasyMDE === 'undefined') return;
+        function refreshMarkdownEditor(editor) {
+            if (!editor?.codemirror) return;
+            editor.codemirror.refresh();
+        }
 
-                document.querySelectorAll('[data-markdown-editor]').forEach((el) => {
-                    if (el._easymde) return;
+        function initMarkdownEditors() {
+            const fields = document.querySelectorAll('[data-markdown-editor]');
+            if (fields.length === 0) return true;
+            if (typeof EasyMDE === 'undefined') return false;
 
-                    const model = el.dataset.markdownModel;
-                    const minHeight = el.dataset.minHeight || '220px';
-
-                    const editor = new EasyMDE({
-                        element: el,
-                        spellChecker: false,
-                        status: false,
-                        minHeight,
-                        placeholder: el.getAttribute('placeholder') || '',
-                        toolbar: ['bold', 'italic', 'heading', '|', 'unordered-list', 'ordered-list', '|', 'quote', '|', 'preview'],
-                    });
-
-                    el._easymde = editor;
-                    markdownEditors[model] = editor;
-                    editor.value($wire.get(model) || '');
-
-                    editor.codemirror.on('change', () => {
-                        $wire.set(model, editor.value(), false);
-                    });
-                });
-            }
-
-            function setMarkdownEditorValue(model, value) {
-                const editor = markdownEditors[model]
-                    || document.querySelector(`[data-markdown-model="${model}"]`)?._easymde;
-
-                if (editor) {
-                    editor.value(value ?? '');
+            fields.forEach((el) => {
+                if (el._easymde) {
+                    refreshMarkdownEditor(el._easymde);
+                    return;
                 }
-            }
 
-            function initFeatherIcons() {
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', initFeatherIcons);
-
-            document.addEventListener('livewire:initialized', () => {
-                initFeatherIcons();
-
-                Livewire.hook('morphed', () => {
-                    setTimeout(() => {
-                        initFeatherIcons();
-                        initMarkdownEditors();
-                    }, 0);
+                const model = el.dataset.markdownModel;
+                const minHeight = el.dataset.minHeight || '220px';
+                const editor = new EasyMDE({
+                    element: el,
+                    spellChecker: false,
+                    status: false,
+                    autofocus: false,
+                    minHeight,
+                    placeholder: el.getAttribute('placeholder') || '',
+                    toolbar: ['bold', 'italic', 'heading', '|', 'unordered-list', 'ordered-list', '|', 'quote', '|', 'preview'],
                 });
 
-                Livewire.on('modalOpened', () => {
-                    setTimeout(() => {
-                        initMarkdownEditors();
-                        initFeatherIcons();
-                    }, 150);
+                el._easymde = editor;
+                markdownEditors[model] = editor;
+                editor.value($wire.get(model) || '');
+                editor.codemirror.on('change', () => {
+                    $wire.set(model, editor.value(), false);
                 });
 
-                Livewire.on('set-markdown', (payload) => {
-                    const data = Array.isArray(payload) ? payload[0] : payload;
-                    setTimeout(() => {
-                        setMarkdownEditorValue(data?.model, data?.value ?? '');
-                    }, 200);
-                });
+                requestAnimationFrame(() => refreshMarkdownEditor(editor));
+                setTimeout(() => refreshMarkdownEditor(editor), 60);
+                setTimeout(() => refreshMarkdownEditor(editor), 320);
             });
-        </script>
-    @endscript
-@endpush
+
+            return true;
+        }
+
+        function bootMarkdownEditors() {
+            if (initMarkdownEditors()) return;
+            if (markdownRetryTimer) return;
+
+            let attempts = 0;
+            markdownRetryTimer = setInterval(() => {
+                attempts += 1;
+                if (initMarkdownEditors() || attempts >= 30) {
+                    clearInterval(markdownRetryTimer);
+                    markdownRetryTimer = null;
+                }
+            }, 100);
+        }
+
+        window.bootSaranMarkdownEditors = bootMarkdownEditors;
+
+        $wire.__instance.addCleanup(() => {
+            if (markdownRetryTimer) {
+                clearInterval(markdownRetryTimer);
+                markdownRetryTimer = null;
+            }
+            if (window.bootSaranMarkdownEditors === bootMarkdownEditors) {
+                delete window.bootSaranMarkdownEditors;
+            }
+        });
+
+        function setMarkdownEditorValue(model, value) {
+            const editor = document.querySelector(`[data-markdown-model="${model}"]`)?._easymde
+                || markdownEditors[model];
+
+            if (!editor) return;
+
+            const next = value ?? '';
+            if (editor.value() !== next) {
+                editor.value(next);
+            }
+            refreshMarkdownEditor(editor);
+        }
+
+        function initFeatherIcons() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        }
+
+        initFeatherIcons();
+
+        $wire.hook('morphed', () => {
+            setTimeout(() => {
+                initFeatherIcons();
+                bootMarkdownEditors();
+            }, 0);
+        });
+
+        $wire.on('modalOpened', () => {
+            setTimeout(() => {
+                bootMarkdownEditors();
+                initFeatherIcons();
+            }, 30);
+        });
+
+        $wire.on('set-markdown', (payload) => {
+            const data = Array.isArray(payload) ? payload[0] : payload;
+            setTimeout(() => {
+                bootMarkdownEditors();
+                setMarkdownEditorValue(data?.model, data?.value ?? '');
+            }, 60);
+        });
+    </script>
+@endscript
