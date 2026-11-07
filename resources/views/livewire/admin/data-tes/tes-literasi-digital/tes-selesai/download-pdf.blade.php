@@ -8,7 +8,7 @@
             margin-left: 1.5cm;
             margin-top: 1cm;
             margin-right: 1.5cm;
-            margin-bottom: 1.5cm;
+            margin-bottom: 2.6cm;
         }
 
         body {
@@ -101,11 +101,59 @@
             margin-bottom: 10px;
         }
 
+        .aspek-table thead,
+        .saran-table thead {
+            display: table-header-group;
+        }
+
+        .saran-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            page-break-inside: auto;
+        }
+
+        .saran-table th {
+            border: 1px solid #000;
+            padding: 5px;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .saran-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            border-top: none;
+            border-bottom: none;
+            padding: 4px 5px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .saran-table tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        .saran-table tr.awal td {
+            border-top: 1px solid #000;
+        }
+
+        .saran-table tr.akhir td {
+            border-bottom: 1px solid #000;
+        }
+
+        .saran-table td.kolom-tetap {
+            text-align: center;
+            vertical-align: top;
+        }
+
         .aspek-table th, .aspek-table td {
             border: 1px solid #000;
             padding: 5px;
             text-align: left;
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         .aspek-table td {
@@ -177,23 +225,47 @@
 
         .footer {
             position: fixed;
-            bottom: -1.1cm;
+            bottom: -2.15cm;
             left: 0;
             right: 0;
+            height: 1.8cm;
+            overflow: hidden;
             text-align: center;
         }
 
         .footer img {
             width: 100%;
-            height: 65px;
+            height: 1.8cm;
         }
 
         @include('pdf.partials.markdown-styles')
 
         .aspek-table .md,
-        .deskripsi-table .md {
+        .deskripsi-table .md,
+        .saran-table .md {
             font-family: Arial, sans-serif;
             font-size: 12px;
+        }
+
+        .aspek-table .md ul,
+        .aspek-table .md ol,
+        .aspek-table .md p,
+        .aspek-table .md h1,
+        .aspek-table .md h2,
+        .aspek-table .md h3,
+        .aspek-table .md h4,
+        .deskripsi-table .md p {
+            margin: 0;
+        }
+
+        .saran-table .md ul,
+        .saran-table .md ol,
+        .saran-table .md p,
+        .saran-table .md h1,
+        .saran-table .md h2,
+        .saran-table .md h3,
+        .saran-table .md h4 {
+            margin: 0;
         }
     </style>
 </head>
@@ -274,26 +346,30 @@
 
     <div class="identitas-header"><b>B. CAPAIAN</b></div>
     <table class="aspek-table" border="1">
-        <tr>
-            <th><b>NO</b></th>
-            <th><b>ASPEK</b></th>
-            <th><b>STANDAR</b></th>
-            <th><b>CAPAIAN</b></th>
-        </tr>
-        @foreach ($baris as $item)
+        <thead>
             <tr>
-                <td width="3%" style="text-align: center;">{{ $loop->iteration }}</td>
-                <td width="60%">
-                    {{ $item['nama'] }}
-                    @if (filled($item['deskripsi_pilar']))
-                        <br/>
-                        <i>{!! nl2br(e($item['deskripsi_pilar'])) !!}</i>
-                    @endif
-                </td>
-                <td width="10%" style="text-align: center;">{{ $item['standar'] }}</td>
-                <td width="10%" style="text-align: center;">{{ $item['capaian'] }}</td>
+                <th><b>NO</b></th>
+                <th><b>ASPEK</b></th>
+                <th><b>STANDAR</b></th>
+                <th><b>CAPAIAN</b></th>
             </tr>
-        @endforeach
+        </thead>
+        <tbody>
+            @foreach ($baris as $item)
+                <tr>
+                    <td width="3%" style="text-align: center;">{{ $loop->iteration }}</td>
+                    <td width="60%">
+                        {{ $item['nama'] }}
+                        @if (filled($item['deskripsi_pilar']))
+                            <br/>
+                            <i>{!! nl2br(e($item['deskripsi_pilar'])) !!}</i>
+                        @endif
+                    </td>
+                    <td width="10%" style="text-align: center;">{{ $item['standar'] }}</td>
+                    <td width="10%" style="text-align: center;">{{ $item['capaian'] }}</td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
 
     <table class="aspek-table" border="1">
@@ -316,35 +392,48 @@
 
     <div class="deskripsi-header"><b>C. DESKRIPSI</b></div>
     <table class="deskripsi-table">
-        @foreach ($baris as $item)
-            <tr>
-                <td width="3" style="text-align: center;">{{ $loop->iteration }}</td>
-                <td>
-                    <div><b>{{ $item['nama'] }}</b></div>
-                    <p>{!! filled($item['deskripsi']) ? nl2br(e($item['deskripsi'])) : '' !!}</p>
-                </td>
-            </tr>
-        @endforeach
+        <tbody>
+            @foreach ($baris as $item)
+                <tr>
+                    <td width="4%" style="text-align: center;">{{ $loop->iteration }}</td>
+                    <td>
+                        <div><b>{{ $item['nama'] }}</b></div>
+                        @foreach ($item['deskripsi_pecahan'] as $bagian)
+                            <p>{{ $bagian }}</p>
+                        @endforeach
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
 
     <div class="deskripsi-header"><b>D. SARAN PENGEMBANGAN</b></div>
-    <table class="aspek-table" border="1">
-        <tr>
-            <th><b>NO</b></th>
-            <th><b>ASPEK</b></th>
-            <th><b>CAPAIAN</b></th>
-            <th><b>SARAN PENGEMBANGAN</b></th>
-        </tr>
-        @foreach ($baris as $item)
+    <table class="saran-table">
+        <thead>
             <tr>
-                <td width="3%" style="text-align: center;">{{ $loop->iteration }}</td>
-                <td width="30%">{{ $item['nama'] }}</td>
-                <td width="10%" style="text-align: center;">{{ $item['capaian'] }}</td>
-                <td>
-                    @include('pdf.partials.markdown', ['html' => $item['saran_html'], 'empty' => ''])
-                </td>
+                <th><b>NO</b></th>
+                <th><b>ASPEK</b></th>
+                <th><b>CAPAIAN</b></th>
+                <th><b>SARAN PENGEMBANGAN</b></th>
             </tr>
-        @endforeach
+        </thead>
+        <tbody>
+            @foreach ($baris as $item)
+                @php
+                    $pecahanSaran = $item['saran_pecahan'] !== [] ? $item['saran_pecahan'] : [''];
+                @endphp
+                @foreach ($pecahanSaran as $bagian)
+                    <tr class="{{ $loop->first ? 'awal' : 'sambungan' }} {{ $loop->last ? 'akhir' : '' }}">
+                        <td class="kolom-tetap" width="3%">{{ $loop->first ? $loop->parent->iteration : '' }}</td>
+                        <td width="30%">{{ $loop->first ? $item['nama'] : '' }}</td>
+                        <td class="kolom-tetap" width="10%">{{ $loop->first ? $item['capaian'] : '' }}</td>
+                        <td>
+                            @include('pdf.partials.markdown', ['html' => $bagian, 'empty' => ''])
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+        </tbody>
     </table>
 
     @if ($tte)
