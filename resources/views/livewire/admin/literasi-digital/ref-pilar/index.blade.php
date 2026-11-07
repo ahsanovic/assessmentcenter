@@ -8,7 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <p class="text-muted mb-3">Ujian mengambil 15 soal aktif dari masing-masing pilar, lalu mengacak 60 soal itu sebagai satu paket.</p>
+                    <p class="text-muted mb-3">Ujian mengambil 15 soal aktif dari masing-masing pilar, lalu mengacak 60 soal itu sebagai satu paket. Deskripsi pilar nanti tampil di laporan.</p>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle shadow-sm border rounded" style="overflow:hidden;">
                             <thead class="table-light border-bottom">
@@ -16,6 +16,7 @@
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th>Urutan</th>
                                     <th>Pilar</th>
+                                    <th>Deskripsi</th>
                                     <th>Kode</th>
                                     <th>Soal aktif</th>
                                     <th>Status</th>
@@ -28,6 +29,13 @@
                                         <td class="text-center text-secondary fw-bold">{{ $loop->iteration }}</td>
                                         <td>{{ $item->urutan }}</td>
                                         <td>{{ $item->nama }}</td>
+                                        <td class="text-wrap">
+                                            @if (filled($item->deskripsi))
+                                                {{ \Illuminate\Support\Str::limit($item->deskripsi, 180) }}
+                                            @else
+                                                <span class="badge bg-light text-muted border">Belum diisi</span>
+                                            @endif
+                                        </td>
                                         <td><code>{{ $item->kode }}</code></td>
                                         <td>{{ $item->soal_aktif_count }} / {{ $item->soal_count }}</td>
                                         <td>
@@ -119,6 +127,13 @@
                                 </x-form.select>
                             </div>
                         </div>
+                        <x-form.textarea
+                            label="Deskripsi"
+                            icon="align-left"
+                            model="deskripsi"
+                            placeholder="Narasi pilar yang nanti tampil di laporan"
+                            :rows="6"
+                        />
                     </form>
                 </div>
 

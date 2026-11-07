@@ -20,6 +20,8 @@ class Index extends Component
 
     public $nama;
 
+    public ?string $deskripsi = null;
+
     public $urutan;
 
     public $is_active = 'true';
@@ -40,6 +42,7 @@ class Index extends Component
         $this->editId = $data->id;
         $this->kode = $data->kode;
         $this->nama = $data->nama;
+        $this->deskripsi = $data->deskripsi;
         $this->urutan = $data->urutan;
         $this->is_active = $data->is_active;
         $this->showModal = true;
@@ -51,17 +54,19 @@ class Index extends Component
     {
         $this->showModal = false;
         $this->resetValidation();
-        $this->reset(['editId', 'kode', 'nama', 'urutan', 'is_active']);
+        $this->reset(['editId', 'kode', 'nama', 'deskripsi', 'urutan', 'is_active']);
     }
 
     public function save()
     {
         $this->validate([
             'nama' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string|max:5000',
             'urutan' => 'required|integer|min:1|max:9',
             'is_active' => 'required|in:true,false',
         ], [
             'nama.required' => 'harus diisi',
+            'deskripsi.max' => 'maksimal 5000 karakter',
             'urutan.required' => 'harus diisi',
             'is_active.required' => 'harus dipilih',
         ]);
@@ -80,6 +85,7 @@ class Index extends Component
             $data = RefPilarLiterasiDigital::findOrFail($this->editId);
             $old = $data->getOriginal();
             $data->nama = $this->nama;
+            $data->deskripsi = self::normalisasiDeskripsi($this->deskripsi);
             $data->urutan = $this->urutan;
             $data->is_active = $this->is_active;
             $data->save();
@@ -117,5 +123,16 @@ class Index extends Component
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'gagal menghapus data']);
         }
+    }
+
+    private static function normalisasiDeskripsi(?string $teks): ?string
+    {
+        if ($teks === null) {
+            return null;
+        }
+
+        $teks = str_replace(["\r\n", "\r"], "\n", trim($teks));
+
+        return $teks === '' ? null : $teks;
     }
 }
