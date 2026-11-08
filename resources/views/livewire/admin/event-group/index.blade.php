@@ -71,11 +71,12 @@
                                             @endif
                                         </td>
                                         <td class="text-end">
-                                            @if($eventIdsForDownload->get($group->id))
-                                                <x-btn-download-rekap-gabungan :event-id="$eventIdsForDownload->get($group->id)" />
-                                            @else
-                                                <span class="text-muted small">Belum ada event</span>
-                                            @endif
+                                            <div class="d-inline-flex align-items-center justify-content-end gap-1">
+                                                <x-table.btn-edit :id="$group->id" tooltip="Ubah nama" />
+                                                @if($eventIdsForDownload->get($group->id))
+                                                    <x-btn-download-rekap-gabungan :event-id="$eventIdsForDownload->get($group->id)" />
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -94,4 +95,47 @@
             </div>
         </div>
     </div>
+
+    @if($showModal)
+        <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1"
+             wire:key="modal-edit-grup-{{ $editId }}"
+             x-data="{ init() { setTimeout(() => { if (typeof feather !== 'undefined') feather.replace(); }, 50); } }"
+             x-init="init()">
+            <div class="modal-dialog modal-dialog-centered modal-lg" style="animation: slideDown 0.3s ease-out; max-width: min(720px, 92vw);">
+                <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 24px 32px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center justify-content-center"
+                                 style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px;">
+                                <i class="link-icon text-white" data-feather="edit-3" style="width: 24px; height: 24px;"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title text-white fw-bold mb-0">Ubah Nama Grup</h5>
+                                <p class="text-white-50 mb-0 mt-1" style="font-size: 0.875rem;">Nama ini tampil di daftar grup dan pilihan saat membuat event.</p>
+                            </div>
+                        </div>
+                        <button type="button" wire:click="closeModal" class="btn-close btn-close-white"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 32px; background: #f8f9fa;">
+                        <form wire:submit="save">
+                            <x-form.input
+                                label="Nama Grup"
+                                icon="layers"
+                                model="nama"
+                                placeholder="Assessment Eselon II 2026"
+                                :required="true"
+                                maxlength="255"
+                                width="100%"
+                                style="overflow-x: auto; text-overflow: clip;"
+                            />
+                        </form>
+                    </div>
+                    <div class="modal-footer" style="background: white; border-top: 2px solid #f0f0f0; padding: 20px 32px; gap: 12px;">
+                        <x-modal.btn-cancel />
+                        <x-modal.btn-save :isUpdate="true" text="Simpan" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

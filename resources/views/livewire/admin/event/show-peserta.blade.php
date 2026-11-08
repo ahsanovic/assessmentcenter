@@ -37,6 +37,12 @@
                         </div>
                     </div>
 
+                    @if($showMissingPspkLevelHint)
+                        <div class="alert alert-warning py-2" style="border-radius: 10px; border: none;">
+                            <small>Grup ini memiliki beberapa level PSPK. Peserta tanpa level hanya melihat tes bersama di dashboard. Daftarkan mereka lewat event PSPK level yang sesuai.</small>
+                        </div>
+                    @endif
+
                     <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
@@ -113,6 +119,12 @@
                                                 <div class="fw-medium">{{ $item->nik }}</div>
                                             @endif
                                             </span>
+                                            @php
+                                                $levelKey = filled($item->nip) ? 'nip:'.$item->nip : (filled($item->nik) ? 'nik:'.$item->nik : null);
+                                            @endphp
+                                            @if($levelKey && !empty($missingPspkLevelKeys[$levelKey]))
+                                                <div><span class="badge bg-warning text-dark mt-1">Belum punya level PSPK</span></div>
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             <span class="badge {{ $item->jenis_peserta_id == 1 ? 'bg-primary' : 'bg-info' }}">
@@ -239,11 +251,7 @@
                         @if($event->event_group_id)
                             <div class="alert alert-info py-2 mb-3" style="border-radius: 10px; border: none;">
                                 <small>
-                                    @if($isUpdate)
-                                        Perubahan data (termasuk password dan status) akan disinkronkan ke event lain dalam grup <strong>{{ $event->eventGroup?->nama }}</strong>.
-                                    @else
-                                        Peserta akan otomatis disalin ke event lain dalam grup <strong>{{ $event->eventGroup?->nama }}</strong>.
-                                    @endif
+                                    {{ $isUpdate ? $pesertaSyncUpdateNotice : $pesertaSyncCreateNotice }}
                                 </small>
                             </div>
                         @endif
@@ -417,7 +425,7 @@
                                     <li>Upload file yang sudah diisi</li>
                                     <li>Impor ulang file yang sama: baris dengan NIP/NIK yang sudah ada di event ini akan <strong>ditolak</strong> (bukan menimpa data lama); hanya peserta baru yang ditambahkan</li>
                                     @if($event->event_group_id)
-                                        <li>Event ini dalam grup <strong>{{ $event->eventGroup?->nama }}</strong> — peserta baru otomatis disalin ke event lain dalam grup yang sama</li>
+                                        <li>{{ $pesertaSyncCreateNotice }}</li>
                                     @endif
                                 </ol>
                             </small>
@@ -772,9 +780,7 @@
             $wire.on('show-delete-confirmation', () => {
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: @json($event->event_group_id
-                        ? 'Peserta akan dihapus dari event ini dan semua event dalam grup assessment yang sama.'
-                        : 'Data peserta akan dihapus permanen!'),
+                    text: @json($pesertaSyncDeleteNotice ?? 'Data peserta akan dihapus permanen!'),
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',

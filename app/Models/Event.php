@@ -41,6 +41,14 @@ class Event extends Model
     /** ID metode tes di `ref_metode_tes`; kuesioner responden hanya dipakai event dengan metode ini (biasanya teks kolom metode_tes = "Lainnya"). */
     public const METODE_KUESIONER_RESPONDEN = 2;
 
+    /** PSPK level 1–4. Dalam satu grup, satu peserta hanya boleh masuk ke salah satu level ini. */
+    public const METODE_PSPK_LEVEL = [5, 6, 7, 8];
+
+    public function isPspkLevel(): bool
+    {
+        return in_array((int) $this->metode_tes_id, self::METODE_PSPK_LEVEL, true);
+    }
+
     protected function setTglMulaiAttribute($value)
     {
         $this->attributes['tgl_mulai'] = date('Y-m-d', strtotime($value));

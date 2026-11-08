@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Event;
 use App\Models\Peserta;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -23,6 +24,7 @@ class EventPesertaSpreadsheetImportService
         $sheet = $spreadsheet->getActiveSheet();
         $highestRow = (int) $sheet->getHighestDataRow();
 
+        $event = Event::findOrFail($eventId);
         $imported = 0;
         $synced = 0;
         $errors = [];
@@ -129,6 +131,19 @@ class EventPesertaSpreadsheetImportService
 
             if (empty($password) || strlen($password) < 8) {
                 $errors[] = "Baris $rowNum: Password harus minimal 8 karakter";
+
+                continue;
+            }
+
+            $conflict = $this->groupSyncService->conflictingPspkMessage(
+                $event,
+                $jenisPesertaId == 1 ? $nip : null,
+                $jenisPesertaId == 2 ? $nik : null,
+            );
+
+            if ($conflict) {
+                $identifier = $jenisPesertaId == 1 ? "NIP $nip" : "NIK $nik";
+                $errors[] = "Baris $rowNum: $identifier sudah terdaftar di event lain dalam grup yang sama. ".ucfirst($conflict);
 
                 continue;
             }

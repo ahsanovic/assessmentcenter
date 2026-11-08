@@ -9,6 +9,7 @@ use App\Services\EventGroupPesertaSyncService;
 use App\Services\EventPesertaSpreadsheetImportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -233,11 +234,17 @@ class ShowPeserta extends Component
 
         $option_jenis_peserta = RefJenisPeserta::pluck('jenis_peserta', 'id');
         $option_status = ['true' => 'aktif', 'false' => 'tidak aktif'];
+        $syncService = app(EventGroupPesertaSyncService::class);
 
         return view('livewire.admin.event.show-peserta', [
             'data' => $data,
             'option_jenis_peserta' => $option_jenis_peserta,
             'option_status' => $option_status,
+            'pesertaSyncCreateNotice' => $syncService->createSyncNotice($this->event),
+            'pesertaSyncUpdateNotice' => $syncService->updateSyncNotice($this->event),
+            'pesertaSyncDeleteNotice' => $syncService->deleteSyncNotice($this->event),
+            'showMissingPspkLevelHint' => $syncService->groupHasPspkLevel($this->event) && ! $this->event->isPspkLevel(),
+            'missingPspkLevelKeys' => $syncService->missingPspkLevelKeys($this->event, $data->getCollection()),
         ]);
     }
 
@@ -303,6 +310,21 @@ class ShowPeserta extends Component
     public function save()
     {
         $this->validate();
+
+        if (! $this->isUpdate) {
+            $event = Event::query()->findOrFail($this->id_event);
+            $conflict = app(EventGroupPesertaSyncService::class)->conflictingPspkMessage(
+                $event,
+                (int) $this->jenis_peserta_id === 1 ? $this->nip : null,
+                (int) $this->jenis_peserta_id === 2 ? $this->nik : null,
+            );
+
+            if ($conflict) {
+                $this->addError((int) $this->jenis_peserta_id === 2 ? 'nik' : 'nip', $conflict);
+
+                return;
+            }
+        }
 
         try {
             // Parse nama dan gelar
@@ -402,16 +424,29 @@ class ShowPeserta extends Component
     {
         try {
             $data = Peserta::find($this->selected_id);
+            if (! $data) {
+                return;
+            }
+
+            $syncService = app(EventGroupPesertaSyncService::class);
+            $blocked = $syncService->deletionBlockedReason($data);
+            if ($blocked) {
+                $this->dispatch('toast', ['type' => 'error', 'message' => $blocked]);
+
+                return;
+            }
+
             $old_data = $data->getOriginal();
             $matchNip = $data->nip;
             $matchNik = $data->nik;
 
-            $syncService = app(EventGroupPesertaSyncService::class);
-            $deletedSiblings = $syncService->syncDeleteFromPeserta($data, $matchNip, $matchNik);
+            $deletedSiblings = DB::transaction(function () use ($syncService, $data, $matchNip, $matchNik, $old_data) {
+                $deleted = $syncService->syncDeleteFromPeserta($data, $matchNip, $matchNik);
+                activity_log($data, 'delete', 'peserta', $old_data);
+                $data->delete();
 
-            activity_log($data, 'delete', 'peserta', $old_data);
-
-            $data->delete();
+                return $deleted;
+            });
 
             $message = 'berhasil menghapus data peserta';
             if ($deletedSiblings > 0) {
