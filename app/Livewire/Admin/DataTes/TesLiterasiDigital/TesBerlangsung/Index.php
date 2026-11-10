@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\DataTes\TesLiterasiDigital\TesBerlangsung;
 
 use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,7 +15,12 @@ class Index extends Component
 
     public function render()
     {
-        $data = Event::withCount(['peserta', 'ujianLiterasiDigital'])
+        $data = Event::withCount([
+            'peserta',
+            'ujianLiterasiDigital as ujian_literasi_digital_count' => function ($query) {
+                $query->select(DB::raw('count(distinct ujian_literasi_digital.peserta_id)'));
+            },
+        ])
             ->whereIsFinished('false')
             ->where('metode_tes_id', 3)
             ->orderByDesc('id')

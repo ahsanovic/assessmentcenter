@@ -56,23 +56,43 @@ class ShowPeserta extends Component
 
     public function render()
     {
-        $data = Peserta::join('ujian_literasi_digital', 'ujian_literasi_digital.peserta_id', '=', 'peserta.id')
+        $ujianTerbaru = UjianLiterasiDigital::query()
+            ->selectRaw('MAX(id) as id')
+            ->where('event_id', $this->id_event)
+            ->groupBy('peserta_id');
+
+        $data = Peserta::query()
+            ->join('ujian_literasi_digital', 'ujian_literasi_digital.peserta_id', '=', 'peserta.id')
+            ->whereIn('ujian_literasi_digital.id', $ujianTerbaru)
             ->where('ujian_literasi_digital.event_id', $this->id_event)
+            ->where('peserta.event_id', $this->id_event)
             ->select(
-                'peserta.*',
+                'peserta.id',
+                'peserta.jenis_peserta_id',
+                'peserta.nama',
+                'peserta.gelar_depan',
+                'peserta.gelar_belakang',
+                'peserta.nip',
+                'peserta.nik',
+                'peserta.gol_pangkat_id',
+                'peserta.jabatan',
+                'peserta.unit_kerja',
+                'peserta.instansi',
                 'ujian_literasi_digital.is_finished',
                 'ujian_literasi_digital.id as ujian_literasi_digital_id',
-                'ujian_literasi_digital.created_at as mulai_tes'
+                'ujian_literasi_digital.created_at as mulai_tes',
             )
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('nama', 'like', '%'.$this->search.'%')
-                        ->orWhere('nip', 'like', '%'.$this->search.'%')
-                        ->orWhere('nik', 'like', '%'.$this->search.'%')
-                        ->orWhere('jabatan', 'like', '%'.$this->search.'%')
-                        ->orWhere('instansi', 'like', '%'.$this->search.'%');
+                $term = '%'.$this->search.'%';
+                $query->where(function ($q) use ($term) {
+                    $q->where('peserta.nama', 'like', $term)
+                        ->orWhere('peserta.nip', 'like', $term)
+                        ->orWhere('peserta.nik', 'like', $term)
+                        ->orWhere('peserta.jabatan', 'like', $term)
+                        ->orWhere('peserta.instansi', 'like', $term);
                 });
             })
+            ->orderBy('peserta.id')
             ->paginate(10);
 
         return view('livewire.admin.data-tes.tes-literasi-digital.tes-berlangsung.show-peserta', [

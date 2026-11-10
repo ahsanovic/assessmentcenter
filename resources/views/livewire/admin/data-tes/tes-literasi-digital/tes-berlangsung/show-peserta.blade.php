@@ -43,7 +43,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($data as $index => $item)
-                                    <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
+                                    <tr wire:key="ujian-literasi-{{ $item->ujian_literasi_digital_id }}" class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td>
                                             <span class="fw-medium">{{ $item->nama }}</span><br>
@@ -104,7 +104,7 @@
                                 @endforeach
 
                                 @if($data->count() === 0)
-                                    <tr>
+                                    <tr wire:key="ujian-literasi-kosong">
                                         <td colspan="7" class="text-center text-muted py-5 ac-empty-state">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
