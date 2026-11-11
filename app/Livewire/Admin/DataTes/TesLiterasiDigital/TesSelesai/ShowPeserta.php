@@ -7,6 +7,7 @@ use App\Models\LiterasiDigital\HasilLiterasiDigital;
 use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Peserta;
 use App\Services\LiterasiDigital\LiterasiDigitalUjianService;
+use App\Services\Statistik\EventSkorRingkasanService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -115,8 +116,12 @@ class ShowPeserta extends Component
             ->orderBy('peserta.id')
             ->paginate(10);
 
+        $ringkasanSkor = app(EventSkorRingkasanService::class)
+            ->ringkasanLiterasiDigital($this->event, $this->search, $this->tanggal_tes);
+
         return view('livewire.admin.data-tes.tes-literasi-digital.tes-selesai.show-peserta', [
             'data' => $data,
+            'ringkasanSkor' => $ringkasanSkor,
         ]);
     }
 

@@ -3,6 +3,8 @@
 namespace App\Livewire\Admin\DataTes\TesPotensi\TesSelesai;
 
 use App\Models\Event;
+use App\Services\Statistik\EventSkorRingkasanService;
+use App\Services\Statistik\PotensiPesertaSelesaiQuery;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -14,12 +16,15 @@ class ShowPeserta extends Component
     use WithPagination;
 
     public $event;
+
     public $id_event;
+
     public $selected_id;
+
     public $tanggal_tes;
 
     #[Url(as: 'q')]
-    public ?string $search =  '';
+    public ?string $search = '';
 
     public function updatedSearch()
     {
@@ -57,51 +62,26 @@ class ShowPeserta extends Component
         );
         $waktuSelesaiSubquery = 'GREATEST('.implode(', ', $waktuSelesaiParts).') as waktu_selesai';
 
-        $data = $this->event->peserta()
+        $data = PotensiPesertaSelesaiQuery::forEvent($this->event, $this->search, $this->tanggal_tes)
+            ->leftJoin('nilai_jpm', function ($join) use ($eventId) {
+                $join->on('nilai_jpm.peserta_id', '=', 'peserta.id')
+                    ->where('nilai_jpm.event_id', '=', $eventId);
+            })
             ->select('peserta.*')
+            ->addSelect([
+                'nilai_jpm.jpm as skor_pjf',
+                'nilai_jpm.kategori as kategori_pjf',
+            ])
             ->selectRaw('peserta.test_started_at as waktu_mulai')
             ->selectRaw($waktuSelesaiSubquery)
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('nik', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('unit_kerja', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->when($this->tanggal_tes, function ($query) {
-                $tanggal_tes = date('Y-m-d', strtotime($this->tanggal_tes));
-                // $query->whereHas('ujianInterpersonal', function ($query) use ($tanggal_tes) {
-                //     $query->whereDate('created_at', $tanggal_tes);
-                // });
-                $query->whereDate('test_started_at', $tanggal_tes);
-            })
-            ->whereHas('ujianInterpersonal', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKesadaranDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianBerpikirKritis', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianProblemSolving', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianPengembanganDiri', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianKecerdasanEmosi', function ($query) {
-                $query->where('is_finished', 'true');
-            })
-            ->whereHas('ujianMotivasiKomitmen', function ($query) {
-                $query->where('is_finished', 'true');
-            })
             ->paginate(10);
 
+        $ringkasanSkor = app(EventSkorRingkasanService::class)
+            ->ringkasanPotensi($this->event, $this->search, $this->tanggal_tes);
+
         return view('livewire.admin.data-tes.tes-potensi.tes-selesai.show-peserta', [
-            'data' => $data
+            'data' => $data,
+            'ringkasanSkor' => $ringkasanSkor,
         ]);
     }
 }

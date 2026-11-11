@@ -687,3 +687,62 @@
         font-size: 0.82rem;
     }
 }
+
+/* ── Ringkasan skor PJF/JPM (halaman hasil tes) ───────────── */
+.ac-monitoring-theme .ac-skor-ringkasan__card {
+    border-radius: var(--ac-radius, 12px);
+    background: var(--ac-surface, #fff);
+    box-shadow: var(--ac-shadow, 0 1px 3px rgba(15, 23, 42, 0.06));
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__icon {
+    width: 40px;
+    height: 40px;
+    background: var(--ac-primary-light, #eff6ff);
+    color: var(--ac-primary, #3b82f6);
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__kpi {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--ac-border, #e2e8f0);
+    border-radius: var(--ac-radius-sm, 8px);
+    background: var(--bs-light-bg-subtle, #f8fafc);
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__kpi-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ac-text-muted, #64748b);
+    margin-bottom: 0.25rem;
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__kpi-value {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ac-text, #1e293b);
+    line-height: 1.2;
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__kpi-hint {
+    font-size: 0.7rem;
+    color: var(--ac-text-muted, #64748b);
+    margin-top: 0.2rem;
+    max-width: 100%;
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__bar-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ac-border, #e2e8f0);
+    overflow: hidden;
+}
+
+.ac-monitoring-theme .ac-skor-ringkasan__bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}

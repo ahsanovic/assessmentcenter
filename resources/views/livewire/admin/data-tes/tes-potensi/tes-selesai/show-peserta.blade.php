@@ -41,6 +41,7 @@
                                 </div>
                             </div>
                     </x-monitoring.filter-panel>
+                    <x-monitoring.skor-ringkasan-panel :ringkasan="$ringkasanSkor" />
                     <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
                         <x-btn-download 
                             :route="'admin.tes-selesai.download-rekap'"
@@ -76,6 +77,8 @@
                                     <th>Jabatan</th>
                                     <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
                                     <th>Mulai / Selesai Tes</th>
+                                    <th>PJF</th>
+                                    <th>Kategori</th>
                                     <th>Report</th>
                                 </tr>
                             </thead>
@@ -118,6 +121,22 @@
                                                 -
                                             @endif
                                         </td>
+                                        <td class="text-nowrap fw-semibold">
+                                            @if ($item->skor_pjf !== null)
+                                                {{ number_format((float) $item->skor_pjf, 2, ',', '.') }}%
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if (filled($item->kategori_pjf))
+                                                <span class="badge border {{ \App\Support\KategoriCapaian::badgeClass($item->kategori_pjf) }}">
+                                                    {{ $item->kategori_pjf }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             <x-table.btn-link
                                                 :route="'admin.tes-selesai.show-report'"
@@ -149,7 +168,7 @@
 
                                 @if($data->count() === 0)
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted py-5 ac-empty-state">
+                                        <td colspan="8" class="text-center text-muted py-5 ac-empty-state">
                                             <i class="link-icon" data-feather="inbox" style="font-size: 24px; opacity: 0.7;"></i>
                                             <div class="mt-2 fw-semibold">Tidak ada data peserta...</div>
                                         </td>

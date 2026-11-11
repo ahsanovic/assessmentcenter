@@ -41,6 +41,7 @@
                                 </div>
                             </div>
                     </x-monitoring.filter-panel>
+                    <x-monitoring.skor-ringkasan-panel :ringkasan="$ringkasanSkor" />
                     <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
                         <x-btn-download
                             :route="'admin.tes-selesai.literasi-digital.download-all-laporan'"

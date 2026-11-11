@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Peserta;
 use App\Models\Pspk\HasilPspk;
 use App\Models\Pspk\UjianPspk;
+use App\Services\Statistik\EventSkorRingkasanService;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -18,12 +19,15 @@ class ShowPeserta extends Component
     use WithPagination;
 
     public $event;
+
     public $id_event;
+
     public $selected_id;
+
     public $tanggal_tes;
 
     #[Url(as: 'q')]
-    public ?string $search =  '';
+    public ?string $search = '';
 
     public function updatedSearch()
     {
@@ -53,6 +57,8 @@ class ShowPeserta extends Component
             ->select(
                 'peserta.*',
                 'hasil_pspk.id as hasil_pspk_id',
+                'hasil_pspk.jpm',
+                'hasil_pspk.kategori',
                 'hasil_pspk.created_at as waktu_selesai',
                 'ujian_pspk.created_at as waktu_mulai',
                 'ujian_pspk.id as ujian_pspk_id',
@@ -60,11 +66,11 @@ class ShowPeserta extends Component
             )
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('nama', 'like', '%' . $this->search . '%')
-                        ->orWhere('nip', 'like', '%' . $this->search . '%')
-                        ->orWhere('nik', 'like', '%' . $this->search . '%')
-                        ->orWhere('jabatan', 'like', '%' . $this->search . '%')
-                        ->orWhere('instansi', 'like', '%' . $this->search . '%');
+                    $q->where('nama', 'like', '%'.$this->search.'%')
+                        ->orWhere('nip', 'like', '%'.$this->search.'%')
+                        ->orWhere('nik', 'like', '%'.$this->search.'%')
+                        ->orWhere('jabatan', 'like', '%'.$this->search.'%')
+                        ->orWhere('instansi', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->tanggal_tes, function ($query) {
@@ -73,8 +79,12 @@ class ShowPeserta extends Component
             })
             ->paginate(10);
 
+        $ringkasanSkor = app(EventSkorRingkasanService::class)
+            ->ringkasanPspk($this->event, $this->search, $this->tanggal_tes);
+
         return view('livewire.admin.data-tes.tes-pspk.tes-selesai.show-peserta', [
             'data' => $data,
+            'ringkasanSkor' => $ringkasanSkor,
         ]);
     }
 
@@ -105,7 +115,7 @@ class ShowPeserta extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'Berhasil menyetel ' . $updated . ' ujian ke belum selesai',
+                'message' => 'Berhasil menyetel '.$updated.' ujian ke belum selesai',
             ]);
         } catch (\Throwable $th) {
             $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyetel ujian secara massal']);
@@ -119,7 +129,7 @@ class ShowPeserta extends Component
     {
         try {
             $ujian = UjianPspk::find($this->selected_id);
-            if (!$ujian) {
+            if (! $ujian) {
                 $this->dispatch('toast', ['type' => 'error', 'message' => 'Data ujian tidak ditemukan']);
 
                 return;

@@ -41,6 +41,7 @@
                                 </div>
                             </div>
                     </x-monitoring.filter-panel>
+                    <x-monitoring.skor-ringkasan-panel :ringkasan="$ringkasanSkor" />
                     <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
                         <x-btn-download 
                             :route="'admin.tes-selesai.pspk.download-rekap'"
@@ -83,6 +84,8 @@
                                     <th>Jabatan</th>
                                     <th>Instansi / Unit Kerja</th>
                                     <th>Mulai / Selesai Tes</th>
+                                    <th>JPM</th>
+                                    <th>Kategori</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -108,6 +111,22 @@
                                         <td class="text-wrap">
                                             {{ \Carbon\Carbon::parse($item->waktu_mulai)->translatedFormat('d F Y / H:i:s') }} <br/>
                                             {{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}
+                                        </td>
+                                        <td class="text-nowrap fw-semibold">
+                                            @if ($item->jpm !== null)
+                                                {{ number_format((float) $item->jpm, 2, ',', '.') }}%
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if (filled($item->kategori))
+                                                <span class="badge border {{ \App\Support\KategoriCapaian::badgeClass($item->kategori) }}">
+                                                    {{ $item->kategori }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
                                         </td>
                                         <td>
                                             @if ($item->is_finished == 'true')

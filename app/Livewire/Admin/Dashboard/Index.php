@@ -8,9 +8,10 @@ use App\Models\LogPelanggaran;
 use App\Models\NilaiJpm;
 use App\Models\Peserta;
 use App\Models\RefMetodeTes;
+use App\Support\KategoriCapaian;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -149,25 +150,7 @@ class Index extends Component
 
     protected function normalizeKategoriCapaianTier(?string $kategori): ?string
     {
-        if ($kategori === null || trim($kategori) === '') {
-            return null;
-        }
-
-        $k = strtolower(trim($kategori));
-
-        if (str_contains($k, 'kurang') || $k === 'rendah') {
-            return 'Kurang Optimal';
-        }
-
-        if (str_contains($k, 'cukup') || $k === 'menengah') {
-            return 'Cukup Optimal';
-        }
-
-        if (str_contains($k, 'optimal') || $k === 'tinggi') {
-            return 'Optimal';
-        }
-
-        return null;
+        return KategoriCapaian::normalizeTier($kategori);
     }
 
     /**
@@ -175,11 +158,7 @@ class Index extends Component
      */
     protected function emptyKategoriCapaianBuckets(): array
     {
-        return [
-            'Optimal' => 0,
-            'Cukup Optimal' => 0,
-            'Kurang Optimal' => 0,
-        ];
+        return KategoriCapaian::emptyTierBuckets();
     }
 
     public function updatePotensiPspkCharts(): void
