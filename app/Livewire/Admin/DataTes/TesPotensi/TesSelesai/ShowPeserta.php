@@ -41,10 +41,25 @@ class ShowPeserta extends Component
 
     public function render()
     {
+        $eventId = (int) $this->id_event;
+        $waktuSelesaiSubquery = <<<SQL
+(
+    SELECT MAX(created_at) FROM (
+        SELECT created_at FROM hasil_interpersonal WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_kesadaran_diri WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_berpikir_kritis WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_problem_solving WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_pengembangan_diri WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_kecerdasan_emosi WHERE peserta_id = peserta.id AND event_id = {$eventId}
+        UNION ALL SELECT created_at FROM hasil_motivasi_komitmen WHERE peserta_id = peserta.id AND event_id = {$eventId}
+    ) AS waktu_selesai_tes
+) as waktu_selesai
+SQL;
+
         $data = $this->event->peserta()
-            ->with(['ujianInterpersonal' => function ($query) {
-                $query->select('id', 'peserta_id', 'created_at');
-            }])
+            ->select('peserta.*')
+            ->selectRaw('peserta.test_started_at as waktu_mulai')
+            ->selectRaw($waktuSelesaiSubquery)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nama', 'like', '%' . $this->search . '%')

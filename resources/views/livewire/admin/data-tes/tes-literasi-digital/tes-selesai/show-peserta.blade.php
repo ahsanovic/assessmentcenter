@@ -72,6 +72,7 @@
                                     <th>Nama Peserta</th>
                                     <th>Jabatan</th>
                                     <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
+                                    <th>Mulai / Selesai Tes</th>
                                     <th class="text-center">Budaya</th>
                                     <th class="text-center">Cakap</th>
                                     <th class="text-center">Keamanan</th>
@@ -103,13 +104,15 @@
                                             @endif
                                             </span>
                                         </td>
-                                        <td class="text-wrap">
-                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
-                                        </td>
+                                        <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">
                                             <span class="fw-medium text-dark">{{ $item->instansi }}</span>
                                             <br>
                                             <span class="text-muted small">{{ $item->unit_kerja }}</span>
+                                        </td>
+                                        <td class="text-wrap">
+                                            {{ \Carbon\Carbon::parse($item->waktu_mulai)->translatedFormat('d F Y / H:i:s') }} <br/>
+                                            {{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}
                                         </td>
                                         <td class="text-center">
                                             <x-literasi-digital.pilar-skor :skor="$item->skor_budaya" :level="$item->level_budaya" />

@@ -74,7 +74,7 @@
                                     <th>Nama Peserta</th>
                                     <th>Jabatan</th>
                                     <th>Instansi<br><small class="text-muted">Unit Kerja</small></th>
-                                    <th>Tanggal Tes</th>
+                                    <th>Mulai / Selesai Tes</th>
                                     <th>Report</th>
                                 </tr>
                             </thead>
@@ -99,20 +99,23 @@
                                             @endif
                                             </span>
                                         </td>
-                                        <td class="text-wrap">
-                                            <span class="badge bg-info-subtle text-dark fw-normal">{{ $item->jabatan }}</span>
-                                        </td>
+                                        <td class="text-wrap">{{ $item->jabatan }}</td>
                                         <td class="text-wrap">
                                             <span class="fw-medium text-dark">{{ $item->instansi }}</span>
                                             <br>
                                             <span class="text-muted small">{{ $item->unit_kerja }}</span>
                                         </td>
-                                        <td>
-                                            <span class="badge bg-light text-dark border-1 border">
-                                                {{ \Carbon\Carbon::parse($item->test_started_at)->translatedFormat('d F Y') }}
-                                                <span class="text-muted px-1">/</span>
-                                                {{ \Carbon\Carbon::parse($item->test_started_at)->translatedFormat('H:i:s') }}
-                                            </span>
+                                        <td class="text-wrap">
+                                            @if ($item->waktu_mulai)
+                                                {{ \Carbon\Carbon::parse($item->waktu_mulai)->translatedFormat('d F Y / H:i:s') }} <br/>
+                                            @else
+                                                - <br/>
+                                            @endif
+                                            @if ($item->waktu_selesai)
+                                                {{ \Carbon\Carbon::parse($item->waktu_selesai)->translatedFormat('d F Y / H:i:s') }}
+                                            @else
+                                                -
+                                            @endif
                                         </td>
                                         <td>
                                             <x-table.btn-link
