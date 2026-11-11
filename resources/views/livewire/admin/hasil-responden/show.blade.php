@@ -42,7 +42,7 @@
                                 @foreach ($data as $index => $item)
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
-                                        <td>{{ $item->nama }}</td>
+                                        <td>{{ $item->peserta->nama ?? 'Peserta tidak ditemukan' }}</td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1" data-bs-toggle="modal" data-bs-target="#modalJawaban{{ $item->id }}">
                                                 Lihat Jawaban
@@ -65,15 +65,14 @@
                         {{-- Modal Jawaban Responden --}}
                         @foreach ($data as $item)
                             @php
-                                $jawaban = $item->jawabanResponden->first();
-                                $kuesioner_id = explode(',', $jawaban->kuesioner_id ?? '');
-                                $skor = explode(',', $jawaban->skor ?? '');
+                                $kuesioner_id = explode(',', $item->kuesioner_id ?? '');
+                                $skor = explode(',', $item->skor ?? '');
                             @endphp
                             <div class="modal fade" id="modalJawaban{{ $item->id }}" tabindex="-1" aria-labelledby="modalJawabanLabel{{ $item->id }}" aria-hidden="true" wire:ignore.self>
                                 <div class="modal-dialog modal-lg modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalJawabanLabel{{ $item->id }}">Jawaban: {{ $item->nama }}</h5>
+                                            <h5 class="modal-title" id="modalJawabanLabel{{ $item->id }}">Jawaban: {{ $item->peserta->nama ?? 'Peserta tidak ditemukan' }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -109,11 +108,11 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-                                            @if (!empty($jawaban->jawaban_esai))
+                                            @if (!empty($item->jawaban_esai))
                                                 <div class="card border-warning">
                                                     <div class="card-body">
                                                         <p class="mb-2"><strong>Kritik & Saran:</strong></p>
-                                                        <p class="text-muted mb-0">{{ $jawaban->jawaban_esai }}</p>
+                                                        <p class="text-muted mb-0">{{ $item->jawaban_esai }}</p>
                                                     </div>
                                                 </div>
                                             @endif

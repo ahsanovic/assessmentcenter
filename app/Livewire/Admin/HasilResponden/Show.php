@@ -3,7 +3,9 @@
 namespace App\Livewire\Admin\HasilResponden;
 
 use App\Models\Event;
+use App\Models\JawabanResponden;
 use App\Models\Kuesioner;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -37,7 +39,7 @@ class Show extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with('peserta')->findOrFail($this->id_event);
+        $this->event = Event::findOrFail($this->id_event);
 
         if ((int) $this->event->metode_tes_id !== Event::METODE_KUESIONER_RESPONDEN) {
             abort(404);
@@ -48,14 +50,7 @@ class Show extends Component
 
     public function downloadExcel()
     {
-        $peserta = $this->event->peserta()
-            ->whereHas('jawabanResponden', function ($query) {
-                $query->where('event_id', $this->id_event);
-            })
-            ->with(['jawabanResponden' => function ($query) {
-                $query->where('event_id', $this->id_event)->latest('id');
-            }])
-            ->get();
+        $peserta = $this->jawabanRespondenQuery()->get();
         $skorLabel = [
             1 => 'Sangat Tidak Setuju',
             2 => 'Tidak Setuju',
@@ -68,9 +63,8 @@ class Show extends Component
         $no = 1;
 
         foreach ($peserta as $item) {
-            $jawaban = $item->jawabanResponden->first();
-            $kuesioner_ids = explode(',', $jawaban->kuesioner_id ?? '');
-            $skors = explode(',', $jawaban->skor ?? '');
+            $kuesioner_ids = explode(',', $item->kuesioner_id ?? '');
+            $skors = explode(',', $item->skor ?? '');
 
             $jawabanText = [];
             foreach ($kuesioner_ids as $i => $id) {
@@ -82,9 +76,9 @@ class Show extends Component
 
             $exportData[] = [
                 'No' => $no++,
-                'Nama Peserta' => $item->nama,
+                'Nama Peserta' => $item->peserta->nama ?? '-',
                 'Jawaban Responden' => implode("\n", $jawabanText),
-                'Kritik & Saran' => $jawaban->jawaban_esai ?? '-',
+                'Kritik & Saran' => $item->jawaban_esai ?? '-',
             ];
         }
 
@@ -95,23 +89,29 @@ class Show extends Component
 
     public function render()
     {
-        $data = $this->event->peserta()
-            ->whereHas('jawabanResponden', function ($query) {
-                $query->where('event_id', $this->id_event);
-            })
-            ->with(['jawabanResponden' => function ($query) {
-                $query->where('event_id', $this->id_event)->latest('id');
-            }])
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('nama', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->paginate(10);
+        $data = $this->jawabanRespondenQuery()->paginate(10);
 
         return view('livewire.admin.hasil-responden.show', [
             'data' => $data,
             'pertanyaan' => $this->pertanyaan
         ]);
+    }
+
+    /**
+     * Daftar diisi dari jawaban event ini, bukan dari peserta.event_id.
+     * Saat peserta login lewat event lain dalam grup yang sama, jawaban tetap
+     * merekam event tes yang dikerjakan, tetapi peserta_id bisa menunjuk baris partisipasi lain.
+     */
+    private function jawabanRespondenQuery(): Builder
+    {
+        return JawabanResponden::query()
+            ->where('event_id', $this->id_event)
+            ->with('peserta')
+            ->when($this->search, function (Builder $query) {
+                $query->whereHas('peserta', function (Builder $peserta) {
+                    $peserta->where('nama', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->orderBy('id');
     }
 }

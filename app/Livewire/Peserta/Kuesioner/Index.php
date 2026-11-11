@@ -19,9 +19,7 @@ class Index extends Component
     public function mount()
     {
         $this->kuesioner = Kuesioner::where('is_active', 't')->get();
-        $jawaban = JawabanResponden::where('event_id', activeEventId())
-            ->where('peserta_id', Auth::user()->id)
-            ->first();
+        $jawaban = $this->jawabanRespondenPeserta();
 
         if ($jawaban) {
             $kuesioner_id = explode(',', $jawaban->kuesioner_id);
@@ -96,17 +94,25 @@ class Index extends Component
                 }
             }
 
-            JawabanResponden::updateOrCreate(
-                [
-                    'event_id' => activeEventId(),
-                    'peserta_id' => Auth::user()->id,
-                ],
-                [
-                    'kuesioner_id' => implode(',', $kuesioner_id),
-                    'skor' => implode(',', $skor),
-                    'jawaban_esai' => $jawaban_esai,
-                ]
-            );
+            $payload = [
+                'event_id' => activeEventId(),
+                'peserta_id' => activePesertaId(),
+                'kuesioner_id' => implode(',', $kuesioner_id),
+                'skor' => implode(',', $skor),
+                'jawaban_esai' => $jawaban_esai,
+            ];
+
+            $jawaban = $this->jawabanRespondenPeserta();
+            if ($jawaban) {
+                $jawaban->update($payload);
+                JawabanResponden::query()
+                    ->where('event_id', activeEventId())
+                    ->whereIn('peserta_id', $this->idPesertaTerkait())
+                    ->where('id', '!=', $jawaban->id)
+                    ->delete();
+            } else {
+                JawabanResponden::create($payload);
+            }
 
             session()->flash('toast', [
                 'type' => 'success',
@@ -120,5 +126,37 @@ class Index extends Component
                 'message' => 'Gagal mengirimkan kuesioner'
             ]);
         }
+    }
+
+    /**
+     * Jawaban lama bisa tersimpan pada peserta_id akun login (event lain dalam grup),
+     * sementara pengerjaan mengikuti peserta event yang sedang aktif.
+     */
+    private function jawabanRespondenPeserta(): ?JawabanResponden
+    {
+        return JawabanResponden::query()
+            ->where('event_id', activeEventId())
+            ->whereIn('peserta_id', $this->idPesertaTerkait())
+            ->latest('id')
+            ->first();
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function idPesertaTerkait(): array
+    {
+        $ids = pesertaParticipationService()
+            ->getCurrentGroupParticipations()
+            ->pluck('id');
+
+        $authId = Auth::guard('peserta')->id();
+        if ($authId) {
+            $ids->push($authId);
+        }
+
+        $ids->push(activePesertaId());
+
+        return $ids->map(fn ($id) => (int) $id)->unique()->values()->all();
     }
 }

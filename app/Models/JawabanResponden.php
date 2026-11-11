@@ -14,4 +14,9 @@ class JawabanResponden extends Model
         'kuesioner_id',
         'jawaban_esai'
     ];
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class, 'peserta_id', 'id');
+    }
 }
