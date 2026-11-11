@@ -42,19 +42,20 @@ class ShowPeserta extends Component
     public function render()
     {
         $eventId = (int) $this->id_event;
-        $waktuSelesaiSubquery = <<<SQL
-(
-    SELECT MAX(created_at) FROM (
-        SELECT created_at FROM hasil_interpersonal WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_kesadaran_diri WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_berpikir_kritis WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_problem_solving WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_pengembangan_diri WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_kecerdasan_emosi WHERE peserta_id = peserta.id AND event_id = {$eventId}
-        UNION ALL SELECT created_at FROM hasil_motivasi_komitmen WHERE peserta_id = peserta.id AND event_id = {$eventId}
-    ) AS waktu_selesai_tes
-) as waktu_selesai
-SQL;
+        $hasilTabel = [
+            'hasil_interpersonal',
+            'hasil_kesadaran_diri',
+            'hasil_berpikir_kritis',
+            'hasil_problem_solving',
+            'hasil_pengembangan_diri',
+            'hasil_kecerdasan_emosi',
+            'hasil_motivasi_komitmen',
+        ];
+        $waktuSelesaiParts = array_map(
+            fn (string $tabel) => "COALESCE((SELECT MAX(created_at) FROM {$tabel} WHERE peserta_id = peserta.id AND event_id = {$eventId}), '1970-01-01 00:00:00')",
+            $hasilTabel
+        );
+        $waktuSelesaiSubquery = 'GREATEST('.implode(', ', $waktuSelesaiParts).') as waktu_selesai';
 
         $data = $this->event->peserta()
             ->select('peserta.*')
