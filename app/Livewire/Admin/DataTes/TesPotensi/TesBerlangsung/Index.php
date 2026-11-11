@@ -13,15 +13,18 @@ class Index extends Component
     use WithPagination;
 
     public $jabatan_diuji;
+
     public $tgl_mulai;
+
     public $selected_id;
 
     public function render()
     {
         $data = Event::withCount(['peserta', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
-            ->with(['peserta', 'eventGroup', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
+            ->withPesertaMulaiUjian('potensi')
+            ->with('eventGroup')
             ->whereIsFinished('false')
-            ->whereIn('metode_tes_id', [1,2])
+            ->whereIn('metode_tes_id', [1, 2])
             ->orderByDesc('id')
             ->paginate(10);
 

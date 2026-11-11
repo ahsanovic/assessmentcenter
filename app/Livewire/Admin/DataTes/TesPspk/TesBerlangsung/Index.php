@@ -19,7 +19,8 @@ class Index extends Component
     public function render()
     {
         $data = Event::withCount(['peserta', 'ujianPspk'])
-            ->with(['peserta', 'eventGroup', 'ujianPspk'])
+            ->withPesertaMulaiUjian('pspk')
+            ->with('eventGroup')
             ->whereIsFinished('false')
             ->whereIn('metode_tes_id', [5, 6, 7, 8])
             ->orderByDesc('id')

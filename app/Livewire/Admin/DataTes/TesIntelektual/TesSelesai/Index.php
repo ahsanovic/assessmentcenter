@@ -15,11 +15,13 @@ class Index extends Component
     use WithPagination;
 
     public $jabatan_diuji;
+
     public $tgl_mulai;
+
     public $selected_id;
 
     #[Url(as: 'q')]
-    public ?string $search =  '';
+    public ?string $search = '';
 
     public function updatedSearch()
     {
@@ -65,8 +67,9 @@ class Index extends Component
                 });
             },
         ])
+            ->withPesertaMulaiUjian('intelektual')
             ->with('eventGroup')
-            ->whereIn('metode_tes_id', [1,2])
+            ->whereIn('metode_tes_id', [1, 2])
             // ->with(['peserta', 'hasilIntelektual'])
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%'.$this->search.'%');

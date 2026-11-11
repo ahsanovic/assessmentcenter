@@ -30,7 +30,9 @@ use App\Models\ProblemSolving\HasilProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use App\Models\Pspk\HasilPspk;
 use App\Models\Pspk\UjianPspk;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class Event extends Model
 {
@@ -87,6 +89,63 @@ class Event extends Model
     public function peserta()
     {
         return $this->hasMany(Peserta::class, 'event_id', 'id')->where('is_active', 'true');
+    }
+
+    /**
+     * Peserta aktif yang sudah punya baris ujian pada event yang sama.
+     * Satu peserta tetap dihitung satu kali walaupun mengerjakan beberapa subtes.
+     */
+    public function scopeWithPesertaMulaiUjian(Builder $query, string $jenis): Builder
+    {
+        return $query->withCount([
+            'peserta as peserta_mulai_ujian_count' => function (Builder $peserta) use ($jenis) {
+                $relasi = self::relasiPesertaMulaiUjian($jenis);
+
+                $peserta->where(function (Builder $mulai) use ($relasi) {
+                    foreach ($relasi as $index => [$nama, $tabel]) {
+                        $syarat = function (Builder $ujian) use ($tabel) {
+                            $ujian->whereColumn($tabel.'.event_id', 'peserta.event_id');
+                        };
+
+                        if ($index === 0) {
+                            $mulai->whereHas($nama, $syarat);
+                        } else {
+                            $mulai->orWhereHas($nama, $syarat);
+                        }
+                    }
+                });
+            },
+        ]);
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: string}>
+     */
+    private static function relasiPesertaMulaiUjian(string $jenis): array
+    {
+        return match ($jenis) {
+            'potensi' => [
+                ['ujianInterpersonal', 'ujian_interpersonal'],
+                ['ujianKesadaranDiri', 'ujian_kesadaran_diri'],
+                ['ujianBerpikirKritis', 'ujian_berpikir_kritis'],
+                ['ujianProblemSolving', 'ujian_problem_solving'],
+                ['ujianKecerdasanEmosi', 'ujian_kecerdasan_emosi'],
+                ['ujianPengembanganDiri', 'ujian_pengembangan_diri'],
+                ['ujianMotivasiKomitmen', 'ujian_motivasi_komitmen'],
+            ],
+            'literasi-digital' => [
+                ['ujianLiterasiDigital', 'ujian_literasi_digital'],
+            ],
+            'pspk' => [
+                ['ujianPspk', 'ujian_pspk'],
+            ],
+            'intelektual' => [
+                ['ujianIntelektualSubTes1', 'ujian_intelektual_subtes_1'],
+                ['ujianIntelektualSubTes2', 'ujian_intelektual_subtes_2'],
+                ['ujianIntelektualSubTes3', 'ujian_intelektual_subtes_3'],
+            ],
+            default => throw new InvalidArgumentException('Jenis tes tidak dikenal: '.$jenis),
+        };
     }
 
     public function jabatanDiuji()

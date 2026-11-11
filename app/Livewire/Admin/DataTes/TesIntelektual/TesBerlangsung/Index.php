@@ -13,7 +13,9 @@ class Index extends Component
     use WithPagination;
 
     public $jabatan_diuji;
+
     public $tgl_mulai;
+
     public $selected_id;
 
     public function render()
@@ -42,9 +44,10 @@ class Index extends Component
                 });
             },
         ])
-            ->with(['peserta', 'eventGroup', 'ujianIntelektualSubTes1', 'ujianIntelektualSubTes2', 'ujianIntelektualSubTes3'])
+            ->withPesertaMulaiUjian('intelektual')
+            ->with('eventGroup')
             ->whereIsFinished('false')
-            ->whereIn('metode_tes_id', [1,2])
+            ->whereIn('metode_tes_id', [1, 2])
             ->orderByDesc('id')
             ->paginate(10);
 

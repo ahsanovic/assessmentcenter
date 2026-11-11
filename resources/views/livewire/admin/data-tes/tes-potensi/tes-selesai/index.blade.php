@@ -59,7 +59,7 @@
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
                                     <th class="ac-col-event-name">Nama Event</th>
-                                    <th class="text-wrap">Jumlah Peserta</th>
+                                    <th class="text-wrap">Peserta Terdaftar/Mulai Ujian</th>
                                     <th>Interpersonal</th>
                                     <th class="text-wrap">Kesadaran Diri</th>
                                     <th class="text-wrap">Berpikir Kritis dan Strategis</th>
@@ -75,7 +75,7 @@
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
                                         <td class="text-wrap ac-col-event-name"><x-monitoring.event-name-cell :nama="$item->nama_event" :nama-grup="$item->eventGroup?->nama" /></td>
-                                        <td>{{ $item->jumlah_peserta }}</td>
+                                        <td><x-monitoring.peserta-terdaftar-mulai :terdaftar="$item->peserta_count" :mulai="$item->peserta_mulai_ujian_count" /></td>
                                         <td>
                                             <a class="btn btn-xs btn-warning {{ $item->hasil_interpersonal_count == 0 ? 'disabled' : '' }}" wire:navigate
                                                 href="{{ route('admin.tes-selesai.show-peserta-interpersonal', ['idEvent' => $item->id]) }}">
