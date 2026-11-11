@@ -8,7 +8,12 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
+                    <div class="mb-3 min-w-0">
+                        <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
+                        @if (filled($event->eventGroup?->nama))
+                            <x-monitoring.event-group-hint :nama="$event->eventGroup->nama" :compact="true" class="mt-2" />
+                        @endif
+                    </div>
                     <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-4">

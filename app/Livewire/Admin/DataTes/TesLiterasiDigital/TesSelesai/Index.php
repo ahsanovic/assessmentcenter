@@ -46,6 +46,7 @@ class Index extends Component
                 $query->select(DB::raw('count(distinct hasil_literasi_digital.peserta_id)'));
             },
         ])
+            ->with('eventGroup')
             ->where('metode_tes_id', 3)
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%'.$this->search.'%');

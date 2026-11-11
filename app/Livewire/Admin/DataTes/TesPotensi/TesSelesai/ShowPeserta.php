@@ -36,7 +36,7 @@ class ShowPeserta extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with('peserta')->findOrFail($this->id_event);
+        $this->event = Event::with(['peserta', 'eventGroup'])->findOrFail($this->id_event);
     }
 
     public function render()

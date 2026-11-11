@@ -42,7 +42,7 @@ class Index extends Component
                 });
             },
         ])
-            ->with(['peserta', 'ujianIntelektualSubTes1', 'ujianIntelektualSubTes2', 'ujianIntelektualSubTes3'])
+            ->with(['peserta', 'eventGroup', 'ujianIntelektualSubTes1', 'ujianIntelektualSubTes2', 'ujianIntelektualSubTes3'])
             ->whereIsFinished('false')
             ->whereIn('metode_tes_id', [1,2])
             ->orderByDesc('id')

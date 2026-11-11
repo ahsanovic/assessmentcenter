@@ -32,7 +32,7 @@ class ShowAssessor extends Component
 
     public function mount($idEvent)
     {
-        $this->event = Event::with('assessor')->findOrFail($idEvent);
+        $this->event = Event::with(['assessor', 'eventGroup'])->findOrFail($idEvent);
     }
 
     public function render()

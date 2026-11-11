@@ -54,7 +54,7 @@ class Index extends Component
                 $query->where('is_finished', 'true');
             });
         }])
-            ->with(['peserta', 'hasilPspk'])
+            ->with(['peserta', 'eventGroup', 'hasilPspk'])
             ->whereIn('metode_tes_id', [5, 6, 7, 8])
             ->when($this->level_pspk, function ($query) use ($levelToMetode) {
                 $metode = $levelToMetode[$this->level_pspk] ?? null;

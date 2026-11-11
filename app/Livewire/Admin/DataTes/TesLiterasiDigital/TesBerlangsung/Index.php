@@ -21,6 +21,7 @@ class Index extends Component
                 $query->select(DB::raw('count(distinct ujian_literasi_digital.peserta_id)'));
             },
         ])
+            ->with('eventGroup')
             ->whereIsFinished('false')
             ->where('metode_tes_id', 3)
             ->orderByDesc('id')

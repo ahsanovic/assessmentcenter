@@ -8,9 +8,14 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
-                        <div class="d-flex gap-2">
+                    <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                        <div class="min-w-0">
+                            <h6 class="card-title mb-0">Data Peserta Event: <span class="badge bg-warning text-dark"> {{ $event->nama_event }}</span></h6>
+                            @if (filled($event->eventGroup?->nama))
+                                <x-monitoring.event-group-hint :nama="$event->eventGroup->nama" :compact="true" class="mt-2" />
+                            @endif
+                        </div>
+                        <div class="d-flex gap-2 flex-shrink-0">
                             @if ($event->metode_tes_id == 1)
                             <button 
                                 wire:click="downloadPortofolio" 

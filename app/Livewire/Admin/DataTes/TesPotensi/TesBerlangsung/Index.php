@@ -19,7 +19,7 @@ class Index extends Component
     public function render()
     {
         $data = Event::withCount(['peserta', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
-            ->with(['peserta', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
+            ->with(['peserta', 'eventGroup', 'ujianInterpersonal', 'ujianKesadaranDiri', 'ujianBerpikirKritis', 'ujianProblemSolving', 'ujianPengembanganDiri', 'ujianKecerdasanEmosi', 'ujianMotivasiKomitmen'])
             ->whereIsFinished('false')
             ->whereIn('metode_tes_id', [1,2])
             ->orderByDesc('id')

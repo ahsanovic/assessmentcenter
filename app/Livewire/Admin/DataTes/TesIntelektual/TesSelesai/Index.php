@@ -65,6 +65,7 @@ class Index extends Component
                 });
             },
         ])
+            ->with('eventGroup')
             ->whereIn('metode_tes_id', [1,2])
             // ->with(['peserta', 'hasilIntelektual'])
             ->when($this->search, function ($query) {

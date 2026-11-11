@@ -74,7 +74,7 @@ class Index extends Component
             }
         ])
             ->whereIn('metode_tes_id', [1,2])
-            ->with(['peserta', 'hasilInterpersonal', 'hasilKesadaranDiri', 'hasilBerpikirKritis', 'hasilProblemSolving', 'hasilPengembanganDiri', 'hasilKecerdasanEmosi', 'hasilMotivasiKomitmen'])
+            ->with(['peserta', 'eventGroup', 'hasilInterpersonal', 'hasilKesadaranDiri', 'hasilBerpikirKritis', 'hasilProblemSolving', 'hasilPengembanganDiri', 'hasilKecerdasanEmosi', 'hasilMotivasiKomitmen'])
             ->when($this->search, function ($query) {
                 $query->where('nama_event', 'like', '%'.$this->search.'%');
             })

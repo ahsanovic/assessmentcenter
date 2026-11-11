@@ -58,7 +58,7 @@
                             <thead class="table-light border-bottom">
                                 <tr>
                                     <th class="text-center" style="width: 45px;">#</th>
-                                    <th>Nama Event</th>
+                                    <th class="ac-col-event-name">Nama Event</th>
                                     <th class="text-wrap">Jumlah Peserta</th>
                                     <th>Interpersonal</th>
                                     <th class="text-wrap">Kesadaran Diri</th>
@@ -74,7 +74,7 @@
                                 @foreach ($data as $index => $item)
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
-                                        <td class="text-wrap">{{ $item->nama_event }}</td>
+                                        <td class="text-wrap ac-col-event-name"><x-monitoring.event-name-cell :nama="$item->nama_event" :nama-grup="$item->eventGroup?->nama" /></td>
                                         <td>{{ $item->jumlah_peserta }}</td>
                                         <td>
                                             <a class="btn btn-xs btn-warning {{ $item->hasil_interpersonal_count == 0 ? 'disabled' : '' }}" wire:navigate

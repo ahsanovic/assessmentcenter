@@ -68,7 +68,7 @@
                             <thead class="table-light border-bottom">
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th class="ac-table-col-wrap">Nama Event</th>
+                                    <th class="ac-table-col-wrap ac-col-event-name">Nama Event</th>
                                     <th>Tgl Pelaksanaan</th>
                                     <th>Jabatan yg Diujikan<br><small class="text-muted">Metode Tes</small></th>
                                     <th>Jumlah Peserta</th>
@@ -83,11 +83,8 @@
                                 @foreach ($data as $index => $item)
                                     <tr class="@if($loop->iteration % 2 == 1) bg-body @endif border-bottom">
                                         <td class="text-center text-secondary fw-bold">{{ $data->firstItem() + $index }}</td>
-                                        <td class="ac-table-col-wrap text-wrap fw-medium">
-                                            {{ $item->nama_event }}
-                                            @if($item->eventGroup)
-                                                <br><span class="badge bg-info-subtle text-info mt-1">{{ $item->eventGroup->nama }}</span>
-                                            @endif
+                                        <td class="ac-table-col-wrap ac-col-event-name">
+                                            <x-monitoring.event-name-cell :nama="$item->nama_event" :nama-grup="$item->eventGroup?->nama" />
                                         </td>
                                         <td class="text-wrap">
                                             @if ($item->tgl_mulai == $item->tgl_selesai)

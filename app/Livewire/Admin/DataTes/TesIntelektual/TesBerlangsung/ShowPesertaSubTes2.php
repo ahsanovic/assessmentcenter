@@ -46,7 +46,7 @@ class ShowPesertaSubTes2 extends Component
     public function mount($idEvent)
     {
         $this->id_event = $idEvent;
-        $this->event = Event::with(['pesertaTesIntelektualSubTes2'])->findOrFail($this->id_event);
+        $this->event = Event::with(['eventGroup', 'pesertaTesIntelektualSubTes2'])->findOrFail($this->id_event);
     }
 
     public function render()

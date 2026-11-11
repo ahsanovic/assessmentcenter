@@ -8,7 +8,7 @@
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <x-monitoring.event-header :nama="$event->nama_event" />
+                    <x-monitoring.event-header :nama="$event->nama_event" :nama-grup="$event->eventGroup?->nama" />
                     <x-monitoring.filter-panel>
                             <div class="row g-2 align-items-end">
                                 <div class="col-sm-3">
