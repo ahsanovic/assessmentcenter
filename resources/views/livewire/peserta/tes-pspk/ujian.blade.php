@@ -986,7 +986,13 @@
 
                 this.saving = true;
                 try {
-                    const payload = await this.$wire.saveAndNext(this.nomor, this.selected);
+                    const payload = await window.ujianAwait(
+                        () => this.$wire.saveAndNext(this.nomor, this.selected),
+                        'saveAndNext'
+                    );
+                    if (payload && payload.__ujianTimeout) {
+                        return;
+                    }
                     this.applyPayload(payload);
 
                     if (payload?.prompt_ankas_terakhir) {
@@ -1009,7 +1015,13 @@
 
                 this.saving = true;
                 try {
-                    const payload = await this.$wire.navigate(target);
+                    const payload = await window.ujianAwait(
+                        () => this.$wire.navigate(target),
+                        'navigate'
+                    );
+                    if (payload && payload.__ujianTimeout) {
+                        return;
+                    }
                     this.applyPayload(payload);
                 } finally {
                     this.saving = false;

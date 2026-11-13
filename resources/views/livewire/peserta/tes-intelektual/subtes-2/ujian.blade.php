@@ -153,13 +153,20 @@
         });
 
         Livewire.on('toast', e => {
+            if (Array.isArray(e) || typeof toastr === 'undefined') {
+                return;
+            }
+            const payload = e;
+            if (!payload || typeof toastr[payload.type] !== 'function') {
+                return;
+            }
             toastr.options = {
                 positionClass: 'toast-top-center',
                 closeButton: true,
                 timeOut: 0,
                 extendedTimeOut: 0,
             };
-            toastr[e.type](e.message);
+            toastr[payload.type](payload.message);
         });
 
         loadFlags();
@@ -563,7 +570,13 @@
 
                 this.saving = true;
                 try {
-                    const payload = await this.$wire.saveAndNext(this.nomor, this.selected);
+                    const payload = await window.ujianAwait(
+                        () => this.$wire.saveAndNext(this.nomor, this.selected),
+                        'saveAndNext'
+                    );
+                    if (payload && payload.__ujianTimeout) {
+                        return;
+                    }
                     this.applyPayload(payload);
 
                     if (payload?.prompt_soal_terakhir) {
@@ -580,7 +593,13 @@
 
                 this.saving = true;
                 try {
-                    const payload = await this.$wire.navigate(target);
+                    const payload = await window.ujianAwait(
+                        () => this.$wire.navigate(target),
+                        'navigate'
+                    );
+                    if (payload && payload.__ujianTimeout) {
+                        return;
+                    }
                     this.applyPayload(payload);
                 } finally {
                     this.saving = false;

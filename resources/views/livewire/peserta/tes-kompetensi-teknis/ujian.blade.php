@@ -65,13 +65,20 @@ x-init="
     });
 
     Livewire.on('toast', e => {
+        if (Array.isArray(e) || typeof toastr === 'undefined') {
+            return;
+        }
+        const payload = e;
+        if (!payload || typeof toastr[payload.type] !== 'function') {
+            return;
+        }
         toastr.options = {
             positionClass: 'toast-top-center',
             closeButton: true,
             timeOut: 0,
             extendedTimeOut: 0,
         };
-        toastr[e.type](e.message);
+        toastr[payload.type](payload.message);
     });
 ">
     <!-- Header Card -->
@@ -304,11 +311,12 @@ x-init="
     });
 </script>
 <script>
-    $(document).ready(function() {
-        $('.form-check-input').change(function() {
-            $('#btn-simpan').removeAttr('disabled');
-        })
-    })
+    if (window.jQuery && !window.__kompetensiSimpanBound) {
+        window.__kompetensiSimpanBound = true;
+        window.jQuery(document).on('change', '.form-check-input', function () {
+            window.jQuery('#btn-simpan').prop('disabled', false);
+        });
+    }
 
     var waktuBerakhir = new Date({{ $timer }} * 1000).getTime();
     var isShow = false;

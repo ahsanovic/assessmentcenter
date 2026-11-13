@@ -97,7 +97,11 @@
         <script>
             window.addEventListener('livewire:init', function () {
                 Livewire.on('toast', data => {
-                    toastr[data[0].type](data[0].message, null, { positionClass: 'toast-top-center' });
+                    const payload = Array.isArray(data) ? data[0] : data;
+                    if (!payload || typeof toastr === 'undefined' || typeof toastr[payload.type] !== 'function') {
+                        return;
+                    }
+                    toastr[payload.type](payload.message, null, { positionClass: 'toast-top-center' });
                 });
             });
         </script>
@@ -168,6 +172,48 @@
                     if (typeof feather !== 'undefined') feather.replace();
                     initPesertaTooltips();
                 });
+            }
+        </script>
+        <script>
+            if (!window.ujianAwait) {
+                window.ujianAwait = function (request, method, timeoutMs) {
+                    const ms = typeof timeoutMs === 'number' ? timeoutMs : 20000;
+                    let timer = null;
+                    let stopHook = function () {};
+                    let cleaned = false;
+
+                    function cleanup() {
+                        if (cleaned) return;
+                        cleaned = true;
+                        if (timer !== null) clearTimeout(timer);
+                        try { stopHook(); } catch (e) {}
+                    }
+
+                    const timeout = new Promise((resolve) => {
+                        timer = setTimeout(() => resolve({ __ujianTimeout: true }), ms);
+                    });
+
+                    const failed = new Promise((resolve) => {
+                        if (typeof Livewire === 'undefined' || typeof Livewire.hook !== 'function') {
+                            return;
+                        }
+                        const unsubscribe = Livewire.hook('commit', ({ commit, fail }) => {
+                            const calls = (commit && commit.calls) || [];
+                            if (!calls.some((call) => call.method === method) || typeof fail !== 'function') {
+                                return;
+                            }
+                            fail(() => resolve({ __ujianTimeout: true }));
+                        });
+                        if (typeof unsubscribe === 'function') stopHook = unsubscribe;
+                    });
+
+                    const work = Promise.resolve().then(() => request());
+                    work.catch(() => {});
+
+                    const result = Promise.race([work, timeout, failed]);
+                    result.then(cleanup, cleanup);
+                    return result;
+                };
             }
         </script>
         @stack('js')
