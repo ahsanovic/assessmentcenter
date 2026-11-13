@@ -41,7 +41,15 @@
                                 </div>
                             </div>
                     </x-monitoring.filter-panel>
-                    <x-monitoring.skor-ringkasan-panel :ringkasan="$ringkasanSkor" />
+                    <x-monitoring.skor-ringkasan-panel :ringkasan="$ringkasanSkor">
+                        @if ($ringkasanSkor->peringatan)
+                            <x-slot:peringatanAksi>
+                                <button type="button" class="btn btn-sm btn-primary" wire:click="simpanPjfYangBelumAdaConfirmation">
+                                    Simpan PJF yang belum ada
+                                </button>
+                            </x-slot:peringatanAksi>
+                        @endif
+                    </x-monitoring.skor-ringkasan-panel>
                     <div class="d-flex flex-wrap justify-content-end gap-2 mb-3">
                         <x-btn-download 
                             :route="'admin.tes-selesai.download-rekap'"
@@ -183,3 +191,23 @@
         <x-pagination :items="$data" />
     </div>
 </div>
+@push('js')
+    <script>
+        window.addEventListener('simpan-pjf-yang-belum-ada-confirmation', () => {
+            Swal.fire({
+                title: 'Simpan PJF yang belum ada?',
+                html: 'PJF dihitung dari capaian level yang sudah tersimpan, dengan rumus yang sama seperti halaman hasil peserta. Skor subtes tidak diubah.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, simpan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch('simpanPjfYangBelumAda');
+                }
+            });
+        });
+    </script>
+@endpush

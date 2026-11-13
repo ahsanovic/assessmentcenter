@@ -3,9 +3,11 @@
 namespace App\Livewire\Admin\DataTes\TesPotensi\TesSelesai;
 
 use App\Models\Event;
+use App\Services\Potensi\PjfPotensiService;
 use App\Services\Statistik\EventSkorRingkasanService;
 use App\Services\Statistik\PotensiPesertaSelesaiQuery;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -83,5 +85,36 @@ class ShowPeserta extends Component
             'data' => $data,
             'ringkasanSkor' => $ringkasanSkor,
         ]);
+    }
+
+    public function simpanPjfYangBelumAdaConfirmation(): void
+    {
+        $this->dispatch('simpan-pjf-yang-belum-ada-confirmation');
+    }
+
+    #[On('simpanPjfYangBelumAda')]
+    public function simpanPjfYangBelumAda(PjfPotensiService $pjf): void
+    {
+        try {
+            $hasil = $pjf->simpanYangBelumAda($this->event);
+
+            if ($hasil['tersimpan'] === 0 && $hasil['dilewati'] === 0) {
+                $this->dispatch('toast', ['type' => 'info', 'message' => 'Semua peserta selesai sudah memiliki PJF']);
+
+                return;
+            }
+
+            $pesan = $hasil['tersimpan'].' PJF berhasil disimpan';
+            if ($hasil['dilewati'] > 0) {
+                $pesan .= ', '.$hasil['dilewati'].' dilewati karena hasil subtes belum lengkap';
+            }
+
+            $this->dispatch('toast', [
+                'type' => $hasil['dilewati'] > 0 ? 'warning' : 'success',
+                'message' => $pesan,
+            ]);
+        } catch (\Throwable $th) {
+            $this->dispatch('toast', ['type' => 'error', 'message' => 'Gagal menyimpan PJF']);
+        }
     }
 }

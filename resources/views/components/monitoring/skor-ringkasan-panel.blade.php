@@ -38,9 +38,16 @@
                 </div>
 
                 @if ($dto->peringatan)
-                    <div class="alert alert-warning py-2 px-3 small mb-3 mb-md-4 d-flex align-items-start gap-2" role="alert">
-                        <i data-feather="alert-circle" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"></i>
-                        <span>{{ $dto->peringatan }}</span>
+                    <div class="alert alert-warning py-2 px-3 small mb-3 mb-md-4" role="alert">
+                        <div class="d-flex align-items-start gap-2">
+                            <i data-feather="alert-circle" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"></i>
+                            <span>{{ $dto->peringatan }}</span>
+                        </div>
+                        @if (isset($peringatanAksi))
+                            <div class="mt-2">
+                                {{ $peringatanAksi }}
+                            </div>
+                        @endif
                     </div>
                 @endif
 

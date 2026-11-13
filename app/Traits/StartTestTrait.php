@@ -18,6 +18,7 @@ use App\Models\ProblemSolving\SoalProblemSolving;
 use App\Models\ProblemSolving\UjianProblemSolving;
 use App\Models\Settings;
 use App\Models\SettingWaktuTes;
+use App\Services\Potensi\PjfPotensiService;
 
 trait StartTestTrait
 {
@@ -79,7 +80,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianInterpersonal();
+            $ujian = new UjianInterpersonal;
             $ujian->event_id = activeEventId();
             $ujian->peserta_id = activePesertaId();
             $ujian->soal_id = $soal_id;
@@ -128,7 +129,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianPengembanganDiri();
+            $ujian = new UjianPengembanganDiri;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -177,7 +178,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianKecerdasanEmosi();
+            $ujian = new UjianKecerdasanEmosi;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -225,7 +226,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianMotivasiKomitmen();
+            $ujian = new UjianMotivasiKomitmen;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -274,7 +275,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianBerpikirKritis();
+            $ujian = new UjianBerpikirKritis;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -326,7 +327,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianProblemSolving();
+            $ujian = new UjianProblemSolving;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -378,7 +379,7 @@ trait StartTestTrait
                 $waktu_tes_berakhir = null;
             }
 
-            $ujian = new UjianKesadaranDiri();
+            $ujian = new UjianKesadaranDiri;
             $ujian->peserta_id = activePesertaId();
             $ujian->event_id = activeEventId();
             $ujian->soal_id = $soal_id;
@@ -461,6 +462,33 @@ trait StartTestTrait
         $status = getFinishedTes();
 
         return count(array_filter($status)) === count($status);
+    }
+
+    /**
+     * Setelah hasil subtes tersimpan: hitung PJF bila sudah lengkap, lalu lanjut urutan.
+     * Kegagalan menyimpan PJF tidak menghentikan perpindahan ke subtes berikutnya atau kuesioner.
+     */
+    protected function lanjutSetelahSubtesPotensi(mixed $urutanTes): mixed
+    {
+        try {
+            app(PjfPotensiService::class)->simpanJikaSemuaSelesai(activeEventId(), activePesertaId());
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        $currentSequenceTest = Settings::where('urutan', $urutanTes)->first(['urutan']);
+        if ($currentSequenceTest && $currentSequenceTest->urutan !== 7) {
+            $nextTest = Settings::with('alatTes')->where('urutan', $currentSequenceTest->urutan + 1)->first();
+            $this->startTest($nextTest->alatTes->alat_tes, $nextTest->urutan);
+
+            return null;
+        }
+
+        if ($currentSequenceTest && $currentSequenceTest->urutan == 7) {
+            return $this->redirect(route('peserta.kuesioner'), navigate: true);
+        }
+
+        return $this->redirect(route('peserta.tes-potensi.home'), navigate: true);
     }
 
     protected function ujianDitandaiSelesai(mixed $nilai): bool

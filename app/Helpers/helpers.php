@@ -3,7 +3,6 @@
 use App\Models\ActivityLog;
 use App\Models\BerpikirKritis\UjianBerpikirKritis;
 use App\Models\CakapDigital\UjianCakapDigital;
-use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\Intelektual\UjianIntelektualSubTes1;
 use App\Models\Intelektual\UjianIntelektualSubTes2;
 use App\Models\Intelektual\UjianIntelektualSubTes3;
@@ -11,6 +10,7 @@ use App\Models\Interpersonal\UjianInterpersonal;
 use App\Models\KecerdasanEmosi\UjianKecerdasanEmosi;
 use App\Models\KesadaranDiri\UjianKesadaranDiri;
 use App\Models\KompetensiTeknis\UjianKompetensiTeknis;
+use App\Models\LiterasiDigital\UjianLiterasiDigital;
 use App\Models\MotivasiKomitmen\UjianMotivasiKomitmen;
 use App\Models\PengembanganDiri\UjianPengembanganDiri;
 use App\Models\ProblemSolving\UjianProblemSolving;
@@ -38,11 +38,11 @@ if (! function_exists('getKategori')) {
         //     $kategori = 'Kurang Optimal';
         // }
 
-        if ($jpm >= 0.8 && $jpm <= 1) {
+        if ($jpm >= 0.8) {
             $kategori = 'Tinggi';
-        } elseif ($jpm >= 0.6 && $jpm < 0.8) {
+        } elseif ($jpm >= 0.6) {
             $kategori = 'Menengah';
-        } elseif ($jpm < 0.6) {
+        } else {
             $kategori = 'Rendah';
         }
 

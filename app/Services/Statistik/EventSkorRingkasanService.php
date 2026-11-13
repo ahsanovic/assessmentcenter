@@ -51,7 +51,7 @@ final class EventSkorRingkasanService
         $peringatan = null;
         if ($totalPopulasi > $totalDenganSkor) {
             $selisih = $totalPopulasi - $totalDenganSkor;
-            $peringatan = "{$selisih} peserta selesai belum memiliki nilai PJF tersimpan (buka laporan hasil atau sinkronisasi API).";
+            $peringatan = "{$selisih} peserta selesai belum memiliki nilai PJF tersimpan. Gunakan tombol di bawah untuk menghitung dari level yang sudah ada.";
         }
 
         return new EventSkorRingkasanDto(
